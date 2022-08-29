@@ -1,0 +1,97 @@
+{
+  "name": "unplugin-starter",
+  "version": "0.1.0",
+  "packageManager": "pnpm@7.1.1",
+  "description": "Register global imports on demand for Vite and Webpack",
+  "license": "MIT",
+  "homepage": "https://github.com/antfu/unplugin-starter#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/antfu/unplugin-starter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/antfu/unplugin-starter/issues"
+  },
+  "keywords": [
+    "unplugin",
+    "vite",
+    "webpack",
+    "rollup",
+    "transform"
+  ],
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    },
+    "./vite": {
+      "require": "./dist/vite.js",
+      "import": "./dist/vite.mjs"
+    },
+    "./webpack": {
+      "require": "./dist/webpack.js",
+      "import": "./dist/webpack.mjs"
+    },
+    "./rollup": {
+      "require": "./dist/rollup.js",
+      "import": "./dist/rollup.mjs"
+    },
+    "./esbuild": {
+      "require": "./dist/esbuild.js",
+      "import": "./dist/esbuild.mjs"
+    },
+    "./nuxt": {
+      "require": "./dist/nuxt.js",
+      "import": "./dist/nuxt.mjs"
+    },
+    "./types": {
+      "require": "./dist/types.js",
+      "import": "./dist/types.mjs"
+    },
+    "./*": "./*"
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "index.d.ts",
+  "typesVersions": {
+    "*": {
+      "*": [
+        "./dist/*",
+        "./*"
+      ]
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch src",
+    "build:fix": "esno scripts/postbuild.ts",
+    "lint": "eslint .",
+    "play": "npm -C playground run dev",
+    "prepublishOnly": "npm run build",
+    "release": "bumpp && npm publish",
+    "start": "esno src/index.ts",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "unplugin": "^0.7.1"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^0.25.2",
+    "@types/node": "^18.0.1",
+    "bumpp": "^8.2.1",
+    "eslint": "^8.19.0",
+    "esno": "^0.16.3",
+    "fast-glob": "^3.2.11",
+    "nodemon": "^2.0.18",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.75.7",
+    "tsup": "^6.1.3",
+    "typescript": "^4.7.4",
+    "vite": "^2.9.13",
+    "vitest": "^0.17.0",
+    "webpack": "^5.73.0"
+  }
+}
