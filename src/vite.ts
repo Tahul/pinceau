@@ -1,3 +1,2 @@
-import unplugin from '.'
-
-export default unplugin.vite
+import pinceau from '.'
+export default pinceau.vite

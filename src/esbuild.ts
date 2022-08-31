@@ -1,3 +1,2 @@
-import unplugin from '.'
-
-export default unplugin.esbuild
+import pinceau from '.'
+export default pinceau.esbuild

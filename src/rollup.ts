@@ -1,3 +1,2 @@
-import unplugin from '.'
-
-export default unplugin.rollup
+import pinceau from '.'
+export default pinceau.rollup

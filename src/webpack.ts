@@ -1,3 +1,2 @@
-import unplugin from '.'
-
-export default unplugin.webpack
+import pinceau from '.'
+export default pinceau.webpack

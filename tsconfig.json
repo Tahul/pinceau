@@ -7,6 +7,20 @@
     "esModuleInterop": true,
     "strict": true,
     "strictNullChecks": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "paths": {
+      "pinceau": [
+        "./src/index.ts"
+      ],
+      "pinceau.css": [
+        "./playground/node_modules/.vite/pinceau/pinceau.css"
+      ],
+      "#pinceau/*": [
+        "./playground/node_modules/.vite/pinceau/*"
+      ],
+      "#pinceau": [
+        "./playground/node_modules/.vite/pinceau/pinceau.ts"
+      ]
+    }
   }
 }

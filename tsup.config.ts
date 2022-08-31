@@ -7,5 +7,6 @@ export default <Options>{
   clean: true,
   format: ['cjs', 'esm'],
   dts: true,
+  external: ['vite'],
   onSuccess: 'npm run build:fix',
 }
