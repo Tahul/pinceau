@@ -89,8 +89,8 @@ build({
 
 # 💖 Credits
 
-- [antfu](https://github.com/antfu)
-- [johnsoncode](https://github.com/johnsoncodehk)
+- [Anthony Fu](https://github.com/antfu)
+- [Johnson Chu](https://github.com/johnsoncodehk)
 - [The Stitches Team](https://stitches.dev)
   - [Pedro Duarte](https://twitter.com/peduarte)
   - [Jonathan Neal](https://twitter.com/jon_neal)
