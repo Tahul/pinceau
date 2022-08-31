@@ -1,23 +1,25 @@
 {
-  "name": "unplugin-starter",
-  "version": "0.1.0",
+  "name": "pinceau",
+  "version": "0.0.1",
   "packageManager": "pnpm@7.1.1",
-  "description": "Register global imports on demand for Vite and Webpack",
+  "description": "A CSS-in-JS framework built to feel like a native Vue feature.",
   "license": "MIT",
-  "homepage": "https://github.com/antfu/unplugin-starter#readme",
+  "homepage": "https://github.com/Tahul/pinceau#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/antfu/unplugin-starter.git"
+    "url": "git+https://github.com/Tahul/pinceau.git"
   },
   "bugs": {
-    "url": "https://github.com/antfu/unplugin-starter/issues"
+    "url": "https://github.com/Tahul/pinceau/issues"
   },
   "keywords": [
-    "unplugin",
-    "vite",
-    "webpack",
-    "rollup",
-    "transform"
+    "css-in-js",
+    "vue",
+    "design-tokens",
+    "css-variables",
+    "typed-styles",
+    "nuxt",
+    "vite"
   ],
   "exports": {
     ".": {
