@@ -1,28 +1,22 @@
-# unplugin-starter
+# 🖌 pinceau
 
-[![NPM version](https://img.shields.io/npm/v/unplugin-starter?color=a1b858&label=)](https://www.npmjs.com/package/unplugin-starter)
+[![NPM version](https://img.shields.io/npm/v/pinceau?color=a1b858&label=)](https://www.npmjs.com/package/pinceau)
 
-Starter template for [unplugin](https://github.com/unjs/unplugin).
+[✨ Documentation]() • [🎨 Start painting]()
 
-## Template Usage
+A CSS-in-JS framework built to feel like a native Vue feature.
 
-To use this template, clone it down using:
-
-```bash
-npx degit antfu/unplugin-starter my-unplugin
-```
-
-And do a global replace of `unplugin-starter` with your plugin name.
-
-Then you can start developing your unplugin 🔥
-
-To test your plugin, run: `pnpm run dev`
-To release a new version, run: `pnpm run release`
+- Ships **0kb** of JS to the client
+- **DX** that feels like a **native** Vue feature
+- [Design Tokens](https://github.com/design-tokens/community-group)-compatible configuration system
+- Fully-typed styling API inspired from [Stitches](https://www.npmjs.com/package/@stitches/stringify)
+- Integrated with [Volar](https://github.com/johnsoncodehk/volar)
+- First-class support for [Nuxt 3](https://v3.nuxtjs.org), [Vitesse](https://github.com/antfu/vitesse), [@vitejs/plugin-vue](https://github.com/vitejs/vite/tree/main/packages/plugin-vue)
 
 ## Install
 
 ```bash
-npm i unplugin-starter
+npm i pinceau
 ```
 
 <details>
@@ -30,11 +24,11 @@ npm i unplugin-starter
 
 ```ts
 // vite.config.ts
-import Starter from 'unplugin-starter/vite'
+import Pinceau from 'pinceau/vite'
 
 export default defineConfig({
   plugins: [
-    Starter({ /* options */ }),
+    Pinceau({ /* options */ }),
   ],
 })
 ```
@@ -48,28 +42,12 @@ Example: [`playground/`](./playground/)
 
 ```ts
 // rollup.config.js
-import Starter from 'unplugin-starter/rollup'
+import Pinceau from 'pinceau/rollup'
 
 export default {
   plugins: [
-    Starter({ /* options */ }),
+    Pinceau({ /* options */ }),
   ],
-}
-```
-
-<br></details>
-
-
-<details>
-<summary>Webpack</summary><br>
-
-```ts
-// webpack.config.js
-module.exports = {
-  /* ... */
-  plugins: [
-    require('unplugin-starter/webpack')({ /* options */ })
-  ]
 }
 ```
 
@@ -80,30 +58,17 @@ module.exports = {
 
 ```ts
 // nuxt.config.js
-export default {
-  buildModules: [
-    ['unplugin-starter/nuxt', { /* options */ }],
+export default defineNuxtConfig({
+  modules: [
+    ['pinceau/nuxt'],
   ],
-}
+  pinceau: {
+    /* options */
+  }
+})
 ```
 
-> This module works for both Nuxt 2 and [Nuxt Vite](https://github.com/nuxt/vite)
-
-<br></details>
-
-<details>
-<summary>Vue CLI</summary><br>
-
-```ts
-// vue.config.js
-module.exports = {
-  configureWebpack: {
-    plugins: [
-      require('unplugin-starter/webpack')({ /* options */ }),
-    ],
-  },
-}
-```
+> This module only works with [Nuxt 3](https://v3.nuxtjs.org).
 
 <br></details>
 
@@ -113,11 +78,24 @@ module.exports = {
 ```ts
 // esbuild.config.js
 import { build } from 'esbuild'
-import Starter from 'unplugin-starter/esbuild'
+import Pinceau from 'pinceau/esbuild'
 
 build({
-  plugins: [Starter()],
+  plugins: [Pinceau({ /* options */ })],
 })
 ```
 
 <br></details>
+
+# 💖 Credits
+
+- [antfu](https://github.com/antfu)
+- [johnsoncode](https://github.com/johnsoncodehk)
+- [The Stitches Team](https://stitches.dev)
+  - [Pedro Duarte](https://twitter.com/peduarte)
+  - [Jonathan Neal](https://twitter.com/jon_neal)
+  - [Abdulhadi Alhallak](https://twitter.com/hadi_hlk)
+
+## License
+
+[MIT](./LICENSE) License &copy; 2022-PRESENT [Yaël GUILLOUX](https://github.com/Tahul)
