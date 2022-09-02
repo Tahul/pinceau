@@ -1,17 +1,4 @@
 /**
- * Regex used to parsed `{variables}`.
- */
-export const referencesRegex = new RegExp(
-  '\\'
-  + '{'
-  + '([^'
-  + '}'
-  + ']+)'
-  + '\\'
-  + '}', 'g',
-)
-
-/**
  * Make a list of `get()` compatible paths for any object.
  */
 export const objectPaths = (data: any) => {

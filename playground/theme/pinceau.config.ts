@@ -1,4 +1,4 @@
-import { defineTheme } from '../src'
+import { defineTheme } from '../../src'
 
 export default defineTheme({
   colors: {

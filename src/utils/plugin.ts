@@ -1,7 +1,6 @@
 import type { UserConfig as ViteConfig } from 'vite'
-import type { PinceauOptions } from '../types'
 
-export function registerAliases<UserOptions extends PinceauOptions = PinceauOptions>(config: ViteConfig, options: UserOptions) {
+export function registerAliases(config: ViteConfig) {
   if (!config?.resolve) { config.resolve = {} }
   if (!config.resolve?.alias) { config.resolve.alias = {} }
 }

@@ -18,8 +18,8 @@
       "pinceau.css": [
         "./playground/node_modules/.vite/pinceau/pinceau.css"
       ],
-      "#pinceau/*": [
-        "./playground/node_modules/.vite/pinceau/*"
+      "virtual:pinceau.*": [
+        "./playground/node_modules/.vite/pinceau/pinceau.*"
       ],
       "#pinceau": [
         "./playground/node_modules/.vite/pinceau/pinceau.ts"

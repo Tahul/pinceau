@@ -1,6 +1,6 @@
 import type { LoadConfigResult } from 'unconfig'
 import type { ViteDevServer } from 'vite'
-import type { PinceauConfig } from './theme'
+import type { PinceauConfig, TokensFunction } from './theme'
 import type { PinceauOptions } from './'
 
 export type ConfigOrPaths = PinceauConfig | string | string[] | undefined
@@ -8,6 +8,7 @@ export type ConfigOrPaths = PinceauConfig | string | string[] | undefined
 export interface PinceauContext<UserOptions extends PinceauOptions = PinceauOptions> extends PinceauConfigContext<UserOptions>, PinceauVirtualContext {
   env: 'prod' | 'dev'
   tokens: PinceauConfig
+  $tokens: TokensFunction
 
   // Vite
   viteServer: ViteDevServer
@@ -36,4 +37,8 @@ export interface PinceauVirtualContext {
   updateOutputs: (generatedTheme: ThemeGenerationOutput) => void
   getOutput: (key: string) => string | undefined
   getOutputId: (key: string) => string | undefined
+}
+
+export interface PinceauTransformContext {
+  variantProps: { [key: string]: any }
 }

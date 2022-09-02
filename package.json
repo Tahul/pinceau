@@ -89,6 +89,8 @@
     "consola": "^2.15.3",
     "defu": "^6.1.0",
     "magic-regexp": "^0.4.1",
+    "magic-string": "^0.26.3",
+    "recast": "^0.21.2",
     "scule": "^0.3.2",
     "style-dictionary-esm": "^1.0.7",
     "unconfig": "^0.3.5",

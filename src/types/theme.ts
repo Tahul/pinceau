@@ -245,7 +245,7 @@ export type ThemeKey<
 export interface PinceauConfig extends PinceauTheme {
 }
 
-export interface TokenHelperOptions {
+export interface TokensFunctionOptions {
   /**
    * The key that will be unwrapped from the design token object.
    * @default variable
@@ -263,3 +263,10 @@ export interface TokenHelperOptions {
    */
   flatten?: boolean
 }
+
+export type TokensFunction = (
+  path?: string | undefined,
+  options?: TokensFunctionOptions,
+  themeTokens?: PinceauConfig,
+  tokenAliases?: { [key: string]: string }
+) => DesignTokens | DesignToken | number | string

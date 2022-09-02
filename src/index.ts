@@ -1,9 +1,12 @@
 import { join } from 'path'
 import defu from 'defu'
 import { createUnplugin } from 'unplugin'
+import MagicString from 'magic-string'
 import { createContext } from './context'
 import type { PinceauOptions } from './types'
 import { registerAliases } from './utils/plugin'
+import { replaceStyleTs, resolveVueComponents } from './transforms'
+import { parseVueRequest } from './utils/vue'
 
 export { defineTheme } from './theme'
 export { get } from './utils'
@@ -29,7 +32,7 @@ export default createUnplugin<PinceauOptions>(
 
       vite: {
         config(config) {
-          registerAliases(config, options)
+          registerAliases(config)
         },
         async configResolved(config) {
           await ctx.updateCwd(config.root)
@@ -40,16 +43,37 @@ export default createUnplugin<PinceauOptions>(
           await ctx.ready
           ctx.registerConfigWatchers(server)
         },
+        handleHotUpdate(ctx) {
+          const defaultRead = ctx.read
+          ctx.read = async function () {
+            const code = await defaultRead()
+            return replaceStyleTs(code, ctx.file) || code
+          }
+        },
       },
 
-      transformInclude() {
-        // console.log({ id })
-        return true
+      transformInclude(id) {
+        // Use Vue's query parser
+        const { query } = parseVueRequest(id)
+        if (query?.vue) { return true }
       },
 
-      transform(code) {
-        // console.log({ code })
-        return code
+      transform(code, id) {
+        code = replaceStyleTs(code, id)
+
+        const { filename, query } = parseVueRequest(id)
+
+        // Create sourceMap compatible string
+        const magicString = new MagicString(code, { filename })
+        const result = () => ({ code: magicString.toString(), map: magicString.generateMap({ source: id, includeContent: true }) })
+
+        if (query?.vue) {
+          // Return early when the query is scoped (usually style tags)
+          const { code: _code, early } = resolveVueComponents(code, id, magicString, ctx, query)
+          if (early) { return _code }
+        }
+
+        return result()
       },
 
       resolveId(id) {

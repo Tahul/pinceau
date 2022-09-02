@@ -1,15 +1,16 @@
-import type { ViteDevServer } from 'vite'
+import type { ViteDevServer } from 'vite'
 import type { PinceauContext, PinceauOptions } from '../types'
 import { prepareOutputDir, usePinceauConfig } from '../theme'
 import { generateTheme } from '../theme/generate'
 import usePinceauVirtualStore from '../theme/virtual'
+import { createTokensHelper } from './$tokens'
 
 /**
  * Creates the Pinceau context from the options.
  */
 export const createContext = <UserOptions extends PinceauOptions = PinceauOptions>(options: UserOptions): PinceauContext<UserOptions> => {
   const env: PinceauContext['env'] = 'prod'
-  const tokens = {}
+  let tokens = {}
   let viteServer: ViteDevServer
 
   // Prepares the output dir (TODO: remove it to only depend on in-memory storage)
@@ -23,8 +24,10 @@ export const createContext = <UserOptions extends PinceauOptions = PinceauOption
       try {
         const builtTheme = await generateTheme(resolvedConfig.config, options.outputDir as string)
         updateOutputs(builtTheme)
+        tokens = builtTheme.tokens
       }
       catch (e) {
+        // eslint-disable-next-line no-console
         console.log(e)
       }
     },
@@ -35,6 +38,9 @@ export const createContext = <UserOptions extends PinceauOptions = PinceauOption
     env,
     get tokens() {
       return tokens
+    },
+    get $tokens() {
+      return createTokensHelper(tokens, getOutput('aliases'))
     },
 
     // Vite

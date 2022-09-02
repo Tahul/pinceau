@@ -9,6 +9,13 @@ html,
 body {
   height: 100%;
   width: 100%;
-  background-color: var(--colors-primary);
 }
+</style>
+
+<style lang="ts">
+css({
+  html: {
+    backgroundColor: 'red'
+  }
+})
 </style>
