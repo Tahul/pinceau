@@ -17,8 +17,7 @@ export function usePinceauConfig<UserOptions extends PinceauOptions = PinceauOpt
   let ready = reloadConfig()
 
   async function reloadConfig(newOptions?: UserOptions): Promise<LoadConfigResult<PinceauConfig>> {
-    if (!newOptions)
-      newOptions = options
+    if (!newOptions) { newOptions = options }
 
     const result = await loadConfig(newOptions || options)
 
@@ -26,11 +25,9 @@ export function usePinceauConfig<UserOptions extends PinceauOptions = PinceauOpt
     resolvedConfig = result.config
     sources = result.sources
 
-    if (dispatchConfigUpdate)
-      dispatchConfigUpdate(result)
+    if (dispatchConfigUpdate) { dispatchConfigUpdate(result) }
 
-    if (options?.configResolved)
-      options.configResolved(result.config)
+    if (options?.configResolved) { options.configResolved(result.config) }
 
     return result
   }
@@ -49,20 +46,29 @@ export function usePinceauConfig<UserOptions extends PinceauOptions = PinceauOpt
   }
 
   function registerConfigWatchers(server: ViteDevServer) {
-    if (!sources.length)
-      return
+    if (!sources.length) { return }
 
     server.watcher.add(sources)
 
     server.watcher.on('change', async (p) => {
-      if (!sources.includes(p))
-        return
+      if (!sources.includes(p)) { return }
 
       await reloadConfig()
 
+      const _module = server.moduleGraph.getModuleById('virtual:pinceau.css')
+      if (_module) {
+        server.moduleGraph.invalidateModule(_module)
+      }
       server.ws.send({
-        type: 'custom',
-        event: 'pinceau:config-changed',
+        type: 'update',
+        updates: [
+          {
+            acceptedPath: 'virtual:pinceau.css',
+            path: 'virtual:pinceau.css',
+            timestamp: +Date.now(),
+            type: 'js-update',
+          },
+        ],
       })
     })
   }

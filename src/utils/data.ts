@@ -29,11 +29,9 @@ export const objectPaths = (data: any) => {
         ? `${prev}.${key}`
         : key
 
-      if (!output.includes(newKey))
-        output.push(newKey)
+      if (!output.includes(newKey)) { output.push(newKey) }
 
-      if (!isarray && isobject && Object.keys(value).length)
-        return step(value, newKey)
+      if (!isarray && isobject && Object.keys(value).length) { return step(value, newKey) }
     })
   }
   step(data)
@@ -46,8 +44,7 @@ export const objectPaths = (data: any) => {
  * @example get({ foot: { bar: 'baz' } }, 'foo.bar') // 'baz'
  */
 export const get = (obj: any, path: string | string[], defValue = undefined) => {
-  if (!path)
-    return undefined
+  if (!path) { return undefined }
 
   const pathArray = Array.isArray(path) ? path : path.match(/([^[.\]])+/g)
 
@@ -73,8 +70,7 @@ export const walkTokens = (
   }
   else {
     for (const k in obj) {
-      if (obj[k] && typeof obj[k] === 'object')
-        result[k] = walkTokens(obj[k], cb)
+      if (obj[k] && typeof obj[k] === 'object') { result[k] = walkTokens(obj[k], cb) }
     }
   }
 

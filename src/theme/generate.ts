@@ -1,27 +1,22 @@
-import StyleDictionary from 'style-dictionary'
-import type { Dictionary, Core as Instance } from 'style-dictionary'
-import type { DesignTokens, PinceauConfig } from '../types'
+import type { Core as Instance } from 'style-dictionary-esm'
+import StyleDictionary from 'style-dictionary-esm'
+import type { DesignTokens, PinceauConfig, ThemeGenerationOutput } from '../types'
 import { referencesRegex, resolveVariableFromPath, walkTokens } from '../utils'
 import { jsFull, tsFull, tsTypesDeclaration } from './formats'
 
-export async function generateTokens(
-  tokens: PinceauConfig,
-  buildPath: string,
-  silent = false,
-) {
-  // Get styleDictionary instance
-  const styleDictionary = await getStyleDictionaryInstance(tokens, buildPath)
-
-  // Generate outputs silently
-  return await generateTokensOutputs(styleDictionary, silent)
-}
-
-export async function getStyleDictionaryInstance(tokens: PinceauConfig, buildPath: string) {
+export async function generateTheme(tokens: PinceauConfig, buildPath: string, silent = true): Promise<ThemeGenerationOutput> {
   let styleDictionary: Instance = StyleDictionary
 
-  const aliasedTokens: { [key: string]: string } = {}
+  // Tokens outputs as in-memory objects
+  const outputs: ThemeGenerationOutput['outputs'] = {
+    // Aliased tokens detected (a token which only uses an alias as a value)
+    aliases: {},
+  }
+
+  // Tokens processed through dictionary
   let transformedTokens: DesignTokens
 
+  // Cleanup default fileHeader
   styleDictionary.fileHeader = {}
 
   // Prepare tokens, and walk them once
@@ -39,8 +34,8 @@ export async function getStyleDictionaryInstance(tokens: PinceauConfig, buildPat
             token.value = (token.original.value as string).replace(
               keyRegex,
               (_, tokenPath) => {
-                aliasedTokens[reference] = resolveVariableFromPath(tokenPath)
-                return aliasedTokens[reference]
+                outputs.aliases[reference] = resolveVariableFromPath(tokenPath)
+                return outputs.aliases[reference]
               },
             )
           }
@@ -75,11 +70,13 @@ export async function getStyleDictionaryInstance(tokens: PinceauConfig, buildPat
     },
   })
 
+  // Transform group used accross all tokens formats
   styleDictionary.registerTransformGroup({
     name: 'pinceau',
     transforms: ['name/cti/kebab', 'size/px', 'color/hex', 'pinceau/variable'],
   })
 
+  // pinceau.d.ts
   styleDictionary.registerFormat({
     name: 'pinceau/types',
     formatter() {
@@ -87,46 +84,48 @@ export async function getStyleDictionaryInstance(tokens: PinceauConfig, buildPat
     },
   })
 
+  // pinceau.css
   styleDictionary.registerFormat({
     name: 'pinceau/css',
     formatter({ dictionary, options }) {
       const selector = options.selector ? options.selector : ':root'
       const { outputReferences } = options
       const { formattedVariables } = StyleDictionary.formatHelpers
-
-      dictionary.allTokens = dictionary.allTokens.filter(token => !aliasedTokens[token.name])
-
+      dictionary.allTokens = dictionary.allTokens.filter(token => !outputs.aliases[token.name])
       const css = `${selector} {\n${formattedVariables({ format: 'css', dictionary, outputReferences })}\n}\n`
-
+      outputs.css = css
       return css
     },
   })
 
+  // pinceau.json
   styleDictionary.registerFormat({
     name: 'pinceau/json',
     formatter({ dictionary: { allTokens } }) {
       const json = `{\n${allTokens.map((token) => {
         return `  "${token.name}": ${JSON.stringify(token.value)}`
       }).join(',\n')}\n}`
-
+      outputs.json = json
       return json
     },
   })
 
+  // pinceau.ts
   styleDictionary.registerFormat({
     name: 'pinceau/typescript',
     formatter() {
-      const ts = tsFull(transformedTokens, aliasedTokens)
-
+      const ts = tsFull(transformedTokens, outputs.aliases)
+      outputs.ts = ts
       return ts
     },
   })
 
+  // pinceau.js
   styleDictionary.registerFormat({
     name: 'pinceau/javascript',
     formatter() {
-      const js = jsFull(transformedTokens, aliasedTokens)
-
+      const js = jsFull(transformedTokens, outputs.aliases)
+      outputs.js = js
       return js
     },
   })
@@ -163,52 +162,50 @@ export async function getStyleDictionaryInstance(tokens: PinceauConfig, buildPat
       },
 
       done: {
+        transformGroup: 'pinceau',
         actions: ['done'],
       },
     },
   })
 
-  return styleDictionary
-}
-
-export async function generateTokensOutputs(styleDictionary: Instance, silent = false) {
-  return new Promise<Dictionary>(
+  const result = await new Promise<ThemeGenerationOutput>(
     (resolve, reject) => {
       try {
-        // Weird trick to disable nasty logging
+        // Actions run at the end of build, helps on awaiting it properly
         if (silent) {
-        // @ts-expect-error - Silent console.log
-        // eslint-disable-next-line no-console
-          console._log = console.log
-          // eslint-disable-next-line no-console
-          console.log = () => {}
+          styleDictionary.logger().pause()
         }
 
-        // Actions run at the end of build, helps on awaiting it properly
         styleDictionary.registerAction({
           name: 'done',
-          do: (dictionary) => {
-            resolve(dictionary)
+          do: () => {
+            resolve({
+              tokens: transformedTokens,
+              outputs,
+              buildPath,
+            })
           },
           undo: () => {
-            //
+          //
           },
         })
 
         styleDictionary.cleanAllPlatforms()
 
         styleDictionary.buildAllPlatforms()
-
-        // Weird trick to disable nasty logging
-        if (silent) {
-        // @ts-expect-error - Silent console.log
-        // eslint-disable-next-line no-console
-          console.log = console._log
-        }
       }
       catch (e) {
         reject(e)
       }
     },
-  )
+  ).then((result) => {
+    // Actions run at the end of build, helps on awaiting it properly
+    if (silent) {
+      styleDictionary.logger().pause()
+    }
+
+    return result
+  })
+
+  return result
 }

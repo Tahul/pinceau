@@ -9,7 +9,7 @@ export default defineTheme({
 
   colors: {
     primary: {
-      value: 'blue',
+      value: 'red',
     },
     black: {
       value: '#1C1D21',

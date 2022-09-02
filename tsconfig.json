@@ -12,6 +12,9 @@
       "pinceau": [
         "./src/index.ts"
       ],
+      "pinceau/utils": [
+        "./srcu/utils"
+      ],
       "pinceau.css": [
         "./playground/node_modules/.vite/pinceau/pinceau.css"
       ],

@@ -9,7 +9,7 @@ async function run() {
     absolute: true,
     cwd: resolve(__dirname, '../dist'),
   })
-  
+
   for (const file of files) {
     console.log(chalk.cyan.inverse(' POST '), `Fix ${basename(file)}`)
     // fix cjs exports

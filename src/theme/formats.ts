@@ -53,16 +53,14 @@ export const getFunction = `const get = ${get.toString()}`
  */
 
 export const tsTypesDeclaration = (typesObject: any) => {
-  let result = 'import { DesignToken, PinceauConfig } from \'pinceau\'\n\n'
+  let result = 'import { DesignToken, PinceauConfig } from \'pinceau/types\'\n\n'
 
   result += `export interface GeneratedPinceauTheme extends PinceauConfig ${JSON.stringify(typesObject, null, 2)}\n\n`
 
   const tokensPaths = objectPaths(typesObject)
 
-  if (tokensPaths.length)
-    result += `export type DesignTokensPaths = \n${tokensPaths.map((path: string) => (`'${path}'`)).join(' | \n')}\n\n`
-  else
-    result += 'export type DesignTokensPaths = \'no.tokens\'\n\n'
+  if (tokensPaths.length) { result += `export type DesignTokensPaths = \n${tokensPaths.map((path: string) => (`'${path}'`)).join(' | \n')}\n\n` }
+  else { result += 'export type DesignTokensPaths = \'no.tokens\'\n\n' }
 
   // Cast object keys as types for result
   result = result.replace(/"DesignToken"/g, 'DesignToken')
@@ -71,9 +69,9 @@ export const tsTypesDeclaration = (typesObject: any) => {
 }
 
 export const tsFull = (tokensObject: any, aliased: any) => {
-  let result = 'import { get } from \'pinceau\''
+  let result = 'import { get } from \'pinceau/utils\'\n\n'
 
-  result += 'import type { GeneratedPinceauTheme } from \'./pinceau.d.ts\'\n\n'
+  result += 'import type { GeneratedPinceauTheme } from \'./pinceau.d\'\n\n'
 
   result += `export const aliases = ${JSON.stringify(aliased, null, 2)} as const\n\n`
 

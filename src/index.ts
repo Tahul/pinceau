@@ -6,6 +6,7 @@ import type { PinceauOptions } from './types'
 import { registerAliases } from './utils/plugin'
 
 export { defineTheme } from './theme'
+export { get } from './utils'
 
 const defaultOptions: PinceauOptions = {
   configFileName: 'pinceau.config',
@@ -34,10 +35,9 @@ export default createUnplugin<PinceauOptions>(
           await ctx.updateCwd(config.root)
         },
         async configureServer(server) {
+          ctx.setViteServer(server)
           ctx.env = 'dev'
-
           await ctx.ready
-
           ctx.registerConfigWatchers(server)
         },
       },
@@ -53,11 +53,13 @@ export default createUnplugin<PinceauOptions>(
       },
 
       resolveId(id) {
-        if (id === 'pinceau.css') {
-          return {
-            id: join(options.outputDir as string, 'pinceau.css'),
-            external: true,
-          }
+        return ctx.getOutputId(id)
+      },
+
+      load(id) {
+        const output = ctx.getOutput(id)
+        if (output) {
+          return output
         }
       },
     }

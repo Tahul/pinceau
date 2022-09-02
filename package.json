@@ -26,6 +26,10 @@
       "require": "./dist/index.js",
       "import": "./dist/index.mjs"
     },
+    "./utils": {
+      "require": "./dist/utils.js",
+      "import": "./dist/utils.mjs"
+    },
     "./vite": {
       "require": "./dist/vite.js",
       "import": "./dist/vite.mjs"
@@ -71,7 +75,10 @@
     "dev": "tsup --watch src",
     "build:fix": "esno scripts/postbuild.ts",
     "lint": "eslint .",
+    "build:play": "npm -C playground run build",
+    "build:play:nuxt": "npm -C playground run build:nuxt",
     "play": "npm -C playground run dev",
+    "play:nuxt": "npm -C playground run dev:nuxt",
     "prepublishOnly": "npm run build",
     "release": "bumpp && npm publish",
     "start": "esno src/index.ts",
@@ -81,21 +88,22 @@
     "@stitches/stringify": "^1.2.8",
     "consola": "^2.15.3",
     "defu": "^6.1.0",
+    "magic-regexp": "^0.4.1",
     "scule": "^0.3.2",
-    "style-dictionary": "^3.7.1",
+    "style-dictionary-esm": "^1.0.7",
     "unconfig": "^0.3.5",
     "unplugin": "^0.9.5"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.26.2",
-    "@types/node": "^18.7.13",
+    "@types/node": "^18.7.14",
     "bumpp": "^8.2.1",
     "eslint": "^8.23.0",
     "esno": "^0.16.3",
     "fast-glob": "^3.2.11",
     "nodemon": "^2.0.19",
     "rimraf": "^3.0.2",
-    "rollup": "^2.78.1",
+    "rollup": "^2.79.0",
     "tsup": "^6.2.3",
     "typescript": "^4.8.2",
     "vite": "^3.0.9",

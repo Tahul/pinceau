@@ -79,3 +79,7 @@ dist
 
 # IDE
 .idea
+
+# Nuxt
+.nuxt
+.output

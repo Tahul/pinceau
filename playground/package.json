@@ -1,12 +1,16 @@
 {
   "private": true,
   "scripts": {
-    "dev": "nodemon -w '../src/**/*.ts' -e .ts -x vite"
+    "dev": "nodemon -w '../src/**/*.ts' -e .ts -x vite -c _vite.config.ts",
+    "build": "vite build -c _vite.config.ts",
+    "dev:nuxt": "nuxi dev",
+    "build:nuxt": "nuxi build"
   },
   "devDependencies": {
-    "vite": "^3.0.9",
     "@vitejs/plugin-vue": "latest",
-    "vue": "^3.2.37",
-    "vite-plugin-inspect": "^0.6.0"
+    "nuxt": "npm:nuxt3@latest",
+    "vite": "^3.0.9",
+    "vite-plugin-inspect": "^0.6.0",
+    "vue": "^3.2.37"
   }
 }

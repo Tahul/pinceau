@@ -20,4 +20,7 @@ export default defineConfig({
       pinceau: '../src/index.ts',
     },
   },
+  optimizeDeps: {
+    exclude: ['fsevents'],
+  },
 })
