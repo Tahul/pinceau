@@ -89,6 +89,7 @@ build({
 
 # 💖 Credits
 
+- [NuxtLabs](https://github.com/nuxtlabs)
 - [Anthony Fu](https://github.com/antfu)
 - [Johnson Chu](https://github.com/johnsoncodehk)
 - [The Stitches Team](https://stitches.dev)
