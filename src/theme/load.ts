@@ -1,10 +1,29 @@
-import { join, resolve } from 'path'
-import type { LoadConfigResult, LoadConfigSource } from 'unconfig'
-import { createConfigLoader as createLoader } from 'unconfig'
-import type { PinceauConfig, PinceauOptions } from '../types'
-export type { LoadConfigResult, LoadConfigSource }
+import { resolve } from 'path'
+import { existsSync } from 'fs'
+import jiti from 'jiti'
+import defu from 'defu'
+import { file } from '@babel/types'
+import type { PinceauOptions, PinceauTheme } from '../types'
+import { logger } from '../utils'
 
-export async function loadConfig<U extends PinceauConfig>(
+export interface LoadConfigResult<T> {
+  config: T
+  sources: string[]
+}
+
+export type ConfigLayer = string | {
+  cwd: string
+  configFileName: string
+}
+
+export interface ResolvedConfigLayer {
+  path: string | undefined
+  config: any
+}
+
+const extensions = ['.js', '.ts', '.mjs', '.cjs']
+
+export async function loadConfig<U extends PinceauTheme>(
   {
     cwd = process.cwd(),
     configOrPaths = [cwd],
@@ -18,22 +37,30 @@ export async function loadConfig<U extends PinceauConfig>(
 
   if (typeof configOrPaths === 'string') { _sources = [configOrPaths] }
 
+  // Inline config; overwrites any other configuration
   if (Object.prototype.toString.call(configOrPaths) === '[object Object]') {
     inlineConfig = configOrPaths as U
-    if (inlineConfig?.configFile) { _sources = [inlineConfig.configFile] }
+    return { config: inlineConfig, sources: [] }
   }
 
-  const sources: LoadConfigSource[] = [
+  const sources: ConfigLayer[] = [
     {
-      files: configFileName,
+      cwd,
+      configFileName,
     },
     ..._sources.reduce(
-      (acc: LoadConfigSource[], path: string) => {
+      (acc: ConfigLayer[], layerOrPath: string | ConfigLayer) => {
+        if (typeof layerOrPath === 'object') {
+          acc.push(layerOrPath as ConfigLayer)
+          return acc
+        }
+
         // process.cwd() already gets scanned by default
-        if (resolve(cwd, path) === resolve(cwd)) { return acc }
+        if (resolve(cwd, layerOrPath) === resolve(cwd)) { return acc }
 
         acc.push({
-          files: join(path, configFileName),
+          cwd: layerOrPath,
+          configFileName,
         })
 
         return acc
@@ -42,16 +69,68 @@ export async function loadConfig<U extends PinceauConfig>(
     ),
   ]
 
-  const loader = createLoader<U>({
-    sources,
-    cwd,
-    defaults: inlineConfig,
-    merge: true,
-  })
+  const resolveConfig = async (layer: ConfigLayer): Promise<ResolvedConfigLayer> => {
+    const empty = () => {
+      logger.warn('Could not find the config layer:')
+      logger.warn(JSON.stringify(layer))
+      return { path: undefined, config: {} }
+    }
 
-  const result = await loader.load()
+    let config = {}
 
-  result.config = result.config || inlineConfig
+    let path = ''
+
+    // Resolve config path from layer
+    if (typeof layer === 'string') {
+      path = resolve(cwd, layer)
+    }
+    else if (typeof layer === 'object') {
+      path = resolve(layer?.cwd || cwd, layer?.configFileName || configFileName)
+    }
+    else {
+      return empty()
+    }
+
+    let filePath = ''
+    extensions.some((ext) => {
+      if (existsSync(path + ext)) {
+        filePath = path + ext
+        return true
+      }
+      return false
+    })
+
+    if (!filePath) { return empty() }
+
+    if (filePath) {
+      try {
+        const _file = jiti(import.meta.url, { interopDefault: true, cache: false, v8cache: false, requireCache: false })(filePath)
+        if (_file) { config = _file?.default || file }
+      }
+      catch (e) {
+        return empty()
+      }
+    }
+
+    return { path: filePath, config }
+  }
+
+  const result: LoadConfigResult<U> = {
+    config: {} as any,
+    sources: [] as string[],
+  }
+
+  for (const source of sources) {
+    const { path, config } = await resolveConfig(source)
+
+    if (path) {
+      result.sources.push(path)
+    }
+
+    if (config) {
+      result.config = defu(config, result.config)
+    }
+  }
 
   return result
 }

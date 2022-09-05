@@ -17,11 +17,11 @@ export function prepareOutputDir<UserOptions extends PinceauOptions = PinceauOpt
 
 export async function stubOutputs(buildPath: string, force = false) {
   const files = {
-    'pinceau.css': () => '/* This file is empty because no tokens has been provided. */',
-    'pinceau.json': () => '{}',
-    'pinceau.js': jsFull,
-    'pinceau.ts': tsFull,
-    'pinceau.d.ts': tsTypesDeclaration,
+    'index.css': () => '/* This file is empty because no tokens has been provided. */',
+    'index.json': () => '{}',
+    'index.js': jsFull,
+    'index.ts': tsFull,
+    'index.d.ts': tsTypesDeclaration,
   }
 
   for (const [file, stubbingFunction] of Object.entries(files)) {

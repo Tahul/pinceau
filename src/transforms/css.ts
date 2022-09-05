@@ -5,7 +5,35 @@ import type { TokensFunction } from '../types'
 
 const cssContentRegex = /css\(({.*?\})\)/mgs
 
-export const resolveCssFunction = (
+const castValue = (_value: string | number, $tokens: TokensFunction): string | number => {
+  if (typeof _value === 'number') {
+    return _value
+  }
+  _value = _value.replace(
+    referencesRegex,
+    // @ts-expect-error - ?
+    (...parts) => {
+      const [, tokenPath] = parts
+
+      const token = $tokens(tokenPath)
+
+      return token
+    },
+  )
+  if (_value === '{}') {
+    return ''
+  }
+  return _value
+}
+
+const resolveValue = (value: string | string[] | number | number[], $tokens: TokensFunction): string | number | (string | number)[] => {
+  if (Array.isArray(value)) {
+    return value.map(v => castValue(v, $tokens)).join(',')
+  }
+  return castValue(value, $tokens)
+}
+
+export const transformCssFunction = (
   code = '',
   id: string,
   variantsProps: any = {},
@@ -74,18 +102,8 @@ export const resolveCssFunction = (
             )
           }
 
-          if (typeof value === 'string') {
-            value = value.replace(
-              referencesRegex,
-              // @ts-expect-error - ?
-              (...parts) => {
-                const [, tokenPath] = parts
-
-                const token = $tokens(tokenPath)
-
-                return token
-              },
-            )
+          if (Array.isArray(value) || typeof value === 'string' || typeof value === 'number') {
+            value = resolveValue(value, $tokens)
           }
 
           return {
@@ -97,8 +115,6 @@ export const resolveCssFunction = (
       return style
     },
   )
-
-  console.log({ code })
 
   return code
 }

@@ -7,12 +7,7 @@ export default defineConfig({
   logLevel: 'info',
   plugins: [
     Inspect(),
-    Unplugin({
-      configOrPaths: [
-        './',
-        './theme',
-      ],
-    }),
+    Unplugin({}),
     Vue(),
   ],
   resolve: {

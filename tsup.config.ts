@@ -7,6 +7,6 @@ export default <Options>{
   clean: true,
   format: ['cjs', 'esm'],
   dts: true,
-  external: ['vite'],
+  external: ['vite', '#pinceau', '#pinceau/*', '@nuxt/schema', '@nuxt/kit'],
   onSuccess: 'npm run build:fix',
 }

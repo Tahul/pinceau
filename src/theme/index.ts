@@ -1,5 +1,5 @@
 import type { ViteDevServer } from 'vite'
-import type { PinceauConfig, PinceauConfigContext, PinceauOptions } from '../types'
+import type { PinceauConfigContext, PinceauOptions, PinceauTheme } from '../types'
 import type { LoadConfigResult } from './load'
 import { loadConfig } from './load'
 
@@ -8,15 +8,15 @@ export * from './output'
 
 export function usePinceauConfig<UserOptions extends PinceauOptions = PinceauOptions>(
   options: UserOptions,
-  dispatchConfigUpdate?: (result: LoadConfigResult<PinceauConfig>) => void,
+  dispatchConfigUpdate?: (result: LoadConfigResult<PinceauTheme>) => void,
 ): PinceauConfigContext<UserOptions> {
   let cwd = options?.cwd ?? process.cwd()
   let sources: string[] = []
-  let resolvedConfig: PinceauConfig = {}
+  let resolvedConfig: PinceauTheme = {} as any
 
   let ready = reloadConfig()
 
-  async function reloadConfig(newOptions?: UserOptions): Promise<LoadConfigResult<PinceauConfig>> {
+  async function reloadConfig(newOptions?: UserOptions): Promise<LoadConfigResult<PinceauTheme>> {
     if (!newOptions) { newOptions = options }
 
     const result = await loadConfig(newOptions || options)
@@ -56,9 +56,11 @@ export function usePinceauConfig<UserOptions extends PinceauOptions = PinceauOpt
       await reloadConfig()
 
       const _module = server.moduleGraph.getModuleById('virtual:pinceau.css')
+
       if (_module) {
         server.moduleGraph.invalidateModule(_module)
       }
+
       server.ws.send({
         type: 'update',
         updates: [

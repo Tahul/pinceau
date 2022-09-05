@@ -1,10 +1,10 @@
 import type { Core as Instance } from 'style-dictionary-esm'
 import StyleDictionary from 'style-dictionary-esm'
-import type { DesignTokens, PinceauConfig, ThemeGenerationOutput } from '../types'
+import type { PinceauTheme, PinceauTokens, ThemeGenerationOutput } from '../types'
 import { referencesRegex, resolveVariableFromPath, walkTokens } from '../utils'
 import { jsFull, tsFull, tsTypesDeclaration } from './formats'
 
-export async function generateTheme(tokens: PinceauConfig, buildPath: string, silent = true): Promise<ThemeGenerationOutput> {
+export async function generateTheme(tokens: PinceauTheme, buildPath: string, silent = true): Promise<ThemeGenerationOutput> {
   let styleDictionary: Instance = StyleDictionary
 
   // Tokens outputs as in-memory objects
@@ -14,7 +14,8 @@ export async function generateTheme(tokens: PinceauConfig, buildPath: string, si
   }
 
   // Tokens processed through dictionary
-  let transformedTokens: DesignTokens
+  let transformedTokens: PinceauTokens
+  let transformedTokensTyping: any
 
   // Cleanup default fileHeader
   styleDictionary.fileHeader = {}
@@ -40,6 +41,12 @@ export async function generateTheme(tokens: PinceauConfig, buildPath: string, si
             )
           }
           return token
+        },
+      )
+      transformedTokensTyping = walkTokens(
+        dictionary.tokens,
+        () => {
+          return 'DesignToken'
         },
       )
     },
@@ -80,7 +87,7 @@ export async function generateTheme(tokens: PinceauConfig, buildPath: string, si
   styleDictionary.registerFormat({
     name: 'pinceau/types',
     formatter() {
-      return tsTypesDeclaration(tokens)
+      return tsTypesDeclaration(transformedTokensTyping)
     },
   })
 
@@ -143,19 +150,19 @@ export async function generateTheme(tokens: PinceauConfig, buildPath: string, si
         buildPath,
         files: [
           {
-            destination: 'pinceau.css',
+            destination: 'index.css',
             format: 'pinceau/css',
           },
           {
-            destination: 'pinceau.d.ts',
+            destination: 'index.d.ts',
             format: 'pinceau/types',
           },
           {
-            destination: 'pinceau.ts',
+            destination: 'index.ts',
             format: 'pinceau/typescript',
           },
           {
-            destination: 'pinceau.js',
+            destination: 'index.js',
             format: 'pinceau/javascript',
           },
         ],

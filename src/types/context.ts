@@ -1,13 +1,13 @@
 import type { LoadConfigResult } from 'unconfig'
 import type { ViteDevServer } from 'vite'
-import type { PinceauConfig, TokensFunction } from './theme'
+import type { PinceauTheme, TokensFunction } from './theme'
 import type { PinceauOptions } from './'
 
-export type ConfigOrPaths = PinceauConfig | string | string[] | undefined
+export type ConfigOrPaths = PinceauTheme | string | string[] | undefined
 
 export interface PinceauContext<UserOptions extends PinceauOptions = PinceauOptions> extends PinceauConfigContext<UserOptions>, PinceauVirtualContext {
   env: 'prod' | 'dev'
-  tokens: PinceauConfig
+  tokens: PinceauTheme
   $tokens: TokensFunction
 
   // Vite
@@ -17,18 +17,18 @@ export interface PinceauContext<UserOptions extends PinceauOptions = PinceauOpti
 
 export interface PinceauConfigContext<UserOptions = PinceauOptions> {
   cwd: string
-  updateCwd: (newCwd: string) => Promise<LoadConfigResult<PinceauConfig>>
+  updateCwd: (newCwd: string) => Promise<LoadConfigResult<PinceauTheme>>
   sources: string[]
-  resolvedConfig: PinceauConfig
-  ready: Promise<LoadConfigResult<PinceauConfig>>
-  reloadConfig: (newOptions?: UserOptions) => Promise<LoadConfigResult<PinceauConfig>>
+  resolvedConfig: PinceauTheme
+  ready: Promise<LoadConfigResult<PinceauTheme>>
+  reloadConfig: (newOptions?: UserOptions) => Promise<LoadConfigResult<PinceauTheme>>
   registerConfigWatchers: (server: ViteDevServer) => void
-  getConfig: () => Promise<PinceauConfig>
+  getConfig: () => Promise<PinceauTheme>
 }
 
 export interface ThemeGenerationOutput {
   buildPath: string
-  tokens: PinceauConfig
+  tokens: PinceauTheme
   outputs: { [key: string]: any }
 }
 

@@ -1,11 +1,10 @@
-import type { PinceauConfig } from './theme'
+import type { PinceauTheme } from './theme'
 import type { ConfigOrPaths } from './context'
 
 export * from './utils'
 export * from './theme'
 export * from './context'
-
-export type DesignTokensPaths = ''
+export * from './css'
 
 export interface PinceauOptions {
   /**
@@ -27,7 +26,7 @@ export interface PinceauOptions {
   /**
    * A callback called each time your config gets resolved.
    */
-  configResolved?: (config: PinceauConfig) => void
+  configResolved?: (config: PinceauTheme) => void
   /**
    * The directry in which you store your design tokens.
    *
@@ -38,4 +37,18 @@ export interface PinceauOptions {
    * The directory in which you want to output the built version of your configuration.
    */
   outputDir?: string
+  /**
+   * Import `normalize.css` in the project
+   *
+   * @default true
+   */
+  preflight?: boolean
 }
+
+declare module '@vue/runtime-core' {
+  interface ComponentCustomProperties {
+    $config: any
+  }
+}
+
+export {}

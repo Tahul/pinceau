@@ -4,19 +4,21 @@ import { createUnplugin } from 'unplugin'
 import MagicString from 'magic-string'
 import { createContext } from './context'
 import type { PinceauOptions } from './types'
-import { registerAliases } from './utils/plugin'
-import { replaceStyleTs, resolveVueComponents } from './transforms'
-import { parseVueRequest } from './utils/vue'
+import { registerAliases, registerPostCssPlugins } from './utils/plugin'
+import { replaceStyleTs, transformVueSFC, transformVueStyle } from './transforms'
+import { parseVueQuery } from './utils/vue'
 
+export * from './types'
 export { defineTheme } from './theme'
-export { get } from './utils'
+export { get, palette } from './utils'
 
-const defaultOptions: PinceauOptions = {
+export const defaultOptions: PinceauOptions = {
   configFileName: 'pinceau.config',
-  configOrPaths: [join(process.cwd(), 'pinceau.config')],
+  configOrPaths: [process.cwd()],
   configResolved: (_) => {},
   cwd: process.cwd(),
   outputDir: join(process.cwd(), 'node_modules/.vite/pinceau/'),
+  preflight: true,
 }
 
 export default createUnplugin<PinceauOptions>(
@@ -32,7 +34,8 @@ export default createUnplugin<PinceauOptions>(
 
       vite: {
         config(config) {
-          registerAliases(config)
+          registerAliases(config, options)
+          registerPostCssPlugins(config)
         },
         async configResolved(config) {
           await ctx.updateCwd(config.root)
@@ -54,22 +57,21 @@ export default createUnplugin<PinceauOptions>(
 
       transformInclude(id) {
         // Use Vue's query parser
-        const { query } = parseVueRequest(id)
+        const query = parseVueQuery(id)
         if (query?.vue) { return true }
       },
 
       transform(code, id) {
         code = replaceStyleTs(code, id)
 
-        const { filename, query } = parseVueRequest(id)
+        const query = parseVueQuery(id)
 
-        // Create sourceMap compatible string
-        const magicString = new MagicString(code, { filename })
+        const magicString = new MagicString(code, { filename: query.filename })
         const result = () => ({ code: magicString.toString(), map: magicString.generateMap({ source: id, includeContent: true }) })
 
         if (query?.vue) {
           // Return early when the query is scoped (usually style tags)
-          const { code: _code, early } = resolveVueComponents(code, id, magicString, ctx, query)
+          const { code: _code, early } = transformVueSFC(code, id, magicString, ctx, query)
           if (early) { return _code }
         }
 
@@ -81,9 +83,16 @@ export default createUnplugin<PinceauOptions>(
       },
 
       load(id) {
+        const query = parseVueQuery(id)
+
         const output = ctx.getOutput(id)
+
         if (output) {
           return output
+        }
+
+        if (query.vue && query.type === 'style') {
+          return transformVueStyle(id, query, ctx)
         }
       },
     }

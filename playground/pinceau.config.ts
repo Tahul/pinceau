@@ -1,4 +1,4 @@
-import { defineTheme } from '../src'
+import { defineTheme, palette } from '../src'
 
 export default defineTheme({
   fonts: {
@@ -8,11 +8,9 @@ export default defineTheme({
   },
 
   colors: {
-    primary: {
-      value: 'red',
-    },
+    primary: palette('rgb(49, 52, 66)'),
     black: {
-      value: '#1C1D21',
+      value: 'blue',
     },
     grape: {
       value: '#A288A6',
@@ -32,10 +30,9 @@ export default defineTheme({
   },
 
   screens: {
-    'sm': { value: '640px' },
-    'md': { value: '768px' },
-    'lg': { value: '1024px' },
-    'xl': { value: '1280px' },
-    '2xl': { value: '1536px' },
+    sm: { value: '640px' },
+    md: { value: '768px' },
+    lg: { value: '1024px' },
+    xl: { value: '1280px' },
   },
 })

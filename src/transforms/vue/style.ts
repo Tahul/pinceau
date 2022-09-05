@@ -1,24 +1,45 @@
+import fs from 'fs'
 import chalk from 'chalk'
-import type { TokensFunction } from '../../types'
+import { parse } from 'vue/compiler-sfc'
+import type { PinceauContext, TokensFunction } from '../../types'
 import { logger } from '../../utils'
-import { resolveDt } from '../dt'
+import type { VueQuery } from '../../utils/vue'
+import { transformDt } from '../dt'
+import { transformCssFunction } from '../css'
 
 const screenRegex = /(@screen\s(.*?)\s{)/g
 const darkRegex = /(@dark\s{)/g
 const lightRegex = /(@light\s{)/g
 
+export const transformVueStyle = (id: string, query: VueQuery, ctx: PinceauContext) => {
+  const { filename } = query
+
+  const file = fs.readFileSync(filename, 'utf8')
+
+  const { descriptor } = parse(file, { filename })
+
+  const style = descriptor.styles[query.index!]
+
+  let source = style?.content || ''
+
+  source = transformStyle(source, ctx.$tokens)
+  source = transformCssFunction(source, id, {}, ctx.$tokens)
+
+  if (style?.content !== source) { return source }
+}
+
 /**
  * Helper grouping all resolvers applying to <style>
  */
-export const resolveStyle = (code = '', $tokens: TokensFunction) => {
-  code = resolveDt(code)
-  code = resolveScreens(code, $tokens)
-  code = resolveScheme(code, 'dark')
-  code = resolveScheme(code, 'light')
+export function transformStyle(code = '', $tokens: TokensFunction) {
+  code = transformDt(code)
+  code = transformScreens(code, $tokens)
+  code = transformScheme(code, 'dark')
+  code = transformScheme(code, 'light')
   return code
 }
 
-export function resolveScheme(code = '', scheme: 'light' | 'dark') {
+export function transformScheme(code = '', scheme: 'light' | 'dark') {
   // Only supports `light` and `dark` schemes as they are native from browsers.
   const schemesRegex = {
     light: lightRegex,
@@ -33,7 +54,7 @@ export function resolveScheme(code = '', scheme: 'light' | 'dark') {
 /**
  * Resolve `@screen {screenSize}` declarations.
  */
-export function resolveScreens(code = '', $tokens: TokensFunction): string {
+export function transformScreens(code = '', $tokens: TokensFunction): string {
   const screens = $tokens('screens', {
     flatten: false,
     key: undefined,

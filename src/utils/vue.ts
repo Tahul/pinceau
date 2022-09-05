@@ -9,6 +9,8 @@
  */
 
 export interface VueQuery {
+  id: string
+  filename: string
   vue?: boolean
   src?: boolean
   global?: boolean
@@ -23,15 +25,20 @@ export interface VueQuery {
   issuerPath?: string
 }
 
-export function parseVueRequest(id: string) {
+export function parseVueQuery(id: string) {
   const [filename, rawQuery] = id.split('?', 2)
   const params = new URLSearchParams(rawQuery)
-  const ret = {} as VueQuery
+  const ret = {
+    filename,
+    id,
+  } as VueQuery
+
   const langPart = Object.keys(Object.fromEntries(params)).find(key => /lang\./i.test(key))
   ret.vue = params.has('vue') || id.endsWith('.vue')
   ret.global = params.has('global')
   ret.src = params.has('src')
   ret.raw = params.has('raw')
+
   if (params.has('type')) {
     ret.type = params.get('type') as VueQuery['type']
   }
@@ -58,11 +65,5 @@ export function parseVueRequest(id: string) {
     ret.issuerPath = params.get('issuerPath') as VueQuery['issuerPath']
   }
 
-  // console.log({ filename, rawQuery, params, ret })
-
-  return {
-    id,
-    filename,
-    query: ret,
-  }
+  return ret
 }

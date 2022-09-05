@@ -7,7 +7,7 @@ const dtRegex = /\$dt\('(.*?)'\)/g
  *
  * Supports `wrapper` to be used in both `<style>` and `<script>` or `<template>` tags.
  */
-export const resolveDt = (code: string, wrapper: string | undefined = undefined) => {
+export const transformDt = (code: string, wrapper: string | undefined = undefined) => {
   const replace = (path: string): string => `${wrapper || ''}var(--${path.split('.').map(key => kebabCase(key)).join('-')})${wrapper || ''}`
 
   code = code.replace(dtRegex, (_, path) => replace(path))

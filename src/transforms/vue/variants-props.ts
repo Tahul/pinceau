@@ -1,10 +1,10 @@
 import { camelCase, upperFirst } from 'scule'
-import recast from 'recast'
+import * as recast from 'recast'
 
-const shortVariantsPropsRegex = /\$variantsProps\('(.*)'\)/g
-const fullVariantsPropsRegex = /\$variantsProps\(('(.*?)'),\s'(.*?)'\)/g
+const shortVariantsPropsRegex = /\$variantsProps\('(.*)'\)/gm
+const fullVariantsPropsRegex = /\$variantsProps\(('(.*?)'),\s'(.*?)'\)/gm
 
-export function resolveVariantProps(code = '', variantProps: any = {}): string {
+export function transformVariantsProps(code = '', variantsProps: any = {}): string {
   const propKeyToAst = (ast: any, key: string, prefix: string) => {
     ast.properties.push(
       recast.types.builders.objectProperty(
@@ -28,11 +28,12 @@ export function resolveVariantProps(code = '', variantProps: any = {}): string {
   }
 
   // $variantProps('tagName')
-  code = code.replace(shortVariantsPropsRegex,
+  code = code.replace(
+    shortVariantsPropsRegex,
     (_, tagName) => {
       const ast = recast.types.builders.objectExpression([])
-      if (variantProps[tagName]) {
-        Object.keys(variantProps[tagName])
+      if (variantsProps[tagName]) {
+        Object.keys(variantsProps[tagName])
           .forEach(
             propKey => propKeyToAst(ast, propKey, ''),
           )
@@ -40,12 +41,13 @@ export function resolveVariantProps(code = '', variantProps: any = {}): string {
       return recast.print(ast).code
     })
 
-  // $variantProps('tagName', 'prefix')
-  code = code.replace(fullVariantsPropsRegex,
+  // $variantsProps('tagName', 'prefix')
+  code = code.replace(
+    fullVariantsPropsRegex,
     (_, tagName, prefix) => {
       const ast = recast.types.builders.objectExpression([])
-      if (variantProps[tagName]) {
-        Object.keys(variantProps[tagName])
+      if (variantsProps[tagName]) {
+        Object.keys(variantsProps[tagName])
           .forEach(
             propKey => propKeyToAst(ast, propKey, prefix),
           )

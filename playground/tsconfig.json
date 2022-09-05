@@ -8,30 +8,31 @@
     "strict": true,
     "strictNullChecks": true,
     "resolveJsonModule": true,
+    "baseUrl": ".",
     "paths": {
       "pinceau": [
-        "./src/index.ts"
+        "../src/index.ts"
       ],
       "pinceau/utils": [
-        "./src/utils.ts"
+        "../src/utils.ts"
       ],
       "pinceau.css": [
-        "./playground/node_modules/.vite/pinceau/index.css"
+        "./node_modules/.vite/pinceau/index.css"
       ],
       "virtual:pinceau.*": [
-        "./playground/node_modules/.vite/pinceau/index.*"
+        "./node_modules/.vite/pinceau/index.*"
       ],
       "#pinceau/types": [
-        "./playground/node_modules/.vite/pinceau/index.d.ts"
+        "./node_modules/.vite/pinceau/index.d.ts"
       ],
       "#pinceau": [
-        "./playground/node_modules/.vite/pinceau/index.ts"
+        "./node_modules/.vite/pinceau/index.ts"
       ]
     }
   },
   "vueCompilerOptions": {
     "plugins": [
-      "./volar"
+      "../volar"
     ]
   }
 }

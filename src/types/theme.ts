@@ -1,7 +1,8 @@
 import type { Defu } from 'defu'
 import type { NestedKeyOf, WrapUnion } from '.'
-// @ts-expect-error - ??
-import type { PinceauThemeTokens as GeneratedThemeTokens, PinceauTokens } from '#pinceau/types'
+import type { GeneratedPinceauTheme } from '#pinceau/types'
+
+type PermissiveKey = string
 
 export interface DesignToken<T = string | number> {
   /**
@@ -37,14 +38,14 @@ export interface DesignToken<T = string | number> {
     item?: string
     subitem?: string
     state?: string
-    [key: string]: any
+    [key: PermissiveKey]: any
   }
   /* Permissive type */
-  [key: string]: any
+  [key: PermissiveKey]: any
 }
 
-export interface DesignTokens {
-  [key: string]: DesignTokens | DesignToken
+export interface PinceauTokens {
+  [key: string]: PinceauTokens | DesignToken | undefined
 }
 
 export interface ScaleTokens extends PinceauTokens {
@@ -101,15 +102,13 @@ export interface GlobalTokens {
   borders?: BreakpointsTokens
   borderWidths?: BreakpointsTokens
   shadows?: BreakpointsTokens
-  opacity: BreakpointsTokens
+  opacity?: BreakpointsTokens
   lineHeight?: BreakpointsTokens
   lineHeights?: BreakpointsTokens
   letterSpacings?: BreakpointsTokens
   transitions?: PinceauTokens
   z?: PinceauTokens
 }
-
-export interface PinceauTheme extends PinceauTokens, Defu<GeneratedThemeTokens, [GlobalTokens]> {}
 
 export interface DefaultThemeMap {
   gap: 'spacings'
@@ -234,16 +233,9 @@ export interface DefaultThemeMap {
   zIndex: 'z'
 }
 
-export type ThemeKey<
-  K extends keyof DefaultThemeMap,
-> = WrapUnion<
-    NestedKeyOf<PinceauTheme[DefaultThemeMap[K]]>,
-    `{${DefaultThemeMap[K]}.`,
-    '}'
-  >
+export interface PinceauTheme extends PinceauTokens, Defu<GlobalTokens, [GeneratedPinceauTheme]> {}
 
-export interface PinceauConfig extends PinceauTheme {
-}
+export type ThemeKey<K extends keyof DefaultThemeMap> = WrapUnion<NestedKeyOf<PinceauTheme[DefaultThemeMap[K]]>, `{${DefaultThemeMap[K]}.`, '}'>
 
 export interface TokensFunctionOptions {
   /**
@@ -267,6 +259,6 @@ export interface TokensFunctionOptions {
 export type TokensFunction = (
   path?: string | undefined,
   options?: TokensFunctionOptions,
-  themeTokens?: PinceauConfig,
+  themeTokens?: PinceauTheme,
   tokenAliases?: { [key: string]: string }
-) => DesignTokens | DesignToken | number | string
+) => PinceauTokens | DesignToken | number | string

@@ -9,8 +9,8 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "latest",
     "nuxt": "npm:nuxt3@latest",
-    "vite": "^3.0.9",
-    "vite-plugin-inspect": "^0.6.0",
-    "vue": "^3.2.37"
+    "vite": "^3.1.0",
+    "vite-plugin-inspect": "^0.6.1",
+    "vue": "^3.2.38"
   }
 }
