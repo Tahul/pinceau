@@ -60,7 +60,7 @@ export default {
 // nuxt.config.js
 export default defineNuxtConfig({
   modules: [
-    ['pinceau/nuxt'],
+    'pinceau/nuxt',
   ],
   pinceau: {
     /* options */
