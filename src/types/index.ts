@@ -45,10 +45,4 @@ export interface PinceauOptions {
   preflight?: boolean
 }
 
-declare module '@vue/runtime-core' {
-  interface ComponentCustomProperties {
-    $config: any
-  }
-}
-
 export {}

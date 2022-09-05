@@ -1,28 +1,25 @@
-import { defineNuxtModule } from '@nuxt/kit'
 import type { PinceauOptions } from './types'
 import pinceau from '.'
 
-export default defineNuxtModule<PinceauOptions>(
-  {
-    setup(options: PinceauOptions, nuxt) {
-      // Webpack plugin
-      nuxt.hook('webpack:config', (config: any) => {
-        config.plugins = config.plugins || []
-        config.plugins.unshift(pinceau.webpack(options))
-      })
+export default function (this: any, options: PinceauOptions) {
+  const nuxt = this.nuxt
 
-      // Vite plugin
-      nuxt.hook('vite:extend', (vite: any) => {
-        vite.config.plugins = vite.config.plugins || []
-        vite.config.plugins.push(pinceau.vite(options))
-      })
+  // Webpack plugin
+  nuxt.hook('webpack:config', (config: any) => {
+    config.plugins = config.plugins || []
+    config.plugins.unshift(pinceau.webpack(options))
+  })
 
-      nuxt.options.css = nuxt.options.css || []
-      nuxt.options.css.push('pinceau.css')
+  // Vite plugin
+  nuxt.hook('vite:extend', (vite: any) => {
+    vite.config.plugins = vite.config.plugins || []
+    vite.config.plugins.push(pinceau.vite(options))
+  })
 
-      if (options.preflight !== false) {
-        nuxt.options.css.unshift('pinceau/reset.css')
-      }
-    },
-  },
-)
+  nuxt.options.css = nuxt.options.css || []
+  nuxt.options.css.push('pinceau.css')
+
+  if (options.preflight !== false) {
+    nuxt.options.css.unshift('pinceau/reset.css')
+  }
+}
