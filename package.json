@@ -22,6 +22,10 @@
     "vite"
   ],
   "exports": {
+    "./reset.css": {
+      "import": "./dist/assets/reset.css",
+      "require": "./dist/assets/reset.css"
+    },
     ".": {
       "require": "./dist/index.js",
       "import": "./dist/index.mjs"
@@ -68,12 +72,14 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "assets"
   ],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch src",
     "build:fix": "esno scripts/postbuild.ts",
+    "build:copy-assets": "cp -r src/assets dist",
     "lint": "eslint .",
     "build:play": "npm -C playground run build",
     "build:play:nuxt": "npm -C playground run build:nuxt",

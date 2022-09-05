@@ -1,6 +1,7 @@
 import type { Defu } from 'defu'
 import type { NestedKeyOf, WrapUnion } from '.'
-// @ts-expect-error - Can be not found
+// eslint-disable-next-line @typescript-eslint/prefer-ts-expect-error
+// @ts-ignore - Can be not found
 import type { GeneratedPinceauTheme } from '#pinceau/types'
 
 type PermissiveKey = string
