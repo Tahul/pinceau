@@ -89,6 +89,7 @@ build({
 
 # 💖 Credits
 
+- [Sébastien Chopin](https://github.com/Atinux)
 - [NuxtLabs](https://github.com/nuxtlabs)
 - [Anthony Fu](https://github.com/antfu)
 - [Johnson Chu](https://github.com/johnsoncodehk)
