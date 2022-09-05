@@ -20,6 +20,25 @@ npm i pinceau
 ```
 
 <details>
+<summary>Nuxt</summary><br>
+
+```ts
+// nuxt.config.js
+export default defineNuxtConfig({
+  modules: [
+    'pinceau/nuxt',
+  ],
+  pinceau: {
+    /* options */
+  }
+})
+```
+
+> This module only works with [Nuxt 3](https://v3.nuxtjs.org).
+
+<br></details>
+
+<details>
 <summary>Vite</summary><br>
 
 ```ts
@@ -50,25 +69,6 @@ export default {
   ],
 }
 ```
-
-<br></details>
-
-<details>
-<summary>Nuxt</summary><br>
-
-```ts
-// nuxt.config.js
-export default defineNuxtConfig({
-  modules: [
-    'pinceau/nuxt',
-  ],
-  pinceau: {
-    /* options */
-  }
-})
-```
-
-> This module only works with [Nuxt 3](https://v3.nuxtjs.org).
 
 <br></details>
 
