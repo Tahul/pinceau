@@ -23,8 +23,8 @@
   ],
   "exports": {
     "./reset.css": {
-      "import": "./dist/assets/reset.css",
-      "require": "./dist/assets/reset.css"
+      "require": "./dist/assets/reset.css",
+      "import": "./dist/assets/reset.css"
     },
     ".": {
       "require": "./dist/index.js",
