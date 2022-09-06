@@ -1,37 +1,5 @@
 {
-  "compilerOptions": {
-    "target": "es2017",
-    "module": "esnext",
-    "lib": ["esnext", "DOM"],
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "strict": true,
-    "strictNullChecks": true,
-    "resolveJsonModule": true,
-    "paths": {
-      "pinceau": [
-        "../src/index.ts"
-      ],
-      "pinceau/utils": [
-        "../src/utils.ts"
-      ],
-      "pinceau/reset.css": [
-        "../src/reset.css"
-      ],
-      "pinceau.css": [
-        "./node_modules/.vite/pinceau/index.css"
-      ],
-      "virtual:pinceau.*": [
-        "./node_modules/.vite/pinceau/index.*"
-      ],
-      "#pinceau/types": [
-        "./node_modules/.vite/pinceau/index.d.ts"
-      ],
-      "#pinceau": [
-        "./node_modules/.vite/pinceau/index.ts"
-      ]
-    }
-  },
+  "extends": "./.nuxt/tsconfig.json",
   "vueCompilerOptions": {
     "plugins": [
       "../volar"

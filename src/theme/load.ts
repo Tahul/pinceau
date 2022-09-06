@@ -3,7 +3,6 @@ import { existsSync } from 'fs'
 import { defu } from 'defu'
 import jiti from 'jiti'
 import type { ConfigLayer, LoadConfigResult, PinceauOptions, PinceauTheme, ResolvedConfigLayer } from '../types'
-import { logger } from '../utils'
 
 const extensions = ['.js', '.ts', '.mjs', '.cjs']
 
@@ -54,11 +53,7 @@ export async function loadConfig<U extends PinceauTheme>(
   ]
 
   const resolveConfig = async <U extends PinceauTheme>(layer: ConfigLayer): Promise<ResolvedConfigLayer<U>> => {
-    const empty = () => {
-      logger.warn('Could not find the config layer:')
-      logger.warn(JSON.stringify(layer))
-      return { path: undefined, config: {} as any }
-    }
+    const empty = () => ({ path: undefined, config: {} as any })
 
     let path = ''
 
@@ -101,19 +96,17 @@ export async function loadConfig<U extends PinceauTheme>(
     sources: [] as string[],
   }
 
-  await Promise.all(
-    sources.map(async (layer) => {
-      const { path, config } = await resolveConfig(layer)
+  for (const layer of sources) {
+    const { path, config } = await resolveConfig(layer)
 
-      if (path) {
-        result.sources.push(path)
-      }
+    if (path) {
+      result.sources.push(path)
+    }
 
-      if (config) {
-        result.config = defu(config, result.config) as U
-      }
-    }),
-  )
+    if (config) {
+      result.config = defu(config, result.config) as U
+    }
+  }
 
   return result
 }

@@ -39,11 +39,19 @@ export interface PinceauOptions {
    */
   outputDir?: string
   /**
-   * Import `normalize.css` in the project
+   * Imports the default CSS reset in the project.
    *
    * @default true
    */
   preflight?: boolean
+  /**
+   * Excluded transform paths.
+   */
+  excludes?: string[]
+  /**
+   * Included transform paths
+   */
+  includes?: string[]
 }
 
 export {}

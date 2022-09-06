@@ -32,13 +32,11 @@ export function parseVueQuery(id: string) {
     filename,
     id,
   } as VueQuery
-
   const langPart = Object.keys(Object.fromEntries(params)).find(key => /lang\./i.test(key))
   ret.vue = params.has('vue') || id.endsWith('.vue')
   ret.global = params.has('global')
   ret.src = params.has('src')
   ret.raw = params.has('raw')
-
   if (params.has('type')) {
     ret.type = params.get('type') as VueQuery['type']
   }
@@ -47,9 +45,6 @@ export function parseVueQuery(id: string) {
   }
   if (params.has('index')) {
     ret.index = Number(params.get('index'))
-  }
-  if (params.has('data-v-transformed')) {
-    ret.transformed = Boolean(params.get('data-v-transformed'))
   }
   if (params.has('scoped')) {
     ret.scoped = String(params.get('scoped'))

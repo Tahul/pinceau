@@ -25,7 +25,9 @@ export const transformVueStyle = (id: string, query: VueQuery, ctx: PinceauConte
   source = transformStyle(source, ctx.$tokens)
   source = transformCssFunction(source, id, {}, ctx.$tokens)
 
-  if (style?.content !== source) { return source }
+  if (style?.content !== source) {
+    return source
+  }
 }
 
 /**

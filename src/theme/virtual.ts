@@ -5,6 +5,9 @@ import reset from '../reset'
 const resolveIdRegex = createRegExp(exactly('pinceau.').and(oneOrMore(word).as('extension')))
 const virtualModuleRegex = createRegExp(exactly('virtual:pinceau.').and(oneOrMore(word).as('extension')))
 
+const RESET_IMPORT_ID = 'pinceau/reset.css'
+const RESET_ID = 'virtual:pinceau-reset.css'
+
 export default function usePinceauVirtualStore(): PinceauVirtualContext {
   const outputs: ThemeGenerationOutput['outputs'] = {}
 
@@ -17,32 +20,38 @@ export default function usePinceauVirtualStore(): PinceauVirtualContext {
   }
 
   function getOutput(id: string) {
-    if (id === 'virtual:pinceau-reset.css') {
-      return reset
+    let result
+    if (id.includes(RESET_ID)) {
+      result = reset
     }
 
     const matchId = virtualModuleRegex.exec(id)
     if (matchId) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const [_, ext] = matchId
-      return outputs[ext]
+      result = outputs[ext]
     }
+
+    return result
   }
 
   /**
    * Resolves the virtual module id from an import like `pinceau.css` or `pinceau.ts`
    */
   function getOutputId(id: string) {
-    if (id === 'pinceau/reset.css') {
-      return 'virtual:pinceau-reset.css'
+    let result
+    if (id.includes(RESET_IMPORT_ID)) {
+      result = RESET_ID
     }
 
     const matchId = resolveIdRegex.exec(id)
     if (matchId) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const [_, ext] = matchId
-      return `virtual:pinceau.${ext}`
+      result = `virtual:pinceau.${ext}`
     }
+
+    return result
   }
 
   return {

@@ -208,7 +208,7 @@ export async function generateTheme(tokens: PinceauTheme, buildPath: string, sil
   ).then((result) => {
     // Actions run at the end of build, helps on awaiting it properly
     if (silent) {
-      styleDictionary.logger().pause()
+      styleDictionary.logger().resume()
     }
 
     return result

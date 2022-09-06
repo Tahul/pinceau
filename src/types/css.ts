@@ -198,7 +198,3 @@ export const css = (
 ) => declaration
 
 export type CssFunctionType = typeof css
-
-css({
-  color: '',
-})

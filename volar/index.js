@@ -7,7 +7,8 @@ const plugin = _ => ({
     if (embeddedFile.fileName.replace(fileName, '').match(/^\.(js|ts|jsx|tsx)$/)) {
       // $dt helpers
       const dtRegex = /\$dt\('(.*?)'\)/g
-      embeddedFile.codeGen.addText('\ndeclare const $dt: import(\'pinceau\').TokensFunction\n')
+      embeddedFile.codeGen.addText('import type { TokensFunction } from \'pinceau\'\n')
+      embeddedFile.codeGen.addText('\nconst $dt: TokensFunction = (path, options) => ({ path, options })\n')
       const addDt = (match, dtKey, index, vueTag, vueTagIndex) => {
         embeddedFile.codeGen.addText(`\nconst __VLS_$dt_${camelCase(dtKey)}_${index} = `)
         embeddedFile.codeGen.addCode2(

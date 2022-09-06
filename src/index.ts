@@ -19,6 +19,11 @@ export const defaultOptions: PinceauOptions = {
   cwd: process.cwd(),
   outputDir: join(process.cwd(), 'node_modules/.vite/pinceau/'),
   preflight: true,
+  includes: [],
+  excludes: [
+    'node_modules/nuxt/dist',
+    'node_modules/@vue/',
+  ],
 }
 
 export default createUnplugin<PinceauOptions>(
@@ -58,6 +63,13 @@ export default createUnplugin<PinceauOptions>(
       transformInclude(id) {
         // Use Vue's query parser
         const query = parseVueQuery(id)
+
+        // Stop on excluded paths.
+        if (options.excludes && options.excludes.some(path => id.includes(path))) { return false }
+
+        // // Run only on Nuxt loaded components
+        if (options.includes && options.includes.some(path => id.includes(path))) { return true }
+
         if (query?.vue) { return true }
       },
 
@@ -83,13 +95,13 @@ export default createUnplugin<PinceauOptions>(
       },
 
       load(id) {
-        const query = parseVueQuery(id)
-
+        // Check if id refers to local output
         const output = ctx.getOutput(id)
-
         if (output) {
           return output
         }
+
+        const query = parseVueQuery(id)
 
         if (query.vue && query.type === 'style') {
           return transformVueStyle(id, query, ctx)
