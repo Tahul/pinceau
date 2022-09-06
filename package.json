@@ -99,7 +99,6 @@
     "postcss-custom-properties": "^12.1.8",
     "postcss-nested": "^5.0.6",
     "recast": "^0.21.2",
-    "release-it": "^15.4.1",
     "scule": "^0.3.2",
     "style-dictionary-esm": "^1.0.7",
     "unplugin": "^0.9.5"
@@ -120,7 +119,8 @@
     "typescript": "^4.8.2",
     "vite": "^3.1.0",
     "vitest": "^0.23.1",
-    "webpack": "^5.74.0"
+    "webpack": "^5.74.0",
+    "release-it": "^15.4.1"
   },
   "pnpm": {
     "peerDependencyRules": {
