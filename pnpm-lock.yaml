@@ -10,7 +10,6 @@ importers:
       '@types/chroma-js': ^2.1.4
       '@types/node': ^18.7.15
       '@volar/vue-language-core': ^0.40.7
-      bumpp: ^8.2.1
       chroma-js: ^2.4.2
       consola: ^2.15.3
       csstype: ^3.1.0
@@ -57,7 +56,6 @@ importers:
       '@nuxt/kit': 3.0.0-rc.9_fur7awe7sddig5uusmg32radwu
       '@types/chroma-js': 2.1.4
       '@types/node': 18.7.15
-      bumpp: 8.2.1
       eslint: 8.23.0
       esno: 0.16.3
       fast-glob: 3.2.11
@@ -615,16 +613,6 @@ packages:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.0
       '@jridgewell/sourcemap-codec': 1.4.14
-
-  /@jsdevtools/ez-spawn/3.0.4:
-    resolution: {integrity: sha512-f5DRIOZf7wxogefH03RjMPMdBF7ADTWUMoOs9kaJo06EfwF+aFhMZMDZxHg/Xe12hptN9xoZjGso2fdjapBRIA==}
-    engines: {node: '>=10'}
-    dependencies:
-      call-me-maybe: 1.0.1
-      cross-spawn: 7.0.3
-      string-argv: 0.3.1
-      type-detect: 4.0.8
-    dev: true
 
   /@mapbox/node-pre-gyp/1.0.9:
     resolution: {integrity: sha512-aDF3S3rK9Q2gey/WAttUlISduDItz5BU3306M9Eyv6/oS40aMprnopshtlKTykxRNIBEZuRMaZAnbrQ4QtKGyw==}
@@ -2119,19 +2107,6 @@ packages:
       semver: 7.3.7
     dev: true
 
-  /bumpp/8.2.1:
-    resolution: {integrity: sha512-4tHKsWC2mqHQvdjZ4AXgVhS2xMsz8qQ4zYt87vGRXW5tqAjrYa/UJqy7s/dGYI2OIe9ghBdiFhKpyKEX9SXffg==}
-    engines: {node: '>=10'}
-    hasBin: true
-    dependencies:
-      '@jsdevtools/ez-spawn': 3.0.4
-      cac: 6.7.14
-      fast-glob: 3.2.11
-      kleur: 4.1.5
-      prompts: 2.4.2
-      semver: 7.3.7
-    dev: true
-
   /bundle-require/3.1.0_esbuild@0.15.7:
     resolution: {integrity: sha512-IIXtAO7fKcwPHNPt9kY/WNVJqy7NDy6YqJvv6ENH0TOZoJ+yjpEsn1w40WKZbR2ibfu5g1rfgJTvmFHpm5aOMA==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
@@ -2187,10 +2162,6 @@ packages:
     dependencies:
       function-bind: 1.1.1
       get-intrinsic: 1.1.2
-    dev: true
-
-  /call-me-maybe/1.0.1:
-    resolution: {integrity: sha512-wCyFsDQkKPwwF8BDwOiWNx/9K45L/hvggQiDbve+viMNMQnWhrlYIuBk09offfwCRtCO9P6XwUttufzU11WCVw==}
     dev: true
 
   /callsites/3.1.0:
@@ -4921,16 +4892,6 @@ packages:
       json-buffer: 3.0.1
     dev: true
 
-  /kleur/3.0.3:
-    resolution: {integrity: sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==}
-    engines: {node: '>=6'}
-    dev: true
-
-  /kleur/4.1.5:
-    resolution: {integrity: sha512-o+NO+8WrRiQEE4/7nwRJhN1HWpVmJm511pBHUxPLtp0BUISzlBplORYSmTclCnJvQq2tKu/sgl3xVpkc7ZWuQQ==}
-    engines: {node: '>=6'}
-    dev: true
-
   /klona/2.0.5:
     resolution: {integrity: sha512-pJiBpiXMbt7dkzXe8Ghj/u4FfXOOa98fPW+bihOJ4SjnoijweJrNThJfd3ifXpXhREjpoF2mZVH1GfS9LV3kHQ==}
     engines: {node: '>= 8'}
@@ -6570,14 +6531,6 @@ packages:
       iterate-value: 1.0.2
     dev: true
 
-  /prompts/2.4.2:
-    resolution: {integrity: sha512-NxNv/kLguCA7p3jE8oL2aEBsrJWgAakBpgmgK6lpPWV+WuOmY6r2/zbAVnP+T8bQlA0nzHXSJSJW0Hq7ylaD2Q==}
-    engines: {node: '>= 6'}
-    dependencies:
-      kleur: 3.0.3
-      sisteransi: 1.0.5
-    dev: true
-
   /prop-types/15.8.1:
     resolution: {integrity: sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==}
     dependencies:
@@ -7179,10 +7132,6 @@ packages:
       totalist: 3.0.0
     dev: true
 
-  /sisteransi/1.0.5:
-    resolution: {integrity: sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==}
-    dev: true
-
   /slash/3.0.0:
     resolution: {integrity: sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==}
     engines: {node: '>=8'}
@@ -7291,11 +7240,6 @@ packages:
 
   /std-env/3.2.1:
     resolution: {integrity: sha512-D/uYFWkI/31OrnKmXZqGAGK5GbQRPp/BWA1nuITcc6ICblhhuQUPHS5E2GSCVS7Hwhf4ciq8qsATwBUxv+lI6w==}
-    dev: true
-
-  /string-argv/0.3.1:
-    resolution: {integrity: sha512-a1uQGz7IyVy9YwhqjZIZu1c8JO8dNIe20xBmSS6qu9kv++k3JGzCVmprbNN5Kn+BgzD5E7YYwg1CcjuJMRNsvg==}
-    engines: {node: '>=0.6.19'}
     dev: true
 
   /string-width/4.2.3:
