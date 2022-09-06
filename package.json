@@ -51,15 +51,15 @@
       "require": "./dist/nuxt.js",
       "import": "./dist/nuxt.mjs"
     },
-    "./types": {
-      "require": "./dist/types.js",
-      "import": "./dist/types.mjs"
+    "./volar": {
+      "require": "./volar/index.js",
+      "import": "./volar/index.js"
     },
     "./*": "./*"
   },
   "main": "dist/index.js",
   "module": "dist/index.mjs",
-  "types": "index.d.ts",
+  "types": "dist/index.d.ts",
   "typesVersions": {
     "*": {
       "*": [
@@ -70,7 +70,7 @@
   },
   "files": [
     "dist",
-    "assets"
+    "volar"
   ],
   "scripts": {
     "build": "tsup",
