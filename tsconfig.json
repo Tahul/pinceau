@@ -15,6 +15,9 @@
       "pinceau/utils": [
         "./src/utils.ts"
       ],
+      "pinceau/reset.css": [
+        "./src/reset.css"
+      ],
       "pinceau.css": [
         "./playground/node_modules/.vite/pinceau/index.css"
       ],

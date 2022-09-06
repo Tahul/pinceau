@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
 import App from './app.vue'
 import Block from './components/Block.vue'
-import './theme/reset.css'
+import 'pinceau/reset.css'
 import 'pinceau.css'
 
 const app = createApp(App)

@@ -5,6 +5,7 @@ export * from './utils'
 export * from './theme'
 export * from './context'
 export * from './css'
+export * from './config'
 
 export interface PinceauOptions {
   /**

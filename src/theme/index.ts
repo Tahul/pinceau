@@ -1,6 +1,5 @@
 import type { ViteDevServer } from 'vite'
-import type { PinceauConfigContext, PinceauOptions, PinceauTheme } from '../types'
-import type { LoadConfigResult } from './load'
+import type { LoadConfigResult, PinceauConfigContext, PinceauOptions, PinceauTheme } from '../types'
 import { loadConfig } from './load'
 
 export * from './define'

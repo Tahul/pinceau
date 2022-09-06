@@ -5,6 +5,7 @@
   "description": "A CSS-in-JS framework built to feel like a native Vue feature.",
   "license": "MIT",
   "homepage": "https://github.com/Tahul/pinceau#readme",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Tahul/pinceau.git"
@@ -22,10 +23,6 @@
     "vite"
   ],
   "exports": {
-    "./reset.css": {
-      "require": "./dist/assets/reset.css",
-      "import": "./dist/assets/reset.css"
-    },
     ".": {
       "require": "./dist/index.js",
       "import": "./dist/index.mjs"
@@ -79,7 +76,6 @@
     "build": "tsup",
     "dev": "tsup --watch src",
     "build:fix": "esno scripts/postbuild.ts",
-    "build:copy-assets": "cp -r src/assets dist",
     "lint": "eslint .",
     "build:play": "npm -C playground run build",
     "build:play:nuxt": "npm -C playground run build:nuxt",
@@ -105,7 +101,6 @@
     "recast": "^0.21.2",
     "scule": "^0.3.2",
     "style-dictionary-esm": "^1.0.7",
-    "unconfig": "^0.3.6",
     "unplugin": "^0.9.5"
   },
   "devDependencies": {
@@ -125,5 +120,13 @@
     "vite": "^3.1.0",
     "vitest": "^0.23.1",
     "webpack": "^5.74.0"
+  },
+  "pnpm": {
+    "peerDependencyRules": {
+      "ignoreMissing": [
+        "postcss",
+        "postcss-*"
+      ]
+    }
   }
 }

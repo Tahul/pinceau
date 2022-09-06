@@ -8,13 +8,15 @@
     "strict": true,
     "strictNullChecks": true,
     "resolveJsonModule": true,
-    "baseUrl": ".",
     "paths": {
       "pinceau": [
         "../src/index.ts"
       ],
       "pinceau/utils": [
         "../src/utils.ts"
+      ],
+      "pinceau/reset.css": [
+        "../src/reset.css"
       ],
       "pinceau.css": [
         "./node_modules/.vite/pinceau/index.css"

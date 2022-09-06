@@ -1,4 +1,4 @@
-import { basename, resolve } from 'path'
+import { basename, dirname, resolve } from 'path'
 import { promises as fs } from 'fs'
 import fg from 'fast-glob'
 import chalk from 'chalk'
@@ -7,7 +7,7 @@ async function run() {
   const files = await fg('*.js', {
     ignore: ['chunk-*'],
     absolute: true,
-    cwd: resolve(__dirname, '../dist'),
+    cwd: resolve(dirname(import.meta.url), '../dist'),
   })
 
   for (const file of files) {

@@ -9,9 +9,6 @@ export default defineTheme({
 
   colors: {
     primary: palette('rgb(49, 52, 66)'),
-    black: {
-      value: 'black',
-    },
     grape: {
       value: '#A288A6',
     },

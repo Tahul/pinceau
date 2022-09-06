@@ -1,5 +1,5 @@
-import { join } from 'path'
-import defu from 'defu'
+import { join } from 'pathe'
+import { defu } from 'defu'
 import { createUnplugin } from 'unplugin'
 import MagicString from 'magic-string'
 import { createContext } from './context'

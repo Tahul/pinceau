@@ -1,8 +1,11 @@
+import { defu } from 'defu'
 import type { PinceauOptions } from './types'
-import pinceau from '.'
+import pinceau, { defaultOptions } from './index'
 
 export default function (this: any, options: PinceauOptions) {
   const nuxt = this.nuxt
+
+  options = defu(options, defaultOptions)
 
   // Webpack plugin
   nuxt.hook('webpack:config', (config: any) => {

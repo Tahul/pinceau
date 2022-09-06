@@ -1,25 +1,9 @@
 import { resolve } from 'path'
 import { existsSync } from 'fs'
+import { defu } from 'defu'
 import jiti from 'jiti'
-import defu from 'defu'
-import { file } from '@babel/types'
-import type { PinceauOptions, PinceauTheme } from '../types'
+import type { ConfigLayer, LoadConfigResult, PinceauOptions, PinceauTheme, ResolvedConfigLayer } from '../types'
 import { logger } from '../utils'
-
-export interface LoadConfigResult<T> {
-  config: T
-  sources: string[]
-}
-
-export type ConfigLayer = string | {
-  cwd: string
-  configFileName: string
-}
-
-export interface ResolvedConfigLayer {
-  path: string | undefined
-  config: any
-}
 
 const extensions = ['.js', '.ts', '.mjs', '.cjs']
 
@@ -69,20 +53,18 @@ export async function loadConfig<U extends PinceauTheme>(
     ),
   ]
 
-  const resolveConfig = async (layer: ConfigLayer): Promise<ResolvedConfigLayer> => {
+  const resolveConfig = async <U extends PinceauTheme>(layer: ConfigLayer): Promise<ResolvedConfigLayer<U>> => {
     const empty = () => {
       logger.warn('Could not find the config layer:')
       logger.warn(JSON.stringify(layer))
-      return { path: undefined, config: {} }
+      return { path: undefined, config: {} as any }
     }
-
-    let config = {}
 
     let path = ''
 
     // Resolve config path from layer
     if (typeof layer === 'string') {
-      path = resolve(cwd, layer)
+      path = resolve(layer)
     }
     else if (typeof layer === 'object') {
       path = resolve(layer?.cwd || cwd, layer?.configFileName || configFileName)
@@ -104,15 +86,14 @@ export async function loadConfig<U extends PinceauTheme>(
 
     if (filePath) {
       try {
-        const _file = jiti(import.meta.url, { interopDefault: true, cache: false, v8cache: false, requireCache: false })(filePath)
-        if (_file) { config = _file?.default || file }
+        return await loadConfigFile(filePath) as ResolvedConfigLayer<U>
       }
       catch (e) {
         return empty()
       }
     }
 
-    return { path: filePath, config }
+    return empty()
   }
 
   const result: LoadConfigResult<U> = {
@@ -120,17 +101,32 @@ export async function loadConfig<U extends PinceauTheme>(
     sources: [] as string[],
   }
 
-  for (const source of sources) {
-    const { path, config } = await resolveConfig(source)
+  await Promise.all(
+    sources.map(async (layer) => {
+      const { path, config } = await resolveConfig(layer)
 
-    if (path) {
-      result.sources.push(path)
-    }
+      if (path) {
+        result.sources.push(path)
+      }
 
-    if (config) {
-      result.config = defu(config, result.config)
-    }
-  }
+      if (config) {
+        result.config = defu(config, result.config) as U
+      }
+    }),
+  )
 
   return result
+}
+
+async function loadConfigFile(path: string) {
+  return {
+    config: jiti(path, {
+      interopDefault: true,
+      cache: false,
+      requireCache: false,
+      v8cache: false,
+      esmResolve: true,
+    })(path),
+    path,
+  }
 }

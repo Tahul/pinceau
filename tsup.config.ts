@@ -8,5 +8,5 @@ export default <Options>{
   format: ['cjs', 'esm'],
   dts: true,
   external: ['vite', '#pinceau', '#pinceau/types', '@nuxt/schema', '@nuxt/kit'],
-  onSuccess: 'npm run build:fix && npm run build:copy-assets',
+  onSuccess: 'npm run build:fix',
 }

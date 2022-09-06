@@ -138,7 +138,7 @@ export async function generateTheme(tokens: PinceauTheme, buildPath: string, sil
   })
 
   styleDictionary = styleDictionary.extend({
-    tokens,
+    tokens: tokens as any,
     platforms: {
       prepare: {
         transformGroup: 'pinceau',
@@ -187,7 +187,7 @@ export async function generateTheme(tokens: PinceauTheme, buildPath: string, sil
           name: 'done',
           do: () => {
             resolve({
-              tokens: transformedTokens,
+              tokens: transformedTokens as PinceauTheme,
               outputs,
               buildPath,
             })

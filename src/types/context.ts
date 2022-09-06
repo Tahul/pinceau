@@ -1,6 +1,6 @@
-import type { LoadConfigResult } from 'unconfig'
 import type { ViteDevServer } from 'vite'
 import type { PinceauTheme, TokensFunction } from './theme'
+import type { LoadConfigResult } from './config'
 import type { PinceauOptions } from './'
 
 export type ConfigOrPaths = PinceauTheme | string | string[] | undefined
