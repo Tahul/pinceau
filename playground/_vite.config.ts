@@ -9,6 +9,7 @@ export default defineConfig({
   plugins: [
     Inspect(),
     Unplugin({
+      configFileName: 'tokens.config',
       configOrPaths: [
         join(__dirname, 'theme'),
       ],
