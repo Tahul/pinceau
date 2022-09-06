@@ -82,7 +82,7 @@
     "play": "npm -C playground run dev",
     "play:nuxt": "npm -C playground run dev:nuxt",
     "prepublishOnly": "npm run build",
-    "release": "bumpp && npm publish",
+    "release": "release-it",
     "start": "esno src/index.ts",
     "test": "vitest"
   },
