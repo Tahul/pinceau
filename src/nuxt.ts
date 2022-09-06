@@ -1,12 +1,25 @@
 import { defu } from 'defu'
+import type { Nuxt } from '@nuxt/schema'
+import { join } from 'pathe'
 import type { PinceauOptions } from './types'
 import pinceau, { defaultOptions } from './index'
 
 export default function (this: any) {
-  const nuxt = this.nuxt
-  let options: PinceauOptions = nuxt.options.pinceau
+  const nuxt: Nuxt = this.nuxt
+  let options: PinceauOptions = (nuxt.options as any).pinceau
 
+  // Merge options here in Nuxt context so we have access to proper values for local features
   options = defu(options, defaultOptions)
+
+  // Automatically inject generated types to tsconfig
+  nuxt.hook('prepare:types', (opts) => {
+    opts.tsConfig.compilerOptions = opts.tsConfig.compilerOptions || {}
+    opts.tsConfig.compilerOptions.paths = opts.tsConfig.compilerOptions.paths || {}
+    if (options?.outputDir) {
+      opts.tsConfig.compilerOptions.paths['#pinceau/types'] = [join(options.outputDir, 'index.d.ts')]
+      opts.tsConfig.compilerOptions.paths['#pinceau'] = [join(options.outputDir, 'index.ts')]
+    }
+  })
 
   // Support for `extends` feature
   // This will scan each layer for a config file
