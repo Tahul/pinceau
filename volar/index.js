@@ -5,10 +5,12 @@ const { camelCase } = require('scule')
 const plugin = _ => ({
   resolveEmbeddedFile(fileName, sfc, embeddedFile) {
     if (embeddedFile.fileName.replace(fileName, '').match(/^\.(js|ts|jsx|tsx)$/)) {
+      embeddedFile.codeGen.addText('import type { TokensFunction, CSS, PinceauTheme, PinceauTheme, PinceauThemePaths, TokensFunctionOptions } from \'pinceau\'\n')
+      embeddedFile.codeGen.addText('const css = (declaration: CSS<ComponentTemplateTags__VLS, PinceauTheme>) => declaration\n')
+      embeddedFile.codeGen.addText('const $dt = (path?: PinceauThemePaths, options?: TokensFunctionOptions) => ({ path, options })\n')
+
       // $dt helpers
       const dtRegex = /\$dt\('(.*?)'\)/g
-      embeddedFile.codeGen.addText('import type { TokensFunction } from \'pinceau\'\n')
-      embeddedFile.codeGen.addText('\nconst $dt: TokensFunction = (path, options) => ({ path, options })\n')
       const addDt = (match, dtKey, index, vueTag, vueTagIndex) => {
         embeddedFile.codeGen.addText(`\nconst __VLS_$dt_${camelCase(dtKey)}_${index} = `)
         embeddedFile.codeGen.addCode2(
@@ -66,9 +68,6 @@ const plugin = _ => ({
           const dtMatches = style.content.match(dtRegex)
 
           if (cssMatches) {
-            embeddedFile.codeGen.addText('import type { CSS, PinceauTheme } from \'pinceau\'\n')
-            embeddedFile.codeGen.addText('const css = (declaration: CSS<ComponentTemplateTags__VLS, PinceauTheme>) => declaration\n')
-
             embeddedFile.codeGen.addText('\nconst __VLS_css = ')
             embeddedFile.codeGen.addCode2(
               cssMatches[0],

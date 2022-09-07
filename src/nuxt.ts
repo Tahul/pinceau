@@ -5,7 +5,7 @@ import { addPluginTemplate, createResolver, defineNuxtModule } from '@nuxt/kit'
 import type { PinceauOptions } from './types'
 import pinceau, { defaultOptions } from './index'
 
-export default defineNuxtModule<PinceauOptions>({
+const module: any = defineNuxtModule<PinceauOptions>({
   meta: {
     name: 'pinceau/nuxt',
     configKey: 'pinceau',
@@ -23,8 +23,9 @@ export default defineNuxtModule<PinceauOptions>({
       tsConfig.compilerOptions.paths = tsConfig.compilerOptions.paths || {}
 
       if (options?.outputDir) {
-        tsConfig.compilerOptions.paths['#pinceau/types'] = [join(options.outputDir, 'index.d.ts')]
-        tsConfig.compilerOptions.paths['#pinceau'] = [join(options.outputDir, 'index.ts')]
+        const relativeOutputDir = options?.outputDir.replace(nuxt.options.rootDir, './')
+        tsConfig.compilerOptions.paths['#pinceau/types'] = [`./${join(relativeOutputDir, 'types.ts')}`]
+        tsConfig.compilerOptions.paths['#pinceau'] = [`./${join(relativeOutputDir, 'index.ts')}`]
       }
 
       tsConfig.vueCompilerOptions = tsConfig.vueCompilerOptions || {}
@@ -56,17 +57,15 @@ export default defineNuxtModule<PinceauOptions>({
       options.includes?.push(...await glob(join(layer, '**/*.vue')))
     }
 
-    // Inject Pinceau CSS
     addPluginTemplate({
       filename: 'pinceau-imports.mjs',
-
-      getContents: () => {
+      getContents() {
         const lines = [
           'import \'pinceau.css\'',
           'export default defineNuxtPlugin(() => {})',
         ]
 
-        if (options?.preflight !== false) {
+        if (options?.preflight) {
           lines.unshift('import \'@unocss/reset/tailwind.css\'')
         }
 
@@ -87,3 +86,5 @@ export default defineNuxtModule<PinceauOptions>({
     })
   },
 })
+
+export default module

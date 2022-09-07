@@ -8,7 +8,7 @@ export function registerAliases(config: ViteConfig, options: PinceauOptions) {
   if (!config?.resolve) { config.resolve = {} }
   if (!config.resolve?.alias) { config.resolve.alias = {} }
   // @ts-expect-error - TODO
-  config.resolve.alias['#pinceau/types'] = join(options?.outputDir || process.cwd(), '/index.d.ts')
+  config.resolve.alias['#pinceau/types'] = join(options?.outputDir || process.cwd(), '/types.ts')
   // @ts-expect-error - TODO
   config.resolve.alias['#pinceau/*'] = join(options?.outputDir || process.cwd(), '/*')
 }

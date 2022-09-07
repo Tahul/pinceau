@@ -26,7 +26,7 @@ export async function loadConfig<U extends PinceauTheme>(
     return { config: inlineConfig, sources: [] }
   }
 
-  const sources: ConfigLayer[] = [
+  let sources: ConfigLayer[] = [
     {
       cwd,
       configFileName,
@@ -51,6 +51,29 @@ export async function loadConfig<U extends PinceauTheme>(
       [],
     ),
   ]
+
+  // Dedupe sources
+  sources = sources.reduce<ConfigLayer[]>(
+    (acc, source) => {
+      let searchable: string
+      if (typeof source === 'string') {
+        searchable = source
+      }
+      else {
+        searchable = source?.cwd || ''
+      }
+
+      if (!acc.find((s: any) => s.cwd === searchable)) {
+        acc.push({
+          cwd: searchable,
+          configFileName,
+        })
+      }
+
+      return acc
+    },
+    [],
+  )
 
   const resolveConfig = async <U extends PinceauTheme>(layer: ConfigLayer): Promise<ResolvedConfigLayer<U>> => {
     const empty = () => ({ path: undefined, config: {} as any })
@@ -113,7 +136,7 @@ export async function loadConfig<U extends PinceauTheme>(
 
 async function loadConfigFile(path: string) {
   return {
-    config: jiti(path, {
+    config: await jiti(path, {
       interopDefault: true,
       cache: false,
       requireCache: false,

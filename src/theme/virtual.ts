@@ -1,12 +1,7 @@
-import { createRegExp, exactly, oneOrMore, word } from 'magic-regexp'
 import type { PinceauVirtualContext, ThemeGenerationOutput } from '../types'
-import reset from '../reset'
 
-const resolveIdRegex = createRegExp(exactly('pinceau.').and(oneOrMore(word).as('extension')))
-const virtualModuleRegex = createRegExp(exactly('virtual:pinceau.').and(oneOrMore(word).as('extension')))
-
-const RESET_IMPORT_ID = 'pinceau/reset.css'
-const RESET_ID = 'virtual:pinceau-reset.css'
+const VIRTUAL_ENTRY_REGEX = /^(?:virtual:)?pinceau\.(css|ts)(\?.*)?$/
+export const RESOLVED_ID_RE = /\/__pinceau(?:(_.*?))?\.(css|ts)(\?.*)?$/
 
 export default function usePinceauVirtualStore(): PinceauVirtualContext {
   const outputs: ThemeGenerationOutput['outputs'] = {}
@@ -14,44 +9,28 @@ export default function usePinceauVirtualStore(): PinceauVirtualContext {
   function updateOutputs(generatedTheme: ThemeGenerationOutput) {
     Object.entries(generatedTheme.outputs).forEach(
       ([key, value]) => {
-        outputs[key] = value
+        outputs[`_${key}`] = value
       },
     )
   }
 
   function getOutput(id: string) {
-    let result
-    if (id.includes(RESET_ID)) {
-      result = reset
+    const match = id.match(RESOLVED_ID_RE)
+    if (match) {
+      return outputs[match[1]]
     }
-
-    const matchId = virtualModuleRegex.exec(id)
-    if (matchId) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const [_, ext] = matchId
-      result = outputs[ext]
-    }
-
-    return result
   }
 
   /**
    * Resolves the virtual module id from an import like `pinceau.css` or `pinceau.ts`
    */
   function getOutputId(id: string) {
-    let result
-    if (id.includes(RESET_IMPORT_ID)) {
-      result = RESET_ID
+    const match = id.match(VIRTUAL_ENTRY_REGEX)
+    if (match) {
+      return match[1]
+        ? `/__pinceau_${match[1]}.css`
+        : '/__pinceau_css.css'
     }
-
-    const matchId = resolveIdRegex.exec(id)
-    if (matchId) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const [_, ext] = matchId
-      result = `virtual:pinceau.${ext}`
-    }
-
-    return result
   }
 
   return {

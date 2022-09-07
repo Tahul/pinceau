@@ -2,7 +2,7 @@ import type { Defu } from 'defu'
 import type { NestedKeyOf, WrapUnion } from '.'
 // eslint-disable-next-line @typescript-eslint/prefer-ts-expect-error
 // @ts-ignore - Can be not found
-import type { GeneratedPinceauTheme } from '#pinceau/types'
+import type { GeneratedPinceauTheme, GeneratedTokensPaths } from '#pinceau/types'
 
 type PermissiveKey = string
 
@@ -237,6 +237,8 @@ export interface DefaultThemeMap {
 
 export interface PinceauTheme extends PinceauTokens, Defu<GlobalTokens, [GeneratedPinceauTheme]> {}
 
+export type PinceauThemePaths = {} & GeneratedTokensPaths
+
 export type ThemeKey<K extends keyof DefaultThemeMap> = WrapUnion<NestedKeyOf<PinceauTheme[DefaultThemeMap[K]]>, `{${DefaultThemeMap[K]}.`, '}'>
 
 export interface TokensFunctionOptions {
@@ -259,7 +261,7 @@ export interface TokensFunctionOptions {
 }
 
 export type TokensFunction = (
-  path?: string | undefined,
+  path?: PinceauThemePaths,
   options?: TokensFunctionOptions,
   themeTokens?: PinceauTheme,
   tokenAliases?: { [key: string]: string }

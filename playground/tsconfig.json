@@ -1,8 +1,10 @@
 {
   "extends": "./.nuxt/tsconfig.json",
-  "vueCompilerOptions": {
-    "plugins": [
-      "../volar"
-    ]
+  "compilerOptions": {
+    "paths": {
+      "pinceau": [
+        "../src/index.ts"
+      ]
+    }
   }
 }

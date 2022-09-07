@@ -23,7 +23,7 @@ css({
     borderRadius: '16px',
     width: '320px',
     height: '320px',
-    border: '16px solid {colors.grape}',
+    border: '16px solid {colors.grey}',
     padding: '',
     position: 'relative',
     '&:hover': {

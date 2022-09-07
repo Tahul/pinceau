@@ -21,7 +21,7 @@ export async function stubOutputs(buildPath: string, force = false) {
     'index.json': () => '{}',
     'index.js': jsFull,
     'index.ts': tsFull,
-    'index.d.ts': tsTypesDeclaration,
+    'types.ts': tsTypesDeclaration,
   }
 
   for (const [file, stubbingFunction] of Object.entries(files)) {

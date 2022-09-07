@@ -54,7 +54,7 @@ export function usePinceauConfig<UserOptions extends PinceauOptions = PinceauOpt
 
       await reloadConfig()
 
-      const _module = server.moduleGraph.getModuleById('virtual:pinceau.css')
+      const _module = server.moduleGraph.getModuleById('/__pinceau_css.css')
 
       if (_module) {
         server.moduleGraph.invalidateModule(_module)
@@ -64,8 +64,8 @@ export function usePinceauConfig<UserOptions extends PinceauOptions = PinceauOpt
         type: 'update',
         updates: [
           {
-            acceptedPath: 'virtual:pinceau.css',
-            path: 'virtual:pinceau.css',
+            acceptedPath: '/__pinceau_css.css',
+            path: '/__pinceau_css.css',
             timestamp: +Date.now(),
             type: 'js-update',
           },

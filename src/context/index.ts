@@ -24,12 +24,6 @@ export const createContext = <UserOptions extends PinceauOptions = PinceauOption
       try {
         const builtTheme = await generateTheme(resolvedConfig.config, options.outputDir as string)
 
-        // Inject preflight to virtual store
-        if (options.preflight) {
-          // await readFile(RESET_PATH, 'utf8')
-          builtTheme.outputs['pinceau-reset'] = ''
-        }
-
         updateOutputs(builtTheme)
 
         tokens = builtTheme.tokens

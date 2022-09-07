@@ -154,7 +154,7 @@ export async function generateTheme(tokens: PinceauTheme, buildPath: string, sil
             format: 'pinceau/css',
           },
           {
-            destination: 'index.d.ts',
+            destination: 'types.ts',
             format: 'pinceau/types',
           },
           {
@@ -175,14 +175,14 @@ export async function generateTheme(tokens: PinceauTheme, buildPath: string, sil
     },
   })
 
+  // Actions run at the end of build, helps on awaiting it properly
+  if (silent) {
+    styleDictionary.logger().pause()
+  }
+
   const result = await new Promise<ThemeGenerationOutput>(
     (resolve, reject) => {
       try {
-        // Actions run at the end of build, helps on awaiting it properly
-        if (silent) {
-          styleDictionary.logger().pause()
-        }
-
         styleDictionary.registerAction({
           name: 'done',
           do: () => {
@@ -192,9 +192,7 @@ export async function generateTheme(tokens: PinceauTheme, buildPath: string, sil
               buildPath,
             })
           },
-          undo: () => {
-          //
-          },
+          undo: () => {},
         })
 
         styleDictionary.cleanAllPlatforms()
@@ -205,14 +203,12 @@ export async function generateTheme(tokens: PinceauTheme, buildPath: string, sil
         reject(e)
       }
     },
-  ).then((result) => {
-    // Actions run at the end of build, helps on awaiting it properly
-    if (silent) {
-      styleDictionary.logger().resume()
-    }
+  )
 
-    return result
-  })
+  // Actions run at the end of build, helps on awaiting it properly
+  if (silent) {
+    styleDictionary.logger().resume()
+  }
 
   return result
 }

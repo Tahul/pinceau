@@ -25,16 +25,11 @@
         "./playground/node_modules/.vite/pinceau/index.*"
       ],
       "#pinceau/types": [
-        "./playground/node_modules/.vite/pinceau/index.d.ts"
+        "./playground/node_modules/.vite/pinceau/types.ts"
       ],
       "#pinceau": [
         "./playground/node_modules/.vite/pinceau/index.ts"
       ]
     }
-  },
-  "vueCompilerOptions": {
-    "plugins": [
-      "./volar"
-    ]
   }
 }

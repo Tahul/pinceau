@@ -81,11 +81,9 @@ export default createUnplugin<PinceauOptions>(
         const magicString = new MagicString(code, { filename: query.filename })
         const result = () => ({ code: magicString.toString(), map: magicString.generateMap({ source: id, includeContent: true }) })
 
-        if (query?.vue) {
-          // Return early when the query is scoped (usually style tags)
-          const { code: _code, early } = transformVueSFC(code, id, magicString, ctx, query)
-          if (early) { return _code }
-        }
+        // Return early when the query is scoped (usually style tags)
+        const { code: _code, early } = transformVueSFC(code, id, magicString, ctx, query)
+        if (early) { return _code }
 
         return result()
       },
