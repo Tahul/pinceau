@@ -5,9 +5,9 @@ const { camelCase } = require('scule')
 const plugin = _ => ({
   resolveEmbeddedFile(fileName, sfc, embeddedFile) {
     if (embeddedFile.fileName.replace(fileName, '').match(/^\.(js|ts|jsx|tsx)$/)) {
-      embeddedFile.codeGen.addText('import type { TokensFunction, CSS, PinceauTheme, PinceauThemePaths, TokensFunctionOptions } from \'pinceau\'\n')
-      embeddedFile.codeGen.addText('const css = (declaration: CSS<ComponentTemplateTags__VLS, PinceauTheme>) => declaration\n')
-      embeddedFile.codeGen.addText('const $dt = (path?: PinceauThemePaths, options?: TokensFunctionOptions) => ({ path, options })\n')
+      embeddedFile.codeGen.addText('\nimport type { TokensFunction, CSS, PinceauTheme, PinceauThemePaths, TokensFunctionOptions } from \'pinceau\'\n')
+      embeddedFile.codeGen.addText('\nconst css = (declaration: CSS<ComponentTemplateTags__VLS, PinceauTheme>) => declaration\n')
+      embeddedFile.codeGen.addText('\~const $dt = (path?: PinceauThemePaths, options?: TokensFunctionOptions) => ({ path, options })\n')
 
       // $dt helpers
       const dtRegex = /\$dt\('(.*?)'\)/g
@@ -42,7 +42,7 @@ const plugin = _ => ({
             templateTags[tag] = true
           },
         )
-        embeddedFile.codeGen.addText(`type ComponentTemplateTags__VLS = {\n${Object.entries(templateTags).map(([tag]) => `  /**\n  * The \`<${tag}>\` tag from the Vue template.\n  */\n  ${tag}: true,\n`).join('')}}\n`)
+        embeddedFile.codeGen.addText(`\ntype ComponentTemplateTags__VLS = {\n${Object.entries(templateTags).map(([tag]) => `  /**\n  * The \`<${tag}>\` tag from the Vue template.\n  */\n  ${tag}: true,\n`).join('')}}\n`)
 
         // $variantProps()
         embeddedFile.codeGen.addText('\ndeclare const $variantsProps: (key: keyof ComponentTemplateTags__VLS) => {}\n')
@@ -56,7 +56,7 @@ const plugin = _ => ({
         }
       }
       else {
-        embeddedFile.codeGen.addText('type ComponentTemplateTags__VLS = {}')
+        embeddedFile.codeGen.addText('\ntype ComponentTemplateTags__VLS = {}\n')
       }
 
       // Grab `css()` function and type it.
