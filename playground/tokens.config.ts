@@ -10,7 +10,7 @@ export default defineTheme({
   colors: {
     primary: palette('rgb(49, 52, 66)'),
     grape: {
-      value: '#A288A6',
+      value: 'blue',
     },
     lila: {
       value: '#BB9BB0',

@@ -71,6 +71,17 @@ export function usePinceauConfig<UserOptions extends PinceauOptions = PinceauOpt
           },
         ],
       })
+      server.ws.send({
+        type: 'update',
+        updates: [
+          {
+            acceptedPath: '/__pinceau_css.css',
+            path: '/__pinceau_css.css',
+            timestamp: +Date.now(),
+            type: 'css-update',
+          },
+        ],
+      })
     })
   }
 

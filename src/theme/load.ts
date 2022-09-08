@@ -75,7 +75,7 @@ export async function loadConfig<U extends PinceauTheme>(
     [],
   )
 
-  const resolveConfig = async <U extends PinceauTheme>(layer: ConfigLayer): Promise<ResolvedConfigLayer<U>> => {
+  const resolveConfig = <U extends PinceauTheme>(layer: ConfigLayer): ResolvedConfigLayer<U> => {
     const empty = () => ({ path: undefined, config: {} as any })
 
     let path = ''
@@ -104,7 +104,7 @@ export async function loadConfig<U extends PinceauTheme>(
 
     if (filePath) {
       try {
-        return await loadConfigFile(filePath) as ResolvedConfigLayer<U>
+        return loadConfigFile(filePath) as ResolvedConfigLayer<U>
       }
       catch (e) {
         return empty()
@@ -120,7 +120,7 @@ export async function loadConfig<U extends PinceauTheme>(
   }
 
   for (const layer of sources) {
-    const { path, config } = await resolveConfig(layer)
+    const { path, config } = resolveConfig(layer)
 
     if (path) {
       result.sources.push(path)
@@ -134,13 +134,11 @@ export async function loadConfig<U extends PinceauTheme>(
   return result
 }
 
-async function loadConfigFile(path: string) {
+function loadConfigFile(path: string) {
   return {
-    config: await jiti(path, {
+    config: jiti(path, {
       interopDefault: true,
-      cache: false,
       requireCache: false,
-      v8cache: false,
       esmResolve: true,
     })(path),
     path,

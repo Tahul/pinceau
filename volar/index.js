@@ -5,7 +5,7 @@ const { camelCase } = require('scule')
 const plugin = _ => ({
   resolveEmbeddedFile(fileName, sfc, embeddedFile) {
     if (embeddedFile.fileName.replace(fileName, '').match(/^\.(js|ts|jsx|tsx)$/)) {
-      embeddedFile.codeGen.addText('import type { TokensFunction, CSS, PinceauTheme, PinceauTheme, PinceauThemePaths, TokensFunctionOptions } from \'pinceau\'\n')
+      embeddedFile.codeGen.addText('import type { TokensFunction, CSS, PinceauTheme, PinceauThemePaths, TokensFunctionOptions } from \'pinceau\'\n')
       embeddedFile.codeGen.addText('const css = (declaration: CSS<ComponentTemplateTags__VLS, PinceauTheme>) => declaration\n')
       embeddedFile.codeGen.addText('const $dt = (path?: PinceauThemePaths, options?: TokensFunctionOptions) => ({ path, options })\n')
 

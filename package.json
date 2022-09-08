@@ -89,7 +89,7 @@
   "dependencies": {
     "@stitches/stringify": "^1.2.8",
     "@unocss/reset": "^0.45.18",
-    "@volar/vue-language-core": "^0.40.9",
+    "@volar/vue-language-core": "^0.40.12",
     "chroma-js": "^2.4.2",
     "consola": "^2.15.3",
     "csstype": "^3.1.0",
@@ -101,14 +101,14 @@
     "postcss-nested": "^5.0.6",
     "recast": "^0.21.2",
     "scule": "^0.3.2",
-    "style-dictionary-esm": "^1.0.7",
+    "style-dictionary-esm": "^1.0.10",
     "unplugin": "^0.9.5"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.26.3",
     "@nuxt/kit": "3.0.0-rc.9",
     "@types/chroma-js": "^2.1.4",
-    "@types/node": "^18.7.15",
+    "@types/node": "^18.7.16",
     "eslint": "^8.23.0",
     "esno": "^0.16.3",
     "fast-glob": "^3.2.11",
@@ -121,9 +121,6 @@
     "vite": "^3.1.0",
     "vitest": "^0.23.1",
     "webpack": "^5.74.0"
-  },
-  "resolutions": {
-    "jiti": "1.14.0"
   },
   "pnpm": {
     "peerDependencyRules": {

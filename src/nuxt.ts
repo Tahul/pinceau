@@ -1,5 +1,5 @@
 import { defu } from 'defu'
-import { join } from 'pathe'
+import { resolve } from 'pathe'
 import glob from 'fast-glob'
 import { addPluginTemplate, createResolver, defineNuxtModule } from '@nuxt/kit'
 import type { PinceauOptions } from './types'
@@ -23,9 +23,12 @@ const module: any = defineNuxtModule<PinceauOptions>({
       tsConfig.compilerOptions.paths = tsConfig.compilerOptions.paths || {}
 
       if (options?.outputDir) {
-        const relativeOutputDir = options?.outputDir.replace(nuxt.options.rootDir, './')
-        tsConfig.compilerOptions.paths['#pinceau/types'] = [`./${join(relativeOutputDir, 'types.ts')}`]
-        tsConfig.compilerOptions.paths['#pinceau'] = [`./${join(relativeOutputDir, 'index.ts')}`]
+        let relativeOutputDir = options?.outputDir
+        if (options?.outputDir.includes(nuxt.options.rootDir)) {
+          relativeOutputDir = options?.outputDir.replace(nuxt.options.rootDir, '../')
+        }
+        tsConfig.compilerOptions.paths['#pinceau/types'] = [`${resolve(relativeOutputDir, 'types.ts')}`]
+        tsConfig.compilerOptions.paths['#pinceau'] = [`${resolve(relativeOutputDir, 'index.ts')}`]
       }
 
       tsConfig.vueCompilerOptions = tsConfig.vueCompilerOptions || {}

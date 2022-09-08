@@ -141,11 +141,13 @@ export async function generateTheme(tokens: PinceauTheme, buildPath: string, sil
     tokens: tokens as any,
     platforms: {
       prepare: {
+        silent,
         transformGroup: 'pinceau',
         actions: ['prepare'],
       },
 
       ts: {
+        silent,
         transformGroup: 'pinceau',
         buildPath,
         files: [
@@ -169,16 +171,12 @@ export async function generateTheme(tokens: PinceauTheme, buildPath: string, sil
       },
 
       done: {
+        silent,
         transformGroup: 'pinceau',
         actions: ['done'],
       },
     },
   })
-
-  // Actions run at the end of build, helps on awaiting it properly
-  if (silent) {
-    styleDictionary.logger().pause()
-  }
 
   const result = await new Promise<ThemeGenerationOutput>(
     (resolve, reject) => {
@@ -194,9 +192,7 @@ export async function generateTheme(tokens: PinceauTheme, buildPath: string, sil
           },
           undo: () => {},
         })
-
         styleDictionary.cleanAllPlatforms()
-
         styleDictionary.buildAllPlatforms()
       }
       catch (e) {
@@ -204,11 +200,6 @@ export async function generateTheme(tokens: PinceauTheme, buildPath: string, sil
       }
     },
   )
-
-  // Actions run at the end of build, helps on awaiting it properly
-  if (silent) {
-    styleDictionary.logger().resume()
-  }
 
   return result
 }
