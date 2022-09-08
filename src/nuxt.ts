@@ -1,5 +1,5 @@
 import { defu } from 'defu'
-import { resolve } from 'pathe'
+import { join, resolve } from 'pathe'
 import glob from 'fast-glob'
 import { addPluginTemplate, createResolver, defineNuxtModule } from '@nuxt/kit'
 import type { PinceauOptions } from './types'
