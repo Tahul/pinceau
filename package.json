@@ -89,7 +89,7 @@
   "dependencies": {
     "@stitches/stringify": "^1.2.8",
     "@unocss/reset": "^0.45.18",
-    "@volar/vue-language-core": "^0.40.12",
+    "@volar/vue-language-core": "^0.40.13",
     "chroma-js": "^2.4.2",
     "consola": "^2.15.3",
     "csstype": "^3.1.0",
@@ -101,7 +101,7 @@
     "postcss-nested": "^5.0.6",
     "recast": "^0.21.2",
     "scule": "^0.3.2",
-    "style-dictionary-esm": "^1.0.10",
+    "style-dictionary-esm": "^1.0.12",
     "unplugin": "^0.9.5"
   },
   "devDependencies": {

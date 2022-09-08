@@ -28,7 +28,7 @@ export default function usePinceauVirtualStore(): PinceauVirtualContext {
     const match = id.match(VIRTUAL_ENTRY_REGEX)
     if (match) {
       return match[1]
-        ? `/__pinceau_${match[1]}.css`
+        ? `/__pinceau_${match[1]}.${match[1]}`
         : '/__pinceau_css.css'
     }
   }
