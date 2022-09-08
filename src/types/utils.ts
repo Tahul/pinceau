@@ -53,6 +53,9 @@ export type NestedKeyOf<TObject> =
   : `${Key}`
 }[keyof TObject & (string | number)]
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export type FilterStartingWith<Set, Needle extends string> = Set extends `${Needle}${infer _X}` ? Set : never
+
 export type WrapUnion<
   TObject extends string,
   TPrefix extends string,

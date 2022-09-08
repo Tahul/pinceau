@@ -1,4 +1,4 @@
-import type { NestedKeyOf, WrapUnion } from '.'
+import type { FilterStartingWith, WrapUnion } from '.'
 // eslint-disable-next-line @typescript-eslint/prefer-ts-expect-error
 // @ts-ignore - Can be not found
 import type { GeneratedPinceauTheme, GeneratedTokensPaths } from '#pinceau/types'
@@ -237,9 +237,13 @@ export interface DefaultThemeMap {
 
 export interface PinceauTheme extends GeneratedPinceauTheme, Omit<GlobalTokens, keyof GeneratedPinceauTheme>, PinceauTokens {}
 
-export type PinceauThemePaths = {} & GeneratedTokensPaths
+export type PinceauThemePaths = GeneratedTokensPaths
 
-export type ThemeKey<K extends keyof DefaultThemeMap> = WrapUnion<NestedKeyOf<PinceauTheme[DefaultThemeMap[K]]>, `{${DefaultThemeMap[K]}.`, '}'>
+// Old version; slower and relying on recursively walking through typing object
+// export type ThemeKey<K extends keyof DefaultThemeMap> = WrapUnion<NestedKeyOf<PinceauTheme[DefaultThemeMap[K]]>, `{${DefaultThemeMap[K]}.`, '}'>
+
+// Resolve available theme tokens for a key from theme map and generated theme paths
+export type ThemeKey<K extends keyof DefaultThemeMap> = WrapUnion<FilterStartingWith<PinceauThemePaths, DefaultThemeMap[K]>, '{', '}'>
 
 export interface TokensFunctionOptions {
   /**
