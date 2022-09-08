@@ -3,9 +3,7 @@ import type { FilterStartingWith, WrapUnion } from '.'
 // @ts-ignore - Can be not found
 import type { GeneratedPinceauTheme, GeneratedTokensPaths } from '#pinceau/types'
 
-type PermissiveKey = string
-
-export interface DesignToken<T = string | number> {
+export interface DesignToken<T = string | number | any> {
   /**
    * The raw value of the token.
    */
@@ -39,10 +37,10 @@ export interface DesignToken<T = string | number> {
     item?: string
     subitem?: string
     state?: string
-    [key: PermissiveKey]: any
+    [key: string]: any
   }
   /* Permissive type */
-  [key: PermissiveKey]: any
+  [key: string]: any
 }
 
 export interface PinceauTokens {
