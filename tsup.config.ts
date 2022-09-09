@@ -20,6 +20,9 @@ export default <Options>{
     'magic-string',
     'json5',
     'vue',
+    'pathe',
+    'fast-glob',
+    'defu',
   ],
   onSuccess: 'npm run build:fix',
 }

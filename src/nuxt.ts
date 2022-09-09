@@ -2,6 +2,7 @@ import { defu } from 'defu'
 import { join, resolve } from 'pathe'
 import glob from 'fast-glob'
 import { addPluginTemplate, createResolver, defineNuxtModule } from '@nuxt/kit'
+import { withoutLeadingSlash } from 'ufo'
 import type { PinceauOptions } from './types'
 import pinceau, { defaultOptions } from './index'
 
@@ -25,8 +26,11 @@ const module: any = defineNuxtModule<PinceauOptions>({
       if (options?.outputDir) {
         let relativeOutputDir = options?.outputDir
         if (options?.outputDir.includes(nuxt.options.rootDir)) {
-          relativeOutputDir = options?.outputDir.replace(nuxt.options.rootDir, '../')
+          relativeOutputDir = options?.outputDir.replace(nuxt.options.rootDir, '')
+          relativeOutputDir = resolve('../', relativeOutputDir)
+          relativeOutputDir = withoutLeadingSlash(relativeOutputDir)
         }
+
         tsConfig.compilerOptions.paths['#pinceau/types'] = [`${resolve(relativeOutputDir, 'types.ts')}`]
         tsConfig.compilerOptions.paths['#pinceau'] = [`${resolve(relativeOutputDir, 'index.ts')}`]
       }
