@@ -54,34 +54,33 @@ export function usePinceauConfig<UserOptions extends PinceauOptions = PinceauOpt
 
       await reloadConfig()
 
-      const _module = server.moduleGraph.getModuleById('/__pinceau_css.css')
+      const css = server.moduleGraph.getModuleById('/__pinceau_css.css')
+      const ts = server.moduleGraph.getModuleById('/__pinceau_ts.ts')
 
-      if (_module) {
-        server.moduleGraph.invalidateModule(_module)
-      }
+      // Send HMR updates for each
+      Object.entries({ css, ts }).forEach(
+        ([key, module]) => {
+          if (!module) { return }
 
-      server.ws.send({
-        type: 'update',
-        updates: [
-          {
-            acceptedPath: '/__pinceau_css.css',
-            path: '/__pinceau_css.css',
-            timestamp: +Date.now(),
-            type: 'js-update',
-          },
-        ],
-      })
-      server.ws.send({
-        type: 'update',
-        updates: [
-          {
-            acceptedPath: '/__pinceau_css.css',
-            path: '/__pinceau_css.css',
-            timestamp: +Date.now(),
-            type: 'css-update',
-          },
-        ],
-      })
+          server.moduleGraph.invalidateModule(module)
+
+          ;['js', 'css'].forEach(
+            (type: 'js' | 'css') => {
+              server.ws.send({
+                type: 'update',
+                updates: [
+                  {
+                    acceptedPath: `/__pinceau_${key}.${key}`,
+                    path: `/__pinceau_${key}.${key}`,
+                    timestamp: +Date.now(),
+                    type: `${type}-update`,
+                  },
+                ],
+              })
+            },
+          )
+        },
+      )
     })
   }
 

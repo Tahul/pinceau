@@ -7,10 +7,10 @@ import type { PinceauOptions } from '../types'
 export function registerAliases(config: ViteConfig, options: PinceauOptions) {
   if (!config?.resolve) { config.resolve = {} }
   if (!config.resolve?.alias) { config.resolve.alias = {} }
-  // @ts-expect-error - TODO
-  config.resolve.alias['#pinceau/types'] = join(options?.outputDir || process.cwd(), '/types.ts')
-  // @ts-expect-error - TODO
-  config.resolve.alias['#pinceau/*'] = join(options?.outputDir || process.cwd(), '/*')
+  if (options?.outputDir) {
+    config.resolve.alias['#pinceau/types'] = join(options.outputDir, '/types.ts')
+    config.resolve.alias['#pinceau'] = join(options.outputDir, '/index.ts')
+  }
 }
 
 export function registerPostCssPlugins(config: ViteConfig) {

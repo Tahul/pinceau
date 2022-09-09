@@ -89,7 +89,7 @@ export interface FontWeightTokens extends PinceauTokens {
   heavyBlack: DesignToken
 }
 
-export interface GlobalTokens {
+export interface ConfigTokens extends PinceauTokens {
   colors?: ScaleTokens
   fonts?: PinceauTokens
   fontWeights?: FontWeightTokens
@@ -100,7 +100,7 @@ export interface GlobalTokens {
   radii?: BreakpointsTokens
   borders?: BreakpointsTokens
   borderWidths?: BreakpointsTokens
-  borderStyles: BreakpointsTokens
+  borderStyles?: BreakpointsTokens
   shadows?: BreakpointsTokens
   opacity?: BreakpointsTokens
   lineHeights?: BreakpointsTokens
@@ -233,7 +233,7 @@ export interface DefaultThemeMap {
   zIndex: 'zIndices'
 }
 
-export interface PinceauTheme extends GeneratedPinceauTheme, Omit<GlobalTokens, keyof GeneratedPinceauTheme>, PinceauTokens {}
+export interface PinceauTheme extends GeneratedPinceauTheme, Omit<ConfigTokens, keyof GeneratedPinceauTheme>, PinceauTokens {}
 
 export type PinceauThemePaths = GeneratedTokensPaths
 
@@ -265,6 +265,6 @@ export interface TokensFunctionOptions {
 export type TokensFunction = (
   path?: PinceauThemePaths,
   options?: TokensFunctionOptions,
-  themeTokens?: PinceauTheme,
-  tokenAliases?: { [key: string]: string }
+  theme?: PinceauTheme,
+  aliases?: { [key: string]: string }
 ) => PinceauTokens | DesignToken | number | string

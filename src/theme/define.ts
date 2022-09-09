@@ -1,3 +1,7 @@
-import type { DeepPartial, PinceauTheme } from '../types'
+import type { ConfigTokens, PinceauTheme, PinceauTokens } from '../types'
 
-export const defineTheme = (config: DeepPartial<PinceauTheme>): DeepPartial<PinceauTheme> => config
+export const defineTheme = (config: ConfigTokens & PinceauTokens): PinceauTheme => config as PinceauTheme
+
+defineTheme({
+
+})

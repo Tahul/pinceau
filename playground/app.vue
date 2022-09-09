@@ -1,3 +1,7 @@
+<script setup lang="ts">
+import { theme } from '#pinceau'
+</script>
+
 <template>
   <NuxtLayout>
     <section>
@@ -7,6 +11,10 @@
       <Block lavender />
       <Block velvet />
       <Block grape />
+    </section>
+
+    <section>
+      <pre>{{ JSON.stringify(theme, null, 2) }}</pre>
     </section>
   </NuxtLayout>
 </template>
