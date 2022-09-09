@@ -231,6 +231,7 @@ export interface DefaultThemeMap {
   textShadow: 'shadows'
   transition: 'transitions'
   zIndex: 'zIndices'
+  opacity: 'opacity'
 }
 
 export interface PinceauTheme extends GeneratedPinceauTheme, Omit<ConfigTokens, keyof GeneratedPinceauTheme>, PinceauTokens {}

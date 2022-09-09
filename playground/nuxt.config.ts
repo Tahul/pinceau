@@ -6,4 +6,7 @@ export default defineNuxtConfig({
   pinceau: {
     configFileName: 'tokens.config',
   },
+  experimental: {
+    inlineSSRStyles: false,
+  },
 })

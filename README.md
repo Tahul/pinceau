@@ -91,6 +91,7 @@ build({
 
 - [Sébastien Chopin](https://github.com/Atinux)
 - [NuxtLabs](https://github.com/nuxtlabs)
+- [Daniel Roe](https://github.com/danielroe)
 - [Anthony Fu](https://github.com/antfu)
 - [Johnson Chu](https://github.com/johnsoncodehk)
 - [The Stitches Team](https://stitches.dev)
