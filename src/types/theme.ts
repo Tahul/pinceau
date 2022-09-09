@@ -86,7 +86,7 @@ export interface FontWeightTokens extends PinceauTokens {
   bold?: DesignToken
   extraBold?: DesignToken
   black?: DesignToken
-  heavyBlack: DesignToken
+  heavyBlack?: DesignToken
 }
 
 export interface ConfigTokens extends PinceauTokens {
