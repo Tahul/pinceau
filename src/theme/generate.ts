@@ -1,7 +1,7 @@
 import type { Core as Instance } from 'style-dictionary-esm'
 import StyleDictionary from 'style-dictionary-esm'
 import type { PinceauTheme, PinceauTokens, ThemeGenerationOutput } from '../types'
-import { referencesRegex, resolveVariableFromPath, walkTokens } from '../utils'
+import { logger, referencesRegex, resolveVariableFromPath, walkTokens } from '../utils'
 import { jsFull, tsFull, tsTypesDeclaration } from './formats'
 
 export async function generateTheme(tokens: PinceauTheme, buildPath: string, silent = true): Promise<ThemeGenerationOutput> {
@@ -27,6 +27,13 @@ export async function generateTheme(tokens: PinceauTheme, buildPath: string, sil
       transformedTokens = walkTokens(
         dictionary.tokens,
         (token) => {
+          if (
+            // Skip if token has no original value
+            !token?.original?.value
+            // Skip if token has array value (TODO: Handle arrays and objects)
+            || !(typeof token.original.value === 'string' || typeof token.original.value === 'string')
+          ) { return token }
+
           // Resolve aliased properties
           const keyRegex = /{(.*)}/g
           const hasReference = token?.original?.value?.match(referencesRegex) || false
@@ -178,28 +185,40 @@ export async function generateTheme(tokens: PinceauTheme, buildPath: string, sil
     },
   })
 
-  const result = await new Promise<ThemeGenerationOutput>(
-    (resolve, reject) => {
-      try {
-        styleDictionary.registerAction({
-          name: 'done',
-          do: () => {
-            resolve({
-              tokens: transformedTokens as PinceauTheme,
-              outputs,
-              buildPath,
-            })
-          },
-          undo: () => {},
-        })
-        styleDictionary.cleanAllPlatforms()
-        styleDictionary.buildAllPlatforms()
-      }
-      catch (e) {
-        reject(e)
-      }
-    },
-  )
+  let result = {
+    tokens: {} as PinceauTheme,
+    outputs: {} as { [key: string]: any },
+    buildPath,
+  }
+
+  try {
+    result = await new Promise<ThemeGenerationOutput>(
+      (resolve, reject) => {
+        try {
+          styleDictionary.registerAction({
+            name: 'done',
+            do: () => {
+              resolve({
+                tokens: transformedTokens as PinceauTheme,
+                outputs,
+                buildPath,
+              })
+            },
+            undo: () => {},
+          })
+          styleDictionary.cleanAllPlatforms()
+          styleDictionary.buildAllPlatforms()
+        }
+        catch (e) {
+          reject(e)
+        }
+      },
+    )
+  }
+  catch (e) {
+    logger.error('Could not build your design tokens configuration! 😪')
+    logger.error(e)
+  }
 
   return result
 }

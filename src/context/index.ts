@@ -21,17 +21,11 @@ export const createContext = <UserOptions extends PinceauOptions = PinceauOption
   const configContext = usePinceauConfig<UserOptions>(
     options,
     async (resolvedConfig) => {
-      try {
-        const builtTheme = await generateTheme(resolvedConfig.config, options.outputDir as string)
+      const builtTheme = await generateTheme(resolvedConfig.config, options.outputDir as string)
 
-        updateOutputs(builtTheme)
+      updateOutputs(builtTheme)
 
-        tokens = builtTheme.tokens
-      }
-      catch (e) {
-        // eslint-disable-next-line no-console
-        console.log(e)
-      }
+      tokens = builtTheme.tokens
     },
   )
 

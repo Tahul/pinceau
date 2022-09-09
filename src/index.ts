@@ -7,6 +7,7 @@ import type { PinceauOptions } from './types'
 import { registerAliases, registerPostCssPlugins } from './utils/plugin'
 import { replaceStyleTs, transformVueSFC, transformVueStyle } from './transforms'
 import { parseVueQuery } from './utils/vue'
+import { logger } from './utils'
 
 export * from './types'
 export { defineTheme } from './theme'
@@ -81,9 +82,16 @@ export default createUnplugin<PinceauOptions>(
         const magicString = new MagicString(code, { filename: query.filename })
         const result = () => ({ code: magicString.toString(), map: magicString.generateMap({ source: id, includeContent: true }) })
 
-        // Return early when the query is scoped (usually style tags)
-        const { code: _code, early } = transformVueSFC(code, id, magicString, ctx, query)
-        if (early) { return _code }
+        try {
+          // Return early when the query is scoped (usually style tags)
+          const { code: _code, early } = transformVueSFC(code, id, magicString, ctx, query)
+          if (early) { return _code }
+        }
+        catch (e) {
+          logger.error(`Could not transform file ${query.filename || id}`)
+          logger.error(e)
+          return code
+        }
 
         return result()
       },
