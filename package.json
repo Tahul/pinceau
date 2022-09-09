@@ -1,11 +1,11 @@
 {
   "name": "pinceau",
+  "type": "module",
   "version": "0.1.14",
   "packageManager": "pnpm@7.1.1",
   "description": "A CSS-in-JS framework built to feel like a native Vue feature.",
   "license": "MIT",
   "homepage": "https://github.com/Tahul/pinceau#readme",
-  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Tahul/pinceau.git"
