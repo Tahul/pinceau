@@ -19,6 +19,7 @@ export default <Options>{
     'pathe',
     'magic-string',
     'json5',
+    'vue',
   ],
   onSuccess: 'npm run build:fix',
 }
