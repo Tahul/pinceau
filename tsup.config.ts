@@ -8,5 +8,9 @@ export default <Options>{
   format: ['esm'],
   dts: true,
   skipNodeModulesBundle: true,
+  external: [
+    '#pinceau',
+    '#pinceau/types',
+  ],
   onSuccess: 'npm run build:fix',
 }
