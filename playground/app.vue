@@ -12,10 +12,6 @@ import { theme } from '#pinceau'
       <Block velvet />
       <Block grape />
     </section>
-
-    <section>
-      <pre>{{ JSON.stringify(theme, null, 2) }}</pre>
-    </section>
   </NuxtLayout>
 </template>
 

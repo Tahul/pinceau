@@ -17,6 +17,7 @@ const props = defineProps({
 <style lang="ts" scoped>
 css({
   button: {
+    boxShadow: '{shadows.2xl}',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',

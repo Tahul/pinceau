@@ -3,7 +3,9 @@ import type { FilterStartingWith, WrapUnion } from '.'
 // @ts-ignore - Can be not found
 import type { GeneratedPinceauTheme, GeneratedTokensPaths } from '#pinceau/types'
 
-export interface DesignToken<T = string | number | any> {
+export interface DesignToken<
+  T = string | number | ShadowTokenValue | any,
+> {
   /**
    * The raw value of the token.
    */
@@ -45,6 +47,15 @@ export interface DesignToken<T = string | number | any> {
 
 export interface PinceauTokens {
   [key: string]: PinceauTokens | DesignToken | undefined
+}
+
+export interface ShadowTokenValue {
+  color?: string
+  type?: 'dropShadow' | 'innerShadow'
+  x?: string | number
+  y?: string | number
+  blur?: string | number
+  spread?: string | number
 }
 
 export interface ScaleTokens extends PinceauTokens {

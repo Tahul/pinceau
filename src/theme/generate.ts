@@ -1,5 +1,6 @@
 import type { Core as Instance } from 'style-dictionary-esm'
 import StyleDictionary from 'style-dictionary-esm'
+import { isShadowToken, transformShadow } from '../utils/shadows'
 import type { PinceauTheme, PinceauTokens, ThemeGenerationOutput } from '../types'
 import { logger, referencesRegex, resolveVariableFromPath, walkTokens } from '../utils'
 import { jsFull, tsFull, tsTypesDeclaration } from './formats'
@@ -84,10 +85,42 @@ export async function generateTheme(tokens: PinceauTheme, buildPath: string, sil
     },
   })
 
+  styleDictionary.registerTransform({
+    name: 'pinceau/boxShadows',
+    type: 'value',
+    transitive: true,
+    matcher: (token) => {
+      const value = token?.original?.value || token?.value
+
+      if (value) {
+        if (Array.isArray(value)) {
+          return value.some((value: any) => isShadowToken(value))
+        }
+        return isShadowToken(value)
+      }
+    },
+    transformer(token) {
+      const value = token?.original?.value || token?.value
+
+      let result: string | string[] = ''
+
+      if (value) {
+        if (Array.isArray(value)) {
+          result = value.map((value: any) => transformShadow(value))
+        }
+        else {
+          result = transformShadow(value)
+        }
+      }
+
+      return Array.isArray(result) ? result.join(', ') : result
+    },
+  })
+
   // Transform group used accross all tokens formats
   styleDictionary.registerTransformGroup({
     name: 'pinceau',
-    transforms: ['name/cti/kebab', 'size/px', 'color/hex', 'pinceau/variable'],
+    transforms: ['name/cti/kebab', 'size/px', 'color/hex', 'pinceau/variable', 'pinceau/boxShadows'],
   })
 
   // pinceau.d.ts

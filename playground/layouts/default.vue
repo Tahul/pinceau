@@ -54,7 +54,7 @@ html, body {
     position: sticky;
     top: 0;
     width: 100%;
-    background-color: $dt('colors.primary.500');
+    background-color: $dt('colors.black');
     z-index: 50;
     span {
       font-weight: bold;
