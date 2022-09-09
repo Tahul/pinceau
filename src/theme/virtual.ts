@@ -25,6 +25,9 @@ export default function usePinceauVirtualStore(): PinceauVirtualContext {
    * Resolves the virtual module id from an import like `pinceau.css` or `pinceau.ts`
    */
   function getOutputId(id: string) {
+    if (id.match(RESOLVED_ID_RE)) {
+      return id
+    }
     const match = id.match(VIRTUAL_ENTRY_REGEX)
     if (match) {
       return match[1]
