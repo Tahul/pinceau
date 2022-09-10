@@ -1,6 +1,5 @@
 import json5 from 'json5'
-import { stringify } from '@stitches/stringify'
-import { referencesRegex } from '../utils'
+import { referencesRegex, stringify } from '../utils'
 import type { TokensFunction } from '../types'
 
 const cssContentRegex = /css\(({.*?\})\)/mgs
@@ -57,7 +56,13 @@ export const transformCssFunction = (
     cssContentRegex,
     (...cssFunctionMatch) => {
       // Parse css({}) content
-      const declaration = json5.parse(cssFunctionMatch[1])
+      let declaration = {}
+      try {
+        declaration = json5.parse(cssFunctionMatch[1])
+      }
+      catch (e) {
+        //
+      }
 
       const style = stringify(
         declaration,
@@ -87,8 +92,8 @@ export const transformCssFunction = (
           }
 
           // Push variants to variantsProps
-          if (value.variants) {
-            resolveVariantProps(property, value.variants)
+          if (value?.variants) {
+            resolveVariantProps(property, value?.variants || {})
           }
 
           // Transform variants to nested selectors

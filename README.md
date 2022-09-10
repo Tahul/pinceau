@@ -4,11 +4,11 @@
 
 [✨ Documentation]() • [🎨 Start painting]()
 
-A CSS-in-JS framework built to feel like a native Vue feature.
+A _CSS-in-JS_ framework built to feel like a native Vue feature.
 
-- Ships **0kb** of JS to the client
-- **DX** that feels like a **native** Vue feature
-- [Design Tokens](https://github.com/design-tokens/community-group)-compatible configuration system
+- Ships **0kb** of **JS** to the client
+- **DX** that feels like a native Vue feature
+- [Design Tokens](https://github.com/design-tokens/community-group) compatible configuration system
 - Fully-typed styling API inspired from [Stitches](https://www.npmjs.com/package/@stitches/stringify)
 - Integrated with [Volar](https://github.com/johnsoncodehk/volar)
 - First-class support for [Nuxt 3](https://v3.nuxtjs.org), [Vitesse](https://github.com/antfu/vitesse), [@vitejs/plugin-vue](https://github.com/vitejs/vite/tree/main/packages/plugin-vue)

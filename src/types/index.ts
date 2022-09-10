@@ -49,9 +49,18 @@ export interface PinceauOptions {
    */
   excludes?: string[]
   /**
-   * Included transform paths
+   * Included transform paths.
    */
   includes?: string[]
+  /**
+   * Toggles color .{dark|light} global classes.
+   *
+   * If set to class, all @dark and @light clauses will also be generated
+   * with .{dark|light} classes on <html> tag as a parent selector.
+   *
+   * @default 'class'
+   */
+  colorSchemeMode?: 'media' | 'class'
 }
 
 export {}

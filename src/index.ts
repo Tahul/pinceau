@@ -2,6 +2,7 @@ import { join } from 'pathe'
 import { defu } from 'defu'
 import { createUnplugin } from 'unplugin'
 import MagicString from 'magic-string'
+import { parse } from '@vue/compiler-sfc'
 import { createContext } from './context'
 import type { PinceauOptions } from './types'
 import { registerAliases, registerPostCssPlugins } from './utils/plugin'
@@ -25,6 +26,7 @@ export const defaultOptions: PinceauOptions = {
     'node_modules/nuxt/dist',
     'node_modules/@vue/',
   ],
+  colorSchemeMode: 'class',
 }
 
 export default createUnplugin<PinceauOptions>(
@@ -41,7 +43,7 @@ export default createUnplugin<PinceauOptions>(
       vite: {
         config(config) {
           registerAliases(config, options)
-          registerPostCssPlugins(config)
+          registerPostCssPlugins(config, options)
         },
         async configResolved(config) {
           await ctx.updateCwd(config.root)
@@ -91,6 +93,17 @@ export default createUnplugin<PinceauOptions>(
           logger.error(`Could not transform file ${query.filename || id}`)
           logger.error(e)
           return code
+        }
+
+        // Parse the component code to check if it is a valid Vue SFC
+        if (query?.vue) {
+          try {
+            parse(result().code)
+          }
+          catch (e) {
+            // Return code w/o transforms when parsing fails
+            return code
+          }
         }
 
         return result()

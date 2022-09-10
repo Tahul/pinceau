@@ -6,7 +6,7 @@ importers:
     specifiers:
       '@antfu/eslint-config': ^0.26.3
       '@nuxt/kit': 3.0.0-rc.9
-      '@stitches/stringify': ^1.2.8
+      '@nuxtjs/color-mode': ^3.1.5
       '@types/chroma-js': ^2.1.4
       '@types/node': ^18.7.16
       '@unocss/reset': ^0.45.18
@@ -23,6 +23,7 @@ importers:
       nodemon: ^2.0.19
       normalize.css: ^8.0.1
       postcss-custom-properties: ^12.1.8
+      postcss-dark-theme-class: ^0.7.3
       postcss-nested: ^5.0.6
       recast: ^0.21.2
       release-it: ^15.4.1
@@ -37,7 +38,6 @@ importers:
       vitest: ^0.23.1
       webpack: ^5.74.0
     dependencies:
-      '@stitches/stringify': 1.2.8
       '@unocss/reset': 0.45.18
       '@volar/vue-language-core': 0.40.13
       chroma-js: 2.4.2
@@ -48,6 +48,7 @@ importers:
       magic-string: 0.26.3
       normalize.css: 8.0.1
       postcss-custom-properties: 12.1.8
+      postcss-dark-theme-class: 0.7.3
       postcss-nested: 5.0.6
       recast: 0.21.2
       scule: 0.3.2
@@ -56,6 +57,7 @@ importers:
     devDependencies:
       '@antfu/eslint-config': 0.26.3_itqs5654cmlnjraw6gjzqacppi
       '@nuxt/kit': 3.0.0-rc.9_fur7awe7sddig5uusmg32radwu
+      '@nuxtjs/color-mode': 3.1.5_fur7awe7sddig5uusmg32radwu
       '@types/chroma-js': 2.1.4
       '@types/node': 18.7.16
       eslint: 8.23.0
@@ -959,6 +961,20 @@ packages:
       - webpack
     dev: true
 
+  /@nuxtjs/color-mode/3.1.5_fur7awe7sddig5uusmg32radwu:
+    resolution: {integrity: sha512-i5guOxWn3XkHwVdzLZ7iYGMw9fasj6UjiQYaVtD3PyuFNBY3LtdoipUS7ItkMo89ZnOYwf88dLURwOtx247rRw==}
+    dependencies:
+      '@nuxt/kit': 3.0.0-rc.9_fur7awe7sddig5uusmg32radwu
+      lodash.template: 4.5.0
+      pathe: 0.3.7
+    transitivePeerDependencies:
+      - esbuild
+      - rollup
+      - supports-color
+      - vite
+      - webpack
+    dev: true
+
   /@octokit/auth-token/3.0.1:
     resolution: {integrity: sha512-/USkK4cioY209wXRpund6HZzHo9GmjakpV9ycOkpMcMxMk7QVcVFVyCMtzvXYiHsB2crgDgrtNYSELYFBXhhaA==}
     engines: {node: '>= 14'}
@@ -1198,10 +1214,6 @@ packages:
     resolution: {integrity: sha512-CX6t4SYQ37lzxicAqsBtxA3OseeoVrh9cSJ5PFYam0GksYlupRfy1A+Q4aYD3zvcfECLc0zO2u+ZnR2UYKvCrw==}
     engines: {node: '>=14.16'}
     dev: true
-
-  /@stitches/stringify/1.2.8:
-    resolution: {integrity: sha512-juDrnCsfBlckOu0pFOCzEN8iX6oIbLS7vFlrqXwG0Y6yzS6EnOtbP4NGNtB7XzyF9u82jLoCDq1EmBwsgBssqQ==}
-    dev: false
 
   /@szmarczak/http-timer/5.0.1:
     resolution: {integrity: sha512-+PmQX0PiAYPMeVYe237LJAYvOMYW1j2rH5YROyS3b4CTVJum34HfRvKvAzozHAQG0TnHNdUfY9nCeUyRAs//cw==}
@@ -6102,6 +6114,16 @@ packages:
         optional: true
     dependencies:
       postcss-value-parser: 4.2.0
+    dev: false
+
+  /postcss-dark-theme-class/0.7.3:
+    resolution: {integrity: sha512-M9vtfh8ORzQsVdT9BWb+xpEDAzC7nHBn7wVc988/JkEVLPupKcUnV0jw7RZ8sSj0ovpqN1POf6PLdt19JCHfhQ==}
+    engines: {node: '>=12.0'}
+    peerDependencies:
+      postcss: ^8.2.14
+    peerDependenciesMeta:
+      postcss:
+        optional: true
     dev: false
 
   /postcss-discard-comments/5.1.2_postcss@8.4.16:

@@ -63,7 +63,6 @@
     "test": "vitest"
   },
   "dependencies": {
-    "@stitches/stringify": "^1.2.8",
     "@unocss/reset": "^0.45.18",
     "@volar/vue-language-core": "^0.40.13",
     "chroma-js": "^2.4.2",
@@ -74,6 +73,7 @@
     "magic-string": "^0.26.3",
     "normalize.css": "^8.0.1",
     "postcss-custom-properties": "^12.1.8",
+    "postcss-dark-theme-class": "^0.7.3",
     "postcss-nested": "^5.0.6",
     "recast": "^0.21.2",
     "scule": "^0.3.2",
@@ -83,6 +83,7 @@
   "devDependencies": {
     "@antfu/eslint-config": "^0.26.3",
     "@nuxt/kit": "3.0.0-rc.9",
+    "@nuxtjs/color-mode": "^3.1.5",
     "@types/chroma-js": "^2.1.4",
     "@types/node": "^18.7.16",
     "eslint": "^8.23.0",
