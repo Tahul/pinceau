@@ -15,7 +15,7 @@ const castValue = (_value: string | number, $tokens: TokensFunction): string | n
     (...parts) => {
       const [, tokenPath] = parts
 
-      const token = $tokens(tokenPath)
+      const token = $tokens(tokenPath, { key: 'attributes.variable' })
 
       return token
     },
