@@ -14,6 +14,17 @@ export async function generateTheme(tokens: PinceauTheme, buildPath: string, sil
     aliases: {},
   }
 
+  let result = {
+    tokens: {} as PinceauTheme,
+    outputs: {} as { [key: string]: any },
+    buildPath,
+  }
+
+  // Skip generation if no tokens provided
+  if (!tokens || typeof tokens !== 'object' || !Object.keys(tokens).length) {
+    return result
+  }
+
   // Tokens processed through dictionary
   let transformedTokens: PinceauTokens
   let transformedTokensTyping: any
@@ -217,12 +228,6 @@ export async function generateTheme(tokens: PinceauTheme, buildPath: string, sil
       },
     },
   })
-
-  let result = {
-    tokens: {} as PinceauTheme,
-    outputs: {} as { [key: string]: any },
-    buildPath,
-  }
 
   try {
     result = await new Promise<ThemeGenerationOutput>(
