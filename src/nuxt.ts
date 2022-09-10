@@ -17,6 +17,9 @@ const module: any = defineNuxtModule<PinceauOptions>({
     // Merge options here in Nuxt context so we have access to proper values for local features
     options = defu(options, defaultOptions)
 
+    // Call options hook
+    await nuxt.callHook('pinceau:options', options)
+
     // Automatically inject generated types to tsconfig
     nuxt.hook('prepare:types', (opts) => {
       const tsConfig: typeof opts.tsConfig & { vueCompilerOptions?: any } = opts.tsConfig

@@ -63,4 +63,19 @@ export interface PinceauOptions {
   colorSchemeMode?: 'media' | 'class'
 }
 
+export interface ModuleHooks {
+  'pinceau:options': (options?: PinceauOptions) => Promise<void> | void
+}
+
+export interface ModuleOptions extends PinceauOptions {}
+
+declare module '@nuxt/schema' {
+  interface NuxtHooks {
+    'pinceau:options': ModuleHooks['pinceau:options']
+  }
+  interface NuxtConfig {
+    pinceau?: ModuleOptions
+  }
+}
+
 export {}

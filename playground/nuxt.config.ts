@@ -6,4 +6,11 @@ export default defineNuxtConfig({
   pinceau: {
     configFileName: 'tokens.config',
   },
+  hooks: {
+    // @ts-expect-error - ???
+    'pinceau:options': (options) => {
+      // console.log({ options })
+      return options
+    },
+  },
 })
