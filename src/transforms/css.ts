@@ -1,5 +1,6 @@
 import json5 from 'json5'
-import { referencesRegex, stringify } from '../utils'
+import chalk from 'chalk'
+import { logger, referencesRegex, stringify } from '../utils'
 import type { TokensFunction } from '../types'
 
 const cssContentRegex = /css\(({.*?\})\)/mgs
@@ -84,9 +85,16 @@ export const transformCssFunction = (
               }
             }
             if (screenMatches) {
-              const screenToken = $tokens(`screens.${screenMatches[1]}` as any, { key: undefined })
+              const screen = screenMatches[1]
+              const screenToken = $tokens(`screens.${screen}` as any, { key: undefined })
+              const tokenValue = (screenToken as any)?.original?.value
+
+              if (!tokenValue) {
+                logger.warn(`This screen size is not defined: ${chalk.red(screen)}\n`)
+              }
+
               return {
-                [`@media (min-width: ${(screenToken as any).original.value})`]: value,
+                [`@media (min-width: ${tokenValue || '0px'})`]: value,
               }
             }
           }

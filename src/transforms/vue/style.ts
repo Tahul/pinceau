@@ -72,10 +72,7 @@ export function transformScreens(code = '', $tokens: TokensFunction): string {
         return `@media (min-width: ${screenToken.value}) {`
       }
 
-      logger.warn(
-        `This screen size is not defined: ${chalk.red(screenSize)}\n\n`,
-        'Available screen sizes: ', Object.keys(screens).map(screen => chalk.green(screen)).join(', '),
-      )
+      logger.warn(`This screen size is not defined: ${chalk.red(screenSize)}\n`)
 
       return '@media (min-width: 0px) {'
     },
