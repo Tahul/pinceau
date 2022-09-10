@@ -6,6 +6,9 @@ import { kebabCase } from 'scule'
  * - [Pedro Duarte](https://twitter.com/peduarte)
  * - [Jonathan Neal](https://twitter.com/jon_neal)
  * - [Abdulhadi Alhallak](https://twitter.com/hadi_hlk)
+ *
+ * I had to fork this part to have control over it and add special integrations
+ * for Vue like `v-bind()`, `:global`, and other `$` prefix.
  */
 
 /** Comma matcher outside rounded brackets. */
