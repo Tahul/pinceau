@@ -1,36 +1,20 @@
 import json5 from 'json5'
 import chalk from 'chalk'
-import { logger, referencesRegex, stringify } from '../utils'
+import { cssContentRegex, logger, resolveReferences, resolveRgbaTokens, stringify } from '../utils'
 import type { TokensFunction } from '../types'
 
-const cssContentRegex = /css\(({.*?\})\)/mgs
-
-const castValue = (_value: string | number, $tokens: TokensFunction): string | number => {
-  if (typeof _value === 'number') {
-    return _value
+const castValue = (key: string, value: string | number, $tokens: TokensFunction): string | number => {
+  if (typeof value === 'number') {
+    return value
   }
-  _value = _value.replace(
-    referencesRegex,
-    // @ts-expect-error - ?
-    (...parts) => {
-      const [, tokenPath] = parts
 
-      const token = $tokens(tokenPath, { key: 'attributes.variable' })
+  value = resolveRgbaTokens(key, value, $tokens)
 
-      return token
-    },
-  )
-  if (_value === '{}') {
-    return ''
-  }
-  return _value
-}
+  value = resolveReferences(key, value, $tokens)
 
-const resolveValue = (value: string | string[] | number | number[], $tokens: TokensFunction): string | number | (string | number)[] => {
-  if (Array.isArray(value)) {
-    return value.map(v => castValue(v, $tokens)).join(',')
-  }
-  return castValue(value, $tokens)
+  if (value === '{}') { return '' }
+
+  return value
 }
 
 export const transformCssFunction = (
@@ -74,16 +58,19 @@ export const transformCssFunction = (
             const LIGHT = '@light'
             const SCREEN = /@screen:(.*)/
             const screenMatches = property.match(SCREEN)
+
             if (property === DARK) {
               return {
                 '@media (prefers-color-scheme: dark)': value,
               }
             }
+
             if (property === LIGHT) {
               return {
                 '@media (prefers-color-scheme: light)': value,
               }
             }
+
             if (screenMatches) {
               const screen = screenMatches[1]
               const screenToken = $tokens(`screens.${screen}` as any, { key: undefined })
@@ -115,8 +102,14 @@ export const transformCssFunction = (
             )
           }
 
+          // Resolve final value
           if (Array.isArray(value) || typeof value === 'string' || typeof value === 'number') {
-            value = resolveValue(value, $tokens)
+            if (Array.isArray(value)) {
+              value = value.map(v => castValue(property, v, $tokens)).join(',')
+            }
+            else {
+              value = castValue(property, value, $tokens)
+            }
           }
 
           return {

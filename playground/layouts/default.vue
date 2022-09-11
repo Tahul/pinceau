@@ -34,16 +34,12 @@ html, body {
   align-items: center;
   flex-direction: column;
   overflow-y: auto;
-  background-color: $dt('colors.primary.500');
   color: white;
   margin: 0;
   padding: 0;
+  background-color: $dt('colors.primary.200');
 
   @dark {
-    background-color: $dt('colors.primary.200');
-  }
-
-  @screen lg {
     background-color: $dt('colors.primary.900');
   }
 

@@ -31,9 +31,18 @@ export interface DesignToken<
    */
   palette?: Boolean
   /**
+   * The original values (not transformed)
+   */
+  original?: Omit<DesignToken, 'original'>
+  /**
    * Token extraneous attributes.
    */
   attributes?: {
+    // If value is a color
+    hsl?: string
+    rgb?: string
+    hex?: string
+    variable?: string
     category?: string
     type?: string
     item?: string

@@ -25,7 +25,6 @@ css({
     width: '320px',
     height: '320px',
     border: '16px solid {colors.grey}',
-    padding: '',
     position: 'relative',
     '&:hover': {
       border: '8px solid blue',
@@ -36,7 +35,7 @@ css({
     },
     variants: {
       primary: {
-        backgroundColor: '{colors.primary.500}',
+        backgroundColor: 'rgba({colors.primary.500}, 0.2)',
       },
       black: {
         backgroundColor: '{colors.black}',
