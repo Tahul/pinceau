@@ -302,6 +302,7 @@ The `css()` function has mutliple features:
   })
   </style>
   ```
+
   </details>
 
 - Supports [`postcss-nested`](https://github.com/postcss/postcss-nested) syntax
@@ -310,7 +311,7 @@ The `css()` function has mutliple features:
   <summary>Example</summary>
   <br>
   
-  ```
+  ```vue
   <style lang="ts">
   css({
     '.phone': {
@@ -324,6 +325,7 @@ The `css()` function has mutliple features:
   })
   </style>
   ```
+
   </details>
 
 - Supports [`postcss-custom-properties`](https://github.com/postcss/postcss-custom-properties) syntax
@@ -341,6 +343,7 @@ The `css()` function has mutliple features:
   })
   </style>
   ```
+
   </details>
 
 - Supports all custom features from Vue `<style>` attributes
@@ -403,6 +406,7 @@ The `css()` function has mutliple features:
   })
   </style>
   ```
+
   </details>
 
 - Supports [`@nuxtjs/color-mode`](https://color-mode.nuxtjs.org)
@@ -615,7 +619,7 @@ There is plenty of features to come, including:
   <details>
   <summary>Example</summary>
 
-  ```
+  ```ts
   // Theme config
   defineTheme({
     colors: {
@@ -630,8 +634,8 @@ There is plenty of features to come, including:
     },
     utils: {
       surface: (value: ThemeKeys<'colors'>) => ({
-        'backgroundColor': `{colors.${value}.dark}`,
-        'borderColor': `{colors.${value}.light}`
+        backgroundColor: `{colors.${value}.dark}`,
+        borderColor: `{colors.${value}.light}`
       })
     }
   })
