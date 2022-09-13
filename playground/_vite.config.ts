@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import Inspect from 'vite-plugin-inspect'
 import Vue from '@vitejs/plugin-vue'
 import { join } from 'pathe'
-import Unplugin from '../src/vite'
+import Unplugin from '../dist/vite'
 
 export default defineConfig({
   logLevel: 'info',

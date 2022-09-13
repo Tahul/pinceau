@@ -1,6 +1,5 @@
 {
   "name": "pinceau",
-  "type": "module",
   "version": "0.1.26",
   "packageManager": "pnpm@7.1.1",
   "description": "A CSS-in-JS framework built to feel like a native Vue feature.",
@@ -23,18 +22,22 @@
     "vite"
   ],
   "exports": {
-    ".": "./dist/index.js",
-    "./utils": "./dist/utils.js",
-    "./vite": "./dist/vite.js",
-    "./webpack": "./dist/webpack.js",
-    "./rollup": "./dist/rollup.js",
-    "./esbuild": "./dist/esbuild.js",
-    "./nuxt": "./dist/nuxt.js",
-    "./volar": "./volar/index.js",
-    "./*": "./*"
+    ".": {
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.mjs"
+    },
+    "./vite": {
+      "require": "./dist/vite.cjs",
+      "import": "./dist/vite.mjs"
+    },
+    "./nuxt": {
+      "require": "./dist/nuxt.cjs",
+      "import": "./dist/nuxt.mjs"
+    },
+    "./volar": "./volar/index.js"
   },
-  "main": "dist/index.js",
-  "module": "dist/index.js",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "typesVersions": {
     "*": {
@@ -49,8 +52,7 @@
     "volar"
   ],
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch src",
+    "build": "unbuild",
     "build:fix": "esno scripts/postbuild.ts",
     "lint": "eslint .",
     "build:play": "npm -C playground run build",
@@ -63,21 +65,20 @@
     "test": "vitest"
   },
   "dependencies": {
-    "@unocss/reset": "^0.45.18",
+    "@unocss/reset": "^0.45.21",
     "@volar/vue-language-core": "^0.40.13",
     "chroma-js": "^2.4.2",
     "consola": "^2.15.3",
-    "csstype": "^3.1.0",
+    "csstype": "^3.1.1",
     "defu": "^6.1.0",
-    "magic-regexp": "^0.4.1",
     "magic-string": "^0.26.3",
-    "normalize.css": "^8.0.1",
     "postcss-custom-properties": "^12.1.8",
     "postcss-dark-theme-class": "^0.7.3",
     "postcss-nested": "^5.0.6",
     "recast": "^0.21.2",
     "scule": "^0.3.2",
     "style-dictionary-esm": "^1.0.14",
+    "unbuild": "^0.8.11",
     "unplugin": "^0.9.5"
   },
   "devDependencies": {
@@ -85,15 +86,14 @@
     "@nuxt/kit": "3.0.0-rc.9",
     "@nuxtjs/color-mode": "^3.1.5",
     "@types/chroma-js": "^2.1.4",
-    "@types/node": "^18.7.16",
-    "eslint": "^8.23.0",
+    "@types/node": "^18.7.17",
+    "eslint": "^8.23.1",
     "esno": "^0.16.3",
     "fast-glob": "^3.2.12",
     "nodemon": "^2.0.19",
     "release-it": "^15.4.1",
     "rimraf": "^3.0.2",
     "rollup": "^2.79.0",
-    "tsup": "^6.2.3",
     "typescript": "^4.8.3",
     "vite": "^3.1.0",
     "vitest": "^0.23.2",

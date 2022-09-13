@@ -1,6 +1,6 @@
 import fs from 'fs'
 import chalk from 'chalk'
-import { parse } from 'vue/compiler-sfc'
+import { parse } from '@vue/compiler-sfc'
 import type { PinceauContext, TokensFunction } from '../../types'
 import { logger } from '../../utils'
 import type { VueQuery } from '../../utils/vue'
