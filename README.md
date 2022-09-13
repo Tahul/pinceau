@@ -204,7 +204,7 @@ Pinceau enables `lang="ts"` as a valid attribute for `<style>` or `<style scoped
 
 That enables the usage of another internal API, `css()`.
 
-```
+```vue
 <style lang="ts">
 css({
   color: '{colors.primary}'
@@ -224,7 +224,7 @@ The `css()` function has mutliple features:
   <summary>Example</summary>
   <br>
   
-  ```
+  ```vue
   <style lang="ts">
   css({
     color: '{*}', < Will autocomplete from all 'colors' keys,
@@ -244,11 +244,11 @@ The `css()` function has mutliple features:
   <summary>Example</summary>
   <br>
   
-  ```
+  ```vue
   <template>
     <div>
       <button>
-      Hello World!
+        Hello World!
       </button>
     </div>
   </template>
@@ -289,7 +289,7 @@ The `css()` function has mutliple features:
   <summary>Example</summary>
   <br>
   
-  ```
+  ```vue
   <style lang="ts">
   css({
     '.phone': {
@@ -306,7 +306,7 @@ The `css()` function has mutliple features:
   <summary>Example</summary>
   <br>
   
-  ```
+  ```vue
   <script setup>
   defineProps({
     color: {
@@ -344,7 +344,7 @@ The `css()` function has mutliple features:
   <summary>Example</summary>
   <br>
   
-  ```
+  ```vue
   <style lang="ts">
   css({
     '.block': {
@@ -368,7 +368,7 @@ The `css()` function has mutliple features:
   <summary>Example</summary>
   <br>
   
-  ```
+  ```vue
   <style lang="ts">
   css({
     '@sepia': {
@@ -406,7 +406,7 @@ The `css()` function has mutliple features:
   
   - Component
 
-  ```
+  ```vue
   <style lang="ts">
   css({
     '.block': {
@@ -426,7 +426,7 @@ The `css()` function has mutliple features:
   <summary>Example</summary>
   <br>
 
-  ```
+  ```vue
   <style lang="ts">
   css({
     '.block': {
@@ -444,17 +444,17 @@ The `css()` function has mutliple features:
   <summary>Example</summary>
   <br>
 
-  ```
-  <template>
-  <div :class="['block', blockTransparent]" />
-  </template>
-
+  ```vue
   <script setup>
   defineProps({
     // This part is WIP (and fully optional)
     ...variantsProps('block')
   })
   </script>
+  
+  <template>
+    <div class="block" :class="[blockTransparent]" />
+  </template>
 
   <style lang="ts">
   css({
@@ -471,7 +471,6 @@ The `css()` function has mutliple features:
   ```
 
   </details>
-
 
 ## 💖 Credits
 
