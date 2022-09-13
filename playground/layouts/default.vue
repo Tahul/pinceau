@@ -4,7 +4,7 @@
   >
     <header>
       <span>
-        @nuxtjs/design-tokens
+        Pinceau 🖌
       </span>
     </header>
 

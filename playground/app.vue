@@ -23,7 +23,7 @@ css({
     overflowY: 'auto',
     padding: '1rem 2rem',
     zIndex: '50',
-    '& > * + *': {
+    '& > button + *': {
       marginTop: '1rem'
     }
   }
