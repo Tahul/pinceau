@@ -2,9 +2,9 @@
 
 [![NPM version](https://img.shields.io/npm/v/pinceau?color=a1b858&label=)](https://www.npmjs.com/package/pinceau)
 
-[✨ Documentation](#documentation) • [🎨 Start painting]()
-
 A _CSS-in-JS_ framework built to feel like a native Vue feature.
+
+[🎨 Start painting](https://stackblitz.com/github/Tahul/vitesse-pinceau?file=src%2FApp.vue) • [🚧 Documentation](#install)
 
 - Ships **0kb** of **JS** to the client
 - **DX** that feels like a native Vue feature
@@ -122,6 +122,15 @@ export interface PinceauOptions {
   colorSchemeMode?: 'media' | 'class'
 }
 ```
+
+</details>
+
+<details>
+<summary>Volar</summary>
+
+If you want to have all autocomplete and TypeScript powered features, you need to setup [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) in your IDE.
+
+That also means these features sadly won't work in the [StackBlitz playground](https://stackblitz.com/github/Tahul/vitesse-pinceau?file=src%2FApp.vue), unless they provide support for it at some point.
 
 </details>
 
