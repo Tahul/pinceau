@@ -13,6 +13,10 @@ A _CSS-in-JS_ framework built to feel like a native Vue feature.
 - Integrated with [Volar](https://github.com/johnsoncodehk/volar)
 - First-class support for [Nuxt 3](https://v3.nuxtjs.org), [Vitesse](https://github.com/antfu/vitesse), [@vitejs/plugin-vue](https://github.com/vitejs/vite/tree/main/packages/plugin-vue)
 
+#### 🚨 Warning
+
+> Pinceau is still under heavy development, if you are missing some parts of the documentation, please [open an issue](https://github.com/Tahul/pinceau) and describe your problem. I'll be happy to help.
+
 ## ⚙️ Install
 
 ```bash
@@ -29,14 +33,16 @@ export default defineNuxtConfig({
     'pinceau/nuxt',
   ],
   pinceau: {
-    /* options */
+    ...PinceauOptions
   }
 })
 ```
 
+Example: [`playground/`](./playground/)
+
 > This module only works with [Nuxt 3](https://v3.nuxtjs.org).
 
-<br></details>
+</details>
 
 <details>
 <summary>Vite</summary><br>
@@ -47,45 +53,77 @@ import Pinceau from 'pinceau/vite'
 
 export default defineConfig({
   plugins: [
-    Pinceau({ /* options */ }),
+    Pinceau(PinceauOptions),
   ],
 })
 ```
 
 Example: [`playground/`](./playground/)
 
-<br></details>
+</details>
 
 <details>
-<summary>Rollup</summary><br>
+<summary>PinceauOptions</summary>
 
 ```ts
-// rollup.config.js
-import Pinceau from 'pinceau/rollup'
-
-export default {
-  plugins: [
-    Pinceau({ /* options */ }),
-  ],
+export interface PinceauOptions {
+  /**
+   * The root directory of your project.
+   *
+   * @default process.cwd()
+   */
+  cwd?: string
+  /**
+   * The path of your configuration file.
+   */
+  configOrPaths?: ConfigOrPaths
+  /**
+   * The path of your configuration file.
+   *
+   * @default 'pinceau.config'
+   */
+  configFileName?: string
+  /**
+   * A callback called each time your config gets resolved.
+   */
+  configResolved?: (config: PinceauTheme) => void
+  /**
+   * The directry in which you store your design tokens.
+   *
+   * @default 'tokens'
+   */
+  tokensDir?: string
+  /**
+   * The directory in which you want to output the built version of your configuration.
+   */
+  outputDir?: string
+  /**
+   * Imports the default CSS reset in the project.
+   *
+   * @default true
+   */
+  preflight?: boolean
+  /**
+   * Excluded transform paths.
+   */
+  excludes?: string[]
+  /**
+   * Included transform paths.
+   */
+  includes?: string[]
+  /**
+   * Toggles color .{dark|light} global classes.
+   *
+   * If set to class, all @dark and @light clauses will also be generated
+   * with .{dark|light} classes on <html> tag as a parent selector.
+   *
+   * @default 'class'
+   */
+  colorSchemeMode?: 'media' | 'class'
 }
 ```
 
-<br></details>
-
-<details>
-<summary>esbuild</summary><br>
-
-```ts
-// esbuild.config.js
-import { build } from 'esbuild'
-import Pinceau from 'pinceau/esbuild'
-
-build({
-  plugins: [Pinceau({ /* options */ })],
-})
-```
-
-<br></details>
+</details>
 
 ## 🎨 Configure
 
@@ -192,6 +230,8 @@ Out of your configuration file, **Pinceau** will generate multiple output target
 - Globally injected CSS variables
 - A lot more for you to discover, and for me to document ✨
 
+This is powered by [style-dictionary](https://github.com/amzn/style-dictionary) and runs on [style-dictionary-esm](https://github.com/Tahul/style-dictionary-esm).
+
 ## 🖌 Paint
 
 Pinceau styling API is made to feel like a native Vue API.
@@ -207,7 +247,10 @@ That enables the usage of another internal API, `css()`.
 ```vue
 <style lang="ts">
 css({
-  color: '{colors.primary}'
+  div: {
+    color: '{colors.primary}',
+    backgroundColor: '{colors.orange.50}'
+  }
 })
 </style>
 ```
@@ -418,6 +461,8 @@ The `css()` function has mutliple features:
   })
   </style>
   ```
+
+  You can add as many screen you need, they will all get autocompleted.
   </details>
 
 
@@ -472,6 +517,145 @@ The `css()` function has mutliple features:
 
   </details>
 
+### `$dt()` <span style="font-size: 12px; font-style: italic;">$designToken</span>
+
+In addition to `css()`, `$dt()` comes with everything you need to use your Design Tokens outside of `<style>`.
+
+```vue
+<script setup>
+defineProps({
+  color: {
+    type: String,
+    required: false,
+    default: $dt('colors.primary')
+  }
+})
+
+const orangeVariable = $dt('colors.orange.500')
+</script>
+
+<template>
+  <div :style="{ backgroundColor: color }">
+    {{ $dt('colors.primary') }}
+  </div>
+</template>
+
+<style lang="postcss">
+div {
+  color: $dt('colors.orange.900')
+}
+</style>
+```
+
+`$dt()` helper will autocomplete all theme keys anywhere in your app.
+
+### Options
+
+`$dt()` supports options as a second argument, allowing you not only to grab CSS variables from your token, but the whole definition from a token, or a tree of token.
+
+```ts
+/**
+ * The key that will be unwrapped from the design token object.
+ * 
+ * Supports `nested.key.syntax`.
+ * 
+ * Can be set to `undefined` to return the whole design token object.
+ * 
+ * @default 'attributes.variable'
+ */
+key?: string
+/**
+ * Toggle deep flattening of the design token object to the requested key.
+ *
+ * If you query an token path containing mutliple design tokens and want a flat \`key: value\` object.
+ * 
+ * @default false
+ */
+flatten?: boolean
+```
+
+```ts
+const allColors = $dt('colors', { flatten: false, key: undefined })
+const orangeColor = $dt('colors.orange', { key: undefined })
+```
+
+This is considered as advanced usage and these options might be subject to changes.
+
+Accessing CSS variables via `$dt('token.path')` should stay the same.
+
+#### 🚨 Warning
+
+Please note that `$dt()` acts as a macro, like `defineProps` or `defineEmits`.
+
+It will be replaced when your component gets transformed by Vite by the static value of the token.
+
+That means the only valid value for `$dt()` is a plain string, not a reference to a string.
+
+```vue
+<script setup>
+const test = $dt('colors.primary.500') // ✅ Valid
+
+const ref = ref('colors.primary.500')
+const refTest = $dt(ref.value) // 🚨 Invalid
+</script>
+```
+
+## 🚀 More to come
+
+Pinceau is currently in ⚡️ active ⚡️ development.
+
+There is plenty of features to come, including:
+
+- Proper test suite
+  - Configuration side relies on [style-dictionary-esm](https://github.com/Tahul/style-dictionary-esm) which is heavily tested
+  - `css()` core API relies on [`@stitches/stringify`] which also has tests, as this package maintains local implementation of it, I'll add some more tests to it.
+  - All CSS transforms applied on `.vue` components are built with testing in mind
+
+- Util properties
+  <details>
+  <summary>Example</summary>
+
+  ```
+  // Theme config
+  defineTheme({
+    colors: {
+      primary: {
+        light: {
+          value: '#B6465F'
+        },
+        dark: {
+          value: '#4D1C26'
+        }
+      }
+    },
+    utils: {
+      surface: (value: ThemeKeys<'colors'>) => ({
+        'backgroundColor': `{colors.${value}.dark}`,
+        'borderColor': `{colors.${value}.light}`
+      })
+    }
+  })
+
+  // Component <style lang="ts">
+  css({
+    surface: 'primary'
+  })
+  ```
+
+    </details>
+
+- Configuring your own [transforms](https://amzn.github.io/style-dictionary/#/transforms), [formats](https://amzn.github.io/style-dictionary/#/formats) and [actions](https://amzn.github.io/style-dictionary/#/actions)
+
+- 🌐 Documentation website
+
+- 🎨 Online playground
+
+- Autogenerating props from declared variants (`$variantProps`)
+
+- Maybe [yours](https://github.com/Tahul/pinceau/issues)? I'm happy to provide guidance and reviews on any PR!
+
+- And even more! 🚀
+
 ## 💖 Credits
 
 - [Sébastien Chopin](https://github.com/Atinux)
@@ -484,6 +668,12 @@ The `css()` function has mutliple features:
   - [Jonathan Neal](https://twitter.com/jon_neal)
   - [Abdulhadi Alhallak](https://twitter.com/hadi_hlk)
 
+This package takes inspiration in a lot of other projects, such as [style-dictionary](https://github.com/amzn/style-dictionary), [Stitches](https://stitches.dev), [vanilla-extract](https://vanilla-extract.style/), [unocss](https://github.com/unocss/unocss).
+
 ## License
 
 [MIT](./LICENSE) License &copy; 2022-PRESENT [Yaël GUILLOUX](https://github.com/Tahul)
+
+---
+
+> _“All you need to paint is a few tools, a little instruction, and a vision in your mind.”_ • Bob Ross
