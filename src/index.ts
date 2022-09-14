@@ -1,3 +1,4 @@
+import process from 'process'
 import { join } from 'pathe'
 import { defu } from 'defu'
 import { createUnplugin } from 'unplugin'
@@ -52,6 +53,7 @@ export default createUnplugin<PinceauOptions>(
           ctx.setViteServer(server)
           ctx.env = 'dev'
           await ctx.ready
+          process.setMaxListeners(0)
           ctx.registerConfigWatchers(server)
         },
         handleHotUpdate(ctx) {

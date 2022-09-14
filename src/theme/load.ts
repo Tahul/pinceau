@@ -50,7 +50,7 @@ export async function loadConfig<U extends PinceauTheme>(
       },
       [],
     ),
-  ]
+  ].reverse()
 
   // Dedupe sources
   sources = sources.reduce<ConfigLayer[]>(
