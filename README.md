@@ -65,6 +65,8 @@ Example: [`playground/`](./playground/)
 <details>
 <summary>PinceauOptions</summary>
 
+<br/>
+
 ```ts
 export interface PinceauOptions {
   /**
@@ -128,9 +130,23 @@ export interface PinceauOptions {
 <details>
 <summary>Volar</summary>
 
+<br>
+
 If you want to have all autocomplete and TypeScript powered features, you need to setup [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) in your IDE.
 
 That also means these features sadly won't work in the [StackBlitz playground](https://stackblitz.com/github/Tahul/vitesse-pinceau?file=src%2FApp.vue), unless they provide support for it at some point.
+
+Once Volar enabled, add the Pinceau plugin to your `tsconfig.json`:
+
+```json
+{
+  "vueCompilerOptions": {
+    "plugins": ["pinceau/volar"]
+  }
+}
+```
+
+Once enabled, be sure to restart your TypeScript server, and enjoy autocompletion!
 
 </details>
 
