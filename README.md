@@ -676,6 +676,8 @@ There is plenty of features to come, including:
 - [Daniel Roe](https://github.com/danielroe)
 - [Anthony Fu](https://github.com/antfu)
 - [Johnson Chu](https://github.com/johnsoncodehk)
+- [@patak](https://github.com/patak-dev)
+- [Serhii Bedrytskyi](https://github.com/bdrtsky)
 - [The Stitches Team](https://stitches.dev)
   - [Pedro Duarte](https://twitter.com/peduarte)
   - [Jonathan Neal](https://twitter.com/jon_neal)
