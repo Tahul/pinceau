@@ -2,7 +2,7 @@
 
 [![NPM version](https://img.shields.io/npm/v/pinceau?color=a1b858&label=)](https://www.npmjs.com/package/pinceau)
 
-A _CSS-in-JS_ framework built to feel like a native Vue feature.
+A _CSS-in-TS_ framework built to feel like a native Vue feature.
 
 [🎨 Start painting](https://stackblitz.com/github/Tahul/vitesse-pinceau?file=src%2FApp.vue) • [🚧 Documentation](#install)
 
