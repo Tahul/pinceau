@@ -289,7 +289,7 @@ The `css()` function has mutliple features:
 - Autocomplete CSS values from theme design tokens
 
   <details>
-  <summary>Example</summary>
+  <summary>💡 Example</summary>
   <br>
   
   ```vue
@@ -309,7 +309,7 @@ The `css()` function has mutliple features:
 - Autocomplete root keys from your `<template>` elements
 
   <details>
-  <summary>Example</summary>
+  <summary>💡 Example</summary>
   <br>
   
   ```vue
@@ -333,7 +333,7 @@ The `css()` function has mutliple features:
 - Supports [`postcss-nested`](https://github.com/postcss/postcss-nested) syntax
 
   <details>
-  <summary>Example</summary>
+  <summary>💡 Example</summary>
   <br>
   
   ```vue
@@ -356,7 +356,7 @@ The `css()` function has mutliple features:
 - Supports [`postcss-custom-properties`](https://github.com/postcss/postcss-custom-properties) syntax
 
   <details>
-  <summary>Example</summary>
+  <summary>💡 Example</summary>
   <br>
   
   ```vue
@@ -374,7 +374,7 @@ The `css()` function has mutliple features:
 - Supports all custom features from Vue `<style>` attributes
 
   <details>
-  <summary>Example</summary>
+  <summary>💡 Example</summary>
   <br>
   
   ```vue
@@ -412,7 +412,7 @@ The `css()` function has mutliple features:
 - Supports `@dark` & `@light` helpers
 
   <details>
-  <summary>Example</summary>
+  <summary>💡 Example</summary>
   <br>
   
   ```vue
@@ -437,7 +437,7 @@ The `css()` function has mutliple features:
 - Supports [`@nuxtjs/color-mode`](https://color-mode.nuxtjs.org)
 
   <details>
-  <summary>Example</summary>
+  <summary>💡 Example</summary>
   <br>
   
   ```vue
@@ -456,7 +456,7 @@ The `css()` function has mutliple features:
 - Supports `@screen` helper
 
   <details>
-  <summary>Example</summary>
+  <summary>💡 Example</summary>
   <br>
 
   - Configuration
@@ -497,7 +497,7 @@ The `css()` function has mutliple features:
 
 - Supports `rgba()` conversions
   <details>
-  <summary>Example</summary>
+  <summary>💡 Example</summary>
   <br>
 
   ```vue
@@ -515,7 +515,7 @@ The `css()` function has mutliple features:
 - Supports `variants`system **`🚨 wip`**
 
   <details>
-  <summary>Example</summary>
+  <summary>💡 Example</summary>
   <br>
 
   ```vue
@@ -642,7 +642,7 @@ There is plenty of features to come, including:
 
 - Util properties
   <details>
-  <summary>Example</summary>
+  <summary>💡 Example</summary>
 
   ```ts
   // Theme config
