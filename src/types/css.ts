@@ -129,7 +129,7 @@ export type CSS<
 > =
   {
     [key in keyof Utils.PrefixObjectKeys<
-      // @ts-expect-error - Might not be defiend by the user
+      // @ts-expect-error - Might not be defined by the user
       Theme['screens'],
       '@screen:'
     >]?: (
@@ -140,8 +140,8 @@ export type CSS<
   {
     [key in keyof typeof schemes]?: (
       | CSS<TemplateTags, Theme>
-      | undefined
       | {}
+      | undefined
     )
   }
   &
@@ -156,8 +156,8 @@ export type CSS<
   {
     [K in keyof TemplateTags]?: (
       | CSS<TemplateTags, Theme>
-      | undefined
       | {}
+      | undefined
     )
   }
   &
@@ -165,8 +165,9 @@ export type CSS<
     [K in keyof DefaultThemeMap]?: (
       | ThemeKey<K>
       | CssProperties[K]
-      | undefined
+      | CSS<TemplateTags, Theme>
       | {}
+      | undefined
     )
   }
   &
@@ -174,18 +175,20 @@ export type CSS<
   {
     [K in Exclude<keyof CssProperties, keyof DefaultThemeMap>]?: (
       | CssProperties[K]
-      | undefined
+      | CSS<TemplateTags, Theme>
       | {}
+      | undefined
     )
   }
   &
   // Other properties (nested selector)
   {
     [K: string]: (
+      | CSS<TemplateTags, Theme>
+      | { [key: string]: CSS<TemplateTags, Theme> }
+      | {}
       | number
       | string
-      | CSS<TemplateTags, Theme>
-      | {}
       | undefined
     )
   }

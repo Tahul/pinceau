@@ -59,10 +59,10 @@ export function usePinceauConfig<UserOptions extends PinceauOptions = PinceauOpt
 
       // Send HMR updates for each
       Object.entries({ css, ts }).forEach(
-        ([key, module]) => {
-          if (!module) { return }
+        ([key, _module]) => {
+          if (!_module) { return }
 
-          server.moduleGraph.invalidateModule(module)
+          server.moduleGraph.invalidateModule(_module)
 
           ;['js', 'css'].forEach(
             (type: 'js' | 'css') => {
