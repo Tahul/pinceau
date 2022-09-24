@@ -1,16 +1,12 @@
-<script setup lang="ts">
-import { theme } from '#pinceau'
-</script>
-
 <template>
   <NuxtLayout>
     <section>
-      <Block primary />
-      <Block black />
-      <Block lila />
-      <Block lavender />
-      <Block velvet />
-      <Block grape />
+      <Block color="{colors.primary.600}" />
+      <Block color="black" />
+      <Block color="lila" />
+      <Block color="lavender" />
+      <Block color="velvet" />
+      <Block color="grape" />
     </section>
   </NuxtLayout>
 </template>

@@ -512,7 +512,39 @@ The `css()` function has mutliple features:
 
   </details>
 
-- Supports `variants`system **`🚨 wip`**
+- Supports `computed styles` **`💡 new`**
+
+  <details>
+  <summary>💡 Example</summary>
+  <br>
+
+  ```vue
+  <script setup>
+  import type { PropType } from 'vue'
+
+  const props = defineProps({
+    color: {
+      type: String as PropType<ThemeKey<'color'>>
+    }
+  })
+  </script>
+  
+  <template>
+    <div class="block" />
+  </template>
+
+  <style lang="ts">
+  css({
+    '.block': {
+      backgroundColor: (props) => `{colors.${props.colr}`,
+    }
+  })
+  </style>
+  ```
+
+  </details>
+
+- Supports `variants` system **`🚨 wip`**
 
   <details>
   <summary>💡 Example</summary>

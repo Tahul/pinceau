@@ -5,8 +5,10 @@ const { camelCase } = require('scule')
 const plugin = _ => ({
   resolveEmbeddedFile(fileName, sfc, embeddedFile) {
     if (embeddedFile.fileName.replace(fileName, '').match(/^\.(js|ts|jsx|tsx)$/)) {
-      embeddedFile.codeGen.addText('\nimport type { TokensFunction, CSS, PinceauTheme, PinceauThemePaths, TokensFunctionOptions } from \'pinceau\'\n')
-      embeddedFile.codeGen.addText('\nconst css = (declaration: CSS<ComponentTemplateTags__VLS, PinceauTheme>) => ({ declaration })\n')
+      embeddedFile.codeGen.addText('\nimport type { TokensFunction, CSS, PinceauTheme, PinceauThemePaths, TokensFunctionOptions, ThemeKey } from \'pinceau\'\n')
+      embeddedFile.codeGen.addText('\ntype __VLS_InstanceOmittedKeys = \'onVnodeBeforeMount\' | \'onVnodeBeforeUnmount\' | \'onVnodeBeforeUpdate\' | \'onVnodeMounted\' | \'onVnodeUnmounted\' | \'onVnodeUpdated\' | \'key\' | \'ref\' | \'ref_for\' | \'ref_key\' | \'style\' | \'class\'\n')
+      embeddedFile.codeGen.addText(`\ntype __VLS_PropsType = Omit<InstanceType<typeof import(\'${fileName}\').default>[\'$props\'], __VLS_InstanceOmittedKeys>\n`)
+      embeddedFile.codeGen.addText('\nconst css = (declaration: CSS<PinceauTheme, ComponentTemplateTags__VLS, __VLS_PropsType>) => ({ declaration })\n')
       embeddedFile.codeGen.addText('\nconst $dt = (path?: PinceauThemePaths, options?: TokensFunctionOptions) => ({ path, options })\n')
       embeddedFile.codeGen.addText('\nconst $variantsProps: (key: keyof ComponentTemplateTags__VLS) => ({ key })\n')
 
@@ -22,6 +24,8 @@ const plugin = _ => ({
             vueTagIndex,
             capabilities: {
               basic: true,
+              formatting: true,
+              referencesCodeLens: true,
               references: true,
               definitions: true,
               diagnostic: true,
@@ -39,7 +43,8 @@ const plugin = _ => ({
         const templateTags = {}
         walkElementNodes(
           sfc.templateAst,
-          ({ tag }) => {
+          ({ tag, props }) => {
+            templateTags[`${props.class}`] = true
             templateTags[tag] = true
           },
         )
@@ -75,6 +80,7 @@ const plugin = _ => ({
                 vueTagIndex: i,
                 capabilities: {
                   basic: true,
+                  referencesCodeLens: true,
                   references: true,
                   definitions: true,
                   diagnostic: true,

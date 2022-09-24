@@ -119,9 +119,7 @@ export default createUnplugin<PinceauOptions>(
 
         const query = parseVueQuery(id)
 
-        if (query.vue && query.type === 'style') {
-          return transformVueStyle(id, query, ctx)
-        }
+        if (query.vue && query.type === 'style') { return transformVueStyle(id, query, ctx) }
       },
     }
   })

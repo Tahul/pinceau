@@ -65,6 +65,7 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@types/babel__core": "^7.1.19",
     "@unocss/reset": "^0.45.21",
     "@volar/vue-language-core": "^0.40.13",
     "chroma-js": "^2.4.2",
