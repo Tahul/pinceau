@@ -11,22 +11,7 @@ export const resolveVariableFromPath = (path: string): string => `var(--${path.s
 /**
  * Take a property and transform every tokens present in it to their value.
  */
-export const transformTokensToVariable = (property: string) => property.replace(keyRegex, (_, tokenPath) => resolveVariableFromPath(tokenPath))
-
-/**
- * Cast a value to a valid CSS unit.
- */
-export function castValue(property: any, value: any, $tokens: TokensFunction) {
-  if (typeof value === 'number') { return value }
-
-  value = resolveRgbaTokens(property, value, $tokens)
-
-  value = resolveReferences(property, value, $tokens)
-
-  if (value === '{}') { return '' }
-
-  return value
-}
+export const transformTokensToVariable = (property: string) => (property || '').replace(keyRegex, (_, tokenPath) => resolveVariableFromPath(tokenPath))
 
 /**
  * Cast value or values before pushing it to the style declaration
@@ -44,9 +29,26 @@ export function castValues(property: any, value: any, $tokens: TokensFunction) {
 }
 
 /**
+ * Cast a value to a valid CSS unit.
+ */
+export function castValue(property: any, value: any, $tokens: TokensFunction) {
+  if (typeof value === 'number') { return value }
+
+  value = resolveRgbaTokens(property, value, $tokens)
+
+  value = resolveReferences(property, value, $tokens)
+
+  if (value === '{}') { return '' }
+
+  return value
+}
+
+/**
  * Resolve token references
  */
 export function resolveReferences(property: string, value: string, $tokens: TokensFunction) {
+  if (!(typeof value === 'string')) { return value }
+
   value = value.replace(
     referencesRegex,
     (...parts) => {
@@ -69,6 +71,8 @@ export function resolveReferences(property: string, value: string, $tokens: Toke
  * Resolve rgba() value properly
  */
 export function resolveRgbaTokens(property: string, value: string, $tokens: TokensFunction) {
+  if (!(typeof value === 'string')) { return value }
+
   value = value.replace(
     rgbaRegex,
     (...parts) => {

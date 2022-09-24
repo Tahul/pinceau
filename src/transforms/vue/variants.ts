@@ -3,10 +3,11 @@ import * as recast from 'recast'
 import { fullVariantsPropsRegex, shortVariantsPropsRegex } from '../../utils'
 
 export function transformVariants(code = '', variants: any = {}): string {
+  // code += `\nconst __$variants = ${JSON.stringify(variants)}\n`
   return code
 }
 
-export function transformVariantsProps(code = '', variantsProps: any = {}): string {
+export function transformVariantsProps(code = '', variants: any = {}): string {
   const propKeyToAst = (ast: any, key: string, prefix: string) => {
     ast.properties.push(
       recast.types.builders.objectProperty(
@@ -34,8 +35,8 @@ export function transformVariantsProps(code = '', variantsProps: any = {}): stri
     shortVariantsPropsRegex,
     (_, tagName) => {
       const ast = recast.types.builders.objectExpression([])
-      if (variantsProps[tagName]) {
-        Object.keys(variantsProps[tagName])
+      if (variants[tagName]) {
+        Object.keys(variants[tagName])
           .forEach(
             propKey => propKeyToAst(ast, propKey, ''),
           )
@@ -48,8 +49,8 @@ export function transformVariantsProps(code = '', variantsProps: any = {}): stri
     fullVariantsPropsRegex,
     (_, tagName, prefix) => {
       const ast = recast.types.builders.objectExpression([])
-      if (variantsProps[tagName]) {
-        Object.keys(variantsProps[tagName])
+      if (variants[tagName]) {
+        Object.keys(variants[tagName])
           .forEach(
             propKey => propKeyToAst(ast, propKey, prefix),
           )

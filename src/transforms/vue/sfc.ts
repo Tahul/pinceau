@@ -39,7 +39,7 @@ export function transformVueSFC(code: string, id: string, magicString: MagicStri
  * These does not need to resolve variants or populate computed styles.
  */
 export function resolveStyleQuery(id: string, code: string, magicString: MagicString, $tokens: TokensFunction) {
-  code = transformCssFunction(code, id, undefined, undefined, $tokens)
+  code = transformCssFunction(id, code, undefined, undefined, $tokens)
   code = transformStyle(code, $tokens)
   return { code, early: true, magicString }
 }
@@ -64,8 +64,8 @@ export function resolveStyle(id: string, parsedComponent: SFCParseResult, magicS
       const { loc, content } = styleBlock
       let newStyle = content
 
+      newStyle = transformCssFunction(id, newStyle, variants, computedStyles, $tokens)
       newStyle = transformStyle(newStyle, $tokens)
-      newStyle = transformCssFunction(newStyle, id, variants, computedStyles, $tokens)
 
       magicString.remove(loc.start.offset, loc.end.offset)
       magicString.appendRight(
@@ -128,6 +128,8 @@ Object
   else {
     logger.warn('You seem to be using Computed Styles, but no props are defined in your component!')
   }
+
+  console.log({ newScriptSetup })
 
   return newScriptSetup
 }

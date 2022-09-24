@@ -1,16 +1,16 @@
 import * as recast from 'recast'
 import type { ASTNode } from 'ast-types'
 import defu from 'defu'
-import { hash } from 'ohash'
 import { castValues, resolveCustomDirectives, stringify } from '../utils'
 import type { TokensFunction } from '../types'
+import { resolveComputedProperties } from './vue/computed'
 
 /**
  * Stringify every call of css() into a valid Vue <style> declaration.
  */
 export const transformCssFunction = (
-  code = '',
   id: string,
+  code = '',
   variants: any | undefined,
   computedStyles: any | undefined,
   $tokens: TokensFunction,
@@ -18,12 +18,12 @@ export const transformCssFunction = (
   try {
     const declaration = resolveCssCallees(
       code,
-      ast => resolveComputedStyles(ast, computedStyles),
+      ast => transformCssDeclaration(ast, computedStyles),
     )
 
     const style = stringify(
       declaration,
-      (property: any, value: any) => resolveCssProperty(property, value, $tokens, variants),
+      (property: any, value: any) => resolveCssProperty(property, value, variants, $tokens),
     )
 
     if (style) { code = style }
@@ -38,16 +38,18 @@ export const transformCssFunction = (
 /**
  * Resolve a css function property to a stringifiable declaration.
  */
-export function resolveCssProperty(property: any, value: any, $tokens: TokensFunction, variants: any) {
+export function resolveCssProperty(property: any, value: any, variants: any, $tokens: TokensFunction) {
   // Resolve custom style directives
   const directive = resolveCustomDirectives(property, value, $tokens)
   if (directive) { return directive }
 
   // Push variants to variants
-  if (variants && value?.variants) { variants = defu(variants, value.variants) }
 
   // Transform variants to nested selectors
-  if (property === 'variants') { return castVariants(property, value) }
+  if (property === 'variants') {
+    variants = Object.assign(variants, defu(variants || {}, value))
+    return castVariants(property, value)
+  }
 
   // Resolve final value
   value = castValues(property, value, $tokens)
@@ -91,47 +93,20 @@ export function resolveCssCallees(code: string, cb: (ast: ASTNode) => any) {
       return this.traverse(path)
     },
   })
-
   return result
 }
 
 /**
  * Resolve computed styles found in css() declaration.
  */
-export function resolveComputedStyles(cssAst: ASTNode, computedStyles: any) {
-  if (!computedStyles) { return }
-
-  // Search for function properties in css() AST
-  recast.visit(
-    cssAst,
-    {
-      visitObjectProperty(path) {
-        if (path.value) {
-          const valueType = path.value.value.type
-
-          if (valueType === 'ArrowFunctionExpression' || valueType === 'FunctionExpression') {
-            const id = `${hash(path.value.loc.start)}-${path.value.key.name}`
-
-            // Push property function to computedStyles
-            computedStyles[id] = recast.print(path.value.value.body).code
-
-            path.replace(
-              recast.types.builders.objectProperty(
-                path.value.key,
-                recast.types.builders.stringLiteral(`v-bind(_$cst['${id}'].value)`),
-              ),
-            )
-          }
-        }
-        return this.traverse(path)
-      },
-    },
-  )
+export function transformCssDeclaration(cssAst: ASTNode, computedStyles: any = {}) {
+  resolveComputedProperties(cssAst, computedStyles)
 
   // eslint-disable-next-line no-eval
   const _eval = eval
   // const transformed = transform({ source: recast.print(ast).code })
   _eval(`var cssDeclaration = ${recast.print(cssAst).code}`)
+
   // @ts-expect-error - Evaluated code
   return cssDeclaration
 }

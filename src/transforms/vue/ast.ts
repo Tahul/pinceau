@@ -19,6 +19,8 @@ export const findPropsKey = (code: string) => {
             propsVariableName = path.value.declarations[0].id.name
           }
 
+          console.log({ propsVariableName })
+
           return this.traverse(path)
         },
       },
