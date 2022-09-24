@@ -1,6 +1,10 @@
 <script setup lang="ts">
+import type { PropType } from 'vue'
+
 const props = defineProps({
-  ...$variantsProps('button'),
+  color: {
+    type: String as PropType<ThemeKey<'color'> | keyof PinceauTheme['colors']>,
+  },
 })
 </script>
 
@@ -8,7 +12,7 @@ const props = defineProps({
   <button :class="{ ...$props }">
     <template v-for="[key, value] in Object.entries($props)">
       <p v-if="value" :key="key">
-        {{ value ? key : '' }}
+        {{ color }}
       </p>
     </template>
   </button>
@@ -17,7 +21,16 @@ const props = defineProps({
 <style lang="ts" scoped>
 css({
   button: {
-    boxShadow: '{shadows.2xl}',
+    backgroundColor: (props) => {
+      if (props.color.startsWith('{')) {
+        return props.color
+      }
+      return `var(--colors-${props.color})`
+    },
+    '&:hover': {
+      border: (props) => `8px solid {colors.${props.color}}`,
+    },
+    boxShadow: '{shadows.sm}',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -26,38 +39,9 @@ css({
     height: '320px',
     border: '16px solid {colors.grey}',
     position: 'relative',
-    '&:hover': {
-      border: '8px solid blue',
-    },
     '& > p': {
       fontSize: '16px',
       textDecoration: 'underline',
-    },
-    variants: {
-      primary: {
-        backgroundColor: 'rgba({colors.primary.500}, 0.2)',
-      },
-      black: {
-        backgroundColor: '{colors.black}',
-      },
-      lavender: {
-        backgroundColor: '{colors.lavender}'
-      },
-      lila: {
-        backgroundColor: '{colors.lila}'
-      },
-      velvet: {
-        backgroundColor: '{colors.velvet}'
-      },
-      grape: {
-        backgroundColor: '{colors.grape}'
-      },
-      rounded: {
-        borderRadius: '50%'
-      },
-      padded: {
-        padding: '4rem'
-      },
     }
   }
 })

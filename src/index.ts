@@ -1,3 +1,3 @@
 export * from './types'
 export { defineTheme } from './theme/define'
-export { get, palette } from './utils'
+export { get, palette, transformTokensToVariable } from './utils'

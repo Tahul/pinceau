@@ -23,7 +23,7 @@ export const transformVueStyle = (id: string, query: VueQuery, ctx: PinceauConte
   let source = style?.content || ''
 
   source = transformStyle(source, ctx.$tokens)
-  source = transformCssFunction(source, id, {}, ctx.$tokens)
+  source = transformCssFunction(source, id, undefined, undefined, ctx.$tokens)
 
   if (style?.content !== source) {
     return source
@@ -57,6 +57,7 @@ export function transformScheme(code = '', scheme: 'light' | 'dark') {
  * Resolve `@screen {screenSize}` declarations.
  */
 export function transformScreens(code = '', $tokens: TokensFunction): string {
+  // @ts-expect-error - Might not be defined
   const screens = $tokens('screens', {
     flatten: false,
     key: undefined,

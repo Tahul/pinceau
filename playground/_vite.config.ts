@@ -1,17 +1,22 @@
 import { defineConfig } from 'vite'
 import Inspect from 'vite-plugin-inspect'
 import Vue from '@vitejs/plugin-vue'
-import { join } from 'pathe'
+import { resolve } from 'pathe'
 import Unplugin from '../src/vite'
 
 export default defineConfig({
   logLevel: 'info',
+  resolve: {
+    alias: {
+      pinceau: resolve(__dirname, '../src/index.ts'),
+    },
+  },
   plugins: [
     Inspect(),
     Unplugin({
       configFileName: 'tokens.config',
       configOrPaths: [
-        join(__dirname, 'theme'),
+        resolve(__dirname, 'theme'),
       ],
     }),
     Vue(),

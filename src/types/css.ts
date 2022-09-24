@@ -2,6 +2,10 @@ import type * as CSSType from 'csstype'
 import type * as Utils from './utils'
 import type { DefaultThemeMap, PinceauTheme, ThemeKey } from './theme'
 
+export interface ComputedPropertiesUtils {
+  isToken: (value: string) => boolean
+}
+
 export type VuePseudos =
 | '&:deep('
 | '&:slotted('
@@ -118,14 +122,14 @@ const schemes = {
 export type PermissiveVariants<K> = {
   [key in string]?: (
     | K
-    | undefined
-    | {}
   )
 }
 
 export type CSS<
-  TemplateTags extends object = {},
   Theme extends object = PinceauTheme,
+  TemplateTags extends object = {},
+  TemplateProps extends object = {},
+  Root extends boolean = true,
 > =
   {
     [key in keyof Utils.PrefixObjectKeys<
@@ -133,29 +137,34 @@ export type CSS<
       Theme['screens'],
       '@screen:'
     >]?: (
-      | CSS<TemplateTags, Theme>
+      | CSS<Theme, TemplateTags, TemplateProps, false>
     )
   }
   &
   {
     [key in keyof typeof schemes]?: (
-      | CSS<TemplateTags, Theme>
+      | CSS<Theme, TemplateTags, TemplateProps, false>
       | {}
       | undefined
     )
   }
   &
   // Reserved `variants` key keys
-  {
-    variants?: (
-      | PermissiveVariants<CSS<TemplateTags, Theme>>
-    )
-  }
+  (
+    Root extends true ?
+        {
+          variants?: (
+            | PermissiveVariants<CSS<Theme, TemplateTags, TemplateProps, false>>
+          )
+        } :
+        {
+        }
+  )
   &
   // Template tags (coming from Volar)
   {
     [K in keyof TemplateTags]?: (
-      | CSS<TemplateTags, Theme>
+      | CSS<Theme, TemplateTags, TemplateProps, false>
       | {}
       | undefined
     )
@@ -165,7 +174,8 @@ export type CSS<
     [K in keyof DefaultThemeMap]?: (
       | ThemeKey<K>
       | CssProperties[K]
-      | CSS<TemplateTags, Theme>
+      | ((props: TemplateProps, utils: ComputedPropertiesUtils) => ThemeKey<K> | CssProperties[K])
+      | CSS<Theme, TemplateTags, TemplateProps, false>
       | {}
       | undefined
     )
@@ -175,7 +185,7 @@ export type CSS<
   {
     [K in Exclude<keyof CssProperties, keyof DefaultThemeMap>]?: (
       | CssProperties[K]
-      | CSS<TemplateTags, Theme>
+      | ((props: TemplateProps, utils: ComputedPropertiesUtils) => CssProperties[K])
       | {}
       | undefined
     )
@@ -184,8 +194,8 @@ export type CSS<
   // Other properties (nested selector)
   {
     [K: string]: (
-      | CSS<TemplateTags, Theme>
-      | { [key: string]: CSS<TemplateTags, Theme> }
+      | CSS<Theme, TemplateTags, TemplateProps, false>
+      | { [key: string]: CSS<Theme, TemplateTags, TemplateProps, false> }
       | {}
       | number
       | string
@@ -195,8 +205,9 @@ export type CSS<
 
 export const css = (
   declaration: CSS<
+    PinceauTheme,
     {},
-    PinceauTheme
+    {}
   >,
 ) => declaration
 

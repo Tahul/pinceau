@@ -16,7 +16,7 @@ export const objectPaths = (data: any) => {
         ? `${prev}.${key}`
         : key
 
-      if (!output.includes(newKey)) { output.push(newKey) }
+      if (value === 'DesignToken' && !output.includes(newKey)) { output.push(newKey) }
 
       if (!isarray && isobject && Object.keys(value).length) { return step(value, newKey) }
     })
