@@ -1,8 +1,10 @@
 import { camelCase, upperFirst } from 'scule'
 import * as recast from 'recast'
+import { fullVariantsPropsRegex, shortVariantsPropsRegex } from '../../utils'
 
-const shortVariantsPropsRegex = /\$variantsProps\('(.*)'\)/gm
-const fullVariantsPropsRegex = /\$variantsProps\(('(.*?)'),\s'(.*?)'\)/gm
+export function transformVariants(code = '', variants: any = {}): string {
+  return code
+}
 
 export function transformVariantsProps(code = '', variantsProps: any = {}): string {
   const propKeyToAst = (ast: any, key: string, prefix: string) => {

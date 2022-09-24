@@ -1,31 +1,41 @@
 import type { Plugin } from 'vue'
-import { getCurrentInstance, reactive } from 'vue'
+import { getCurrentInstance, inject, reactive } from 'vue'
 
 export interface PinceauRuntimeUtils {
-  push: (id: string, value: any) => void
-  drop: (id: String, value: string) => void
+  push: (value: any) => void
+  drop: () => void
 }
 
-export const pinceauPlugin: Plugin = (app) => {
-  const state = reactive({})
+export const pinceauPlugin: Plugin = {
+  install(app) {
+    const state = reactive({})
 
-  const push = (id, value) => {
-    console.log(value)
-  }
+    const getId = (): string => {
+      const instance = getCurrentInstance()
+      instance.attrs.__pid = instance.uid
+      return (instance.vnode.type as any).__scopeId as string
+    }
 
-  const drop = (id) => {
-    console.log(id)
-  }
+    const push = (id, value) => {
+      console.log(value)
+    }
 
-  const utils: PinceauRuntimeUtils = { push, drop }
+    const drop = (id) => {
+      console.log(id)
+    }
 
-  app.provide(
-    'pinceau',
-    utils,
-  )
+    const utils: () => PinceauRuntimeUtils = () => {
+      const id = getId()
+
+      return {
+        push: (value: any) => push(id, value),
+        drop: () => drop(id),
+      }
+    }
+
+    app.config.globalProperties.$pinceau = utils
+    app.provide('pinceau', utils)
+  },
 }
 
-export const usePinceauRuntime = () => {
-  const instance = getCurrentInstance()
-  return instance.$pinceau
-}
+export const usePinceauRuntime = (): PinceauRuntimeUtils => (inject('pinceau') as any)()

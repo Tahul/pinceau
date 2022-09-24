@@ -55,6 +55,7 @@ export default createUnplugin<PinceauOptions>(
           const defaultRead = ctx.read
           ctx.read = async function () {
             const code = await defaultRead()
+            console.log({ code })
             return replaceStyleTs(code, ctx.file) || code
           }
         },
@@ -84,6 +85,7 @@ export default createUnplugin<PinceauOptions>(
         try {
           // Return early when the query is scoped (usually style tags)
           const { code: _code, early } = transformVueSFC(code, id, magicString, ctx, query)
+          console.log({ query, _code, early })
           if (early) { return _code }
         }
         catch (e) {

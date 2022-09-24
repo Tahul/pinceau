@@ -8,9 +8,7 @@ const props = defineProps({
   },
 })
 
-const pinceauRuntime = usePinceauRuntime()
-
-console.log({ pinceauRuntime })
+usePinceauRuntime()
 </script>
 
 <template>
@@ -47,6 +45,13 @@ css({
     '& > p': {
       fontSize: '16px',
       textDecoration: 'underline',
+    }
+  },
+  variants: {
+    padded: {
+      button: {
+        padding: '64px',
+      }
     }
   }
 })
