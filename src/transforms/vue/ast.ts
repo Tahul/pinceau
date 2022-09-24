@@ -15,12 +15,16 @@ export const findPropsKey = (code: string) => {
       ast,
       {
         visitVariableDeclaration(path) {
-          const test = path.get('defineProps')
-          propsVariableName = test?.parentPath?.value?.declarations?.[0]?.id?.name
+          if (path.value.declarations[0].init.callee.name === 'defineProps') {
+            propsVariableName = path.value.declarations[0].id.name
+          }
+
           return this.traverse(path)
         },
       },
     )
+
+    console.log({ propsVariableName })
 
     return propsVariableName
   }

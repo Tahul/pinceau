@@ -1,5 +1,5 @@
 import type { Plugin } from 'vue'
-import { reactive } from 'vue'
+import { getCurrentInstance, reactive } from 'vue'
 
 export interface PinceauRuntimeUtils {
   push: (id: string, value: any) => void

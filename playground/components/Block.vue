@@ -1,11 +1,16 @@
 <script setup lang="ts">
 import type { PropType } from 'vue'
+import { usePinceauRuntime } from 'pinceau/runtime'
 
 const props = defineProps({
   color: {
     type: String as PropType<ThemeKey<'color'> | keyof PinceauTheme['colors']>,
   },
 })
+
+const pinceauRuntime = usePinceauRuntime()
+
+console.log({ pinceauRuntime })
 </script>
 
 <template>
