@@ -39,7 +39,8 @@
       "#pinceau/types": ["./playground/node_modules/.vite/pinceau/types.ts"],
       "#pinceau": ["./playground/node_modules/.vite/pinceau/index.ts"],
       "pinceau.css": ["./playground/node_modules/.vite/pinceau/index.css"],
-      "pinceau": ["./src/index.ts"]
+      "pinceau": ["./src/index.ts"],
+      "pinceau/runtime": ["./src/runtime.ts"]
     }
   },
   "include": ["./playground/.nuxt/nuxt.d.ts", "./src/**/*", "./playground/**/*"],

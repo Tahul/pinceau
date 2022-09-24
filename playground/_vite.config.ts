@@ -8,7 +8,8 @@ export default defineConfig({
   logLevel: 'info',
   resolve: {
     alias: {
-      pinceau: resolve(__dirname, '../src/index.ts'),
+      'pinceau/runtime': resolve(__dirname, '../src/runtime.ts'),
+      'pinceau': resolve(__dirname, '../src/index.ts'),
     },
   },
   plugins: [

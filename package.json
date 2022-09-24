@@ -34,6 +34,10 @@
       "require": "./dist/nuxt.cjs",
       "import": "./dist/nuxt.mjs"
     },
+    "./runtime": {
+      "require": "./dist/runtime.cjs",
+      "import": "./dist/runtime.mjs"
+    },
     "./volar": "./volar/index.js"
   },
   "main": "dist/index.cjs",

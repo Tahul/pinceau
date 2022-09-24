@@ -78,4 +78,8 @@ declare module '@nuxt/schema' {
   }
 }
 
-export {}
+declare module 'vue' {
+  interface ComponentCustomProperties {
+    $pinceau: any
+  }
+}
