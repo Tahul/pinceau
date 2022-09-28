@@ -24,6 +24,7 @@ importers:
       jsdom: ^20.0.0
       magic-string: ^0.26.4
       nodemon: ^2.0.20
+      ohash: ^0.1.5
       playwright: ^1.26.1
       postcss-custom-properties: ^12.1.9
       postcss-dark-theme-class: ^0.7.3
@@ -50,6 +51,7 @@ importers:
       csstype: 3.1.1
       defu: 6.1.0
       magic-string: 0.26.4
+      ohash: 0.1.5
       postcss-custom-properties: 12.1.9
       postcss-dark-theme-class: 0.7.3
       postcss-nested: 5.0.6
@@ -1551,9 +1553,6 @@ packages:
     resolution: {integrity: sha512-1yn9u2YBQWIgytFMjz4f/t0j43awKytTGVptfd3FtBk76t1pd8mxbek0G/DrnjJhd2V7mSTb5qgnxMYt8Z5iSQ==}
     peerDependencies:
       vue: 3.2.39
-    peerDependenciesMeta:
-      vue:
-        optional: true
     dependencies:
       '@vue/compiler-ssr': 3.2.39
       '@vue/shared': 3.2.39
@@ -5952,7 +5951,6 @@ packages:
 
   /ohash/0.1.5:
     resolution: {integrity: sha512-qynly1AFIpGWEAW88p6DhMNqok/Swb52/KsiU+Toi7er058Ptvno3tkfTML6wYcEgFgp2GsUziW4Nqn62ciuyw==}
-    dev: true
 
   /ohmyfetch/0.4.19:
     resolution: {integrity: sha512-OH2xVeRPNsHkx+JFdq1ewe9EwVDfTrv6lsBHpIx8wIWXowP5FyLhhYVaXIVlPsW542rt7gmwK14FwIDWUXEO+Q==}

@@ -1,7 +1,7 @@
 import type { PinceauVirtualContext, ThemeGenerationOutput } from '../types'
 import { jsFlat, jsFull, tsFlat, tsFull } from './formats'
 
-export const VIRTUAL_ENTRY_REGEX = /^(?:virtual:)?(#)?pinceau(\/theme|\/theme\/flat)?(\.)?(css|ts|js)?(\?.*)?$/
+export const VIRTUAL_ENTRY_REGEX = /^(virtual:)?pinceau(\/theme|\/theme\/flat)?(\.)?(css|ts|js)?(\?.*)?$/
 export const RESOLVED_ID_RE = /\/__pinceau(?:(_.*?))?\.(css|ts|js)(\?.*)?$/
 
 export default function usePinceauVirtualStore(): PinceauVirtualContext {
@@ -42,14 +42,14 @@ export default function usePinceauVirtualStore(): PinceauVirtualContext {
       // #pinceau/theme | #pinceau/theme/flat
       if (match[1] && match[2]) {
         if (match[2].includes('/flat')) {
-          return '/__pinceau_flat_ts.ts'
+          return '\0/__pinceau_flat_ts.ts'
         }
-        return '/__pinceau_ts.ts'
+        return '\0/__pinceau_ts.ts'
       }
 
       // pinceau.css
       if (match[4]) {
-        return `/__pinceau_${match[4]}.${match[4]}`
+        return `\0/__pinceau_${match[4]}.${match[4]}`
       }
     }
   }

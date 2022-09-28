@@ -40,7 +40,7 @@
     },
     "./volar": "./volar/index.js"
   },
-  "main": "dist/index.cjs",
+  "main": "dist/index.mjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "typesVersions": {
@@ -80,6 +80,7 @@
     "csstype": "^3.1.1",
     "defu": "^6.1.0",
     "magic-string": "^0.26.4",
+    "ohash": "^0.1.5",
     "postcss-custom-properties": "^12.1.9",
     "postcss-dark-theme-class": "^0.7.3",
     "postcss-nested": "^5.0.6",
