@@ -74,8 +74,9 @@ const module: any = defineNuxtModule<PinceauOptions>({
         const lines = [
           'import \'pinceau.css\'',
           'import { plugin as pinceau } from \'pinceau/runtime\'',
+          'import theme from \'#pinceau/theme/flat\'',
           `export default defineNuxtPlugin((nuxtApp) => {
-            nuxtApp.vueApp.use(pinceau)
+            nuxtApp.vueApp.use(pinceau, { theme })
 
             // Handle first render of SSR styles
             nuxtApp.hook('app:rendered', (app) => {

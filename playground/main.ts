@@ -6,6 +6,7 @@ import App from './app.vue'
 import Block from './components/Block.vue'
 import NuxtLayout from './layouts/default.vue'
 import Index from './pages/index.vue'
+import theme from '#pinceau/theme/flat'
 
 import '@unocss/reset/tailwind.css'
 import 'pinceau.css'
@@ -25,7 +26,7 @@ const router = createRouter({
 
 // Plugins
 app.use(router)
-app.use(pinceau)
+app.use(pinceau, { theme })
 
 // Components
 app.component('Block', Block)

@@ -1,16 +1,19 @@
 import type { Plugin } from 'vue'
 import { computed, getCurrentInstance, inject, onScopeDispose, watch } from 'vue'
-// @ts-expect-error - Virtual
-import { aliases, flattenedTheme } from 'virtual:pinceau/theme/flat'
+import { defu } from 'defu'
 import { createTokensHelper, isToken, resolveVariableFromPath, sanitizeProps, transformTokensToVariable } from './utils'
 import { bindClass, getIds } from './instance'
 import { usePinceauRuntimeState } from './state'
 import { usePinceauStylesheet } from './stylesheet'
 
-const $tokens = createTokensHelper(flattenedTheme, aliases, { flattened: true })
-
 export const plugin: Plugin = {
-  install(app) {
+  install(app, { theme, helpersConfig }) {
+    theme = defu(theme || {}, { theme: {}, aliases: {} })
+
+    helpersConfig = defu(helpersConfig, { flattened: true })
+
+    const $tokens = createTokensHelper(theme.theme, theme.aliases, helpersConfig)
+
     const state = usePinceauRuntimeState()
 
     const { getStylesheetContent, updateStylesheet } = usePinceauStylesheet(state, $tokens)

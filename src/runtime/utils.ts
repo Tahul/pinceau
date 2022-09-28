@@ -2,7 +2,10 @@ import defu from 'defu'
 import { kebabCase } from 'scule'
 import { keyRegex } from '../utils/regexes'
 
-export { createTokensHelper, resolveCssProperty, stringify } from '../utils'
+// Local re-exports, avoiding whole bundle
+export { resolveCssProperty } from '../utils/css'
+export { stringify } from '../utils/stringify'
+export { createTokensHelper } from '../utils/$tokens'
 
 /**
  * Check if a string is a resolvable token path.

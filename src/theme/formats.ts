@@ -23,13 +23,17 @@ export const tsFull = (tokensObject: any, aliased: any) => {
 
   result += `export const theme: GeneratedPinceauTheme = ${JSON.stringify(tokensObject, null, 2)} as const\n\n`
 
+  result += 'export default { aliases, theme }'
+
   return result
 }
 
 export const tsFlat = (tokensObject: any, aliased: any) => {
   let result = `export const aliases = ${JSON.stringify(aliased, null, 2)}\n\n`
 
-  result += `export const flattenedTheme = ${JSON.stringify(flattenTokens(tokensObject), null, 2)}\n\n`
+  result += `export const theme = ${JSON.stringify(flattenTokens(tokensObject), null, 2)}\n\n`
+
+  result += 'export default { aliases, theme }'
 
   return result
 }
@@ -39,13 +43,17 @@ export const jsFull = (tokensObject: any, aliased: any) => {
 
   result += `export const theme = ${JSON.stringify(tokensObject, null, 2)}\n\n`
 
+  result += 'export default { aliases, theme }'
+
   return result
 }
 
 export const jsFlat = (tokensObject: any, aliased: any) => {
   let result = `export const aliases = ${JSON.stringify(aliased, null, 2)}\n\n`
 
-  result += `export const flattenedTheme = ${JSON.stringify(flattenTokens(tokensObject), null, 2)}\n\n`
+  result += `export const theme = ${JSON.stringify(flattenTokens(tokensObject), null, 2)}\n\n`
+
+  result += 'export default { aliases, theme }'
 
   return result
 }

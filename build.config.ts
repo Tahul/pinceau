@@ -20,6 +20,10 @@ export default defineBuildConfig({
       input: 'src/utils.ts',
       name: 'utils',
     },
+    {
+      input: 'src/runtime.ts',
+      name: 'runtime',
+    },
   ],
   clean: true,
   declaration: true,
@@ -43,12 +47,12 @@ export default defineBuildConfig({
     'tinycolor2',
     'virtual:pinceau/theme/flat',
     '#pinceau/types',
+    '#pinceau/theme',
+    '#pinceau/theme/flat',
   ],
   hooks: {
     'build:done': () => {
       execSync('npm run build:fix')
-      execSync('cp src/runtime.ts dist/runtime.ts')
-      execSync('cp -r src/runtime/ dist/runtime/')
     },
   },
 })
