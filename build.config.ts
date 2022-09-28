@@ -43,7 +43,8 @@ export default defineBuildConfig({
     'chalk',
     'jiti',
     'tinycolor2',
-    '#pinceau',
+    '#pinceau/theme/flat',
+    '#pinceau/theme',
     '#pinceau/types',
   ],
   hooks: {

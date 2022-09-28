@@ -1,12 +1,12 @@
 import type { Plugin } from 'vue'
 import { computed, getCurrentInstance, inject, onScopeDispose, watch } from 'vue'
-// @ts-expect-error - Virtual
-import { aliases, flattenedTheme } from 'pinceau__flat.ts'
 import { createTokensHelper } from '../context/$tokens'
 import { isToken, resolveVariableFromPath, sanitizeProps, transformTokensToVariable } from './helpers'
 import { bindClass, getIds } from './instance'
 import { usePinceauRuntimeState } from './state'
 import { usePinceauStylesheet } from './stylesheet'
+// @ts-expect-error - Virtual
+import { aliases, flattenedTheme } from '#pinceau/theme/flat'
 
 const $tokens = createTokensHelper(flattenedTheme, aliases, { flattened: true })
 

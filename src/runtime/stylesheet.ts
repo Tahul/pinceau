@@ -10,7 +10,9 @@ export function usePinceauStylesheet(state: any, $tokens: TokensFunction) {
   const getStylesheetContent = () => stringify(declaration.value, (property: any, value: any, style: any, selectors: any) => resolveCssProperty(property, value, style, selectors, $tokens))
 
   const updateStylesheet = () => {
-    if (document) {
+    // Only update stylesheet on client-side
+    // SSR Rendering occurs in `app:rendered` hook, or via `getStylesheetContent`
+    if (!import.meta.env.SSR && document) {
       const content = getStylesheetContent()
       let style = document.querySelector('style#pinceau')
 

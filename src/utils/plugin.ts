@@ -10,7 +10,6 @@ export function registerAliases(config: ViteConfig, options: PinceauOptions) {
   if (!config.resolve?.alias) { config.resolve.alias = {} }
   if (options?.outputDir) {
     config.resolve.alias['#pinceau/types'] = join(options.outputDir, '/types.ts')
-    config.resolve.alias['#pinceau'] = join(options.outputDir, '/index.ts')
   }
 }
 
