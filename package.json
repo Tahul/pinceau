@@ -66,7 +66,8 @@
     "prepublishOnly": "npm run build",
     "release": "release-it",
     "start": "esno src/index.ts",
-    "test": "vitest",
+    "test": "vitest --run",
+    "test:watch": "vitest",
     "test:nuxt": "(cd test/fixtures/nuxt && npx nuxi dev)",
     "test:vite": "(cd test/fixtures/vite && npx vite dev)"
   },
