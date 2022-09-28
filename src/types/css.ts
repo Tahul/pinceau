@@ -1,9 +1,9 @@
 import type * as CSSType from 'csstype'
 import type * as Utils from './utils'
-import type { DefaultThemeMap, PinceauTheme, ThemeKey } from './theme'
+import type { DefaultThemeMap, MediaQueriesKeys, PinceauTheme, ThemeKey } from './theme'
 
 export interface ComputedPropertiesUtils {
-  isToken: (value: string) => boolean
+  isToken: (value: any) => boolean
 }
 
 export type VuePseudos =
@@ -119,10 +119,18 @@ const schemes = {
   '@light': true,
 } as const
 
-export type PermissiveVariants<K> = {
-  [key in string]?: (
-    | K
-  )
+export interface VariantOptions<K> {
+  type?: string
+  required?: boolean
+  default?: K | ({ [key in MediaQueriesKeys]: K }) | ({ [key: string]: K })
+}
+
+export interface BooleanVariant<K> { true?: K; false?: K; options?: VariantOptions<boolean> }
+
+export type EnumVariant<K, T = { [key: string]: K }> = T & { options?: VariantOptions<keyof T> }
+
+export interface Variants<K> {
+  [key: string]: BooleanVariant<K> | EnumVariant<K>
 }
 
 export type CSS<
@@ -134,8 +142,8 @@ export type CSS<
   {
     [key in keyof Utils.PrefixObjectKeys<
       // @ts-expect-error - Might not be defined by the user
-      Theme['screens'],
-      '@screen:'
+      Theme['media'],
+      '@mq:'
     >]?: (
       | CSS<Theme, TemplateTags, TemplateProps, false>
     )
@@ -153,12 +161,9 @@ export type CSS<
   (
     Root extends true ?
         {
-          variants?: (
-            | PermissiveVariants<CSS<Theme, TemplateTags, TemplateProps, false>>
-          )
+          variants?: Variants<CSS<Theme, TemplateTags, TemplateProps, false>>
         } :
-        {
-        }
+        {}
   )
   &
   // Template tags (coming from Volar)
@@ -195,6 +200,7 @@ export type CSS<
   {
     [K: string]: (
       | CSS<Theme, TemplateTags, TemplateProps, false>
+      | ((props: TemplateProps, utils: ComputedPropertiesUtils) => string)
       | { [key: string]: CSS<Theme, TemplateTags, TemplateProps, false> }
       | {}
       | number
@@ -203,12 +209,12 @@ export type CSS<
     )
   }
 
-export const css = (
+export function css(
   declaration: CSS<
     PinceauTheme,
     {},
     {}
   >,
-) => declaration
+) { return declaration }
 
 export type CssFunctionType = typeof css

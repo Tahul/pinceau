@@ -3,7 +3,7 @@ import StyleDictionary from 'style-dictionary-esm'
 import { isShadowToken, transformShadow } from '../utils/shadows'
 import type { PinceauTheme, PinceauTokens, ThemeGenerationOutput } from '../types'
 import { logger, referencesRegex, resolveVariableFromPath, walkTokens } from '../utils'
-import { jsFull, tsFull, tsTypesDeclaration } from './formats'
+import { jsFlat, jsFull, tsFlat, tsFull, tsTypesDeclaration } from './formats'
 
 export async function generateTheme(tokens: PinceauTheme, buildPath: string, silent = true): Promise<ThemeGenerationOutput> {
   let styleDictionary: Instance = StyleDictionary
@@ -134,7 +134,7 @@ export async function generateTheme(tokens: PinceauTheme, buildPath: string, sil
     transforms: ['name/cti/kebab', 'size/px', 'color/hex', 'pinceau/variable', 'pinceau/boxShadows'],
   })
 
-  // pinceau.d.ts
+  // types.ts
   styleDictionary.registerFormat({
     name: 'pinceau/types',
     formatter() {
@@ -142,7 +142,7 @@ export async function generateTheme(tokens: PinceauTheme, buildPath: string, sil
     },
   })
 
-  // pinceau.css
+  // index.css
   styleDictionary.registerFormat({
     name: 'pinceau/css',
     formatter({ dictionary, options }) {
@@ -156,7 +156,7 @@ export async function generateTheme(tokens: PinceauTheme, buildPath: string, sil
     },
   })
 
-  // pinceau.json
+  // index.json
   styleDictionary.registerFormat({
     name: 'pinceau/json',
     formatter({ dictionary: { allTokens } }) {
@@ -168,7 +168,7 @@ export async function generateTheme(tokens: PinceauTheme, buildPath: string, sil
     },
   })
 
-  // pinceau.ts
+  // index.ts
   styleDictionary.registerFormat({
     name: 'pinceau/typescript',
     formatter() {
@@ -178,13 +178,33 @@ export async function generateTheme(tokens: PinceauTheme, buildPath: string, sil
     },
   })
 
-  // pinceau.js
+  // index.js
   styleDictionary.registerFormat({
     name: 'pinceau/javascript',
     formatter() {
       const js = jsFull(transformedTokens, outputs.aliases)
       outputs.js = js
       return js
+    },
+  })
+
+  // flat.ts
+  styleDictionary.registerFormat({
+    name: 'pinceau/typescript-flat',
+    formatter() {
+      const _tsFlat = tsFlat(transformedTokens, outputs.aliases)
+      outputs['flat.ts'] = _tsFlat
+      return _tsFlat
+    },
+  })
+
+  // flat.js
+  styleDictionary.registerFormat({
+    name: 'pinceau/javascript-flat',
+    formatter() {
+      const _jsFlat = jsFlat(transformedTokens, outputs.aliases)
+      outputs['flat.js'] = _jsFlat
+      return _jsFlat
     },
   })
 
@@ -215,8 +235,16 @@ export async function generateTheme(tokens: PinceauTheme, buildPath: string, sil
             format: 'pinceau/typescript',
           },
           {
+            destination: 'flat.ts',
+            format: 'pinceau/typescript-flat',
+          },
+          {
             destination: 'index.js',
             format: 'pinceau/javascript',
+          },
+          {
+            destination: 'flat.js',
+            format: 'pinceau/javascript-flat',
           },
         ],
       },

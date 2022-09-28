@@ -4,12 +4,9 @@ import { parse } from '@vue/compiler-sfc'
 import type { PinceauContext, TokensFunction } from '../../types'
 import { logger } from '../../utils'
 import type { VueQuery } from '../../utils/vue'
-import { transformDt } from '../dt'
+import { darkRegex, lightRegex, mediaQueryRegex } from '../../utils/regexes'
+import { transformDtHelper } from '../dt'
 import { transformCssFunction } from '../css'
-
-const screenRegex = /(@screen\s(.*?)\s{)/g
-const darkRegex = /(@dark\s{)/g
-const lightRegex = /(@light\s{)/g
 
 export const transformVueStyle = (id: string, query: VueQuery, ctx: PinceauContext) => {
   const { filename } = query
@@ -22,20 +19,18 @@ export const transformVueStyle = (id: string, query: VueQuery, ctx: PinceauConte
 
   let source = style?.content || ''
 
+  source = transformCssFunction(id, source, undefined, undefined, ctx.$tokens)
   source = transformStyle(source, ctx.$tokens)
-  source = transformCssFunction(source, id, undefined, undefined, ctx.$tokens)
 
-  if (style?.content !== source) {
-    return source
-  }
+  if (style?.content !== source) { return source }
 }
 
 /**
  * Helper grouping all resolvers applying to <style>
  */
 export function transformStyle(code = '', $tokens: TokensFunction) {
-  code = transformDt(code)
-  code = transformScreens(code, $tokens)
+  code = transformDtHelper(code)
+  code = transformMediaQueries(code, $tokens)
   code = transformScheme(code, 'dark')
   code = transformScheme(code, 'light')
   return code
@@ -54,26 +49,23 @@ export function transformScheme(code = '', scheme: 'light' | 'dark') {
 }
 
 /**
- * Resolve `@screen {screenSize}` declarations.
+ * Resolve `@mq {mediaQuery}` declarations.
  */
-export function transformScreens(code = '', $tokens: TokensFunction): string {
-  // @ts-expect-error - Might not be defined
-  const screens = $tokens('screens', {
-    flatten: false,
+export function transformMediaQueries(code = '', $tokens: TokensFunction): string {
+  // @ts-expect-error - Might be undefined
+  const mediaQueries = $tokens('media', {
     key: undefined,
     silent: true,
   }) as any
 
   code = code.replace(
-    screenRegex,
-    (_, _screenDeclaration, screenSize) => {
-      const screenToken = screens[screenSize]
+    mediaQueryRegex,
+    (_, _mediaQueryDeclaration, query) => {
+      const mediaQuery = mediaQueries[query]
 
-      if (screenToken) {
-        return `@media (min-width: ${screenToken.value}) {`
-      }
+      if (mediaQuery) { return `@media ${mediaQuery.value} {` }
 
-      logger.warn(`This screen size is not defined: ${chalk.red(screenSize)}\n`)
+      logger.warn(`This media query is not defined: ${chalk.red(mediaQuery)}\n`)
 
       return '@media (min-width: 0px) {'
     },

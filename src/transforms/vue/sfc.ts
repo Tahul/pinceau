@@ -4,18 +4,18 @@ import type MagicString from 'magic-string'
 import { logger } from '../../utils'
 import type { VueQuery } from '../../utils/vue'
 import type { PinceauContext, TokensFunction } from '../../types'
-import { transformDt } from '../dt'
+import { transformDtHelper } from '../dt'
 import { transformCssFunction } from '../css'
 import { transformStyle } from './style'
-import { transformVariantsProps } from './variants-props'
-import { findPropsKey } from './ast'
+import { transformVariants } from './variants'
+import { findPropsKey } from './props'
 
 export function transformVueSFC(code: string, id: string, magicString: MagicString, ctx: PinceauContext, query: VueQuery): { code: string; early: boolean; magicString: MagicString } {
   // Handle <style> tags scoped queries
   if (query.type === 'style') { return resolveStyleQuery(id, code, magicString, ctx.$tokens) }
 
   // Resolve from parsing the <style lang="ts"> tag for current component
-  const variantProps = {}
+  const variants = {}
   const computedStyles = {}
 
   // Parse component with compiler-sfc
@@ -25,10 +25,10 @@ export function transformVueSFC(code: string, id: string, magicString: MagicStri
   if (parsedComponent.descriptor.template) { resolveTemplate(id, parsedComponent, magicString) }
 
   // Transform <style> blocks
-  if (parsedComponent.descriptor.styles) { resolveStyle(id, parsedComponent, magicString, variantProps, computedStyles, ctx.$tokens) }
+  if (parsedComponent.descriptor.styles) { resolveStyle(id, parsedComponent, magicString, variants, computedStyles, ctx.$tokens) }
 
   // Transform <script setup> blocks
-  if (parsedComponent.descriptor.scriptSetup) { resolveScriptSetup(id, parsedComponent, magicString, variantProps, computedStyles) }
+  if (parsedComponent.descriptor.scriptSetup) { resolveScriptSetup(id, parsedComponent, magicString, variants, computedStyles, parsedComponent.descriptor.scriptSetup.lang === 'ts') }
 
   return { code, early: false, magicString }
 }
@@ -39,7 +39,7 @@ export function transformVueSFC(code: string, id: string, magicString: MagicStri
  * These does not need to resolve variants or populate computed styles.
  */
 export function resolveStyleQuery(id: string, code: string, magicString: MagicString, $tokens: TokensFunction) {
-  code = transformCssFunction(code, id, undefined, undefined, $tokens)
+  code = transformCssFunction(id, code, undefined, undefined, $tokens)
   code = transformStyle(code, $tokens)
   return { code, early: true, magicString }
 }
@@ -50,22 +50,22 @@ export function resolveStyleQuery(id: string, code: string, magicString: MagicSt
 export function resolveTemplate(id: string, parsedComponent: SFCParseResult, magicString: MagicString) {
   const templateContent = parsedComponent.descriptor.template
   let newTemplateContent = templateContent.content
-  newTemplateContent = transformDt(newTemplateContent, '\'')
+  newTemplateContent = transformDtHelper(newTemplateContent, '\'')
   magicString.overwrite(templateContent.loc.start.offset, templateContent.loc.end.offset, newTemplateContent)
 }
 
 /**
  * Transform all <style> blocks.
  */
-export function resolveStyle(id: string, parsedComponent: SFCParseResult, magicString: MagicString, variantProps: any, computedStyles: any, $tokens: TokensFunction) {
+export function resolveStyle(id: string, parsedComponent: SFCParseResult, magicString: MagicString, variants: any, computedStyles: any, $tokens: TokensFunction) {
   const styles = parsedComponent.descriptor.styles
   styles.forEach(
     (styleBlock) => {
       const { loc, content } = styleBlock
       let newStyle = content
 
+      newStyle = transformCssFunction(id, newStyle, variants, computedStyles, $tokens)
       newStyle = transformStyle(newStyle, $tokens)
-      newStyle = transformCssFunction(newStyle, id, variantProps, computedStyles, $tokens)
 
       magicString.remove(loc.start.offset, loc.end.offset)
       magicString.appendRight(
@@ -79,38 +79,70 @@ export function resolveStyle(id: string, parsedComponent: SFCParseResult, magicS
 /**
  * Transforms <script setup> blocks.
  */
-export function resolveScriptSetup(id: string, parsedComponent: SFCParseResult, magicString: MagicString, variantProps: any, computedStyles: any) {
+export function resolveScriptSetup(id: string, parsedComponent: SFCParseResult, magicString: MagicString, variants: any, computedStyles: any, isTs: boolean) {
   const scriptSetup = parsedComponent.descriptor.scriptSetup
+  const hasVariants = Object.keys(variants).length
+  const hasComputedStyles = Object.keys(computedStyles).length
   let newScriptSetup = scriptSetup.content
-  newScriptSetup = transformDt(newScriptSetup, '`')
-  newScriptSetup = transformVariantsProps(newScriptSetup, variantProps)
-  if (Object.keys(computedStyles).length) {
-    const propsKey = findPropsKey(newScriptSetup)
 
-    if (propsKey) {
-      newScriptSetup = `\nimport { transformTokensToVariable } from 'pinceau'\n${newScriptSetup}`
-      if (!newScriptSetup.includes('computed')) {
-        newScriptSetup = `\nimport { computed } from 'vue'\n${newScriptSetup}`
-      }
-      newScriptSetup += `\nconst _$cstProps = ${propsKey}`
-      newScriptSetup += `\nconst _$cst = {
+  // Transform `$dt()` usage
+  newScriptSetup = transformDtHelper(newScriptSetup, '`')
+
+  // Inject runtime imports
+  if (hasVariants || hasComputedStyles) {
+    newScriptSetup = transformAddRuntimeImports(newScriptSetup)
+  }
+
+  // Check for variant props
+  if (hasVariants) {
+    newScriptSetup = transformVariants(newScriptSetup, variants, isTs)
+  }
+
+  // Check for computed styles
+  if (hasComputedStyles) {
+    newScriptSetup = transformComputedStyles(newScriptSetup, computedStyles)
+  }
+
+  // Overwrite <script setup> block with new content
+  magicString.overwrite(scriptSetup.loc.start.offset, scriptSetup.loc.end.offset, newScriptSetup)
+}
+
+/**
+ * Adds computed styles code to <script setup>
+ */
+export function transformComputedStyles(newScriptSetup: string, computedStyles: any): string {
+  newScriptSetup += `\nconst __$cst = {
 ${
 Object
-  .entries(computedStyles)
-  .map(
-    ([key, styleFunction]) => {
-      return `'${key}': computed(() => transformTokensToVariable(((props) => ${styleFunction})(_$cstProps)))\n`
-    },
-  )
-  .join(',')
+.entries(computedStyles)
+.map(
+  ([key, styleFunction]) => {
+    return `'${key}': computed(() => __$cstUtils.transformTokensToVariable(((props, utils) => ${styleFunction})(__$cstProps, __$cstUtils)))\n`
+  },
+)
+.join(',')
 }
 }
 `
-    }
-    else {
-      logger.warn('You seem to be using Computed Styles, but no props are defined in your component!')
-    }
+
+  return newScriptSetup
+}
+
+export function transformAddRuntimeImports(code: string): string {
+  code = `\nimport { usePinceauRuntime, utils as __$cstUtils } from 'pinceau/runtime'\n${code}`
+
+  if (!code.includes('computed')) {
+    code = `\nimport { computed } from 'vue'\n${code}`
   }
 
-  magicString.overwrite(scriptSetup.loc.start.offset, scriptSetup.loc.end.offset, newScriptSetup)
+  const propsKey = findPropsKey(code)
+
+  if (propsKey) {
+    code += `\nconst __$cstProps = ${propsKey}`
+  }
+  else {
+    logger.warn('You seem to be using Computed Styles, but no props are defined in your component!')
+  }
+
+  return code
 }

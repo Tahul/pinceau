@@ -21,15 +21,27 @@
 </template>
 
 <style lang="postcss">
-html, body {
-  max-height: 100vh;
-  max-width: 100vw;
-  font-family: $dt('fonts.primary');
+html, body, #app, #__nuxt {
+  height: 100vh;
+  width: 100vw;
+  font-family: $dt('fonts.primary') !important;
+
+  @light {
+    color: black;
+    background-color: red;
+  }
+
+  @dark {
+    color: white;
+    background-color: black;
+  }
 }
 </style>
 
-<style scoped lang="postcss">
+<style lang="postcss">
 .layout {
+  height: 100%;
+  width: 100%;
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -37,13 +49,9 @@ html, body {
   color: white;
   margin: 0;
   padding: 0;
-  background-color: $dt('colors.primary.200');
-
-  @dark {
-    background-color: $dt('colors.primary.900');
-  }
 
   header {
+    flex: 0;
     display: flex;
     align-items: center;
     padding: 1rem 2rem;
@@ -58,7 +66,7 @@ html, body {
   }
 
   footer {
-    background-color: $dt('colors.grape');
+    flex: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;

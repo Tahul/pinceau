@@ -6,6 +6,7 @@ export * from './theme'
 export * from './context'
 export * from './css'
 export * from './config'
+export * from './runtime'
 
 export interface PinceauOptions {
   /**
@@ -52,6 +53,14 @@ export interface PinceauOptions {
    * Included transform paths.
    */
   includes?: string[]
+  /**
+   * Toggle follow of symbolic links in glob.
+   *
+   * Disabling might be useful when testing.
+   *
+   * Enabling might be useful when using `link`.
+   */
+  followSymbolicLinks?: boolean
   /**
    * Toggles color .{dark|light} global classes.
    *

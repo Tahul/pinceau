@@ -40,5 +40,6 @@ export interface PinceauVirtualContext {
 }
 
 export interface PinceauTransformContext {
-  variantProps: { [key: string]: any }
+  variants: { [key: string]: any }
+  computedStyles: { [key: string]: any }
 }

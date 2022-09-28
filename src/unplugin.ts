@@ -19,9 +19,11 @@ export const defaultOptions: PinceauOptions = {
   preflight: true,
   includes: [],
   excludes: [
-    'node_modules/nuxt/dist',
+    'node_modules/nuxt/dist/',
     'node_modules/@vue/',
+    'node_modules/pinceau/',
   ],
+  followSymbolicLinks: true,
   colorSchemeMode: 'class',
 }
 
@@ -80,16 +82,17 @@ export default createUnplugin<PinceauOptions>(
 
         const magicString = new MagicString(code, { filename: query.filename })
         const result = () => ({ code: magicString.toString(), map: magicString.generateMap({ source: id, includeContent: true }) })
+        const missingMap = (code: string) => ({ code, map: { mappings: '' } })
 
         try {
           // Return early when the query is scoped (usually style tags)
           const { code: _code, early } = transformVueSFC(code, id, magicString, ctx, query)
-          if (early) { return _code }
+          if (early) { return missingMap(_code) }
         }
         catch (e) {
           logger.error(`Could not transform file ${query.filename || id}`)
           logger.error(e)
-          return code
+          return missingMap(code)
         }
 
         // Parse the component code to check if it is a valid Vue SFC
@@ -99,7 +102,7 @@ export default createUnplugin<PinceauOptions>(
           }
           catch (e) {
             // Return code w/o transforms when parsing fails
-            return code
+            return missingMap(code)
           }
         }
 
@@ -119,7 +122,9 @@ export default createUnplugin<PinceauOptions>(
 
         const query = parseVueQuery(id)
 
-        if (query.vue && query.type === 'style') { return transformVueStyle(id, query, ctx) }
+        if (query.vue && query.type === 'style') {
+          return transformVueStyle(id, query, ctx)
+        }
       },
     }
   })

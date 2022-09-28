@@ -1,4 +1,4 @@
-import type { FilterStartingWith, WrapUnion } from '.'
+import type { FilterStartingWith, WrapUnion } from './utils'
 // eslint-disable-next-line @typescript-eslint/prefer-ts-expect-error
 // @ts-ignore - Can be not found
 import type { GeneratedPinceauTheme, GeneratedTokensPaths } from '#pinceau/types'
@@ -110,20 +110,20 @@ export interface FontWeightTokens extends PinceauTokens {
 }
 
 export interface ConfigTokens extends PinceauTokens {
+  media?: PinceauTokens
   colors?: ScaleTokens
   fonts?: PinceauTokens
   fontWeights?: FontWeightTokens
   fontSizes?: BreakpointsTokens
   size?: BreakpointsTokens
   space?: BreakpointsTokens
-  screens?: BreakpointsTokens
   radii?: BreakpointsTokens
   borders?: BreakpointsTokens
   borderWidths?: BreakpointsTokens
   borderStyles?: BreakpointsTokens
   shadows?: BreakpointsTokens
   opacity?: BreakpointsTokens
-  lineHeights?: BreakpointsTokens
+  leads?: BreakpointsTokens
   letterSpacings?: BreakpointsTokens
   transitions?: PinceauTokens
   zIndices?: PinceauTokens
@@ -219,7 +219,7 @@ export interface DefaultThemeMap {
   textDecorationColor: 'colors'
   fontFamily: 'fonts'
   fontWeight: 'fontWeights'
-  lineHeight: 'lineHeights'
+  lineHeight: 'leads'
   letterSpacing: 'letterSpacings'
   blockSize: 'size'
   minBlockSize: 'size'
@@ -264,6 +264,8 @@ export type PinceauThemePaths = GeneratedTokensPaths
 // Resolve available theme tokens for a key from theme map and generated theme paths
 export type ThemeKey<K extends keyof DefaultThemeMap> = WrapUnion<FilterStartingWith<PinceauThemePaths, DefaultThemeMap[K]>, '{', '}'>
 
+export type MediaQueriesKeys = keyof PinceauTheme['media']
+
 export interface TokensFunctionOptions {
   /**
    * The key that will be unwrapped from the design token object.
@@ -276,11 +278,9 @@ export interface TokensFunctionOptions {
    */
   silent?: boolean
   /**
-   * Toggle deep flattening of the design token object to the requested key.
-   *
-   * If you query an token path containing mutliple design tokens and want a flat \`key: value\` object, this option will help you do that.
+   * Makes the function compatible with flattened version of tokens file.
    */
-  flatten?: boolean
+  flattened?: boolean
 }
 
 export type TokensFunction = (
