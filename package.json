@@ -1,6 +1,6 @@
 {
   "name": "pinceau",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "packageManager": "pnpm@7.1.1",
   "description": "A CSS-in-JS framework built to feel like a native Vue feature.",
   "license": "MIT",
@@ -38,7 +38,7 @@
     },
 
     "./runtime": "./dist/runtime.ts",
-    
+
     "./volar": "./volar/index.js"
   },
   "main": "dist/index.cjs",
