@@ -1,9 +1,10 @@
 import * as recast from 'recast'
 import type { ASTNode } from 'ast-types'
 import defu from 'defu'
-import { castValues, resolveCustomDirectives, stringify } from '../utils'
+import * as parser from 'recast/parsers/typescript'
+import { resolveCssProperty, stringify } from '../utils'
 import type { TokensFunction } from '../types'
-import { resolveComputedProperties } from './vue/computed'
+import { resolveComputedStyles } from './vue/computed'
 
 /**
  * Stringify every call of css() into a valid Vue <style> declaration.
@@ -18,12 +19,18 @@ export const transformCssFunction = (
   try {
     const declaration = resolveCssCallees(
       code,
-      ast => transformCssDeclaration(ast, computedStyles),
+      ast => evalCssDeclaration(ast, computedStyles),
     )
+
+    // Handle variants and remove them from declaration
+    if (variants && declaration?.variants) {
+      variants = Object.assign(variants, defu(variants || {}, declaration?.variants || {}))
+      delete declaration.variants
+    }
 
     const style = stringify(
       declaration,
-      (property: any, value: any) => resolveCssProperty(property, value, variants, $tokens),
+      (property: any, value: any, _style: any, _selectors: any) => resolveCssProperty(property, value, _style, _selectors, $tokens),
     )
 
     if (style) { code = style }
@@ -36,37 +43,12 @@ export const transformCssFunction = (
 }
 
 /**
- * Resolve a css function property to a stringifiable declaration.
- */
-export function resolveCssProperty(property: any, value: any, variants: any, $tokens: TokensFunction) {
-  // Resolve custom style directives
-  const directive = resolveCustomDirectives(property, value, $tokens)
-  if (directive) { return directive }
-
-  // Push variants to variants
-
-  // Transform variants to nested selectors
-  if (property === 'variants') {
-    variants = Object.assign(variants, defu(variants || {}, value))
-    return castVariants(property, value)
-  }
-
-  // Resolve final value
-  value = castValues(property, value, $tokens)
-
-  // Return proper declaration
-  return {
-    [property]: value,
-  }
-}
-
-/**
  * Transform a variants property to nested selectors.
  */
 export function castVariants(property: any, value: any) {
   return Object.entries(value).reduce(
     (acc: any, [key, value]) => {
-      acc[`&.${key}`] = value
+      acc[key] = value
       return acc
     },
     {},
@@ -76,14 +58,8 @@ export function castVariants(property: any, value: any) {
 /**
  * Find all calls of css() and call a callback on each.
  */
-export function resolveCssCallees(code: string, cb: (ast: ASTNode) => any) {
-  const ast = recast.parse(
-    code,
-    {
-      parser: require('recast/parsers/typescript'),
-    },
-  )
-
+export function resolveCssCallees(code: string, cb: (ast: ASTNode) => any): any {
+  const ast = recast.parse(code, { parser })
   let result = {}
   recast.visit(ast, {
     visitCallExpression(path: any) {
@@ -99,8 +75,9 @@ export function resolveCssCallees(code: string, cb: (ast: ASTNode) => any) {
 /**
  * Resolve computed styles found in css() declaration.
  */
-export function transformCssDeclaration(cssAst: ASTNode, computedStyles: any = {}) {
-  resolveComputedProperties(cssAst, computedStyles)
+export function evalCssDeclaration(cssAst: ASTNode, computedStyles: any = {}) {
+  // Resolve computed styled from AST of css() call
+  resolveComputedStyles(cssAst, computedStyles)
 
   // eslint-disable-next-line no-eval
   const _eval = eval

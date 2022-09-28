@@ -14,6 +14,8 @@ export const cssContentRegex = /css\(({.*?\})\)/mgs
 
 export const rgbaRegex = /rgb(a?)?\((.*?)\)/mg
 
-export const shortVariantsPropsRegex = /\$variantsProps\('(.*)'\)/gm
+export const mediaQueryRegex = /(@mq\s(.*?)\s{)/g
 
-export const fullVariantsPropsRegex = /\$variantsProps\(('(.*?)'),\s'(.*?)'\)/gm
+export const darkRegex = /(@dark\s{)/g
+
+export const lightRegex = /(@light\s{)/g

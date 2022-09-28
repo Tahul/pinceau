@@ -2,7 +2,7 @@ import type { ASTNode } from 'ast-types'
 import { hash } from 'ohash'
 import * as recast from 'recast'
 
-export function resolveComputedProperties(cssAst: ASTNode, computedStyles: any = {}) {
+export function resolveComputedStyles(cssAst: ASTNode, computedStyles: any = {}) {
   // Search for function properties in css() AST
   recast.visit(
     cssAst,
@@ -20,7 +20,7 @@ export function resolveComputedProperties(cssAst: ASTNode, computedStyles: any =
             path.replace(
               recast.types.builders.objectProperty(
                 path.value.key,
-                recast.types.builders.stringLiteral(`v-bind(_$cst['${id}'].value)`),
+                recast.types.builders.stringLiteral(`v-bind(__$cst['${id}'].value)`),
               ),
             )
           }

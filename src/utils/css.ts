@@ -4,6 +4,23 @@ import type { DesignToken, TokensFunction } from '../types'
 import { keyRegex, referencesRegex, rgbaRegex } from './regexes'
 
 /**
+ * Resolve a css function property to a stringifiable declaration.
+ */
+export function resolveCssProperty(property: any, value: any, style: any, selectors: any, $tokens: TokensFunction) {
+  // Resolve custom style directives
+  const directive = resolveCustomDirectives(property, value, $tokens)
+  if (directive) { return directive }
+
+  // Resolve final value
+  value = castValues(property, value, $tokens)
+
+  // Return proper declaration
+  return {
+    [property]: value,
+  }
+}
+
+/**
  * Resolve a `var(--token)` value from a token path.
  */
 export const resolveVariableFromPath = (path: string): string => `var(--${path.split('.').map((key: string) => kebabCase(key)).join('-')})`
@@ -56,7 +73,7 @@ export function resolveReferences(property: string, value: string, $tokens: Toke
 
       const token = $tokens(tokenPath, { key: undefined }) as DesignToken
 
-      const tokenValue = token?.attributes?.variable || token?.value || token?.original?.value
+      const tokenValue = typeof token === 'string' ? token : token?.attributes?.variable || token?.value || token?.original?.value
 
       if (!tokenValue) { return '' }
 
@@ -109,8 +126,8 @@ export function resolveCustomDirectives(property: any, value: any, $tokens: Toke
   if (property.startsWith('@')) {
     const DARK = '@dark'
     const LIGHT = '@light'
-    const SCREEN = /@screen:(.*)/
-    const screenMatches = property.match(SCREEN)
+    const MQ = /@mq\.(.*)/
+    const mqMatches = property.match(MQ)
 
     if (property === DARK) {
       return {
@@ -124,13 +141,12 @@ export function resolveCustomDirectives(property: any, value: any, $tokens: Toke
       }
     }
 
-    if (screenMatches) {
-      const screen = screenMatches[1]
-      const screenToken = $tokens(`screens.${screen}` as any, { key: undefined })
-      const tokenValue = (screenToken as any)?.original?.value
+    if (mqMatches) {
+      const screen = mqMatches[1]
+      const screenToken = $tokens(`media.${screen}` as any, { key: 'value' })
 
       return {
-        [`@media (min-width: ${tokenValue || '0px'})`]: value,
+        [`@media ${screenToken}`]: value,
       }
     }
   }

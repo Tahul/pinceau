@@ -40,10 +40,12 @@
       "#pinceau": ["./playground/node_modules/.vite/pinceau/index.ts"],
       "pinceau.css": ["./playground/node_modules/.vite/pinceau/index.css"],
       "pinceau": ["./src/index.ts"],
-      "pinceau/runtime": ["./src/runtime.ts"]
+      "pinceau/runtime": ["./src/runtime.ts"],
+
+      "pinceau/vite": ["./src/vite.ts"]
     }
   },
-  "include": ["./playground/.nuxt/nuxt.d.ts", "./src/**/*", "./playground/**/*"],
+  "include": ["./playground/.nuxt/nuxt.d.ts", "./src/**/*", "./playground/**/*", "./test/**/*"],
   "vueCompilerOptions": {
     "plugins": ["./volar"]
   }

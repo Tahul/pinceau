@@ -1,8 +1,12 @@
-import { defineNuxtConfig } from 'nuxt'
+import { resolve } from 'path'
 
 export default defineNuxtConfig({
-  extends: ['./theme'],
+  extends: [resolve(__dirname, './theme')],
   modules: ['../src/nuxt.ts'],
+  alias: {
+    'pinceau/runtime': resolve(__dirname, '../src/runtime.ts'),
+    'pinceau': resolve(__dirname, '../src/index.ts'),
+  },
   pinceau: {
     configFileName: 'tokens.config',
   },
@@ -11,5 +15,8 @@ export default defineNuxtConfig({
     'pinceau:options': (options) => {
       return options
     },
+  },
+  experimental: {
+    inlineSSRStyles: false,
   },
 })

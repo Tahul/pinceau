@@ -1,4 +1,4 @@
-import { objectPaths } from '../utils'
+import { flattenTokens, objectPaths } from '../utils'
 
 export const tsTypesDeclaration = (typesObject: any) => {
   let result = 'import type { DesignToken } from \'pinceau\'\n\n'
@@ -26,6 +26,14 @@ export const tsFull = (tokensObject: any, aliased: any) => {
   return result
 }
 
+export const tsFlat = (tokensObject: any, aliased: any) => {
+  let result = `export const aliases = ${JSON.stringify(aliased, null, 2)}\n\n`
+
+  result += `export const flattenedTheme = ${JSON.stringify(flattenTokens(tokensObject), null, 2)}\n\n`
+
+  return result
+}
+
 export const jsFull = (tokensObject: any, aliased: any) => {
   let result = `export const aliases = ${JSON.stringify(aliased, null, 2)}\n\n`
 
@@ -34,3 +42,10 @@ export const jsFull = (tokensObject: any, aliased: any) => {
   return result
 }
 
+export const jsFlat = (tokensObject: any, aliased: any) => {
+  let result = `export const aliases = ${JSON.stringify(aliased, null, 2)}\n\n`
+
+  result += `export const flattenedTheme = ${JSON.stringify(flattenTokens(tokensObject), null, 2)}\n\n`
+
+  return result
+}

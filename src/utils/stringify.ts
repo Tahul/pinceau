@@ -63,10 +63,11 @@ export const stringify = (
     for (let name in style) {
       // Support both `@` and `$` as atRuleLike values
       const isAtRuleLike = name.charCodeAt(0) === 64 || name.charCodeAt(0) === 36
+      // const isAttrRuleLike = name.charCodeAt(0) === 91 && name.charCodeAt(name.length - 1) === 93
 
       for (const data of isAtRuleLike && Array.isArray(style[name]) ? style[name] : [style[name]]) {
         if (replacer && (name !== prevName || data !== prevData)) {
-          const next = replacer(name, data, style)
+          const next = replacer(name, data, style, selectors)
 
           if (next !== null) {
             cssText += typeof next === 'object' && next ? parse(next, selectors, conditions, name, data) : next == null ? '' : next
@@ -120,11 +121,19 @@ export const stringify = (
 
           if (selectors.length && !used.has(selectors)) {
             used.add(selectors)
-
             cssText += `${selectors}{`
           }
 
-          cssText += `${(isAtRuleLike ? `${name} ` : `${kebabCase(name)}:`) + String(data)};`
+          if (isAtRuleLike) {
+            name = `${name} `
+          }
+          else {
+            name = `${kebabCase(name)}:`
+          }
+
+          cssText += `${
+            name + String(data)
+          };`
         }
       }
     }

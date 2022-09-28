@@ -64,7 +64,7 @@ const module: any = defineNuxtModule<PinceauOptions>({
 
     // Automatically inject all components in layers into includes
     for (const layer of layerPaths) {
-      options.includes?.push(...await glob(join(layer, '**/*.vue')))
+      options.includes?.push(...await glob(join(layer, '**/*.vue'), { followSymbolicLinks: options.followSymbolicLinks }))
     }
 
     addPluginTemplate({
@@ -72,7 +72,20 @@ const module: any = defineNuxtModule<PinceauOptions>({
       getContents() {
         const lines = [
           'import \'pinceau.css\'',
-          'export default defineNuxtPlugin(() => {})',
+          'import { plugin as pinceau } from \'pinceau/runtime\'',
+          `export default defineNuxtPlugin((nuxtApp) => {
+            nuxtApp.vueApp.use(pinceau)
+
+            // Handle first render of SSR styles
+            nuxtApp.hook('app:rendered', (app) => {
+              app.ssrContext.nuxt._useHead({
+                style: [{
+                  id: 'pinceau',
+                  children: [app.ssrContext.nuxt.vueApp.config.globalProperties.$pinceauSsr.getStylesheetContent()],
+                }],
+              })
+            })
+          })`,
         ]
 
         if (options?.preflight) {

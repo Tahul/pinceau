@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, rmSync, writeFileSync } from 'fs'
 import { join } from 'path'
 import type { PinceauOptions } from '../types'
-import { jsFull, tsFull, tsTypesDeclaration } from './formats'
+import { jsFlat, jsFull, tsFlat, tsFull, tsTypesDeclaration } from './formats'
 
 export function prepareOutputDir<UserOptions extends PinceauOptions = PinceauOptions>(
   {
@@ -21,6 +21,8 @@ export async function stubOutputs(buildPath: string, force = false) {
     'index.json': () => '{}',
     'index.js': jsFull,
     'index.ts': tsFull,
+    'flat.ts': tsFlat,
+    'flat.js': jsFlat,
     'types.ts': tsTypesDeclaration,
   }
 
