@@ -42,8 +42,6 @@ export default defineBuildConfig({
     'jiti',
     'tinycolor2',
     'virtual:pinceau/theme/flat',
-    '#pinceau/theme/flat',
-    '#pinceau/theme',
     '#pinceau/types',
   ],
   hooks: {

@@ -1,6 +1,6 @@
 {
   "name": "pinceau",
-  "version": "0.3.4",
+  "version": "0.3.3",
   "packageManager": "pnpm@7.1.1",
   "description": "A CSS-in-JS framework built to feel like a native Vue feature.",
   "license": "MIT",
@@ -22,12 +22,26 @@
     "vite"
   ],
   "exports": {
-    ".": "./dist/index.mjs",
-    "./vite": "./dist/vite.mjs",
-    "./nuxt": "./dist/nuxt.mjs",
+    ".": {
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.mjs"
+    },
+
+    "./vite": {
+      "require": "./dist/vite.cjs",
+      "import": "./dist/vite.mjs"
+    },
+
+    "./nuxt": {
+      "require": "./dist/vite.cjs",
+      "import": "./dist/vite.mjs"
+    },
+
     "./runtime": "./dist/runtime.ts",
+    
     "./volar": "./volar/index.js"
   },
+  "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "typesVersions": {
