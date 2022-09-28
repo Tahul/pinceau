@@ -34,7 +34,10 @@
       "require": "./dist/vite.cjs",
       "import": "./dist/vite.mjs"
     },
-    "./runtime": "./dist/runtime.ts",
+    "./runtime": {
+      "require": "./dist/runtime.cjs",
+      "import": "./dist/runtime.mjs"
+    },
     "./volar": "./volar/index.js"
   },
   "main": "dist/index.cjs",
