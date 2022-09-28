@@ -31,8 +31,8 @@
       "import": "./dist/vite.mjs"
     },
     "./nuxt": {
-      "require": "./dist/vite.cjs",
-      "import": "./dist/vite.mjs"
+      "require": "./dist/nuxt.cjs",
+      "import": "./dist/nuxt.mjs"
     },
     "./runtime": {
       "require": "./dist/runtime.cjs",
