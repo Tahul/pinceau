@@ -1,101 +1,60 @@
 import type { ViteDevServer } from 'vite'
-import type { LoadConfigResult, PinceauConfigContext, PinceauOptions, PinceauTheme } from '../types'
-import { loadConfig } from './load'
+import type { PinceauContext, PinceauOptions, PinceauTheme } from '../types'
+import { createTokensHelper } from '../utils/$tokens'
+import { generateTheme } from './generate'
+import { usePinceauConfig } from './config'
+import { usePinceauVirtualStore } from './virtual'
+import { prepareOutputDir } from './output'
 
-export * from './define'
-export * from './output'
+/**
+ * Creates the Pinceau context from the options.
+ */
+export const createContext = <UserOptions extends PinceauOptions = PinceauOptions>(options: UserOptions): PinceauContext<UserOptions> => {
+  const env: PinceauContext['env'] = 'prod'
+  let tokens: PinceauTheme = {} as any as PinceauTheme
+  let viteServer: ViteDevServer
 
-export function usePinceauConfig<UserOptions extends PinceauOptions = PinceauOptions>(
-  options: UserOptions,
-  dispatchConfigUpdate?: (result: LoadConfigResult<PinceauTheme>) => void,
-): PinceauConfigContext<UserOptions> {
-  let cwd = options?.cwd ?? process.cwd()
-  let sources: string[] = []
-  let resolvedConfig: PinceauTheme = {} as any
+  // Prepares the output dir (TODO: remove it to only depend on in-memory storage)
+  prepareOutputDir(options)
 
-  let ready = reloadConfig()
+  const { outputs, getOutput, getOutputId, updateOutputs } = usePinceauVirtualStore()
 
-  async function reloadConfig(newOptions?: UserOptions): Promise<LoadConfigResult<PinceauTheme>> {
-    if (!newOptions) { newOptions = options }
+  const configContext = usePinceauConfig<UserOptions>(
+    options,
+    async (resolvedConfig) => {
+      const builtTheme = await generateTheme(resolvedConfig.config, options.outputDir as string)
 
-    const result = await loadConfig(newOptions || options)
+      updateOutputs(builtTheme)
 
-    cwd = newOptions?.cwd ?? process.cwd()
-    resolvedConfig = result.config
-    sources = result.sources
-
-    if (dispatchConfigUpdate) { dispatchConfigUpdate(result) }
-
-    if (options?.configResolved) { options.configResolved(result.config) }
-
-    return result
-  }
-
-  async function getConfig() {
-    await ready
-    return resolvedConfig
-  }
-
-  async function updateCwd(newCwd: string) {
-    if (newCwd !== cwd) {
-      cwd = newCwd
-      ready = reloadConfig()
-    }
-    return await ready
-  }
-
-  function registerConfigWatchers(server: ViteDevServer) {
-    if (!sources.length) { return }
-
-    server.watcher.add(sources)
-
-    server.watcher.on('change', async (p) => {
-      if (!sources.includes(p)) { return }
-
-      await reloadConfig()
-
-      const css = server.moduleGraph.getModuleById('/__pinceau_css.css')
-      const ts = server.moduleGraph.getModuleById('/__pinceau_ts.ts')
-
-      // Send HMR updates for each
-      Object.entries({ css, ts }).forEach(
-        ([key, _module]) => {
-          if (!_module) { return }
-
-          server.moduleGraph.invalidateModule(_module)
-
-          ;['js', 'css'].forEach(
-            (type: 'js' | 'css') => {
-              server.ws.send({
-                type: 'update',
-                updates: [
-                  {
-                    acceptedPath: `/__pinceau_${key}.${key}`,
-                    path: `/__pinceau_${key}.${key}`,
-                    timestamp: +Date.now(),
-                    type: `${type}-update`,
-                  },
-                ],
-              })
-            },
-          )
-        },
-      )
-    })
-  }
-
-  return {
-    get ready() {
-      return ready
+      tokens = builtTheme.tokens
     },
-    get cwd() {
-      return cwd
+  )
+
+  const context = {
+    // Local context
+    env,
+    get tokens() {
+      return tokens
     },
-    updateCwd,
-    sources,
-    reloadConfig,
-    resolvedConfig,
-    getConfig,
-    registerConfigWatchers,
+    get $tokens() {
+      return createTokensHelper(tokens, getOutput('aliases'))
+    },
+
+    // Vite
+    get viteServer() {
+      return viteServer
+    },
+    setViteServer: (server: ViteDevServer) => (viteServer = server),
+
+    // Config
+    ...configContext,
+
+    // Virtual storage
+    outputs,
+    getOutput,
+    updateOutputs,
+    getOutputId,
   }
+
+  return context
 }

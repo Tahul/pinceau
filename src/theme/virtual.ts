@@ -4,7 +4,7 @@ import { jsFlat, jsFull, tsFlat, tsFull } from './formats'
 export const VIRTUAL_ENTRY_REGEX = /^(virtual:)?pinceau(\/theme|\/theme\/flat)?(\.)?(css|ts|js)?(\?.*)?$/
 export const RESOLVED_ID_RE = /\/__pinceau(?:(_.*?))?\.(css|ts|js)(\?.*)?$/
 
-export default function usePinceauVirtualStore(): PinceauVirtualContext {
+export function usePinceauVirtualStore(): PinceauVirtualContext {
   const outputs: ThemeGenerationOutput['outputs'] = {
     _css: '/* This file is empty because no tokens has been provided. */',
     _flat_ts: tsFlat({}, []),

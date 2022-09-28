@@ -1,6 +1,6 @@
 import defu from 'defu'
 import type { TokensFunction, TokensFunctionOptions } from '../types'
-import { get } from '../utils/data'
+import { get } from './data'
 
 /**
  * Get a theme token by its path

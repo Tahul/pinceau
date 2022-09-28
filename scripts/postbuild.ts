@@ -12,8 +12,10 @@ async function run() {
 
   for (const file of files) {
     console.log(chalk.cyan.inverse(' POST '), `Fix ${basename(file)}`)
+
     // fix cjs exports
     let code = await fs.readFile(file, 'utf8')
+
     code += 'if (module.exports.default) module.exports = module.exports.default;'
     await fs.writeFile(file, code)
   }

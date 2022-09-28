@@ -22,25 +22,12 @@
     "vite"
   ],
   "exports": {
-    ".": {
-      "require": "./dist/index.cjs",
-      "import": "./dist/index.mjs"
-    },
-    "./vite": {
-      "require": "./dist/vite.cjs",
-      "import": "./dist/vite.mjs"
-    },
-    "./nuxt": {
-      "require": "./dist/nuxt.cjs",
-      "import": "./dist/nuxt.mjs"
-    },
-    "./runtime": {
-      "require": "./dist/runtime.cjs",
-      "import": "./dist/runtime.mjs"
-    },
+    ".": "./dist/index.mjs",
+    "./vite": "./dist/vite.mjs",
+    "./nuxt": "./dist/nuxt.mjs",    
+    "./runtime": "./dist/runtime.ts",
     "./volar": "./volar/index.js"
   },
-  "main": "dist/index.mjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "typesVersions": {

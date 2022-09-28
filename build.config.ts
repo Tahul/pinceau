@@ -17,8 +17,8 @@ export default defineBuildConfig({
       name: 'nuxt',
     },
     {
-      input: 'src/runtime.ts',
-      name: 'runtime',
+      input: 'src/utils.ts',
+      name: 'utils',
     },
   ],
   clean: true,
@@ -34,8 +34,6 @@ export default defineBuildConfig({
     'ufo',
     '@nuxt/kit',
     '@vue/compiler-sfc',
-    'pinceau__flat.ts',
-    'pinceau__flat.js',
     'vue',
     '@vue/reactivity',
     'style-dictionary-esm',
@@ -43,6 +41,7 @@ export default defineBuildConfig({
     'chalk',
     'jiti',
     'tinycolor2',
+    'virtual:pinceau/theme/flat',
     '#pinceau/theme/flat',
     '#pinceau/theme',
     '#pinceau/types',
@@ -50,6 +49,8 @@ export default defineBuildConfig({
   hooks: {
     'build:done': () => {
       execSync('npm run build:fix')
+      execSync('cp src/runtime.ts dist/runtime.ts')
+      execSync('cp -r src/runtime/ dist/runtime/')
     },
   },
 })

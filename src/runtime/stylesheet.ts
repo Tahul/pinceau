@@ -1,8 +1,6 @@
 import { computed, watch } from 'vue'
 import type { TokensFunction } from '../types'
-import { resolveCssProperty } from '../utils/css'
-import { stringify } from '../utils/stringify'
-import { transformVariantsAndPropsToDeclaration } from './helpers'
+import { resolveCssProperty, stringify, transformVariantsAndPropsToDeclaration } from './utils'
 
 export function usePinceauStylesheet(state: any, $tokens: TokensFunction) {
   const declaration = computed(() => transformVariantsAndPropsToDeclaration(state.variantsState, state.propsState))

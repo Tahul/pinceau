@@ -3,11 +3,11 @@ import { createUnplugin } from 'unplugin'
 import MagicString from 'magic-string'
 import { parse } from '@vue/compiler-sfc'
 import { join } from 'pathe'
-import { createContext } from './context'
+import { createContext } from './theme'
 import { registerAliases, registerPostCssPlugins } from './utils/plugin'
 import { replaceStyleTs, transformVueSFC, transformVueStyle } from './transforms'
 import { parseVueQuery } from './utils/vue'
-import { logger } from './utils'
+import { logger } from './utils/logger'
 import type { PinceauOptions } from './types'
 
 export const defaultOptions: PinceauOptions = {
