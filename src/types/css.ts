@@ -143,7 +143,7 @@ export type CSS<
     [key in keyof Utils.PrefixObjectKeys<
       // @ts-expect-error - Might not be defined by the user
       Theme['media'],
-      '@mq:'
+      '@mq.'
     >]?: (
       | CSS<Theme, TemplateTags, TemplateProps, false>
     )

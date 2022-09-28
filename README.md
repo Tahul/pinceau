@@ -6,12 +6,12 @@ A _CSS-in-TS_ framework built to feel like a native Vue feature.
 
 [🎨 Start painting](https://stackblitz.com/github/Tahul/vitesse-pinceau?file=src%2FApp.vue) • [🚧 Documentation](#install)
 
-- Ships **0kb** of **JS** to the client
+- Ships **0kb** of **JS** to the client by default
 - **DX** that feels like a native Vue feature
 - [Design Tokens](https://github.com/design-tokens/community-group) compatible configuration system
-- Fully-typed styling API inspired from [Stitches](https://www.npmjs.com/package/@stitches/stringify)
+- Fully-typed styling API
 - Integrated with [Volar](https://github.com/johnsoncodehk/volar)
-- First-class support for [Nuxt 3](https://v3.nuxtjs.org), [Vitesse](https://github.com/antfu/vitesse), [@vitejs/plugin-vue](https://github.com/vitejs/vite/tree/main/packages/plugin-vue)
+- Plug & play with  [Nuxt 3](https://v3.nuxtjs.org), [Vitesse](https://github.com/antfu/vitesse), [@vitejs/plugin-vue](https://github.com/vitejs/vite/tree/main/packages/plugin-vue)
 
 #### 🚨 Warning
 
@@ -453,7 +453,7 @@ The `css()` function has mutliple features:
   This has same API as `@dark` or `@light`, but uses color modes defined in [`@nuxtjs/color-mode`](https://color-mode.nuxtjs.org)
   </details>
 
-- Supports `@screen` helper
+- Supports `@mq` helper
 
   <details>
   <summary>💡 Example</summary>
@@ -465,13 +465,13 @@ The `css()` function has mutliple features:
   import { defineTheme } from 'pinceau'
 
   export default defineTheme({
-    screens: {
-      'xs': { value: '475px' },
-      'sm': { value: '640px' },
-      'md': { value: '768px' },
-      'lg': { value: '1024px' },
-      'xl': { value: '1280px' },
-      '2xl': { value: '1536px' },
+    media: {
+      'sm': { value: '(min-width: 640px)' },
+      'md': { value: '(min-width: 768px)' },
+      'lg': { value: '(min-width: 1024px)' },
+      'xl': { value: '(min-width: 1280px)' },
+      '2xl': { value: '(min-width: 1536px)' },
+      'rm': { value: '(prefers-reduced-motion: reduce)' },
     },
   })
   ```
@@ -483,11 +483,21 @@ The `css()` function has mutliple features:
   css({
     '.block': {
       width: '100%'
-      '@screen:lg': {
+      '@mq.lg': {
         width: '50%'
       },
     }
   })
+  </style>
+
+  <style lang="postcss">
+  .block {
+    width: 100%;
+
+    @mq.lg {
+      width: 50%;
+    }
+  }
   </style>
   ```
 
@@ -518,10 +528,15 @@ The `css()` function has mutliple features:
   <summary>💡 Example</summary>
   <br>
 
+  This syntax only works with `<script setup lang="ts">` for now.
+
+  It is planned to support all `<script>` syntaxes soon.
+
   ```vue
-  <script setup>
+  <script setup lang="ts">
   import type { PropType } from 'vue'
 
+// You must specify a key for props when using Variants
   const props = defineProps({
     color: {
       type: String as PropType<ThemeKey<'color'>>
@@ -544,36 +559,76 @@ The `css()` function has mutliple features:
 
   </details>
 
-- Supports `variants` system **`🚨 wip`**
+- Supports `variants` system **`💡 new`**
 
   <details>
   <summary>💡 Example</summary>
   <br>
 
+  This syntax only works with `<script setup lang="ts">` for now.
+
+  It is planned to support all `<script>` syntaxes soon.
+
+  Define your component variants at root of `css()`:
+
   ```vue
-  <script setup>
-  defineProps({
-    // This part is WIP (and fully optional)
-    ...variantsProps('block')
+  <script setup lang="ts">
+  // You must specify a key for props when using Variants
+  const props = defineProps({
+    // This part is optional, it provides typings
+    ...variantsProps
   })
   </script>
   
   <template>
-    <div class="block" :class="[blockTransparent]" />
+    <div class="block" />
   </template>
 
   <style lang="ts">
   css({
     '.block': {
-      backgroundColor: 'rgba({any.color.token.path}, 0.8)',
-      variants: {
-        transparent: {
+      backgroundColor: 'rgba({colors.primary.500}, 0.8)',
+    },
+    variants: {
+      transparent: {
+        true: {
           backgroundColor: 'transparent'
+        },
+        options: {
+          default: true
+        }
+      },
+      shadows: {
+        soft: {
+          boxShadow: '{shadows.sm}'
+        },
+        smooth: {
+          boxShadow: '{shadows.lg}',
+          border: '2px solid {colors.primary.500}'
+        },
+        heavy: {
+          boxShadow: '{shadows.xl}',
+          border: '4px solid {colors.primary.800}'
+        },
+        options: {
+          default: {
+            sm: 'soft',
+            lg: 'smooth',
+            xl: 'heavy'
+          }
         }
       }
     }
   })
   </style>
+  ```
+
+  Profit from automatically generated props and typings, and compatibility with all your media queries:
+
+  ```vue
+  <template>
+    <Block :transparent="{ md: true, xl: false }" shadow="{ sm: 'soft', xl: 'smooth' }" />
+  </template>
   ```
 
   </details>

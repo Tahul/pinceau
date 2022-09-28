@@ -1,7 +1,7 @@
 import { kebabCase } from 'scule'
 import color from 'tinycolor2'
 import type { DesignToken, TokensFunction } from '../types'
-import { keyRegex, referencesRegex, rgbaRegex } from './regexes'
+import { DARK, LIGHT, keyRegex, mqPlainRegex, referencesRegex, rgbaRegex } from './regexes'
 
 /**
  * Resolve a css function property to a stringifiable declaration.
@@ -120,14 +120,11 @@ export function resolveRgbaTokens(property: string, value: string, $tokens: Toke
 }
 
 /**
- * Resolve custom directives (@screen, @dark).
+ * Resolve custom directives (@mq, @dark).
  */
 export function resolveCustomDirectives(property: any, value: any, $tokens: TokensFunction) {
   if (property.startsWith('@')) {
-    const DARK = '@dark'
-    const LIGHT = '@light'
-    const MQ = /@mq\.(.*)/
-    const mqMatches = property.match(MQ)
+    const mqMatches = property.match(mqPlainRegex)
 
     if (property === DARK) {
       return {

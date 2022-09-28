@@ -14,8 +14,14 @@ export const cssContentRegex = /css\(({.*?\})\)/mgs
 
 export const rgbaRegex = /rgb(a?)?\((.*?)\)/mg
 
-export const mediaQueryRegex = /(@mq\s(.*?)\s{)/g
+export const mqPlainRegex = /@mq\.(.*)/
+
+export const mqCssRegex = /(@mq.(.*?)\s{)/g
 
 export const darkRegex = /(@dark\s{)/g
 
 export const lightRegex = /(@light\s{)/g
+
+export const DARK = '@dark'
+
+export const LIGHT = '@light'

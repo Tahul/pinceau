@@ -4,7 +4,7 @@ import { parse } from '@vue/compiler-sfc'
 import type { PinceauContext, TokensFunction } from '../../types'
 import { logger } from '../../utils'
 import type { VueQuery } from '../../utils/vue'
-import { darkRegex, lightRegex, mediaQueryRegex } from '../../utils/regexes'
+import { darkRegex, lightRegex, mqCssRegex } from '../../utils/regexes'
 import { transformDtHelper } from '../dt'
 import { transformCssFunction } from '../css'
 
@@ -49,7 +49,7 @@ export function transformScheme(code = '', scheme: 'light' | 'dark') {
 }
 
 /**
- * Resolve `@mq {mediaQuery}` declarations.
+ * Resolve `@mq.{mediaQuery}` declarations.
  */
 export function transformMediaQueries(code = '', $tokens: TokensFunction): string {
   // @ts-expect-error - Might be undefined
@@ -59,7 +59,7 @@ export function transformMediaQueries(code = '', $tokens: TokensFunction): strin
   }) as any
 
   code = code.replace(
-    mediaQueryRegex,
+    mqCssRegex,
     (_, _mediaQueryDeclaration, query) => {
       const mediaQuery = mediaQueries[query]
 
