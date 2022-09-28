@@ -24,6 +24,7 @@ export const findPropsKey = (code: string) => {
     return propsVariableName
   }
   catch (e) {
+    // console.log({ e })
     return undefined
   }
 }

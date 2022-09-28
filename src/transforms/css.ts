@@ -36,6 +36,7 @@ export const transformCssFunction = (
     if (style) { code = style }
   }
   catch (e) {
+    // console.log({ e, code })
     return code
   }
 

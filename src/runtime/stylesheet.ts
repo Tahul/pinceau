@@ -10,17 +10,17 @@ export function usePinceauStylesheet(state: any, $tokens: TokensFunction) {
   const updateStylesheet = () => {
     // Only update stylesheet on client-side
     // SSR Rendering occurs in `app:rendered` hook, or via `getStylesheetContent`
-    if (!import.meta.env.SSR && document) {
+    const global = globalThis || window
+    if (global && global.document) {
+      const doc = global.document
       const content = getStylesheetContent()
-      let style = document.querySelector('style#pinceau')
-
+      let style = doc.querySelector('style#pinceau')
       if (!style) {
-        const styleTag = document.createElement('style')
+        const styleTag = doc.createElement('style')
         styleTag.id = 'pinceau'
-        document.head.prepend(styleTag)
+        doc.head.prepend(styleTag)
         style = styleTag
       }
-
       style.textContent = content
     }
   }
