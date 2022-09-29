@@ -26,7 +26,7 @@ export function usePinceauStylesheet(state: any, $tokens: TokensFunction) {
     }
   }
 
-  watch(declaration, () => updateStylesheet())
+  watch(declaration, () => updateStylesheet(), { immediate: true })
 
   return {
     updateStylesheet,

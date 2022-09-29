@@ -23,7 +23,7 @@ setInterval(
       color: colors[sizes.indexOf(size.value)],
     }
   },
-  100000)
+  100)
 </script>
 
 <template>

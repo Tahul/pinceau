@@ -29,8 +29,7 @@ export const plugin: Plugin = {
 
       const css = computed(() => props.css)
 
-      const ids = ref<PinceauRuntimeIds>({} as any)
-      watch([css, variantsPropsValues], ([newCss, newVariantsPropsValues]) => (ids.value = getIds(instance, newCss, newVariantsPropsValues, variants)))
+      const ids = computed(() => getIds(instance, css.value, variantsPropsValues.value, variants))
 
       watch(
         ids,
@@ -51,6 +50,8 @@ export const plugin: Plugin = {
       onScopeDispose(() => state.drop(ids.value))
 
       const $variantsClass = computed(() => [ids.value.className, ids.value.computedClassName].filter(Boolean).join(' '))
+
+      console.log($variantsClass.value)
 
       return { $variantsClass }
     }
