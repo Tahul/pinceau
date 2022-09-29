@@ -57,7 +57,7 @@ export function transformStateToDeclaration(
         // Iterate through all computed styles in `computedStyles[componentId][class]`
         Object.entries(classes).forEach(
           ([className, value]) => {
-            declaration[`.${className}`] = value?.css || {}
+            declaration[`.${className}`] = (value as any)?.css || {}
           },
         )
       })
