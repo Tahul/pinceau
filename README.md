@@ -551,7 +551,7 @@ The `css()` function has mutliple features:
   <style lang="ts">
   css({
     '.block': {
-      backgroundColor: (props) => `{colors.${props.colr}`,
+      backgroundColor: (props) => `{colors.${props.color}`,
     }
   })
   </style>

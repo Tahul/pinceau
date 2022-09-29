@@ -72,8 +72,7 @@
     "test:vite": "(cd test/fixtures/vite && npx vite dev)"
   },
   "dependencies": {
-    "@types/babel__core": "^7.1.19",
-    "@unocss/reset": "^0.45.25",
+    "@unocss/reset": "^0.45.26",
     "@volar/vue-language-core": "^0.40.13",
     "chroma-js": "^2.4.2",
     "consola": "^2.15.3",
@@ -97,7 +96,7 @@
     "@nuxtjs/color-mode": "^3.1.6",
     "@types/chroma-js": "^2.1.4",
     "@types/node": "^18.7.23",
-    "@vue/test-utils": "^2.0.2",
+    "@vue/test-utils": "^2.1.0",
     "eslint": "^8.24.0",
     "esno": "^0.16.3",
     "fast-glob": "^3.2.12",

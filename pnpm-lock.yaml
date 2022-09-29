@@ -8,12 +8,11 @@ importers:
       '@nuxt/kit': 3.0.0-rc.11
       '@nuxt/test-utils': 3.0.0-rc.11
       '@nuxtjs/color-mode': ^3.1.6
-      '@types/babel__core': ^7.1.19
       '@types/chroma-js': ^2.1.4
       '@types/node': ^18.7.23
-      '@unocss/reset': ^0.45.25
+      '@unocss/reset': ^0.45.26
       '@volar/vue-language-core': ^0.40.13
-      '@vue/test-utils': ^2.0.2
+      '@vue/test-utils': ^2.1.0
       chroma-js: ^2.4.2
       consola: ^2.15.3
       csstype: ^3.1.1
@@ -43,8 +42,7 @@ importers:
       vue: ^3.2.40
       webpack: ^5.74.0
     dependencies:
-      '@types/babel__core': 7.1.19
-      '@unocss/reset': 0.45.25
+      '@unocss/reset': 0.45.26
       '@volar/vue-language-core': 0.40.13
       chroma-js: 2.4.2
       consola: 2.15.3
@@ -67,7 +65,7 @@ importers:
       '@nuxtjs/color-mode': 3.1.6
       '@types/chroma-js': 2.1.4
       '@types/node': 18.7.23
-      '@vue/test-utils': 2.0.2_vue@3.2.40
+      '@vue/test-utils': 2.1.0_vue@3.2.40
       eslint: 8.24.0
       esno: 0.16.3
       fast-glob: 3.2.12
@@ -87,14 +85,14 @@ importers:
     specifiers:
       '@vitejs/plugin-vue': latest
       nuxt: npm:nuxt3@latest
-      vite: ^3.1.0
-      vite-plugin-inspect: ^0.6.1
-      vue: ^3.2.38
+      vite: ^3.1.4
+      vite-plugin-inspect: ^0.7.4
+      vue: ^3.2.40
     devDependencies:
       '@vitejs/plugin-vue': 3.1.0_vite@3.1.4+vue@3.2.40
       nuxt: /nuxt3/3.0.0-rc.12-27736489.2e080c2
       vite: 3.1.4
-      vite-plugin-inspect: 0.6.1_vite@3.1.4
+      vite-plugin-inspect: 0.7.4_vite@3.1.4
       vue: 3.2.40
 
   volar:
@@ -1127,35 +1125,6 @@ packages:
     engines: {node: '>=10.13.0'}
     dev: true
 
-  /@types/babel__core/7.1.19:
-    resolution: {integrity: sha512-WEOTgRsbYkvA/KCsDwVEGkd7WAr1e3g31VHQ8zy5gul/V1qKullU/BU5I68X5v7V3GnB9eotmom4v5a5gjxorw==}
-    dependencies:
-      '@babel/parser': 7.19.3
-      '@babel/types': 7.19.3
-      '@types/babel__generator': 7.6.4
-      '@types/babel__template': 7.4.1
-      '@types/babel__traverse': 7.18.2
-    dev: false
-
-  /@types/babel__generator/7.6.4:
-    resolution: {integrity: sha512-tFkciB9j2K755yrTALxD44McOrk+gfpIpvC3sxHjRawj6PfnQxrse4Clq5y/Rq+G3mrBurMax/lG8Qn2t9mSsg==}
-    dependencies:
-      '@babel/types': 7.19.3
-    dev: false
-
-  /@types/babel__template/7.4.1:
-    resolution: {integrity: sha512-azBFKemX6kMg5Io+/rdGT0dkGreboUVR0Cdm3fz9QJWpaQGJRQXl7C+6hOTCZcMll7KFyEQpgbYI2lHdsS4U7g==}
-    dependencies:
-      '@babel/parser': 7.19.3
-      '@babel/types': 7.19.3
-    dev: false
-
-  /@types/babel__traverse/7.18.2:
-    resolution: {integrity: sha512-FcFaxOr2V5KZCviw1TnutEMVUVsGt4D2hP1TAfXZAMKuHYW3xQhe3jTxNPWutgCJ3/X1c5yX8ZoGVEItxKbwBg==}
-    dependencies:
-      '@babel/types': 7.19.3
-    dev: false
-
   /@types/cacheable-request/6.0.2:
     resolution: {integrity: sha512-B3xVo+dlKM6nnKTcmm5ZtY/OL8bOAOd2Olee9M1zft65ox50OzjEHW91sDiU9j6cvW8Ejg1/Qkf4xd2kugApUA==}
     dependencies:
@@ -1379,8 +1348,8 @@ packages:
       eslint-visitor-keys: 3.3.0
     dev: true
 
-  /@unocss/reset/0.45.25:
-    resolution: {integrity: sha512-ab4sP4ybikPq6eje66SIgL/KAkrx6pjx03KFlziHGdfnXpNxTYP5RCXXw5rcVX778NyV6Lk0VyidC8jRp4XtTQ==}
+  /@unocss/reset/0.45.26:
+    resolution: {integrity: sha512-9X0cSvGPXdZ1KAuiWzFWtcoyfC7b8j4GYHr4lDXRkPC5oI3CJhw4WcdvzTHVPqOX2CKqq731H4GhcQ5c5LBuHA==}
     dev: false
 
   /@vercel/nft/0.22.1:
@@ -1566,8 +1535,8 @@ packages:
   /@vue/shared/3.2.40:
     resolution: {integrity: sha512-0PLQ6RUtZM0vO3teRfzGi4ltLUO5aO+kLgwh4Um3THSR03rpQWLTuRCkuO5A41ITzwdWeKdPHtSARuPkoo5pCQ==}
 
-  /@vue/test-utils/2.0.2_vue@3.2.40:
-    resolution: {integrity: sha512-E2P4oXSaWDqTZNbmKZFVLrNN/siVN78YkEqs7pHryWerrlZR9bBFLWdJwRoguX45Ru6HxIflzKl4vQvwRMwm5g==}
+  /@vue/test-utils/2.1.0_vue@3.2.40:
+    resolution: {integrity: sha512-U4AxAD/tKJ3ajxYew1gkfEotpr96DE/gLXpbl+nPbsNRqGBfQZZA7YhwGoQNDPgon56v+IGZDrYq7pe3GDl9aw==}
     peerDependencies:
       vue: ^3.0.1
     dependencies:
@@ -8235,14 +8204,15 @@ packages:
       vscode-uri: 3.0.6
     dev: true
 
-  /vite-plugin-inspect/0.6.1_vite@3.1.4:
-    resolution: {integrity: sha512-MQzIgMoPyiPDuHoO6p7QBOrmheBU/ntg0cgtgcnm21S/Xds5oak1CbVLSAvv4fK1ZpetLK+tlJ+2mlFO9fG3SQ==}
+  /vite-plugin-inspect/0.7.4_vite@3.1.4:
+    resolution: {integrity: sha512-06uSil9CPWsGwICsXixx2O3vsIOLNTkQaiBijmJA84BuxYKIWJ3k0r4I96kX1WgdA3olxJxVBXOjzryzeHOSuQ==}
     engines: {node: '>=14'}
     peerDependencies:
-      vite: ^3.0.0
+      vite: ^3.1.0
     dependencies:
       '@rollup/pluginutils': 4.2.1
       debug: 4.3.4
+      fs-extra: 10.1.0
       kolorist: 1.6.0
       sirv: 2.0.2
       ufo: 0.8.5
