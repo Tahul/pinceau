@@ -121,7 +121,7 @@ export const getIds = (instance: ComponentInternalInstance, css: any, props: any
 
   const className = `p-${hashed}`
 
-  const computedClassName = css && Object.keys(css).length ? `p-${hash(`${componentId}-${uid}`)}` : undefined
+  const computedClassName = css && Object.keys(css).length ? `p-${hash(JSON.stringify(css))}` : undefined
 
   return { uid, componentId, className, computedClassName }
 }

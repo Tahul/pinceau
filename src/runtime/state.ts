@@ -28,8 +28,10 @@ export function usePinceauRuntimeState() {
       if (!computedStylesState[ids.componentId]) { computedStylesState[ids.componentId] = {} }
       if (!computedStylesState[ids.componentId][ids.computedClassName]) { computedStylesState[ids.componentId][ids.computedClassName] = {} }
 
+      // () => computedStyles
       if (componentComputedStyles) { computedStylesState[ids.componentId][ids.computedClassName] = componentComputedStyles }
 
+      // :css prop
       if (componentCssProp) { computedStylesState[ids.componentId][ids.computedClassName].css = componentCssProp }
     }
   }

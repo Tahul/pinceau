@@ -85,7 +85,7 @@ const module: any = defineNuxtModule<PinceauOptions>({
                   id: 'pinceau',
                   type: 'text/css',
                   children: [app.ssrContext.nuxt.vueApp.config.globalProperties.$pinceauSsr.getStylesheetContent()],
-                  renderPriority: 100
+                  renderPriority: 10000
                 }],
               })
             })

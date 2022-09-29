@@ -1,7 +1,7 @@
 import type { Plugin, PropType } from 'vue'
-import { computed, getCurrentInstance, inject, onScopeDispose, ref, watch } from 'vue'
+import { computed, getCurrentInstance, inject, onScopeDispose, watch } from 'vue'
 import { defu } from 'defu'
-import type { CSS, PinceauRuntimeIds, PinceauTheme } from '../types'
+import type { CSS, PinceauTheme } from '../types'
 import { createTokensHelper, getIds, isToken, resolveVariableFromPath, sanitizeProps, transformTokensToVariable } from './utils'
 import { usePinceauRuntimeState } from './state'
 import { usePinceauStylesheet } from './stylesheet'
@@ -50,8 +50,6 @@ export const plugin: Plugin = {
       onScopeDispose(() => state.drop(ids.value))
 
       const $variantsClass = computed(() => [ids.value.className, ids.value.computedClassName].filter(Boolean).join(' '))
-
-      console.log($variantsClass.value)
 
       return { $variantsClass }
     }
