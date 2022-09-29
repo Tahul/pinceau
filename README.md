@@ -535,8 +535,7 @@ The `css()` function has mutliple features:
   ```vue
   <script setup lang="ts">
   import type { PropType } from 'vue'
-
-// You must specify a key for props when using Variants
+  // You must specify a key for props when using Variants
   const props = defineProps({
     color: {
       type: String as PropType<ThemeKey<'color'>>
