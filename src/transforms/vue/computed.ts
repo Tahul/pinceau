@@ -20,7 +20,7 @@ export function resolveComputedStyles(cssAst: ASTNode, computedStyles: any = {})
             path.replace(
               recast.types.builders.objectProperty(
                 path.value.key,
-                recast.types.builders.stringLiteral(`v-bind(__$cst['${id}'].value)`),
+                recast.types.builders.stringLiteral(`v-bind(__$pComputed['${id}'])`),
               ),
             )
           }

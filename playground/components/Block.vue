@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import type { PropType } from 'vue'
+import { cssProp } from 'pinceau/runtime'
 
 const props = defineProps({
   color: {
     type: String as PropType<ThemeKey<'color'> | keyof PinceauTheme['colors']>,
     default: '{colors.primary.600}',
   },
+  css: cssProp,
   ...$variantsProps,
 })
 </script>
 
 <template>
-  <button class="block">
+  <button class="block" :class="[$variantsClass]">
     <pre>{{ JSON.stringify($props, null, 2) }}</pre>
   </button>
 </template>
@@ -19,7 +21,7 @@ const props = defineProps({
 <style lang="ts" scoped>
 css({
   '.block': {
-    marginTop: '1rem',
+    marginTop: '2em',
     backgroundColor: (props, utils) => {
       if (props.color && utils.isToken(props.color)) return props.color
       return props.color

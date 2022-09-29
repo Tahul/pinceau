@@ -42,7 +42,6 @@
       "pinceau.css": ["./playground/node_modules/.vite/pinceau/index.css"],
       "pinceau": ["./src/index.ts"],
       "pinceau/runtime": ["./src/runtime.ts"],
-
       "pinceau/vite": ["./src/vite.ts"]
     }
   },

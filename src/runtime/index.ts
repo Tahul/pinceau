@@ -1,8 +1,8 @@
-import type { Plugin } from 'vue'
-import { computed, getCurrentInstance, inject, onScopeDispose, watch } from 'vue'
+import type { Plugin, PropType } from 'vue'
+import { computed, getCurrentInstance, inject, onScopeDispose, ref, watch } from 'vue'
 import { defu } from 'defu'
-import { createTokensHelper, isToken, resolveVariableFromPath, sanitizeProps, transformTokensToVariable } from './utils'
-import { bindClass, getIds } from './instance'
+import type { CSS, PinceauRuntimeIds, PinceauTheme } from '../types'
+import { createTokensHelper, getIds, isToken, resolveVariableFromPath, sanitizeProps, transformTokensToVariable } from './utils'
 import { usePinceauRuntimeState } from './state'
 import { usePinceauStylesheet } from './stylesheet'
 
@@ -21,18 +21,27 @@ export const plugin: Plugin = {
     const setupPinceauRuntime = (
       props: any,
       variants: any,
+      computedStyles: any,
     ) => {
       const instance = getCurrentInstance()
 
       const variantsPropsValues = computed(() => sanitizeProps(props, variants))
 
-      const ids = computed(() => getIds(instance, variantsPropsValues.value, variants))
+      const css = computed(() => props.css)
+
+      const ids = ref<PinceauRuntimeIds>({} as any)
+      watch([css, variantsPropsValues], ([newCss, newVariantsPropsValues]) => (ids.value = getIds(instance, newCss, newVariantsPropsValues, variants)))
 
       watch(
         ids,
-        (newIds, oldIds) => {
-          state.push(newIds, variants, variantsPropsValues)
-          bindClass(instance, newIds, oldIds)
+        (ids) => {
+          state.push(
+            ids,
+            variants,
+            variantsPropsValues.value,
+            css.value,
+            computedStyles,
+          )
         },
         {
           immediate: true,
@@ -40,6 +49,10 @@ export const plugin: Plugin = {
       )
 
       onScopeDispose(() => state.drop(ids.value))
+
+      const $variantsClass = computed(() => [ids.value.className, ids.value.computedClassName].filter(Boolean).join(' '))
+
+      return { $variantsClass }
     }
 
     app.config.globalProperties.$pinceau = setupPinceauRuntime
@@ -55,11 +68,21 @@ export const utils = {
 }
 
 /**
+ * A prop to be used on any component to enable `:css` prop.
+ */
+export const cssProp = {
+  type: Object as PropType<CSS<PinceauTheme, {}, {}, false>>,
+  required: false,
+  default: undefined,
+}
+
+/**
  * Entrypoint for Pinceau runtime features.
  */
 export function usePinceauRuntime(
   props: any,
   variants: any,
+  computedStyles: any,
 ): void {
-  return (inject('pinceau') as any)(props, variants)
+  return (inject('pinceau') as any)(props, variants, computedStyles)
 }

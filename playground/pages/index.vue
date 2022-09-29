@@ -1,5 +1,49 @@
+<script setup>
+import { ref } from 'vue'
+
+const sizes = ['light', 'medium', 'giant']
+
+const colors = ['red', 'orange', 'blue']
+
+const size = ref('light')
+
+const css = ref({
+  padding: '1px',
+  color: 'red',
+})
+
+setInterval(
+  () => {
+    if (size.value === 'light') { size.value = 'medium' }
+    else if (size.value === 'medium') { size.value = 'giant' }
+    else { size.value = 'light' }
+
+    css.value = {
+      padding: `${parseInt(css.value.padding) + 1}px`,
+      color: colors[sizes.indexOf(size.value)],
+    }
+  },
+  100000)
+</script>
+
 <template>
   <section>
+    <Block :shadow="size" :css="css" />
+
+    <Block shadow="giant" />
+
+    <Block shadow="giant" />
+
+    <Block shadow="giant" />
+
+    <Block shadow="giant" />
+
+    <Block shadow="giant" />
+
+    <Block shadow="giant" />
+
+    <Block shadow="giant" />
+
     <Block shadow="giant" />
   </section>
 </template>

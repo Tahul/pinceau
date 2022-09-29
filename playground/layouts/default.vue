@@ -22,7 +22,7 @@
 
 <style lang="postcss">
 html, body, #app, #__nuxt {
-  height: 100vh;
+  min-height: 100vh;
   width: 100vw;
   font-family: $dt('fonts.primary') !important;
 

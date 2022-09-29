@@ -103,6 +103,10 @@ export function resolveScriptSetup(id: string, parsedComponent: SFCParseResult, 
     newScriptSetup = transformComputedStyles(newScriptSetup, computedStyles)
   }
 
+  if (hasVariants || hasComputedStyles) {
+    newScriptSetup = transformFinishRuntimeSetup(newScriptSetup, hasComputedStyles, hasVariants)
+  }
+
   // Overwrite <script setup> block with new content
   magicString.overwrite(scriptSetup.loc.start.offset, scriptSetup.loc.end.offset, newScriptSetup)
 }
@@ -111,38 +115,50 @@ export function resolveScriptSetup(id: string, parsedComponent: SFCParseResult, 
  * Adds computed styles code to <script setup>
  */
 export function transformComputedStyles(newScriptSetup: string, computedStyles: any): string {
-  newScriptSetup += `\nconst __$cst = {
+  newScriptSetup += `\nconst __$pComputed = reactive({
 ${
 Object
 .entries(computedStyles)
 .map(
   ([key, styleFunction]) => {
-    return `'${key}': computed(() => __$cstUtils.transformTokensToVariable(((props, utils) => ${styleFunction})(__$cstProps, __$cstUtils)))\n`
+    return `'${key}': computed(() => __$pUtils.transformTokensToVariable(((props, utils) => ${styleFunction})(__$pProps, __$pUtils)))\n\n`
   },
 )
 .join(',')
 }
-}
+})
 `
 
   return newScriptSetup
 }
 
 export function transformAddRuntimeImports(code: string): string {
-  code = `\nimport { usePinceauRuntime, utils as __$cstUtils } from 'pinceau/runtime'\n${code}`
+  code = `\nimport { usePinceauRuntime, utils as __$pUtils } from 'pinceau/runtime'\n${code}`
 
+  // TODO: Improve these imports
+  if (!code.includes('reactive')) {
+    code = `\nimport { reactive } from 'vue'\n${code}`
+  }
   if (!code.includes('computed')) {
     code = `\nimport { computed } from 'vue'\n${code}`
   }
 
   const propsKey = findPropsKey(code)
-
   if (propsKey) {
-    code += `\nconst __$cstProps = ${propsKey}`
+    code += `\nconst __$pProps = ${propsKey}`
   }
   else {
     logger.warn('You seem to be using Computed Styles, but no props are defined in your component!')
   }
 
   return code
+}
+
+export function transformFinishRuntimeSetup(
+  newScriptSetup,
+  hasComputedStyles,
+  hasVariants,
+) {
+  newScriptSetup += `\n${hasVariants ? 'const { $variantsClass } = ' : ''}usePinceauRuntime(__$pProps, ${hasVariants ? '__$pVariants' : 'undefined'}, ${hasComputedStyles ? 'undefined' : 'undefined'})\n`
+  return newScriptSetup
 }

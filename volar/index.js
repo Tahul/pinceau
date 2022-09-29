@@ -13,6 +13,7 @@ const plugin = _ => ({
       embeddedFile.codeGen.addText(`\ntype __VLS_PropsType = Omit<InstanceType<typeof import(\'${fileName}\').default>[\'$props\'], __VLS_InstanceOmittedKeys>\n`)
       embeddedFile.codeGen.addText('\nconst css = (declaration: CSS<PinceauTheme, ComponentTemplateTags__VLS, __VLS_PropsType>) => ({ declaration })\n')
       embeddedFile.codeGen.addText('\nconst $dt = (path?: PinceauThemePaths, options?: TokensFunctionOptions) => ({ path, options })\n')
+      embeddedFile.codeGen.addText('\ndeclare const $variantsClass: string\n')
 
       // $dt helper
       const dtRegex = /\$dt\('(.*?)'\)/g
@@ -196,7 +197,7 @@ function resolveVariantsProps(variants, isTs) {
   )
 
   try {
-    const _props = `const __$cstVariantsProps = ${JSON.stringify(props)}`
+    const _props = `const __$pVariantsProps = ${JSON.stringify(props)}`
 
     const propsAst = recast.parse(_props)
 

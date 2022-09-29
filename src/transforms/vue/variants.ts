@@ -22,9 +22,7 @@ export function transformVariants(code = '', variants: any = {}, isTs: boolean):
     {},
   )
 
-  code += `\nconst __$cstVariants = ${JSON.stringify(sanitizedVariants)}\n`
-
-  code += '\nusePinceauRuntime(__$cstProps, __$cstVariants)\n'
+  code += `\nconst __$pVariants = ${JSON.stringify(sanitizedVariants)}\n`
 
   if (variantsProps) { code = pushVariantsProps(code, variantsProps) }
 
