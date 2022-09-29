@@ -44,6 +44,11 @@ const module: any = defineNuxtModule<PinceauOptions>({
       tsConfig.vueCompilerOptions.plugins.push(modulePath.resolve('../volar'))
     })
 
+    // Setup Nitro plugin
+    if (!nuxt.options.nitro) { nuxt.options.nitro = {} }
+    if (!nuxt.options.nitro.plugins) { nuxt.options.nitro.plugins = [] }
+    nuxt.options.nitro.plugins.push(modulePath.resolve('./nitro.ts'))
+
     // Support for `extends` feature
     // This will scan each layer for a config file
     const layerPaths = nuxt.options._layers.reduce(
@@ -80,14 +85,9 @@ const module: any = defineNuxtModule<PinceauOptions>({
 
             // Handle first render of SSR styles
             nuxtApp.hook('app:rendered', (app) => {
-              app.ssrContext.nuxt._useHead({
-                style: [{
-                  id: 'pinceau',
-                  type: 'text/css',
-                  children: [app.ssrContext.nuxt.vueApp.config.globalProperties.$pinceauSsr.getStylesheetContent()],
-                  renderPriority: 10000
-                }],
-              })
+              const content = app.ssrContext.nuxt.vueApp.config.globalProperties.$pinceauSsr.getStylesheetContent()
+
+              app.ssrContext.event.pinceauContent = content
             })
           })`,
         ]
