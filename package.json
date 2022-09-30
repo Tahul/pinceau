@@ -38,10 +38,11 @@
       "require": "./dist/runtime.cjs",
       "import": "./dist/runtime.mjs"
     },
-    "./volar": {
-      "require": "./dist/volar.cjs",
-      "import": "./dist/volar.mjs"
-    }
+    "./nitro": {
+      "require": "./dist/nitro.cjs",
+      "import": "./dist/nitro.mjs"
+    },
+    "./volar": "./dist/volar.cjs"
   },
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",

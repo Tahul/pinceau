@@ -25,6 +25,10 @@ export default defineBuildConfig({
       name: 'runtime',
     },
     {
+      input: 'src/nitro.ts',
+      name: 'runtime',
+    },
+    {
       input: 'src/volar.ts',
       name: 'volar',
       ext: 'js',

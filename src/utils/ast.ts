@@ -1,12 +1,11 @@
 import * as recast from 'recast'
 import * as parser from 'recast/parsers/typescript'
-import type { Options as RecastOptions } from 'recast'
 import defu from 'defu'
 
 /**
  * Parse ASt with TypeScript parser
  */
-export function parseAst(source: string, options?: Partial<RecastOptions>) {
+export function parseAst(source: string, options?: Partial<any>) {
   return recast.parse(source, defu({ parser }, options))
 }
 
