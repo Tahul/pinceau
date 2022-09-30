@@ -6,7 +6,7 @@ import { join } from 'pathe'
 import { createContext } from './theme'
 import { registerAliases, registerPostCssPlugins } from './utils/plugin'
 import { replaceStyleTs, transformVueSFC, transformVueStyle } from './transforms'
-import { parseVueQuery } from './utils/vue'
+import { parseVueQuery } from './utils/query'
 import { logger } from './utils/logger'
 import type { PinceauOptions } from './types'
 
@@ -82,7 +82,7 @@ export default createUnplugin<PinceauOptions>(
 
         const magicString = new MagicString(code, { filename: query.filename })
         const result = () => ({ code: magicString.toString(), map: magicString.generateMap({ source: id, includeContent: true }) })
-        const missingMap = (code: string) => ({ code, map: { mappings: '' } })
+        const missingMap = (code: string) => ({ code, map: new MagicString(code, { filename: query.filename }).generateMap() })
 
         try {
           // Return early when the query is scoped (usually style tags)

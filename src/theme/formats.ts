@@ -1,5 +1,8 @@
 import { flattenTokens, objectPaths } from '../utils'
 
+/**
+ * import type { PinceauTheme } from '#pinceau/types'
+ */
 export const tsTypesDeclaration = (typesObject: any) => {
   let result = 'import type { DesignToken } from \'pinceau\'\n\n'
 
@@ -16,6 +19,9 @@ export const tsTypesDeclaration = (typesObject: any) => {
   return result
 }
 
+/**
+ * import theme from '#pinceau/theme'
+ */
 export const tsFull = (tokensObject: any, aliased: any) => {
   let result = 'import type { GeneratedPinceauTheme } from \'./types\'\n\n'
 
@@ -28,6 +34,9 @@ export const tsFull = (tokensObject: any, aliased: any) => {
   return result
 }
 
+/**
+ * import theme from '#pinceau/theme/flat'
+ */
 export const tsFlat = (tokensObject: any, aliased: any) => {
   let result = `export const aliases = ${JSON.stringify(aliased, null, 2)}\n\n`
 
@@ -38,6 +47,11 @@ export const tsFlat = (tokensObject: any, aliased: any) => {
   return result
 }
 
+/**
+ * import theme from '#pinceau/theme'
+ *
+ * In JS contexts.
+ */
 export const jsFull = (tokensObject: any, aliased: any) => {
   let result = `export const aliases = ${JSON.stringify(aliased, null, 2)}\n\n`
 
@@ -48,6 +62,11 @@ export const jsFull = (tokensObject: any, aliased: any) => {
   return result
 }
 
+/**
+ * import theme from '#pinceau/theme/flat'
+ *
+ * In JS contexts.
+ */
 export const jsFlat = (tokensObject: any, aliased: any) => {
   let result = `export const aliases = ${JSON.stringify(aliased, null, 2)}\n\n`
 

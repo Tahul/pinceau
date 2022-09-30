@@ -1,6 +1,3 @@
-import type { FilterStartingWith, WrapUnion } from './utils'
-// eslint-disable-next-line @typescript-eslint/prefer-ts-expect-error
-// @ts-ignore - Can be not found
 import type { GeneratedPinceauTheme, GeneratedTokensPaths } from '#pinceau/types'
 
 export interface DesignToken<
@@ -257,14 +254,6 @@ export interface DefaultThemeMap {
 export interface PinceauTheme extends GeneratedPinceauTheme, Omit<ConfigTokens, keyof GeneratedPinceauTheme>, PinceauTokens {}
 
 export type PinceauThemePaths = GeneratedTokensPaths
-
-// Old version; slower and relying on recursively walking through typing object
-// export type ThemeKey<K extends keyof DefaultThemeMap> = WrapUnion<NestedKeyOf<PinceauTheme[DefaultThemeMap[K]]>, `{${DefaultThemeMap[K]}.`, '}'>
-
-// Resolve available theme tokens for a key from theme map and generated theme paths
-export type ThemeKey<K extends keyof DefaultThemeMap> = WrapUnion<FilterStartingWith<PinceauThemePaths, DefaultThemeMap[K]>, '{', '}'>
-
-export type MediaQueriesKeys = keyof PinceauTheme['media']
 
 export interface TokensFunctionOptions {
   /**

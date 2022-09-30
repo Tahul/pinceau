@@ -14,6 +14,8 @@ const plugin = _ => ({
       embeddedFile.codeGen.addText('\nconst css = (declaration: CSS<PinceauTheme, ComponentTemplateTags__VLS, __VLS_PropsType>) => ({ declaration })\n')
       embeddedFile.codeGen.addText('\nconst $dt = (path?: PinceauThemePaths, options?: TokensFunctionOptions) => ({ path, options })\n')
       embeddedFile.codeGen.addText('\nconst $variantsClass: string = \'\'\n')
+      embeddedFile.codeGen.addText('\ndeclare global const $variantsClass: any\n')
+      embeddedFile.codeGen.addText('\ndeclare global const $variantsProps: any\n')
 
       // $dt helper
       const dtRegex = /\$dt\('(.*?)'\)/g

@@ -1,6 +1,6 @@
 import type * as CSSType from 'csstype'
 import type * as Utils from './utils'
-import type { DefaultThemeMap, MediaQueriesKeys, PinceauTheme, ThemeKey } from './theme'
+import type { DefaultThemeMap, PinceauTheme, PinceauThemePaths } from './theme'
 
 export interface ComputedPropertiesUtils {
   isToken: (value: any) => boolean
@@ -99,7 +99,7 @@ export type SimplePseudos =
 
 export type Pseudos = AdvancedPseudos | SimplePseudos
 
-interface NativeProperties extends
+export interface NativeProperties extends
   CSSType.StandardProperties,
   CSSType.StandardShorthandProperties,
   CSSType.StandardProperties,
@@ -132,6 +132,12 @@ export type EnumVariant<K, T = { [key: string]: K }> = T & { options?: VariantOp
 export interface Variants<K> {
   [key: string]: BooleanVariant<K> | EnumVariant<K>
 }
+
+export type ThemeKey<K extends keyof DefaultThemeMap> = Utils.WrapUnion<Utils.FilterStartingWith<PinceauThemePaths, DefaultThemeMap[K]>, '{', '}'>
+
+export type MediaQueriesKeys = keyof PinceauTheme['media']
+
+export type TokenOrThemeKey<T extends keyof NativeProperties> = (T extends keyof DefaultThemeMap ? (ThemeKey<T> | keyof PinceauTheme[DefaultThemeMap[T]]) : '') | NativeProperties[T]
 
 export type CSS<
   Theme extends object = PinceauTheme,
