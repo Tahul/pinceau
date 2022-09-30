@@ -1,3 +1,8 @@
+// Pinceau syntaxes
 import ComputedStyling from './components/ComputedStyling.vue'
+import Variants from './components/Variants.vue'
 
-export { ComputedStyling }
+// Native syntaxes coming from @vitejs/plugin-vue
+import NativeSyntaxes from './components/native-syntaxes/NativeSyntaxes.vue'
+
+export { ComputedStyling, Variants, NativeSyntaxes }

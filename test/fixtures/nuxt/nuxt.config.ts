@@ -16,4 +16,9 @@ export default defineNuxtConfig({
   dir: {
     pages: resolve(__dirname, '../shared/pages'),
   },
+  vite: {
+    vue: {
+      reactivityTransform: true,
+    },
+  },
 })

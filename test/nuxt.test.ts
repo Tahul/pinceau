@@ -12,10 +12,17 @@ describe('pages', () => {
   it('render index', async () => {
     const html = await $fetch('/')
 
-    // should render text
     expect(html).toContain('🔥')
 
     await expectNoClientErrors('/')
+  })
+
+  it('render native syntaxes', async () => {
+    const html = await $fetch('/native-syntaxes')
+
+    expect(html).not.toBe('')
+
+    await expectNoClientErrors('/native-syntaxes')
   })
 })
 

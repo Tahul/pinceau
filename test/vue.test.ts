@@ -1,35 +1,36 @@
-import { beforeAll, describe, expect, it } from 'vitest'
-import { config, mount } from '@vue/test-utils'
+import { describe, expect, it } from 'vitest'
+import { mount } from '@vue/test-utils'
+import defu from 'defu'
 import { nextTick } from 'vue'
 import { plugin as pinceau } from '../src/runtime'
 import * as Components from './fixtures/shared/components'
+import theme from '#pinceau/theme/flat'
 
-beforeAll(
-  () => {
-    config.plugins.VueWrapper.extend = (instance) => {
-      // @ts-expect-error - ?
-      instance.__app.use(pinceau)
-    }
-  },
-)
+const mountWithPinceau: typeof mount = (
+  component,
+  options,
+) => {
+  return mount(component, {
+    ...options,
+    global: defu(
+      options,
+      {
+        plugins: [
+          [pinceau, { theme }],
+        ],
+      },
+    ),
+  })
+}
 
 describe('transforms', () => {
-  it('can transform components', async () => {
-    for (const component of Object.entries(Components)) {
+  // Mount each components in `shared/components`
+  for (const component of Object.entries(Components)) {
+    it(`can transform ${component[1].__name}`, async () => {
       expect(component).toBeTruthy()
-
-      const mounted = mount(
-        component[1],
-        {
-          props: {
-            color: 'red',
-          },
-        },
-      )
-
+      const mounted = mountWithPinceau(component[1])
       await nextTick()
-
       expect(mounted.html()).not.toBe('')
-    }
-  })
+    })
+  }
 })
