@@ -8,6 +8,9 @@ export interface PropOptions {
   validator?: (value: unknown) => boolean
 }
 
+/**
+ * Takes variants object and turns it into a `const` inside `<script setup>`
+ */
 export function transformVariants(code = '', variants: any = {}, isTs: boolean): string {
   const variantsProps = resolveVariantsProps(variants, isTs)
 

@@ -2,7 +2,7 @@ import type { SFCParseResult } from '@vue/compiler-sfc'
 import { parse } from '@vue/compiler-sfc'
 import type MagicString from 'magic-string'
 import { logger } from '../../utils'
-import type { VueQuery } from '../../utils/vue'
+import type { VueQuery } from '../../utils/query'
 import type { PinceauContext, TokensFunction } from '../../types'
 import { transformDtHelper } from '../dt'
 import { transformCssFunction } from '../css'
@@ -51,7 +51,10 @@ export function resolveTemplate(id: string, parsedComponent: SFCParseResult, mag
   const templateContent = parsedComponent.descriptor.template
   let newTemplateContent = templateContent.content
   newTemplateContent = transformDtHelper(newTemplateContent, '\'')
-  magicString.overwrite(templateContent.loc.start.offset, templateContent.loc.end.offset, newTemplateContent)
+
+  if (templateContent.loc.end?.offset && templateContent.loc.end?.offset > templateContent.loc.start.offset) {
+    magicString.overwrite(templateContent.loc.start.offset, templateContent.loc.end.offset, newTemplateContent)
+  }
 }
 
 /**
