@@ -1,3 +1,4 @@
+// @ts-expect-error - Might be undefined before theme is generated
 import type { GeneratedPinceauTheme, GeneratedTokensPaths } from '#pinceau/types'
 
 export interface DesignToken<

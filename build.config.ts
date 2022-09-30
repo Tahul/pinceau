@@ -26,7 +26,7 @@ export default defineBuildConfig({
     },
     {
       input: 'src/nitro.ts',
-      name: 'runtime',
+      name: 'nitro',
     },
     {
       input: 'src/volar.ts',
@@ -55,6 +55,7 @@ export default defineBuildConfig({
     'jiti',
     'tinycolor2',
     '#pinceau',
+    'nitropack',
   ],
   hooks: {
     'build:done': () => {

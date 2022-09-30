@@ -82,7 +82,7 @@
     "consola": "^2.15.3",
     "csstype": "^3.1.1",
     "defu": "^6.1.0",
-    "magic-string": "^0.26.4",
+    "magic-string": "^0.26.5",
     "ohash": "^0.1.5",
     "postcss-custom-properties": "^12.1.9",
     "postcss-dark-theme-class": "^0.7.3",
