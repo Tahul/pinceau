@@ -46,9 +46,7 @@ css({
   variants: {
     shadow: {
       light: {
-        '@mq.2xl': {
-          boxShadow: '{shadows.sm}'
-        }
+        boxShadow: '{shadows.sm}'
       },
       medium: {
         boxShadow: '{shadows.md}'

@@ -19,4 +19,9 @@ export default defineNuxtConfig({
   experimental: {
     inlineSSRStyles: false,
   },
+  vite: {
+    vue: {
+      reactivityTransform: true,
+    },
+  },
 })

@@ -12,6 +12,7 @@ const css = ref({
   color: 'red',
 })
 
+/*
 setInterval(
   () => {
     if (size.value === 'light') { size.value = 'medium' }
@@ -24,6 +25,7 @@ setInterval(
     }
   },
   100)
+  */
 </script>
 
 <template>

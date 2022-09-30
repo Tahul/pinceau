@@ -4,5 +4,5 @@
     "curly": ["error", "multi-line", "consistent"],
     "quotes": ["error", "single"]
   },
-  "ignorePatterns": "**/*.md"
+  "ignorePatterns": "**/*.md,test/fixtures/**/*.vue"
 }
