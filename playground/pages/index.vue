@@ -32,6 +32,8 @@ setInterval(
   <section>
     <Block :shadow="size" :css="css" />
 
+    <Block shadow="" />
+
     <Block shadow="giant" />
 
     <Block shadow="giant" />

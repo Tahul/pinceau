@@ -1,9 +1,9 @@
 import * as recast from 'recast'
 import type { ASTNode } from 'ast-types'
 import defu from 'defu'
-import * as parser from 'recast/parsers/typescript'
 import { resolveCssProperty, stringify } from '../utils'
 import type { TokensFunction } from '../types'
+import { parseAst } from '../utils/ast'
 import { resolveComputedStyles } from './vue/computed'
 
 /**
@@ -59,7 +59,7 @@ export function castVariants(property: any, value: any) {
  * Find all calls of css() and call a callback on each.
  */
 export function resolveCssCallees(code: string, cb: (ast: ASTNode) => any): any {
-  const ast = recast.parse(code, { parser })
+  const ast = parseAst(code)
   let result = {}
   recast.visit(ast, {
     visitCallExpression(path: any) {

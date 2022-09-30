@@ -90,5 +90,6 @@ declare module '@nuxt/schema' {
 declare module 'vue' {
   interface ComponentCustomProperties {
     $pinceau: any
+    $variantsClass: any
   }
 }

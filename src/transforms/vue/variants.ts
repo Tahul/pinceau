@@ -1,5 +1,5 @@
-import * as recast from 'recast'
-import * as parser from 'recast/parsers/typescript'
+import type { ASTNode } from 'ast-types'
+import { astTypes, parseAst, printAst, propStringToAst, visitAst } from '../../utils/ast'
 
 export interface PropOptions {
   type?: any
@@ -38,36 +38,20 @@ export function transformVariants(code = '', variants: any = {}, isTs: boolean):
  * Only work with `defineProps()`.
  */
 export function pushVariantsProps(code: string, variantsProps: any) {
-  const scriptAst = recast.parse(code, { parser })
+  const scriptAst = parseAst(code)
 
-  const propsAst = propStringToAst(JSON.stringify(variantsProps))
+  let propsAst = propStringToAst(JSON.stringify(variantsProps))
 
-  // Cast stringified values
-  recast.visit(
-    propsAst,
-    {
-      visitObjectProperty(path) {
-        // Cast `type` string
-        if (path.value?.key?.value === 'type') {
-          path.value.value = propStringToAst(path.value.value.value)
-        }
-        // Cast `validator` string
-        if (path.value?.key?.value === 'validator') {
-          path.value.value = propStringToAst(path.value.value.value)
-        }
-        return this.traverse(path)
-      },
-    },
-  )
+  propsAst = castVariantsPropsAst(propsAst)
 
   // Push to defineProps
-  recast.visit(
+  visitAst(
     scriptAst,
     {
       visitCallExpression(path) {
         if (path?.value?.callee?.name === 'defineProps') {
           path.value.arguments[0].properties.push(
-            recast.types.builders.spreadElement(propsAst),
+            astTypes.builders.spreadElement(propsAst),
           )
         }
         return this.traverse(path)
@@ -75,7 +59,7 @@ export function pushVariantsProps(code: string, variantsProps: any) {
     },
   )
 
-  return recast.print(scriptAst).code
+  return printAst(scriptAst).code
 }
 
 /**
@@ -116,10 +100,23 @@ export function resolveVariantsProps(variants, isTs: boolean) {
   return props
 }
 
-/**
- * Cast a `props.type` string into an AST declaration.
- */
-export function propStringToAst(type: string) {
-  const parsed = recast.parse(`const toAst = ${type}`, { parser })
-  return parsed.program.body[0].declarations[0].init
+export function castVariantsPropsAst(ast: ASTNode) {
+  // Cast stringified values
+  visitAst(
+    ast,
+    {
+      visitObjectProperty(path) {
+        // Cast `type` string
+        if (path.value?.key?.value === 'type') {
+          path.value.value = propStringToAst(path.value.value.value)
+        }
+        // Cast `validator` string
+        if (path.value?.key?.value === 'validator') {
+          path.value.value = propStringToAst(path.value.value.value)
+        }
+        return this.traverse(path)
+      },
+    },
+  )
+  return ast
 }

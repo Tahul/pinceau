@@ -1,6 +1,5 @@
 import { kebabCase } from 'scule'
-
-const dtRegex = /\$dt\('(.*?)'\)/g
+import { dtRegex } from '../utils/regexes'
 
 /**
  * Resolve `$dt()` calls.

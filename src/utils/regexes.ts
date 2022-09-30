@@ -25,3 +25,7 @@ export const lightRegex = /(@light\s{)/g
 export const DARK = '@dark'
 
 export const LIGHT = '@light'
+
+export const dtRegex = /\$dt\('(.*?)'\)/g
+
+export const variantsClassRegex = /\$variantsClass/g

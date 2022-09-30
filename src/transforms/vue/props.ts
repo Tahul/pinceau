@@ -1,13 +1,12 @@
-import * as recast from 'recast'
-import * as parser from 'recast/parsers/typescript'
+import { parseAst, visitAst } from '../../utils/ast'
 
 export const findPropsKey = (code: string) => {
   try {
-    const ast = recast.parse(code, { parser })
+    const ast = parseAst(code)
 
     let propsVariableName
 
-    recast.visit(
+    visitAst(
       ast,
       {
         visitVariableDeclaration(path) {

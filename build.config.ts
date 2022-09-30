@@ -24,6 +24,11 @@ export default defineBuildConfig({
       input: 'src/runtime.ts',
       name: 'runtime',
     },
+    {
+      input: 'src/volar.ts',
+      name: 'volar',
+      ext: 'js',
+    },
   ],
   clean: true,
   declaration: true,
@@ -45,10 +50,7 @@ export default defineBuildConfig({
     'chalk',
     'jiti',
     'tinycolor2',
-    'virtual:pinceau/theme/flat',
-    '#pinceau/types',
-    '#pinceau/theme',
-    '#pinceau/theme/flat',
+    '#pinceau',
   ],
   hooks: {
     'build:done': () => {

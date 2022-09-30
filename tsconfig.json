@@ -45,8 +45,8 @@
       "pinceau/vite": ["./src/vite.ts"]
     }
   },
-  "include": ["./playground/.nuxt/nuxt.d.ts", "./src/**/*", "./playground/**/*", "./test/**/*"],
+  "include": ["./playground/.nuxt/nuxt.d.ts", "./src/**/*", "./playground/**/*", "./test/**/*", "./src/types/vue-shim.d.ts"],
   "vueCompilerOptions": {
-    "plugins": ["./volar"]
+    "plugins": ["./dist/volar.cjs"]
   }
 }
