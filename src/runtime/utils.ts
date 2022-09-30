@@ -25,10 +25,20 @@ export function resolveVariableFromPath(path: string): string { return `var(--${
   */
 export function transformTokensToVariable(property: string): string { return (property || '').replace(keyRegex, (_, tokenPath) => resolveVariableFromPath(tokenPath)) }
 
+export const utils = {
+  resolveVariableFromPath,
+  transformTokensToVariable,
+  isToken,
+}
+
 /**
  * Takes a props object and a variants and remove unnecessary props.
  */
 export function sanitizeProps(propsObject: any, variants: any): any {
+  if (!propsObject || !variants) {
+    return {}
+  }
+
   return Object.entries(propsObject)
     .reduce(
       (acc, [key, value]) => {

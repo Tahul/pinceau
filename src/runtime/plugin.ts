@@ -1,8 +1,8 @@
 import type { Plugin, PropType } from 'vue'
-import { computed, getCurrentInstance, inject, onScopeDispose, watch } from 'vue'
+import { computed, getCurrentInstance, onScopeDispose, watch } from 'vue'
 import { defu } from 'defu'
 import type { CSS, PinceauTheme } from '../types'
-import { createTokensHelper, getIds, isToken, resolveVariableFromPath, sanitizeProps, transformTokensToVariable } from './utils'
+import { createTokensHelper, getIds, sanitizeProps } from './utils'
 import { usePinceauRuntimeState } from './state'
 import { usePinceauStylesheet } from './stylesheet'
 
@@ -60,12 +60,6 @@ export const plugin: Plugin = {
   },
 }
 
-export const utils = {
-  resolveVariableFromPath,
-  transformTokensToVariable,
-  isToken,
-}
-
 /**
  * A prop to be used on any component to enable `:css` prop.
  */
@@ -73,15 +67,4 @@ export const cssProp = {
   type: Object as PropType<CSS<PinceauTheme, {}, {}, false>>,
   required: false,
   default: undefined,
-}
-
-/**
- * Entrypoint for Pinceau runtime features.
- */
-export function usePinceauRuntime(
-  props: any,
-  variants: any,
-  computedStyles: any,
-): void {
-  return (inject('pinceau') as any)(props, variants, computedStyles)
 }
