@@ -89,7 +89,7 @@
     "postcss-nested": "^5.0.6",
     "recast": "^0.21.5",
     "scule": "^0.3.2",
-    "style-dictionary-esm": "^1.0.14",
+    "style-dictionary-esm": "^1.0.15",
     "unbuild": "^0.8.11",
     "unplugin": "^0.9.6"
   },

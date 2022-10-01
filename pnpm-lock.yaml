@@ -33,7 +33,7 @@ importers:
       rimraf: ^3.0.2
       rollup: ^2.79.1
       scule: ^0.3.2
-      style-dictionary-esm: ^1.0.14
+      style-dictionary-esm: ^1.0.15
       typescript: ^4.8.4
       unbuild: ^0.8.11
       unplugin: ^0.9.6
@@ -55,7 +55,7 @@ importers:
       postcss-nested: 5.0.6
       recast: 0.21.5
       scule: 0.3.2
-      style-dictionary-esm: 1.0.14
+      style-dictionary-esm: 1.0.15
       unbuild: 0.8.11
       unplugin: 0.9.6
     devDependencies:
@@ -7574,8 +7574,8 @@ packages:
       acorn: 8.8.0
     dev: true
 
-  /style-dictionary-esm/1.0.14:
-    resolution: {integrity: sha512-+7TH+T8RV3dnARf2/MI9xyQATt2MZXNwCCRRFK+a6ErJbHLT/qjuvyGd20p7FCHnkuMbhcj45yvcWQXv5+6b5w==}
+  /style-dictionary-esm/1.0.15:
+    resolution: {integrity: sha512-bPTF7Mkn/KRgFrsJL/ntRIvwUVP19CwYYHtButQwb1LjXKiiDAlS/V5juaCMoQNzCEWmrXO5V6k0TgFSAyjAog==}
     engines: {node: '>=12.0.0'}
     hasBin: true
     dependencies:
