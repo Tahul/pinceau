@@ -1,6 +1,6 @@
 import fs from 'fs'
 import chalk from 'chalk'
-import { parse } from '@vue/compiler-sfc'
+import { parseVueComponent } from '../../utils/ast'
 import type { PinceauContext, TokensFunction } from '../../types'
 import { logger } from '../../utils'
 import type { VueQuery } from '../../utils/query'
@@ -13,7 +13,7 @@ export const transformVueStyle = (id: string, query: VueQuery, ctx: PinceauConte
 
   const file = fs.readFileSync(filename, 'utf8')
 
-  const { descriptor } = parse(file, { filename })
+  const { descriptor } = parseVueComponent(file, { filename })
 
   const style = descriptor?.styles?.[query.index!]
 

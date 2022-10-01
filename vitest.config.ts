@@ -10,6 +10,7 @@ export default defineConfig({
     alias: {
       '/@': resolve(__dirname, './test/fixtures/shared/components/native-syntaxes'),
       '@': resolve(__dirname, './test/fixtures/shared/components/native-syntaxes'),
+      '@src/utils': resolve(__dirname, './src/utils/'),
       'pinceau/runtime': resolve(__dirname, './src/runtime.ts'),
       'pinceau': resolve(__dirname, './src/index.ts'),
     },

@@ -1,6 +1,6 @@
-import type { SFCParseResult } from '@vue/compiler-sfc'
-import { parse } from '@vue/compiler-sfc'
+import type { SFCParseResult } from 'vue/compiler-sfc'
 import type MagicString from 'magic-string'
+import { parseVueComponent } from '../../utils/ast'
 import { logger } from '../../utils'
 import type { VueQuery } from '../../utils/query'
 import type { PinceauContext, TokensFunction } from '../../types'
@@ -19,7 +19,7 @@ export function transformVueSFC(code: string, id: string, magicString: MagicStri
   const computedStyles = {}
 
   // Parse component with compiler-sfc
-  const parsedComponent = parse(code, { filename: id })
+  const parsedComponent = parseVueComponent(code, { filename: id })
 
   // Transform <template> blocks
   if (parsedComponent.descriptor.template) { resolveTemplate(id, parsedComponent, magicString) }

@@ -1,7 +1,7 @@
 import { readFile } from 'fs/promises'
-import type { SFCDescriptor } from '@vue/compiler-sfc'
-import { parse } from '@vue/compiler-sfc'
+import type { SFCDescriptor } from 'vue/compiler-sfc'
 import { describe, expect, it } from 'vitest'
+import { parseVueComponent } from '@src/utils/ast'
 import * as Components from './fixtures/shared/components'
 
 async function readComponent(name: keyof typeof Components) {
@@ -9,7 +9,7 @@ async function readComponent(name: keyof typeof Components) {
 
   let ast: false | SFCDescriptor = false
   try {
-    ast = parse(component).descriptor
+    ast = parseVueComponent(component).descriptor
   }
   catch (e) {}
 

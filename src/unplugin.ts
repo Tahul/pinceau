@@ -1,7 +1,6 @@
 import { defu } from 'defu'
 import { createUnplugin } from 'unplugin'
 import MagicString from 'magic-string'
-import { parse } from '@vue/compiler-sfc'
 import { join } from 'pathe'
 import { createContext } from './theme'
 import { registerAliases, registerPostCssPlugins } from './utils/plugin'
@@ -9,6 +8,7 @@ import { replaceStyleTs, transformVueSFC, transformVueStyle } from './transforms
 import { parseVueQuery } from './utils/query'
 import { logger } from './utils/logger'
 import type { PinceauOptions } from './types'
+import { parseVueComponent } from './utils/ast'
 
 export const defaultOptions: PinceauOptions = {
   configFileName: 'pinceau.config',
@@ -99,7 +99,7 @@ export default createUnplugin<PinceauOptions>(
         // Parse the component code to check if it is a valid Vue SFC
         if (query?.vue) {
           try {
-            parse(result().code)
+            parseVueComponent(result().code)
           }
           catch (e) {
             // Return code w/o transforms when parsing fails
