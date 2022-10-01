@@ -25,6 +25,7 @@ export const defaultOptions: PinceauOptions = {
   ],
   followSymbolicLinks: true,
   colorSchemeMode: 'class',
+  debug: false,
 }
 
 export default createUnplugin<PinceauOptions>(
@@ -91,7 +92,7 @@ export default createUnplugin<PinceauOptions>(
         }
         catch (e) {
           logger.error(`Could not transform file ${query.filename || id}`)
-          logger.error(e)
+          if (options.debug) { logger.error(e) }
           return missingMap(code)
         }
 
@@ -102,6 +103,7 @@ export default createUnplugin<PinceauOptions>(
           }
           catch (e) {
             // Return code w/o transforms when parsing fails
+            if (options.debug) { logger.log({ code, e }) }
             return missingMap(code)
           }
         }

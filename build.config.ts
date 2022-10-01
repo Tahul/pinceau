@@ -2,38 +2,16 @@ import { execSync } from 'child_process'
 import { defineBuildConfig } from 'unbuild'
 
 export default defineBuildConfig({
-  failOnWarn: false,
   entries: [
-    {
-      input: 'src/index.ts',
-      name: 'index',
-    },
-    {
-      input: 'src/vite.ts',
-      name: 'vite',
-    },
-    {
-      input: 'src/nuxt.ts',
-      name: 'nuxt',
-    },
-    {
-      input: 'src/utils.ts',
-      name: 'utils',
-    },
-    {
-      input: 'src/runtime.ts',
-      name: 'runtime',
-    },
-    {
-      input: 'src/nitro.ts',
-      name: 'nitro',
-    },
-    {
-      input: 'src/volar.ts',
-      name: 'volar',
-      ext: 'js',
-    },
+    'src/index',
+    'src/vite',
+    'src/nuxt',
+    'src/utils',
+    'src/runtime',
+    'src/nitro',
+    'src/volar',
   ],
+  failOnWarn: false,
   clean: true,
   declaration: true,
   rollup: {

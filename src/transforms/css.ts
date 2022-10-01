@@ -1,9 +1,8 @@
-import * as recast from 'recast'
 import type { ASTNode } from 'ast-types'
-import defu from 'defu'
+import { defu } from 'defu'
 import { resolveCssProperty, stringify } from '../utils'
 import type { TokensFunction } from '../types'
-import { parseAst } from '../utils/ast'
+import { parseAst, printAst, visitAst } from '../utils/ast'
 import { resolveComputedStyles } from './vue/computed'
 
 /**
@@ -61,7 +60,7 @@ export function castVariants(property: any, value: any) {
 export function resolveCssCallees(code: string, cb: (ast: ASTNode) => any): any {
   const ast = parseAst(code)
   let result = {}
-  recast.visit(ast, {
+  visitAst(ast, {
     visitCallExpression(path: any) {
       if (path.value.callee.name === 'css') {
         result = defu(result, cb(path.value.arguments[0]))
@@ -82,7 +81,7 @@ export function evalCssDeclaration(cssAst: ASTNode, computedStyles: any = {}) {
   // eslint-disable-next-line no-eval
   const _eval = eval
   // const transformed = transform({ source: recast.print(ast).code })
-  _eval(`var cssDeclaration = ${recast.print(cssAst).code}`)
+  _eval(`var cssDeclaration = ${printAst(cssAst).code}`)
 
   // @ts-expect-error - Evaluated code
   return cssDeclaration

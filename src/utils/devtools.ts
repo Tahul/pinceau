@@ -1,6 +1,6 @@
 import type { EmbeddedFile, Sfc } from '@volar/vue-language-core'
 import { walkElementNodes } from '@volar/vue-language-core'
-import { dtRegex, variantsClassRegex } from './regexes'
+import { dtRegex } from './regexes'
 
 export const fullCapabilities = {
   basic: true,

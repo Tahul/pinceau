@@ -15,7 +15,9 @@ export const transformVueStyle = (id: string, query: VueQuery, ctx: PinceauConte
 
   const { descriptor } = parse(file, { filename })
 
-  const style = descriptor.styles[query.index!]
+  const style = descriptor?.styles?.[query.index!]
+
+  if (!style) { return }
 
   let source = style?.content || ''
 

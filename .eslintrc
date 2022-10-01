@@ -2,7 +2,8 @@
   "extends": "@antfu",
   "rules": {
     "curly": ["error", "multi-line", "consistent"],
-    "quotes": ["error", "single"]
+    "quotes": ["error", "single"],
+    "@typescript-eslint/ban-ts-comment": "off"
   },
   "ignorePatterns": "**/*.md,test/fixtures/**/*.vue"
 }

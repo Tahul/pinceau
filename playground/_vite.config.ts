@@ -2,23 +2,27 @@ import { defineConfig } from 'vite'
 import Inspect from 'vite-plugin-inspect'
 import Vue from '@vitejs/plugin-vue'
 import { resolve } from 'pathe'
-import Unplugin from '../src/vite'
+import Pinceau from '../src/vite'
+
+const from = 'dist'
+const ext = '.mjs'
 
 export default defineConfig({
   logLevel: 'info',
   resolve: {
     alias: {
-      'pinceau/runtime': resolve(__dirname, '../src/runtime.ts'),
-      'pinceau': resolve(__dirname, '../src/index.ts'),
+      'pinceau/runtime': resolve(__dirname, `../${from}/runtime${ext}`),
+      'pinceau': resolve(__dirname, `../${from}/index${ext}`),
     },
   },
   plugins: [
     Inspect(),
-    Unplugin({
+    Pinceau({
       configFileName: 'tokens.config',
       configOrPaths: [
         resolve(__dirname, 'theme'),
       ],
+      debug: true,
     }),
     Vue(),
   ],

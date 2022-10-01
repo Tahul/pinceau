@@ -1,10 +1,10 @@
 import type { ASTNode } from 'ast-types'
 import { hash } from 'ohash'
-import * as recast from 'recast'
+import { astTypes, printAst, visitAst } from '../../utils/ast'
 
 export function resolveComputedStyles(cssAst: ASTNode, computedStyles: any = {}) {
   // Search for function properties in css() AST
-  recast.visit(
+  visitAst(
     cssAst,
     {
       visitObjectProperty(path) {
@@ -15,12 +15,12 @@ export function resolveComputedStyles(cssAst: ASTNode, computedStyles: any = {})
             const id = `${hash(path.value.loc.start)}-${path.value.key.name}`
 
             // Push property function to computedStyles
-            computedStyles[id] = recast.print(path.value.value.body).code
+            computedStyles[id] = printAst(path.value.value.body).code
 
             path.replace(
-              recast.types.builders.objectProperty(
+              astTypes.builders.objectProperty(
                 path.value.key,
-                recast.types.builders.stringLiteral(`v-bind(__$pComputed['${id}'])`),
+                astTypes.builders.stringLiteral(`v-bind(__$pComputed['${id}'])`),
               ),
             )
           }

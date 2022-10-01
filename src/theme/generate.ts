@@ -1,11 +1,11 @@
 import type { Core as Instance } from 'style-dictionary-esm'
 import StyleDictionary from 'style-dictionary-esm'
 import { isShadowToken, transformShadow } from '../utils/shadows'
-import type { PinceauTheme, PinceauTokens, ThemeGenerationOutput } from '../types'
+import type { PinceauOptions, PinceauTheme, PinceauTokens, ThemeGenerationOutput } from '../types'
 import { logger, referencesRegex, resolveVariableFromPath, walkTokens } from '../utils'
 import { jsFlat, jsFull, tsFlat, tsFull, tsTypesDeclaration } from './formats'
 
-export async function generateTheme(tokens: PinceauTheme, buildPath: string, silent = true): Promise<ThemeGenerationOutput> {
+export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath, debug }: PinceauOptions, silent = true): Promise<ThemeGenerationOutput> {
   let styleDictionary: Instance = StyleDictionary
 
   // Tokens outputs as in-memory objects
@@ -259,31 +259,26 @@ export async function generateTheme(tokens: PinceauTheme, buildPath: string, sil
 
   try {
     result = await new Promise<ThemeGenerationOutput>(
-      (resolve, reject) => {
-        try {
-          styleDictionary.registerAction({
-            name: 'done',
-            do: () => {
-              resolve({
-                tokens: transformedTokens as PinceauTheme,
-                outputs,
-                buildPath,
-              })
-            },
-            undo: () => {},
-          })
-          styleDictionary.cleanAllPlatforms()
-          styleDictionary.buildAllPlatforms()
-        }
-        catch (e) {
-          reject(e)
-        }
+      (resolve) => {
+        styleDictionary.registerAction({
+          name: 'done',
+          do: () => {
+            resolve({
+              tokens: transformedTokens as PinceauTheme,
+              outputs,
+              buildPath,
+            })
+          },
+          undo: () => {},
+        })
+        styleDictionary.cleanAllPlatforms()
+        styleDictionary.buildAllPlatforms()
       },
     )
   }
   catch (e) {
-    logger.error('Could not build your design tokens configuration! 😪')
-    logger.error(e)
+    logger.error('Pinceau could not build your design tokens configuration!')
+    if (debug) { logger.error(e) }
   }
 
   return result

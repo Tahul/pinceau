@@ -47,7 +47,7 @@ const module: any = defineNuxtModule<PinceauOptions>({
     // Setup Nitro plugin
     if (!nuxt.options.nitro) { nuxt.options.nitro = {} }
     if (!nuxt.options.nitro.plugins) { nuxt.options.nitro.plugins = [] }
-    nuxt.options.nitro.plugins.push(modulePath.resolve('./nitro.ts'))
+    nuxt.options.nitro.plugins.push(modulePath.resolve('./nitro'))
 
     // Support for `extends` feature
     // This will scan each layer for a config file

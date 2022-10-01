@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
-import defu from 'defu'
+import { defu } from 'defu'
 import { nextTick } from 'vue'
 import { plugin as pinceau } from '../src/runtime'
 import * as Components from './fixtures/shared/components'

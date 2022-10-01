@@ -70,6 +70,10 @@ export interface PinceauOptions {
    * @default 'class'
    */
   colorSchemeMode?: 'media' | 'class'
+  /**
+   * Enables extra logging on transform failures.
+   */
+  debug?: boolean
 }
 
 export interface ModuleHooks {

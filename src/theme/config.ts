@@ -3,6 +3,7 @@ import { existsSync } from 'fs'
 import { defu } from 'defu'
 import jiti from 'jiti'
 import type { ViteDevServer } from 'vite'
+import { logger } from 'style-dictionary-esm'
 import type { ConfigLayer, LoadConfigResult, PinceauConfigContext, PinceauOptions, PinceauTheme, ResolvedConfigLayer } from '../types'
 
 const extensions = ['.js', '.ts', '.mjs', '.cjs']
@@ -107,6 +108,7 @@ export async function loadConfig<U extends PinceauTheme>(
     cwd = process.cwd(),
     configOrPaths = [cwd],
     configFileName = 'pinceau.config',
+    debug = false,
   }: PinceauOptions,
 ): Promise<LoadConfigResult<U>> {
   let _sources: string[] = []
@@ -203,6 +205,7 @@ export async function loadConfig<U extends PinceauTheme>(
         return loadConfigFile(filePath) as ResolvedConfigLayer<U>
       }
       catch (e) {
+        if (debug) { logger().error({ filePath, e }) }
         return empty()
       }
     }
