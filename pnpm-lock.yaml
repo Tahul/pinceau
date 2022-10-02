@@ -22,6 +22,7 @@ importers:
       fast-glob: ^3.2.12
       jsdom: ^20.0.0
       magic-string: ^0.26.5
+      nanoid: ^4.0.0
       nodemon: ^2.0.20
       ohash: ^0.1.5
       playwright: ^1.26.1
@@ -49,6 +50,7 @@ importers:
       csstype: 3.1.1
       defu: 6.1.0
       magic-string: 0.26.5
+      nanoid: 4.0.0
       ohash: 0.1.5
       postcss-custom-properties: 12.1.9
       postcss-dark-theme-class: 0.7.3
@@ -5581,7 +5583,6 @@ packages:
     resolution: {integrity: sha512-IgBP8piMxe/gf73RTQx7hmnhwz0aaEXYakvqZyE302IXW3HyVNhdNGC+O2MwMAVhLEnvXlvKtGbtJf6wvHihCg==}
     engines: {node: ^14 || ^16 || >=18}
     hasBin: true
-    dev: true
 
   /natural-compare/1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}

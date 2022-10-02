@@ -32,6 +32,7 @@ export default defineBuildConfig({
     'tinycolor2',
     '#pinceau',
     'nitropack',
+    'nanoid',
   ],
   hooks: {
     'build:done': () => {
