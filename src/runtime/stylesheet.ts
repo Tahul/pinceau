@@ -1,4 +1,4 @@
-import { computed, watch } from 'vue'
+import { computed, onScopeDispose, watch } from 'vue'
 import type { TokensFunction } from '../types'
 import { resolveCssProperty, stringify, transformStateToDeclaration } from './utils'
 
@@ -16,7 +16,7 @@ export function usePinceauStylesheet(state: any, $tokens: TokensFunction, appId?
       let style = doc.querySelector(`style#pinceau${appId ? `-${appId}` : ''}`)
       if (!style) {
         const styleTag = doc.createElement('style')
-        styleTag.id = 'pinceau'
+        styleTag.id = `pinceau${appId ? `-${appId}` : ''}`
         styleTag.type = 'text/css'
         doc.head.append(styleTag)
         style = styleTag
@@ -27,6 +27,15 @@ export function usePinceauStylesheet(state: any, $tokens: TokensFunction, appId?
   }
 
   watch(declaration, () => updateStylesheet(), { immediate: true })
+
+  onScopeDispose(() => {
+    const global = globalThis || window
+    if (global && global.document) {
+      const doc = global.document
+      const style = doc.querySelector(`style#pinceau${appId ? `-${appId}` : ''}`)
+      style.remove()
+    }
+  })
 
   return {
     updateStylesheet,
