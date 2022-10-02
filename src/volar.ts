@@ -15,6 +15,7 @@ const plugin: VueLanguagePlugin = _ => ({
       embeddedFile.codeGen.addText(`\ntype __VLS_PropsType = Omit<InstanceType<typeof import(\'${fileName}\').default>[\'$props\'], __VLS_InstanceOmittedKeys>\n`)
       embeddedFile.codeGen.addText('\nconst css = (declaration: CSS<PinceauTheme, ComponentTemplateTags__VLS, __VLS_PropsType>) => ({ declaration })\n')
       embeddedFile.codeGen.addText('\nconst $dt = (path?: PinceauThemePaths, options?: TokensFunctionOptions) => ({ path, options })\n')
+      embeddedFile.codeGen.addText(`\ndeclare module "${fileName}" { declare const $variantsClass: string }\n`)
 
       // $dt helper
       const addDt = (match, dtKey, index, vueTag, vueTagIndex) => {
@@ -37,11 +38,36 @@ const plugin: VueLanguagePlugin = _ => ({
       for (let i = 0; i < sfc.styles.length; i++) {
         const style = sfc.styles[i]
         const _variants = resolveStyleContent(embeddedFile, style, i, addDt)
-        variants = defu(variants, _variants)
+        variants = defu(variants, _variants.variants)
       }
 
       if (sfc.template) {
         resolveTemplateTags(fileName, sfc, embeddedFile, addDt)
+        sfc.template.content.replace(
+          /\$variantsClass/g,
+          (match, index) => {
+            embeddedFile.codeGen.addCode2(
+              match,
+              index,
+              {
+                vueTag: 'template',
+                vueTagIndex: 0,
+                capabilities: {
+                  basic: false,
+                  completion: false,
+                  definitions: false,
+                  diagnostic: false,
+                  displayWithLink: false,
+                  references: false,
+                  referencesCodeLens: false,
+                  rename: false,
+                  semanticTokens: false,
+                },
+              },
+            )
+            return match
+          },
+        )
       }
 
       if (sfc.scriptSetup) {
@@ -49,7 +75,7 @@ const plugin: VueLanguagePlugin = _ => ({
 
         const variantProps = resolveVariantsProps(variants, isTs)
 
-        let variantsPropsAst = propStringToAst(JSON.stringify(variantProps))
+        let variantsPropsAst = propStringToAst(JSON.stringify({ ...variantProps, $variantsClass: { type: 'String', default: '', required: false } }))
 
         variantsPropsAst = castVariantsPropsAst(variantsPropsAst)
 
