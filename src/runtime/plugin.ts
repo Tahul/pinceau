@@ -1,22 +1,25 @@
 import type { Plugin, PropType } from 'vue'
 import { computed, getCurrentInstance, onScopeDispose, watch } from 'vue'
 import { defu } from 'defu'
+import { nanoid } from 'nanoid'
 import type { CSS, PinceauTheme } from '../types'
 import { createTokensHelper, getIds, sanitizeProps } from './utils'
 import { usePinceauRuntimeState } from './state'
 import { usePinceauStylesheet } from './stylesheet'
 
 export const plugin: Plugin = {
-  install(app, { theme, helpersConfig }) {
+  install(app, { theme, helpersConfig, multiApp = false }) {
     theme = defu(theme || {}, { theme: {}, aliases: {} })
 
     helpersConfig = defu(helpersConfig, { flattened: true })
+
+    const multiAppId = multiApp ? nanoid(6) : undefined
 
     const $tokens = createTokensHelper(theme.theme, theme.aliases, helpersConfig)
 
     const state = usePinceauRuntimeState()
 
-    const { getStylesheetContent, updateStylesheet } = usePinceauStylesheet(state, $tokens)
+    const { getStylesheetContent, updateStylesheet } = usePinceauStylesheet(state, $tokens, multiAppId)
 
     const setupPinceauRuntime = (
       props: any,
