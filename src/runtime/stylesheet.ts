@@ -1,4 +1,4 @@
-import { computed, onScopeDispose, watch } from 'vue'
+import { computed, watch } from 'vue'
 import type { TokensFunction } from '../types'
 import { resolveCssProperty, stringify, transformStateToDeclaration } from './utils'
 
@@ -11,6 +11,7 @@ export function usePinceauStylesheet(state: any, $tokens: TokensFunction, appId?
     // Only update stylesheet on client-side
     // SSR Rendering occurs in `app:rendered` hook, or via `getStylesheetContent`
     const global = globalThis || window
+
     if (global && global.document) {
       const doc = global.document
       let style = doc.querySelector(`style#pinceau${appId ? `-${appId}` : ''}`)
@@ -21,21 +22,19 @@ export function usePinceauStylesheet(state: any, $tokens: TokensFunction, appId?
         doc.head.append(styleTag)
         style = styleTag
       }
+
       const content = getStylesheetContent()
+
+      if (!content) {
+        style.remove()
+        return
+      }
+
       style.textContent = content
     }
   }
 
   watch(declaration, () => updateStylesheet(), { immediate: true })
-
-  onScopeDispose(() => {
-    const global = globalThis || window
-    if (global && global.document) {
-      const doc = global.document
-      const style = doc.querySelector(`style#pinceau${appId ? `-${appId}` : ''}`)
-      style.remove()
-    }
-  })
 
   return {
     updateStylesheet,
