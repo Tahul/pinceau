@@ -1,5 +1,4 @@
 import fs from 'fs'
-import chalk from 'chalk'
 import { parseVueComponent } from '../../utils/ast'
 import type { PinceauContext, TokensFunction } from '../../types'
 import { logger } from '../../utils'
@@ -67,7 +66,7 @@ export function transformMediaQueries(code = '', $tokens: TokensFunction): strin
 
       if (mediaQuery) { return `@media ${mediaQuery.value} {` }
 
-      logger.warn(`This media query is not defined: ${chalk.red(mediaQuery)}\n`)
+      logger.warn(`This media query is not defined: ${mediaQuery}\n`)
 
       return '@media (min-width: 0px) {'
     },
