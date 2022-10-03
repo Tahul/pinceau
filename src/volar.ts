@@ -10,12 +10,11 @@ import { fullCapabilities, resolveTemplateTags } from './utils/devtools'
 const plugin: VueLanguagePlugin = _ => ({
   resolveEmbeddedFile(fileName, sfc, embeddedFile) {
     if (embeddedFile.fileName.replace(fileName, '').match(/^\.(js|ts|jsx|tsx)$/)) {
-      embeddedFile.codeGen.addText('\nimport type { TokensFunction, CSS, PinceauTheme, PinceauThemePaths, TokensFunctionOptions, ThemeKey, MediaQueriesKeys } from \'pinceau\'\n')
+      embeddedFile.codeGen.addText('\nimport type { TokensFunction, CSS, PinceauTheme, PinceauThemePaths, TokensFunctionOptions, TokenOrThemeKey, MediaQueriesKeys } from \'pinceau\'\n')
       embeddedFile.codeGen.addText('\ntype __VLS_InstanceOmittedKeys = \'onVnodeBeforeMount\' | \'onVnodeBeforeUnmount\' | \'onVnodeBeforeUpdate\' | \'onVnodeMounted\' | \'onVnodeUnmounted\' | \'onVnodeUpdated\' | \'key\' | \'ref\' | \'ref_for\' | \'ref_key\' | \'style\' | \'class\'\n')
       embeddedFile.codeGen.addText(`\ntype __VLS_PropsType = Omit<InstanceType<typeof import(\'${fileName}\').default>[\'$props\'], __VLS_InstanceOmittedKeys>\n`)
       embeddedFile.codeGen.addText('\nconst css = (declaration: CSS<PinceauTheme, ComponentTemplateTags__VLS, __VLS_PropsType>) => ({ declaration })\n')
       embeddedFile.codeGen.addText('\nconst $dt = (path?: PinceauThemePaths, options?: TokensFunctionOptions) => ({ path, options })\n')
-      embeddedFile.codeGen.addText(`\ndeclare module "${fileName}" { declare const $variantsClass: string }\n`)
 
       // $dt helper
       const addDt = (match, dtKey, index, vueTag, vueTagIndex) => {
@@ -75,7 +74,13 @@ const plugin: VueLanguagePlugin = _ => ({
 
         const variantProps = resolveVariantsProps(variants, isTs)
 
-        let variantsPropsAst = propStringToAst(JSON.stringify({ ...variantProps, $variantsClass: { type: 'String', default: '', required: false } }))
+        let variantsPropsAst = propStringToAst(JSON.stringify({
+          ...variantProps,
+          // $variantsClass inference
+          $variantsClass: { type: 'String', default: '', required: false, validator: () => false },
+          // $dt inference
+          $dt: { type: 'Function as PropType<(value: PinceauThemePaths) => string>', required: false, validator: () => false },
+        }))
 
         variantsPropsAst = castVariantsPropsAst(variantsPropsAst)
 
