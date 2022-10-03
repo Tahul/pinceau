@@ -41,7 +41,7 @@ const module: any = defineNuxtModule<PinceauOptions>({
 
       tsConfig.vueCompilerOptions = tsConfig.vueCompilerOptions || {}
       tsConfig.vueCompilerOptions.plugins = tsConfig.vueCompilerOptions.plugins || []
-      tsConfig.vueCompilerOptions.plugins.push(modulePath.resolve('../volar'))
+      tsConfig.vueCompilerOptions.plugins.push('pinceau/volar')
     })
 
     // Setup Nitro plugin
