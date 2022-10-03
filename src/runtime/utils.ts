@@ -25,10 +25,21 @@ export function resolveVariableFromPath(path: string): string { return `var(--${
   */
 export function transformTokensToVariable(property: string): string { return (property || '').replace(keyRegex, (_, tokenPath) => resolveVariableFromPath(tokenPath)) }
 
+export function scale(type: any, prop: any, defaultShade = '500') {
+  if (isToken(prop)) { return prop }
+
+  if (typeof prop === 'string') {
+    return `var(--${type}-${prop}-${defaultShade})`
+  }
+
+  return prop
+}
+
 export const utils = {
   resolveVariableFromPath,
   transformTokensToVariable,
   isToken,
+  scale,
 }
 
 /**

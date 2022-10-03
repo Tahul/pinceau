@@ -19,7 +19,6 @@ export function usePinceauStylesheet(state: any, $tokens: TokensFunction, appId?
         const styleTag = doc.createElement('style')
         styleTag.id = `pinceau${appId ? `-${appId}` : ''}`
         styleTag.type = 'text/css'
-        doc.head.append(styleTag)
         style = styleTag
       }
 
@@ -30,7 +29,10 @@ export function usePinceauStylesheet(state: any, $tokens: TokensFunction, appId?
         return
       }
 
-      style.textContent = content
+      if (content !== style.textContent) {
+        style.textContent = content
+        doc.head.appendChild(style)
+      }
     }
   }
 
