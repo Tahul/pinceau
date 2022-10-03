@@ -9,7 +9,6 @@ const size = ref('light')
 
 const css = ref({
   padding: '1px',
-  color: 'red',
 })
 
 /*
@@ -30,25 +29,23 @@ setInterval(
 
 <template>
   <section>
-    <Block :shadow="size" :css="css" />
+    <Block :border="size" :css="css" />
 
-    <Block shadow="" />
+    <Block appearance="danger" />
 
-    <Block shadow="giant" />
+    <Block border="giant" />
 
-    <Block shadow="giant" />
+    <Block border="giant" />
 
-    <Block shadow="giant" />
+    <Block border="giant" />
 
-    <Block shadow="giant" />
+    <Block border="giant" />
 
-    <Block shadow="giant" />
+    <Block border="giant" />
 
-    <Block shadow="giant" />
+    <Block border="giant" />
 
-    <Block shadow="giant" />
-
-    <Block shadow="giant" />
+    <Block border="giant" />
   </section>
 </template>
 

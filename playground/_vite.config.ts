@@ -4,8 +4,8 @@ import Vue from '@vitejs/plugin-vue'
 import { resolve } from 'pathe'
 import Pinceau from '../src/vite'
 
-const from = 'dist'
-const ext = '.mjs'
+const from = 'src'
+const ext = '.ts'
 
 export default defineConfig({
   logLevel: 'info',

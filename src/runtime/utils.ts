@@ -80,7 +80,7 @@ export function transformStateToDeclaration(
       // Iterate through all unique components in `props[componentId]`
         Object.entries(classes).forEach(
           ([className, classProps]) => {
-            const targetId = `.${className}`
+            const targetId = `.${className}${componentId}`
 
             // Iterate through all props in `props[componentId][class]`
             Object.entries(classProps).forEach(

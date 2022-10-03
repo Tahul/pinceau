@@ -767,8 +767,6 @@ There is plenty of features to come, including:
 
 - 🎨 Online playground
 
-- Autogenerating props from declared variants (`$variantProps`)
-
 - Maybe [yours](https://github.com/Tahul/pinceau/issues)? I'm happy to provide guidance and reviews on any PR!
 
 - And even more! 🚀
