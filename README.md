@@ -632,7 +632,9 @@ The `css()` function has mutliple features:
 
   </details>
 
-### `$dt()` <span style="font-size: 12px; font-style: italic;">$designToken</span>
+### `$dt()`
+
+`$dt` stands for __`$designToken`__.
 
 In addition to `css()`, `$dt()` comes with everything you need to use your Design Tokens outside of `<style>`.
 
