@@ -250,7 +250,7 @@ export default defineTheme({
 
 Out of your configuration file, **Pinceau** will generate multiple output targets which will provide:
 
-- Type completion in `css()` function for [mapped theme tokens](https://github.com/Tahul/pinceau/blob/main/src/types/theme.ts#L132-L255)
+- Type completion in `css()` function for [mapped theme tokens](https://github.com/Tahul/pinceau/blob/4c43e0514daa8a1d07d24e7d96c6a65d69c86313/src/types/theme.ts#L130-L251)
 - Token paths completion with globally available `$dt()` helper
 - Globally injected CSS variables
 - A lot more for you to discover, and for me to document ✨
