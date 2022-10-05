@@ -146,3 +146,44 @@ export const getIds = (instance: ComponentInternalInstance, css: any, props: any
 
   return { uid, componentId, className, computedClassName }
 }
+
+/**
+ * Take a css|var|token color and return corresponding hover color.
+ */
+export function getColorHover(color: any) {
+  if (color.match('\\white|black')) {
+    if (color.includes('white')) {
+      return 'var(--colors-gray-200)'
+    }
+    else {
+      return 'var(--colors-gray-800)'
+    }
+  }
+  else if (color.match('\\.|-')) {
+    let colorRange: number
+    let _color: String
+
+    if (color.includes('.')) {
+      colorRange = parseInt(color.split('.')[2].replace('}', ''))
+      _color = color.split('.')[1]
+    }
+    else {
+      colorRange = parseInt(color.split('-')[4].replace(')', ''))
+      _color = color.split('-')[3]
+    }
+
+    if (colorRange > 500) {
+      colorRange -= 100
+    }
+    else if (colorRange === 50) {
+      colorRange = 200
+    }
+    else {
+      colorRange += 100
+    }
+    return `var(--colors-${_color}-${colorRange})`
+  }
+  else {
+    return `var(--colors-${color}-300)`
+  }
+}

@@ -4,6 +4,7 @@ import type { DefaultThemeMap, PinceauTheme, PinceauThemePaths } from './theme'
 
 export interface ComputedPropertiesUtils {
   isToken: (value: any) => boolean
+  getColorHover: (value: any) => any
 }
 
 export type VuePseudos =

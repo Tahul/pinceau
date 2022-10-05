@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { PropType } from 'vue'
 import { cssProp } from 'pinceau/runtime'
+import { getColorHover } from '../../src/runtime/utils'
 
 const props = defineProps({
   color: {
@@ -27,6 +28,11 @@ css({
       return props.color
     },
     '&:hover': {
+      // test hover color but utils.getColorHover doesn't work
+      // backgroundColor: (props, utils) => {
+      //   if (props.color && utils.isToken(props.color)) return utils.getColorHover(props.color)
+      //   return utils.getColorHover(props.color)
+      // },
       border: (props) => `8px solid {colors.${props.color}}`,
     },
     display: 'flex',
@@ -58,4 +64,3 @@ css({
   }
 })
 </style>
-
