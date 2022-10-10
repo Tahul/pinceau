@@ -102,7 +102,7 @@ function resolveStyleContent(embeddedFile, style, i, addDt) {
       embeddedFile.content.push([
         cssMatches[0],
         style.name,
-        cssMatches[1],
+        cssMatches.index,
         fullCapabilities,
       ])
     }

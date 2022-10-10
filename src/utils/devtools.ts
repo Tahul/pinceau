@@ -6,10 +6,8 @@ export const fullCapabilities = {
   completion: true,
   definition: true,
   diagnostic: true,
-  displayWithLink: true,
   hover: true,
   references: true,
-  referencesCodeLens: true,
   rename: true,
   semanticTokens: true,
 }
