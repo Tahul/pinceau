@@ -8,27 +8,31 @@ import { dtRegex } from './utils/regexes'
 import { fullCapabilities, resolveTemplateTags } from './utils/devtools'
 
 const plugin: VueLanguagePlugin = _ => ({
+  version: 1,
   resolveEmbeddedFile(fileName, sfc, embeddedFile) {
     if (embeddedFile.fileName.replace(fileName, '').match(/^\.(js|ts|jsx|tsx)$/)) {
-      embeddedFile.codeGen.addText('\nimport type { TokensFunction, CSS, PinceauTheme, PinceauThemePaths, TokensFunctionOptions, TokenOrThemeKey, MediaQueriesKeys } from \'pinceau\'\n')
-      embeddedFile.codeGen.addText('\ntype __VLS_InstanceOmittedKeys = \'onVnodeBeforeMount\' | \'onVnodeBeforeUnmount\' | \'onVnodeBeforeUpdate\' | \'onVnodeMounted\' | \'onVnodeUnmounted\' | \'onVnodeUpdated\' | \'key\' | \'ref\' | \'ref_for\' | \'ref_key\' | \'style\' | \'class\'\n')
-      embeddedFile.codeGen.addText(`\ntype __VLS_PropsType = Omit<InstanceType<typeof import(\'${fileName}\').default>[\'$props\'], __VLS_InstanceOmittedKeys>\n`)
-      embeddedFile.codeGen.addText('\nconst css = (declaration: CSS<PinceauTheme, ComponentTemplateTags__VLS, __VLS_PropsType>) => ({ declaration })\n')
-      embeddedFile.codeGen.addText('\nconst $dt = (path?: PinceauThemePaths, options?: TokensFunctionOptions) => ({ path, options })\n')
-
       // $dt helper
-      const addDt = (match, dtKey, index, vueTag, vueTagIndex) => {
-        embeddedFile.codeGen.addText(`\nconst __VLS_$dt_${hash(`${camelCase(dtKey)}-${index}`)} = `)
-        embeddedFile.codeGen.addCode2(
+      const addDt = (match, dtKey, index, vueTag) => {
+        embeddedFile.content.push(`\nconst __VLS_$dt_${hash(`${camelCase(dtKey)}-${index}`)} = `)
+        embeddedFile.content.push([
           match,
+          vueTag,
           index,
-          {
-            vueTag,
-            vueTagIndex,
-            capabilities: fullCapabilities,
-          },
-        )
-        embeddedFile.codeGen.addText('\n')
+          fullCapabilities,
+        ])
+        embeddedFile.content.push('\n')
+      }
+
+      // Add imports to <script setup>
+      if (sfc.scriptSetup) {
+        const imports = [
+          '\nimport type { TokensFunction, CSS, PinceauTheme, PinceauThemePaths, TokensFunctionOptions, TokenOrThemeKey, MediaQueriesKeys } from \'pinceau\'\n',
+          '\ntype __VLS_InstanceOmittedKeys = \'onVnodeBeforeMount\' | \'onVnodeBeforeUnmount\' | \'onVnodeBeforeUpdate\' | \'onVnodeMounted\' | \'onVnodeUnmounted\' | \'onVnodeUpdated\' | \'key\' | \'ref\' | \'ref_for\' | \'ref_key\' | \'style\' | \'class\'\n',
+          `\ntype __VLS_PropsType = Omit<InstanceType<typeof import(\'${fileName}\').default>[\'$props\'], __VLS_InstanceOmittedKeys>\n`,
+          '\nconst css = (declaration: CSS<PinceauTheme, __VLS_ComponentTemplateTags, __VLS_PropsType>) => ({ declaration })\n',
+          '\nconst $dt = (path?: PinceauThemePaths, options?: TokensFunctionOptions) => ({ path, options })\n',
+        ]
+        embeddedFile.content.push(...imports)
       }
 
       let variants = {}
@@ -42,31 +46,6 @@ const plugin: VueLanguagePlugin = _ => ({
 
       if (sfc.template) {
         resolveTemplateTags(fileName, sfc, embeddedFile, addDt)
-        sfc.template.content.replace(
-          /\$variantsClass/g,
-          (match, index) => {
-            embeddedFile.codeGen.addCode2(
-              match,
-              index,
-              {
-                vueTag: 'template',
-                vueTagIndex: 0,
-                capabilities: {
-                  basic: false,
-                  completion: false,
-                  definitions: false,
-                  diagnostic: false,
-                  displayWithLink: false,
-                  references: false,
-                  referencesCodeLens: false,
-                  rename: false,
-                  semanticTokens: false,
-                },
-              },
-            )
-            return match
-          },
-        )
       }
 
       if (sfc.scriptSetup) {
@@ -84,7 +63,7 @@ const plugin: VueLanguagePlugin = _ => ({
 
         variantsPropsAst = castVariantsPropsAst(variantsPropsAst)
 
-        embeddedFile.codeGen.addText(`\nconst $variantsProps = ${printAst(variantsPropsAst).code}\n`)
+        embeddedFile.content.push(`\nconst $variantsProps = ${printAst(variantsPropsAst).code}\n`)
       }
     }
   },
@@ -115,33 +94,27 @@ function resolveStyleContent(embeddedFile, style, i, addDt) {
   }
 
   // Type `css()`
+
   if (style?.content) {
     const cssMatches = style.content.match(/css\(([\s\S]*)\)/)
-    const dtMatches = style.content.match(dtRegex)
     if (cssMatches) {
-      embeddedFile.codeGen.addText('\nconst __VLS_css = ')
-      embeddedFile.codeGen.addCode2(
+      embeddedFile.content.push('\nconst __VLS_css = ')
+      embeddedFile.content.push([
         cssMatches[0],
-        cssMatches.index,
-        {
-          vueTag: 'style',
-          vueTagIndex: i,
-          capabilities: fullCapabilities,
-        },
-      )
-      embeddedFile.codeGen.addText('\n')
+        style.name,
+        cssMatches[1],
+        fullCapabilities,
+      ])
     }
 
     // Type `$dt()` from <style>
-    if (dtMatches) {
-      style.content.replace(
-        dtRegex,
-        (match, dtKey, index) => {
-          addDt(match, dtKey, index, style.tag, i)
-          return match
-        },
-      )
-    }
+    style.content.replace(
+      dtRegex,
+      (match, dtKey, index) => {
+        addDt(match, dtKey, index, style.name, i)
+        return match
+      },
+    )
   }
 
   return { variants }

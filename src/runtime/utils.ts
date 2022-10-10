@@ -25,13 +25,19 @@ export function resolveVariableFromPath(path: string): string { return `var(--${
   */
 export function transformTokensToVariable(property: string): string { return (property || '').replace(keyRegex, (_, tokenPath) => resolveVariableFromPath(tokenPath)) }
 
+/**
+ * Handles a scale of tokens easily.
+ */
 export function scale(type: any, prop: any, defaultShade = '500') {
+  // Is a token, return it as is.
   if (isToken(prop)) { return prop }
 
+  // Is a string, concatenate it with type & defaultShade
   if (typeof prop === 'string') {
     return `var(--${type}-${prop}-${defaultShade})`
   }
 
+  // No valid type, return it as is.
   return prop
 }
 

@@ -4,7 +4,7 @@ import { cssProp } from 'pinceau/runtime'
 
 const props = defineProps({
   color: {
-    type: String as PropType<ThemeKey<'color'> | keyof PinceauTheme['colors']>,
+    type: String as PropType<TokenOrThemeKey<'color'> | keyof PinceauTheme['colors']>,
     default: '{colors.primary.600}',
   },
   css: cssProp,
