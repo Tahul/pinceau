@@ -2,7 +2,7 @@ import { resolve } from 'path'
 import { existsSync } from 'fs'
 import { defu } from 'defu'
 import jiti from 'jiti'
-import type { ViteDevServer } from 'vite'
+import type { Update, ViteDevServer } from 'vite'
 import { logger } from '../utils/logger'
 import type { ConfigLayer, LoadConfigResult, PinceauConfigContext, PinceauOptions, PinceauTheme, ResolvedConfigLayer } from '../types'
 
@@ -57,33 +57,52 @@ export function usePinceauConfig<UserOptions extends PinceauOptions = PinceauOpt
 
       await reloadConfig()
 
-      const css = server.moduleGraph.getModuleById('/__pinceau_css.css')
-      const ts = server.moduleGraph.getModuleById('/__pinceau_ts.ts')
+      const ids = [
+        '\0/__pinceau_css.css',
+        '\0/__pinceau_ts.ts',
+        '\0/__pinceau_js.js',
+        '\0/__pinceau_flat_ts.ts',
+        '\0/__pinceau_flat_js.js',
+        '#pinceau/theme',
+        '#pinceau/theme/flat',
+      ]
 
-      // Send HMR updates for each
-      Object.entries({ css, ts }).forEach(
-        ([key, _module]) => {
-          if (!_module) { return }
+      const updates: Update[] = []
 
-          server.moduleGraph.invalidateModule(_module)
+      for (const id of ids) {
+        const _module = server.moduleGraph.getModuleById(id)
 
-          ;['js', 'css'].forEach(
-            (type: 'js' | 'css') => {
-              server.ws.send({
-                type: 'update',
-                updates: [
-                  {
-                    acceptedPath: `/__pinceau_${key}.${key}`,
-                    path: `/__pinceau_${key}.${key}`,
-                    timestamp: +Date.now(),
-                    type: `${type}-update`,
-                  },
-                ],
-              })
-            },
-          )
-        },
-      )
+        if (!_module) { continue }
+
+        server.moduleGraph.invalidateModule(_module)
+
+        if (id.endsWith('.css')) {
+          updates.push({
+            type: 'css-update',
+            path: `/@id/__x00__${_module.url}`,
+            acceptedPath: `/@id/__x00__${_module.url}`,
+            timestamp: +Date.now(),
+          })
+        }
+        else {
+          updates.push({
+            type: 'js-update',
+            path: `/@id/__x00__${_module.url}`,
+            acceptedPath: `/@id/__x00__${_module.url}`,
+            timestamp: +Date.now(),
+          })
+        }
+      }
+
+      server.ws.send({
+        type: 'update',
+        updates,
+      })
+
+      // TODO: Temporary hotfix for reload on config change
+      server.ws.send({
+        type: 'full-reload',
+      })
     })
   }
 

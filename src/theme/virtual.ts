@@ -1,7 +1,7 @@
 import type { PinceauVirtualContext, ThemeGenerationOutput } from '../types'
 import { jsFlat, jsFull, tsFlat, tsFull } from './formats'
 
-export const VIRTUAL_ENTRY_REGEX = /^(virtual:)?pinceau(\/theme|\/theme\/flat)?(\.)?(css|ts|js)?(\?.*)?$/
+export const VIRTUAL_ENTRY_REGEX = /^(virtual:|#)?pinceau(\/theme|\/theme\/flat)?(\.)?(css|ts|js)?(\?.*)?$/
 export const RESOLVED_ID_RE = /\/__pinceau(?:(_.*?))?\.(css|ts|js)(\?.*)?$/
 
 export function usePinceauVirtualStore(): PinceauVirtualContext {
