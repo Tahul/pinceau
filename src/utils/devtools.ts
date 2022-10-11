@@ -29,17 +29,6 @@ export function resolveTemplateTags(fileName: string, sfc: Sfc, embeddedFile: Vu
     }
 
     embeddedFile.content.push(`\ntype __VLS_ComponentTemplateTags = {\n${Object.entries(templateTags).map(([tag]) => `  /**\n  * The \`<${tag}>\` tag from the Vue template.\n  */\n  ${tag}: true,\n`).join('')}}\n`)
-
-    const templateDtMatches = sfc.template.content.match(dtRegex)
-    if (templateDtMatches) {
-      sfc.template.content.replace(
-        dtRegex,
-        (match, dtKey, index) => {
-          addDt(match, dtKey, 0, sfc.template.name, index)
-          return match
-        },
-      )
-    }
   }
   else {
     embeddedFile.content.push('\ntype __VLS_ComponentTemplateTags = {}\n')

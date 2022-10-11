@@ -272,6 +272,10 @@ export interface TokensFunctionOptions {
   flattened?: boolean
 }
 
+export type DtFunction = (
+  path: PinceauThemePaths
+) => string
+
 export type TokensFunction = (
   path?: PinceauThemePaths,
   options?: TokensFunctionOptions,

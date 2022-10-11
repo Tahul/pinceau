@@ -61,7 +61,6 @@
   ],
   "scripts": {
     "build": "unbuild",
-    "build:fix": "esno scripts/postbuild.ts",
     "lint": "eslint .",
     "build:play": "npm -C playground run build",
     "build:play:nuxt": "npm -C playground run build:nuxt",

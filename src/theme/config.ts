@@ -63,8 +63,6 @@ export function usePinceauConfig<UserOptions extends PinceauOptions = PinceauOpt
         '\0/__pinceau_js.js',
         '\0/__pinceau_flat_ts.ts',
         '\0/__pinceau_flat_js.js',
-        '#pinceau/theme',
-        '#pinceau/theme/flat',
       ]
 
       const updates: Update[] = []
@@ -79,16 +77,16 @@ export function usePinceauConfig<UserOptions extends PinceauOptions = PinceauOpt
         if (id.endsWith('.css')) {
           updates.push({
             type: 'css-update',
-            path: `/@id/__x00__${_module.url}`,
-            acceptedPath: `/@id/__x00__${_module.url}`,
+            path: _module.url,
+            acceptedPath: _module.url,
             timestamp: +Date.now(),
           })
         }
         else {
           updates.push({
             type: 'js-update',
-            path: `/@id/__x00__${_module.url}`,
-            acceptedPath: `/@id/__x00__${_module.url}`,
+            path: _module.url,
+            acceptedPath: _module.url,
             timestamp: +Date.now(),
           })
         }
@@ -97,11 +95,6 @@ export function usePinceauConfig<UserOptions extends PinceauOptions = PinceauOpt
       server.ws.send({
         type: 'update',
         updates,
-      })
-
-      // TODO: Temporary hotfix for reload on config change
-      server.ws.send({
-        type: 'full-reload',
       })
     })
   }

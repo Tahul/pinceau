@@ -41,7 +41,7 @@ export default createUnplugin<PinceauOptions>(
 
       vite: {
         config(config) {
-          registerAliases(config, options)
+          // registerAliases(config, options)
           registerPostCssPlugins(config, options)
         },
         async configResolved(config) {

@@ -1,4 +1,4 @@
-import type { PinceauTheme } from './theme'
+import type { DtFunction, PinceauTheme } from './theme'
 import type { ConfigOrPaths } from './context'
 
 export * from './utils'
@@ -82,18 +82,23 @@ export interface ModuleHooks {
 
 export interface ModuleOptions extends PinceauOptions {}
 
+declare global {
+  const $dt: DtFunction
+  const $variantsClass: string
+}
+
+declare module '@vue/runtime-core' {
+  interface ComponentCustomProperties {
+    $dt: DtFunction
+    $variantsClass: string
+  }
+}
+
 declare module '@nuxt/schema' {
   interface NuxtHooks {
     'pinceau:options': ModuleHooks['pinceau:options']
   }
   interface NuxtConfig {
     pinceau?: ModuleOptions
-  }
-}
-
-declare module 'vue' {
-  interface ComponentCustomProperties {
-    $pinceau: any
-    $variantsClass: any
   }
 }

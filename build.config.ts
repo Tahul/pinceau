@@ -1,4 +1,3 @@
-import { execSync } from 'child_process'
 import { defineBuildConfig } from 'unbuild'
 
 export default defineBuildConfig({
@@ -34,9 +33,4 @@ export default defineBuildConfig({
     'nitropack',
     'nanoid',
   ],
-  hooks: {
-    'build:done': () => {
-      execSync('npm run build:fix')
-    },
-  },
 })

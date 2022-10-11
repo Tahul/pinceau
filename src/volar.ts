@@ -30,9 +30,15 @@ const plugin: VueLanguagePlugin = _ => ({
           '\ntype __VLS_InstanceOmittedKeys = \'onVnodeBeforeMount\' | \'onVnodeBeforeUnmount\' | \'onVnodeBeforeUpdate\' | \'onVnodeMounted\' | \'onVnodeUnmounted\' | \'onVnodeUpdated\' | \'key\' | \'ref\' | \'ref_for\' | \'ref_key\' | \'style\' | \'class\'\n',
           `\ntype __VLS_PropsType = Omit<InstanceType<typeof import(\'${fileName}\').default>[\'$props\'], __VLS_InstanceOmittedKeys>\n`,
           '\nconst css = (declaration: CSS<PinceauTheme, __VLS_ComponentTemplateTags, __VLS_PropsType>) => ({ declaration })\n',
-          '\nconst $dt = (path?: PinceauThemePaths, options?: TokensFunctionOptions) => ({ path, options })\n',
         ]
         embeddedFile.content.push(...imports)
+
+        embeddedFile.content.push([
+          '\nconst $dt = (token: string) => token\n',
+          sfc.scriptSetup.name,
+          sfc.scriptSetup.content.length,
+          fullCapabilities,
+        ])
       }
 
       let variants = {}
