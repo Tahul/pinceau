@@ -10,19 +10,22 @@ import { fullCapabilities, resolveTemplateTags } from './utils/devtools'
 const plugin: VueLanguagePlugin = _ => ({
   version: 1,
   resolveEmbeddedFile(fileName, sfc, embeddedFile) {
-    if (embeddedFile.fileName.replace(fileName, '').match(/^\.(js|ts|jsx|tsx)$/)) {
-      // $dt helper
-      const addDt = (match, dtKey, index, vueTag) => {
-        embeddedFile.content.push(`\nconst __VLS_$dt_${hash(`${camelCase(dtKey)}-${index}`)} = `)
-        embeddedFile.content.push([
-          match,
-          vueTag,
-          index,
-          fullCapabilities,
-        ])
-        embeddedFile.content.push('\n')
-      }
+    // $dt helper
+    const addDt = (match, dtKey, index, vueTag) => {
+      if (!embeddedFile.content) { return }
 
+      embeddedFile.content.push(`\nconst __VLS_$dt_${hash(`${camelCase(dtKey)}-${index}`)} = `)
+      embeddedFile.content.push([
+        match,
+        vueTag,
+        index,
+        fullCapabilities,
+      ])
+      embeddedFile.content.push('\n')
+    }
+
+    // Handle <vue> files
+    if (embeddedFile.fileName.replace(fileName, '').match(/^\.(js|ts|jsx|tsx)$/)) {
       // Add imports to <script setup>
       if (sfc.scriptSetup) {
         const imports = [
@@ -32,13 +35,6 @@ const plugin: VueLanguagePlugin = _ => ({
           '\nconst css = (declaration: CSS<PinceauTheme, __VLS_ComponentTemplateTags, __VLS_PropsType>) => ({ declaration })\n',
         ]
         embeddedFile.content.push(...imports)
-
-        embeddedFile.content.push([
-          '\nconst $dt = (token: string) => token\n',
-          sfc.scriptSetup.name,
-          sfc.scriptSetup.content.length,
-          fullCapabilities,
-        ])
       }
 
       let variants = {}
@@ -51,7 +47,7 @@ const plugin: VueLanguagePlugin = _ => ({
       }
 
       if (sfc.template) {
-        resolveTemplateTags(fileName, sfc, embeddedFile, addDt)
+        resolveTemplateTags(fileName, sfc, embeddedFile)
       }
 
       if (sfc.scriptSetup) {
@@ -100,7 +96,6 @@ function resolveStyleContent(embeddedFile, style, i, addDt) {
   }
 
   // Type `css()`
-
   if (style?.content) {
     const cssMatches = style.content.match(/css\(([\s\S]*)\)/)
     if (cssMatches) {

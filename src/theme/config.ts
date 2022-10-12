@@ -58,14 +58,32 @@ export function usePinceauConfig<UserOptions extends PinceauOptions = PinceauOpt
       await reloadConfig()
 
       const ids = [
-        '\0/__pinceau_css.css',
-        '\0/__pinceau_ts.ts',
-        '\0/__pinceau_js.js',
-        '\0/__pinceau_flat_ts.ts',
-        '\0/__pinceau_flat_js.js',
+        '/__pinceau_css.css',
+        '/__pinceau_ts.ts',
+        '/__pinceau_js.js',
+        '/__pinceau_flat_ts.ts',
+        '/__pinceau_flat_js.js',
       ]
 
       const updates: Update[] = []
+
+      const pushUpdate = (url, css = false) => {
+        updates.push({
+          type: 'js-update',
+          path: url,
+          acceptedPath: url,
+          timestamp: +Date.now(),
+        })
+
+        if (css) {
+          updates.push({
+            type: 'css-update',
+            path: url,
+            acceptedPath: url,
+            timestamp: +Date.now(),
+          })
+        }
+      }
 
       for (const id of ids) {
         const _module = server.moduleGraph.getModuleById(id)
@@ -74,22 +92,12 @@ export function usePinceauConfig<UserOptions extends PinceauOptions = PinceauOpt
 
         server.moduleGraph.invalidateModule(_module)
 
+        let css = false
         if (id.endsWith('.css')) {
-          updates.push({
-            type: 'css-update',
-            path: _module.url,
-            acceptedPath: _module.url,
-            timestamp: +Date.now(),
-          })
+          css = true
         }
-        else {
-          updates.push({
-            type: 'js-update',
-            path: _module.url,
-            acceptedPath: _module.url,
-            timestamp: +Date.now(),
-          })
-        }
+
+        pushUpdate(_module.url, css)
       }
 
       server.ws.send({

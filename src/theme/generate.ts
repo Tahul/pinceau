@@ -193,7 +193,7 @@ export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath
     name: 'pinceau/typescript-flat',
     formatter() {
       const _tsFlat = tsFlat(transformedTokens, outputs.aliases)
-      outputs['flat.ts'] = _tsFlat
+      outputs.flat_ts = _tsFlat
       return _tsFlat
     },
   })
@@ -203,7 +203,7 @@ export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath
     name: 'pinceau/javascript-flat',
     formatter() {
       const _jsFlat = jsFlat(transformedTokens, outputs.aliases)
-      outputs['flat.js'] = _jsFlat
+      outputs.flat_js = _jsFlat
       return _jsFlat
     },
   })

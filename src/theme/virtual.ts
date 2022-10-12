@@ -41,15 +41,18 @@ export function usePinceauVirtualStore(): PinceauVirtualContext {
     if (match) {
       // #pinceau/theme | #pinceau/theme/flat
       if (match[1] && match[2]) {
+        // /flat
         if (match[2].includes('/flat')) {
-          return '\0/__pinceau_flat_ts.ts'
+          return '/__pinceau_flat_ts.ts'
         }
-        return '\0/__pinceau_ts.ts'
+
+        // /theme
+        return '/__pinceau_ts.ts'
       }
 
       // pinceau.css
       if (match[4]) {
-        return `\0/__pinceau_${match[4]}.${match[4]}`
+        return '/__pinceau_css.css'
       }
     }
   }

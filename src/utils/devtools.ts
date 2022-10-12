@@ -1,6 +1,5 @@
 import type { Sfc, VueEmbeddedFile } from '@volar/vue-language-core'
 import { walkElementNodes } from '@volar/vue-language-core'
-import { dtRegex } from './regexes'
 
 export const fullCapabilities = {
   completion: true,
@@ -12,7 +11,7 @@ export const fullCapabilities = {
   semanticTokens: true,
 }
 
-export function resolveTemplateTags(fileName: string, sfc: Sfc, embeddedFile: VueEmbeddedFile, addDt) {
+export function resolveTemplateTags(_: string, sfc: Sfc, embeddedFile: VueEmbeddedFile) {
   // Add TemplateTags typings to autocomplete root in `css()`
   if (sfc.template && sfc.template.content) {
     const templateTags = {}
@@ -24,10 +23,7 @@ export function resolveTemplateTags(fileName: string, sfc: Sfc, embeddedFile: Vu
         },
       )
     }
-    catch (e) {
-      //
-    }
-
+    catch (e) {}
     embeddedFile.content.push(`\ntype __VLS_ComponentTemplateTags = {\n${Object.entries(templateTags).map(([tag]) => `  /**\n  * The \`<${tag}>\` tag from the Vue template.\n  */\n  ${tag}: true,\n`).join('')}}\n`)
   }
   else {
