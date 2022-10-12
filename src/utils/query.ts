@@ -1,3 +1,5 @@
+import * as path from 'pathe'
+
 /**
  * Vue SFC Query, forked from the below:
  * - original repository url: https://github.com/vitejs/vite/tree/main/packages/plugin-vue
@@ -23,6 +25,7 @@ export interface VueQuery {
   scoped?: string
   transformed?: boolean
   issuerPath?: string
+  css: boolean
 }
 
 export function parseVueQuery(id: string) {
@@ -32,6 +35,7 @@ export function parseVueQuery(id: string) {
     filename,
     id,
   } as VueQuery
+
   const langPart = Object.keys(Object.fromEntries(params)).find(key => /lang\./i.test(key))
   ret.vue = params.has('vue') || id.endsWith('.vue')
   ret.global = params.has('global')
@@ -58,6 +62,10 @@ export function parseVueQuery(id: string) {
   }
   if (params.has('issuerPath')) {
     ret.issuerPath = params.get('issuerPath') as VueQuery['issuerPath']
+  }
+  const ext = path.extname(id)
+  if (['.css', '.postcss', '.styl', '.stylus', '.sass', '.scss', '.less'].includes(ext)) {
+    ret.css = true
   }
 
   return ret
