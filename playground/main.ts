@@ -10,6 +10,7 @@ import theme from '#pinceau/theme/flat'
 
 import '@unocss/reset/tailwind.css'
 import 'pinceau.css'
+import './main.css'
 
 const app = createApp(App)
 
