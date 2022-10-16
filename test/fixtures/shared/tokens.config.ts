@@ -2,11 +2,11 @@ import { defineTheme, palette } from 'pinceau'
 
 export default defineTheme({
   media: {
-    'sm': { value: '(min-width: 640px)' },
-    'md': { value: '(min-width: 768px)' },
-    'lg': { value: '(min-width: 1024px)' },
-    'xl': { value: '(min-width: 1280px)' },
-    '2xl': { value: '(min-width: 1536px)' },
+    sm: { value: '(min-width: 640px)' },
+    md: { value: '(min-width: 768px)' },
+    lg: { value: '(min-width: 1024px)' },
+    xl: { value: '(min-width: 1280px)' },
+    xxl: { value: '(min-width: 1536px)' },
   },
 
   fonts: {
@@ -33,7 +33,7 @@ export default defineTheme({
   },
 
   shadows: {
-    'xs': {
+    xs: {
       value: {
         color: '{colors.gray.800}',
         type: 'dropShadow',
@@ -43,7 +43,7 @@ export default defineTheme({
         spread: '0',
       },
     },
-    'sm': {
+    sm: {
       value: [
         {
           color: '{colors.gray.800}',
@@ -63,7 +63,7 @@ export default defineTheme({
         },
       ],
     },
-    'md': {
+    md: {
       value: [
         {
           color: '{colors.gray.800}',
@@ -83,7 +83,7 @@ export default defineTheme({
         },
       ],
     },
-    'lg': {
+    lg: {
       value: [
         {
           color: '{colors.gray.800}',
@@ -103,7 +103,7 @@ export default defineTheme({
         },
       ],
     },
-    'xl': {
+    xl: {
       value: [
         {
           color: '{colors.gray.800}',
@@ -123,7 +123,7 @@ export default defineTheme({
         },
       ],
     },
-    '2xl': {
+    xxl: {
       value: {
         color: '{colors.gray.800}',
         type: 'dropShadow',
@@ -181,7 +181,7 @@ export default defineTheme({
     'xl': {
       value: '20px',
     },
-    '2xl': {
+    'xxl': {
       value: '24px',
     },
     '3xl': {
@@ -268,7 +268,7 @@ export default defineTheme({
     'xl': {
       value: '1rem',
     },
-    '2xl': {
+    'xxl': {
       value: '1.5rem',
     },
     'full': {

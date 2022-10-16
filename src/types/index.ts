@@ -84,13 +84,14 @@ export interface ModuleOptions extends PinceauOptions {}
 
 declare global {
   const $dt: DtFunction
-  const $variantsClass: string
+  const $pinceau: string
+  const __$pProps: any
 }
 
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
     $dt: DtFunction
-    $variantsClass: string
+    $pinceau: string
   }
 }
 

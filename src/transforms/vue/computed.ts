@@ -1,5 +1,6 @@
 import type { ASTNode } from 'ast-types'
 import { hash } from 'ohash'
+import { kebabCase } from 'scule'
 import { astTypes, printAst, visitAst } from '../../utils/ast'
 
 export function resolveComputedStyles(cssAst: ASTNode, computedStyles: any = {}) {
@@ -12,7 +13,8 @@ export function resolveComputedStyles(cssAst: ASTNode, computedStyles: any = {})
           const valueType = path.value.value.type
 
           if (valueType === 'ArrowFunctionExpression' || valueType === 'FunctionExpression') {
-            const id = `${hash(path.value.loc.start)}-${path.value.key.name}`
+            const key = (path.value.key.name || path.value.key.value).replace('--', '__')
+            const id = `_${hash(path.value.loc.start).slice(0, 3)}_${key}`
 
             // Push property function to computedStyles
             computedStyles[id] = printAst(path.value.value.body).code
@@ -20,7 +22,7 @@ export function resolveComputedStyles(cssAst: ASTNode, computedStyles: any = {})
             path.replace(
               astTypes.builders.objectProperty(
                 path.value.key,
-                astTypes.builders.stringLiteral(`v-bind(__$pComputed['${id}'])`),
+                astTypes.builders.stringLiteral(`var(--${kebabCase(id)})`),
               ),
             )
           }

@@ -98,11 +98,9 @@ export function resolveRgbaTokens(property: string, value: string, $tokens: Toke
       newValue = newValue.replace(
         referencesRegex,
         (...reference) => {
-          const [, referencePath] = reference
+          const token = $tokens(reference[1], { key: 'original' }) as DesignToken
 
-          const token = $tokens(referencePath, { key: undefined }) as DesignToken
-
-          let tokenValue = token?.value || token?.original?.value
+          let tokenValue = token?.value || token
 
           if (!tokenValue) { return '0,0,0' }
 

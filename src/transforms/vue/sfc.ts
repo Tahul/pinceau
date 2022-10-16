@@ -1,14 +1,13 @@
 import type { SFCParseResult } from 'vue/compiler-sfc'
 import type MagicString from 'magic-string'
 import { parseVueComponent } from '../../utils/ast'
-import { logger } from '../../utils'
 import type { VueQuery } from '../../utils/query'
 import type { PinceauContext, TokensFunction } from '../../types'
 import { transformDtHelper } from '../dt'
 import { transformCssFunction } from '../css'
 import { transformStyle } from './style'
 import { transformVariants } from './variants'
-import { findPropsKey } from './props'
+import { resolvePropsKey } from './props'
 
 export function transformVueSFC(code: string, id: string, magicString: MagicString, ctx: PinceauContext, query: VueQuery): { code: string; early: boolean; magicString: MagicString } {
   // Handle <style> tags scoped queries
@@ -107,7 +106,7 @@ export function resolveScriptSetup(id: string, parsedComponent: SFCParseResult, 
   }
 
   if (hasVariants || hasComputedStyles) {
-    newScriptSetup = transformFinishRuntimeSetup(newScriptSetup, hasComputedStyles, hasVariants)
+    newScriptSetup = transformFinishRuntimeSetup(newScriptSetup, hasComputedStyles, hasVariants, computedStyles)
   }
 
   // Overwrite <script setup> block with new content
@@ -118,19 +117,13 @@ export function resolveScriptSetup(id: string, parsedComponent: SFCParseResult, 
  * Adds computed styles code to <script setup>
  */
 export function transformComputedStyles(newScriptSetup: string, computedStyles: any): string {
-  newScriptSetup += `\nconst __$pComputed = reactive({
-${
-Object
-.entries(computedStyles)
-.map(
-  ([key, styleFunction]) => {
-    return `'${key}': computed(() => __$pUtils.transformTokensToVariable(((props, utils) => ${styleFunction})(__$pProps, __$pUtils)))\n\n`
-  },
-)
-.join(',')
-}
-})
-`
+  newScriptSetup = Object
+    .entries(computedStyles)
+    .map(
+      ([key, styleFunction]) => {
+        return `const ${key} = computed(() => ((props = __$pProps, utils = __$pUtils) => ${styleFunction})())\n`
+      },
+    ).join('\n') + newScriptSetup
 
   return newScriptSetup
 }
@@ -139,19 +132,24 @@ export function transformAddRuntimeImports(code: string): string {
   code = `\nimport { usePinceauRuntime, utils as __$pUtils } from 'pinceau/runtime'\n${code}`
 
   // TODO: Improve these imports
-  if (!code.includes('reactive')) {
+  if (!code.match(/reactive\(/gm)) {
     code = `\nimport { reactive } from 'vue'\n${code}`
   }
-  if (!code.includes('computed')) {
+  if (!code.match(/computed\(/gm)) {
     code = `\nimport { computed } from 'vue'\n${code}`
   }
-
-  const propsKey = findPropsKey(code)
-  if (propsKey) {
-    code += `\nconst __$pProps = ${propsKey}`
+  if (!code.match(/getCurrentInstance\(/gm)) {
+    code = `\nimport { getCurrentInstance } from 'vue'\n${code}`
   }
-  else {
-    logger.warn('You seem to be using Computed Styles, but no props are defined in your component!')
+  if (!code.match(/ref\(/gm)) {
+    code = `\nimport { ref } from 'vue'\n${code}`
+  }
+
+  // Resolve defineProps reference or add it
+  const { propsKey, code: _code } = resolvePropsKey(code)
+  code = _code
+  if (propsKey && propsKey !== '__$pProps') {
+    code += `\nconst __$pProps = ${propsKey}`
   }
 
   return code
@@ -161,7 +159,9 @@ export function transformFinishRuntimeSetup(
   newScriptSetup,
   hasComputedStyles,
   hasVariants,
+  computedStyles,
 ) {
-  newScriptSetup += `\n${hasVariants ? 'const { $variantsClass } = ' : ''}usePinceauRuntime(__$pProps, ${hasVariants ? '__$pVariants' : 'undefined'}, ${hasComputedStyles ? 'undefined' : 'undefined'})\n`
+  newScriptSetup += `\n${hasVariants ? 'const { $pinceau } = ' : ''}usePinceauRuntime(__$pProps, ${hasVariants ? '__$pVariants' : 'undefined'}, ${hasComputedStyles ? `{ ${Object.keys(computedStyles).map(key => `${key}`).join(',')} }` : 'undefined'})\n`
+
   return newScriptSetup
 }

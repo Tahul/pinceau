@@ -1,37 +1,41 @@
 <script setup lang="ts">
 import type { PropType } from 'vue'
+import { computed } from 'vue'
 import { cssProp } from 'pinceau/runtime'
 
-const props = defineProps({
-  color: {
-    type: String as PropType<TokenOrThemeKey<'color'> | keyof PinceauTheme['colors']>,
+defineProps({
+  palette: {
+    type: [String, Object] as PropType<ComputedStyleProp<'color'>>,
     default: '{colors.primary.600}',
   },
   css: cssProp,
   ...$variantsProps,
 })
+
+const propsToHtml = computed(
+  () => {
+    return Object.entries(__$pProps).map(
+      ([key, value]) => {
+        return `<b>⚙&nbsp;${key}</b>${typeof value === 'object' ? JSON.stringify(value) : value}<br />`
+      },
+    ).join('\n')
+  },
+)
 </script>
 
 <template>
-  <button class="block" :class="[$variantsClass]">
-    <pre>{{ JSON.stringify($props, null, 2) }}</pre>
-  </button>
+  <button class="block" :class="[$pinceau]" v-html="propsToHtml" />
 </template>
 
 <style lang="ts" scoped>
 css({
   '.block': {
-    marginTop: '2em',
-    backgroundColor: (props, utils) => {
-      if (props.color && utils.isToken(props.color)) return props.color
-      return props.color
-    },
+    backgroundColor: (props, utils) => utils.scale('color', props.palette, '300'),
     '&:hover': {
-      border: (props) => `8px solid {colors.${props.color}}`,
+      border: (props) => `8px solid {colors.${props.palette}}`,
     },
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
     flexDirection: 'column',
     borderRadius: '16px',
     width: '320px',
@@ -53,6 +57,14 @@ css({
       },
       giant: {
         boxShadow: '{shadows.xl}'
+      }
+    },
+    bordered: {
+      true: {
+        borderSize: '4px'
+      },
+      options: {
+        default: true
       }
     }
   }

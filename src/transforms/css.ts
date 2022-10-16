@@ -11,7 +11,7 @@ import { resolveComputedStyles } from './vue/computed'
 export const transformCssFunction = (
   id: string,
   code = '',
-  variants: any | undefined,
+  variants: any | undefined = {},
   computedStyles: any | undefined,
   $tokens: TokensFunction,
 ) => {
@@ -22,8 +22,8 @@ export const transformCssFunction = (
     )
 
     // Handle variants and remove them from declaration
-    if (variants && declaration?.variants) {
-      variants = Object.assign(variants, defu(variants || {}, declaration?.variants || {}))
+    if (declaration?.variants) {
+      Object.assign(variants, defu(variants || {}, declaration?.variants || {}))
       delete declaration.variants
     }
 

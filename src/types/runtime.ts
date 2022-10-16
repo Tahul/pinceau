@@ -1,6 +1,6 @@
 export interface PinceauRuntimeIds {
   uid: string
   componentId: string
-  className?: string
-  computedClassName?: string
+  variantsClassName?: string
+  uniqueClassName?: string
 }

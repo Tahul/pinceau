@@ -29,7 +29,7 @@ const plugin: VueLanguagePlugin = _ => ({
       // Add imports to <script setup>
       if (sfc.scriptSetup) {
         const imports = [
-          '\nimport type { TokensFunction, CSS, PinceauTheme, PinceauThemePaths, TokensFunctionOptions, TokenOrThemeKey, MediaQueriesKeys } from \'pinceau\'\n',
+          '\nimport type { TokensFunction, CSS, PinceauTheme, PinceauThemePaths, TokensFunctionOptions, TokenOrThemeKey, ComputedStyleProp, MediaQueriesKeys } from \'pinceau\'\n',
           '\ntype __VLS_InstanceOmittedKeys = \'onVnodeBeforeMount\' | \'onVnodeBeforeUnmount\' | \'onVnodeBeforeUpdate\' | \'onVnodeMounted\' | \'onVnodeUnmounted\' | \'onVnodeUpdated\' | \'key\' | \'ref\' | \'ref_for\' | \'ref_key\' | \'style\' | \'class\'\n',
           `\ntype __VLS_PropsType = Omit<InstanceType<typeof import(\'${fileName}\').default>[\'$props\'], __VLS_InstanceOmittedKeys>\n`,
           '\nconst css = (declaration: CSS<PinceauTheme, __VLS_ComponentTemplateTags, __VLS_PropsType>) => ({ declaration })\n',
@@ -57,8 +57,8 @@ const plugin: VueLanguagePlugin = _ => ({
 
         let variantsPropsAst = propStringToAst(JSON.stringify({
           ...variantProps,
-          // $variantsClass inference
-          $variantsClass: { type: 'String', default: '', required: false, validator: () => false },
+          // $pinceau inference
+          $pinceau: { type: 'String', default: '', required: false, validator: () => false },
           // $dt inference
           $dt: { type: 'Function as PropType<(value: PinceauThemePaths) => string>', required: false, validator: () => false },
         }))

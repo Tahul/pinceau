@@ -25,7 +25,7 @@ export function transformVariants(code = '', variants: any = {}, isTs: boolean):
     {},
   )
 
-  code += `\nconst __$pVariants = ${JSON.stringify(sanitizedVariants)}\n`
+  code += `\nconst __$pVariants = ref(${JSON.stringify(sanitizedVariants)})\n`
 
   if (variantsProps) { code = pushVariantsProps(code, variantsProps) }
 

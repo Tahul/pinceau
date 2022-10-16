@@ -3,7 +3,7 @@ import type { PropType } from 'vue'
 
 const props = defineProps({
   color: {
-    type: String as PropType<ThemeKey<'color'> | keyof PinceauTheme['colors']>,
+    type: String as PropType<TokenOrThemeKey<'color'>>,
     default: '{colors.primary.600}',
   },
   ...$variantsProps,
@@ -32,12 +32,7 @@ const props = defineProps({
 <style lang="ts" scoped>
 css({
   button: {
-    backgroundColor: (props) => {
-      if (props.color && props.color.startsWith('{')) {
-        return props.color
-      }
-      return `var(--colors-${props.color})`
-    },
+    backgroundColor: (props, utils) => utils.scale('color', props.color, 600),
     '&:hover': {
       border: (props) => `8px solid {colors.${props.color}}`,
     },

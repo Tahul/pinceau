@@ -4,7 +4,7 @@ import type { DefaultThemeMap, PinceauTheme, PinceauThemePaths } from './theme'
 
 export interface ComputedPropertiesUtils {
   isToken: (value: any) => boolean
-  scale: (value: any) => string
+  scale: (type: string, value: any, base: any) => string
 }
 
 export type VuePseudos =
@@ -136,9 +136,11 @@ export interface Variants<K> {
 
 export type ThemeKey<K extends keyof DefaultThemeMap> = Utils.WrapUnion<Utils.FilterStartingWith<PinceauThemePaths, DefaultThemeMap[K]>, '{', '}'>
 
-export type MediaQueriesKeys = keyof PinceauTheme['media']
+export type MediaQueriesKeys = keyof PinceauTheme['media'] | 'dark' | 'light' | 'initial'
 
 export type TokenOrThemeKey<T extends keyof NativeProperties> = (T extends keyof DefaultThemeMap ? (ThemeKey<T> | keyof PinceauTheme[DefaultThemeMap[T]]) : '') | NativeProperties[T]
+
+export type ComputedStyleProp<T extends keyof NativeProperties> = TokenOrThemeKey<T> | ({ [key in MediaQueriesKeys]: TokenOrThemeKey<T> }) | ({ [key: string]: TokenOrThemeKey<T> })
 
 export type CSS<
   Theme extends object = PinceauTheme,
@@ -186,7 +188,7 @@ export type CSS<
     [K in keyof DefaultThemeMap]?: (
       | ThemeKey<K>
       | CssProperties[K]
-      | ((props: TemplateProps, utils: ComputedPropertiesUtils) => ThemeKey<K> | CssProperties[K])
+      | ((props: TemplateProps, utils: ComputedPropertiesUtils) => ThemeKey<K> | CssProperties[K] | ({ [key in MediaQueriesKeys]?: ThemeKey<K> | CssProperties[K] }))
       | CSS<Theme, TemplateTags, TemplateProps, false>
       | {}
       | undefined
@@ -197,7 +199,7 @@ export type CSS<
   {
     [K in Exclude<keyof CssProperties, keyof DefaultThemeMap>]?: (
       | CssProperties[K]
-      | ((props: TemplateProps, utils: ComputedPropertiesUtils) => CssProperties[K])
+      | ((props: TemplateProps, utils: ComputedPropertiesUtils) => CssProperties[K] | ({ [key in MediaQueriesKeys]?: CssProperties[K] }))
       | {}
       | undefined
     )
@@ -207,7 +209,7 @@ export type CSS<
   {
     [K: string]: (
       | CSS<Theme, TemplateTags, TemplateProps, false>
-      | ((props: TemplateProps, utils: ComputedPropertiesUtils) => string)
+      | ((props: TemplateProps, utils: ComputedPropertiesUtils) => string | ({ [key in MediaQueriesKeys]?: string }))
       | { [key: string]: CSS<Theme, TemplateTags, TemplateProps, false> }
       | {}
       | number

@@ -8,5 +8,5 @@ export function usePinceauRuntime(
   variants: any,
   computedStyles: any,
 ): void {
-  return (inject('pinceau') as any)(props, variants, computedStyles)
+  return (inject('pinceauRuntime') as any)(props, variants, computedStyles)
 }

@@ -85,8 +85,7 @@ const module: any = defineNuxtModule<PinceauOptions>({
 
             // Handle first render of SSR styles
             nuxtApp.hook('app:rendered', (app) => {
-              const content = app.ssrContext.nuxt.vueApp.config.globalProperties.$pinceauSsr.getStylesheetContent()
-
+              const content = app.ssrContext.nuxt.vueApp.config.globalProperties.$pinceauSsr.get()
               app.ssrContext.event.pinceauContent = content
             })
           })`,

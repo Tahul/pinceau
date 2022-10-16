@@ -2,11 +2,11 @@ import { defineTheme, palette } from '../../src'
 
 export default defineTheme({
   media: {
-    'sm': { value: '(min-width: 640px)' },
-    'md': { value: '(min-width: 768px)' },
-    'lg': { value: '(min-width: 1024px)' },
-    'xl': { value: '(min-width: 1280px)' },
-    '2xl': { value: '(min-width: 1536px)' },
+    sm: { value: '(min-width: 640px)' },
+    md: { value: '(min-width: 768px)' },
+    lg: { value: '(min-width: 1024px)' },
+    xl: { value: '(min-width: 1280px)' },
+    xxl: { value: '(min-width: 1536px)' },
   },
 
   fonts: {
@@ -19,21 +19,19 @@ export default defineTheme({
   },
 
   colors: {
-    primary: palette('#51BBFE'),
+    blue: palette('#2B9EB3'),
 
-    grape: palette('#cdb4db'),
+    yellow: palette('#FCAB10'),
 
-    lila: palette('#BB9BB0'),
+    red: palette('#F8333C'),
 
-    gray: palette('#71717A'),
+    gray: palette('#DBD5B5'),
 
-    lavender: palette('#F1E3E4'),
-
-    velvet: palette('#502274'),
+    green: palette('#44AF69'),
   },
 
   shadows: {
-    'xs': {
+    xs: {
       value: {
         color: '{colors.gray.800}',
         type: 'dropShadow',
@@ -43,7 +41,7 @@ export default defineTheme({
         spread: '0',
       },
     },
-    'sm': {
+    sm: {
       value: [
         {
           color: '{colors.gray.800}',
@@ -63,7 +61,7 @@ export default defineTheme({
         },
       ],
     },
-    'md': {
+    md: {
       value: [
         {
           color: '{colors.gray.800}',
@@ -83,7 +81,7 @@ export default defineTheme({
         },
       ],
     },
-    'lg': {
+    lg: {
       value: [
         {
           color: '{colors.gray.800}',
@@ -103,7 +101,7 @@ export default defineTheme({
         },
       ],
     },
-    'xl': {
+    xl: {
       value: [
         {
           color: '{colors.gray.800}',
@@ -123,7 +121,7 @@ export default defineTheme({
         },
       ],
     },
-    '2xl': {
+    xxl: {
       value: {
         color: '{colors.gray.800}',
         type: 'dropShadow',
@@ -181,7 +179,7 @@ export default defineTheme({
     'xl': {
       value: '20px',
     },
-    '2xl': {
+    'xxl': {
       value: '24px',
     },
     '3xl': {
@@ -268,7 +266,7 @@ export default defineTheme({
     'xl': {
       value: '1rem',
     },
-    '2xl': {
+    'xxl': {
       value: '1.5rem',
     },
     'full': {

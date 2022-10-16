@@ -5,7 +5,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <div :class="$variantsClass" />
+  <div :class="$pinceau" />
 </template>
 
 <style lang="ts">
@@ -19,7 +19,7 @@ css({
         boxShadow: '{shadows.lg}'
       },
       giant: {
-        boxShadow: '{shadows.2xl}'
+        boxShadow: '{shadows.xxl}'
       }
     }
   }

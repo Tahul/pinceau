@@ -19,47 +19,58 @@ export const plugin: Plugin = {
 
     const state = usePinceauRuntimeState()
 
-    const { getStylesheetContent, updateStylesheet } = usePinceauStylesheet(state, $tokens, multiAppId)
+    const { get, update } = usePinceauStylesheet(state, $tokens, multiAppId)
 
     const setupPinceauRuntime = (
-      props: any,
+      _props: any,
       variants: any,
       computedStyles: any,
     ) => {
       const instance = getCurrentInstance()
 
-      const variantsPropsValues = computed(() => sanitizeProps(props, variants))
+      const instanceId = (instance?.vnode?.type as any)?.__scopeId || 'data-v-unknown'
 
-      const css = computed(() => props.css)
+      const instanceUid = instance?.uid?.toString?.() || '0'
 
-      const ids = computed(() => getIds(instance, css.value, variantsPropsValues.value, variants))
+      const props = computed(() => {
+        return _props
+      })
 
-      watch(
-        ids,
-        (ids) => {
-          state.push(
-            ids,
-            variants,
-            variantsPropsValues.value,
-            css.value,
-            computedStyles,
-          )
-        },
-        {
-          immediate: true,
-        },
+      const variantsPropsValues = computed(() => sanitizeProps(props.value, variants.value))
+
+      const css = computed(() => props.value?.css)
+
+      const ids = computed(
+        () => getIds(
+          instanceId,
+          instanceUid,
+          css.value,
+          variants.value,
+        ),
       )
+
+      const push = (_ids = ids.value) => {
+        state.push(
+          _ids,
+          variants.value,
+          variantsPropsValues.value,
+          css.value,
+          computedStyles,
+        )
+      }
+
+      watch([variantsPropsValues, css], () => push(ids.value), { immediate: true })
 
       onScopeDispose(() => state.drop(ids.value))
 
-      const $variantsClass = computed(() => [ids.value.className, ids.value.computedClassName].filter(Boolean).join(' '))
+      const $pinceau = computed(() => [ids.value.variantsClassName, ids.value.uniqueClassName].filter(Boolean).join(' '))
 
-      return { $variantsClass }
+      return { $pinceau, push }
     }
 
-    app.config.globalProperties.$pinceau = setupPinceauRuntime
-    app.config.globalProperties.$pinceauSsr = { getStylesheetContent, updateStylesheet }
-    app.provide('pinceau', setupPinceauRuntime)
+    app.config.globalProperties.$pinceauRuntime = setupPinceauRuntime
+    app.config.globalProperties.$pinceauSsr = { getStylesheetContent: get, updateStylesheet: update }
+    app.provide('pinceauRuntime', setupPinceauRuntime)
   },
 }
 

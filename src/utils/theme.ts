@@ -46,9 +46,9 @@ export const flattenTokens = (data: any) => {
         : key
 
       if (value.value && !output[newKey]) {
+        value.original = value?.original?.value || undefined
         delete value.path
         delete value.name
-        delete value.original
         output[newKey] = value
         return
       }

@@ -2,6 +2,7 @@ import defu from 'defu'
 import { kebabCase } from 'scule'
 import { hash } from 'ohash'
 import type { ComponentInternalInstance } from 'vue'
+import { unref } from 'vue'
 import { keyRegex } from '../utils/regexes'
 import type { PinceauRuntimeIds } from '../types'
 
@@ -28,13 +29,13 @@ export function transformTokensToVariable(property: string): string { return (pr
 /**
  * Handles a scale of tokens easily.
  */
-export function scale(type: any, prop: any, defaultShade = '500') {
+export function scale(type: any, prop: any, base = '500') {
   // Is a token, return it as is.
   if (isToken(prop)) { return prop }
 
   // Is a string, concatenate it with type & defaultShade
   if (typeof prop === 'string') {
-    return `var(--${type}-${prop}-${defaultShade})`
+    return `var(--${type}-${prop}-${base})`
   }
 
   // No valid type, return it as is.
@@ -76,20 +77,6 @@ export function transformStateToDeclaration(
 ) {
   const declaration = {}
 
-  // Iterate through computed styles
-  if (computedStyles && Object.keys(computedStyles).length) {
-    // Iterate through all unique components in `computedStyles[componentId]`
-    Object.entries(computedStyles)
-      .forEach(([_, classes]) => {
-        // Iterate through all computed styles in `computedStyles[componentId][class]`
-        Object.entries(classes).forEach(
-          ([className, value]) => {
-            declaration[`.${className}`] = (value as any)?.css || {}
-          },
-        )
-      })
-  }
-
   // Iterate through all components in `props`
   if (props && Object.keys(props).length) {
     Object.entries(props).forEach(
@@ -102,11 +89,18 @@ export function transformStateToDeclaration(
             // Iterate through all props in `props[componentId][class]`
             Object.entries(classProps).forEach(
               ([propName, propValue]) => {
-              // Prop value is an object, iterate through each `@mq`
+                // Prop value is an object, iterate through each `@mq`
                 if (typeof propValue === 'object') {
                   Object.entries(propValue).forEach(
                     ([mqId, mqPropValue]: [string, string]) => {
-                      mqId = `@mq.${mqId}`
+                      if (!declaration[targetId]) { declaration[targetId] = {} }
+
+                      if (mqId === 'initial') {
+                        declaration[targetId] = defu(declaration[targetId], mqPropValue)
+                        return
+                      }
+
+                      mqId = (mqId === 'dark' || mqId === 'light') ? `@${mqId}` : `@mq.${mqId}`
                       const variantValue = variants[componentId][propName][mqPropValue?.toString?.() || propValue]
 
                       if (!declaration[mqId]) { declaration[mqId] = {} }
@@ -132,13 +126,64 @@ export function transformStateToDeclaration(
     )
   }
 
+  // Iterate through computed styles
+  if (computedStyles && Object.keys(computedStyles).length) {
+    // Iterate through all unique components in `computedStyles[componentId]`
+    Object.entries(computedStyles)
+      .forEach(([componentId, classes]) => {
+        // Iterate through all computed styles in `computedStyles[componentId][class]`
+        Object.entries(classes).forEach(
+          ([className, value]) => {
+            const targetId = `.${className}${componentId}`
+
+            declaration[targetId] = declaration[targetId] || {}
+
+            // Iterate on each computed styles
+            Object.entries(value).forEach(
+              ([varName, _value]) => {
+                const value = unref(_value)
+
+                // Handle CSS Prop
+                if (varName === 'css') {
+                  defu(declaration[targetId], value)
+                  return
+                }
+
+                // Prop value is an object, iterate through each `@mq`
+                if (typeof value === 'object') {
+                  Object.entries(value).forEach(
+                    ([mqId, mqPropValue]: [string, string]) => {
+                      if (mqId === 'initial') {
+                        if (!declaration[targetId]) { declaration[targetId] = {} }
+                        declaration[targetId][`--${varName}`] = transformTokensToVariable(unref(mqPropValue))
+                      }
+
+                      mqId = (mqId === 'dark' || mqId === 'light') ? `@${mqId}` : `@mq.${mqId}`
+
+                      if (!declaration[mqId]) { declaration[mqId] = {} }
+                      if (!declaration[mqId][targetId]) { declaration[mqId][targetId] = {} }
+
+                      declaration[mqId][targetId][`--${varName}`] = transformTokensToVariable(unref(mqPropValue))
+                    },
+                  )
+                }
+                else {
+                  declaration[targetId][`--${varName}`] = transformTokensToVariable(unref(value))
+                }
+              },
+            )
+          },
+        )
+      })
+  }
+
   return declaration
 }
 
-export const getIds = (instance: ComponentInternalInstance, css: any, props: any, variants: any): PinceauRuntimeIds => {
-  const componentId = `[${(instance.vnode.type as any).__scopeId}]`
+export const getIds = (instanceId: string, instanceUid: string | number, props: any, variants: any): PinceauRuntimeIds => {
+  const componentId = `[${instanceId}]`
 
-  const uid = instance.uid.toString()
+  const uid = instanceUid?.toString?.() || '0'
 
   const hashed = hash({
     componentId,
@@ -146,9 +191,9 @@ export const getIds = (instance: ComponentInternalInstance, css: any, props: any
     variants: JSON.stringify(variants),
   })
 
-  const className = `p-${hashed}`
+  const variantsClassName = `p-v-${hashed}`
 
-  const computedClassName = css && Object.keys(css).length ? `p-${hash(JSON.stringify(css))}` : undefined
+  const uniqueClassName = uid ? `p-${hash({ componentId, uid })}` : undefined
 
-  return { uid, componentId, className, computedClassName }
+  return { uid, componentId, variantsClassName, uniqueClassName }
 }

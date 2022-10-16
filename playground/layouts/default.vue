@@ -1,29 +1,37 @@
+<script setup lang="ts">
+import BreakpointDisplay from '../components/BreakpointDisplay.vue'
+</script>
+
 <template>
   <div
     class="layout"
   >
     <header>
       <span>
-        Pinceau 🖌
+        🖌&nbsp;Pinceau
       </span>
+
+      <BreakpointDisplay />
     </header>
 
     <slot />
 
     <footer>
       <span>
-        {{ 'Footer' }}
+        🖌&nbsp;Pinceau
       </span>
 
-      <span>Built with @nuxtjs/design-tokens</span>
+      <BreakpointDisplay />
     </footer>
   </div>
 </template>
 
 <style lang="postcss">
 html, body, #app, #__nuxt {
+  display: flex;
   min-height: 100vh;
   width: 100vw;
+
   font-family: $dt('fonts.primary') !important;
 
   @light {
@@ -54,6 +62,7 @@ html, body, #app, #__nuxt {
     flex: 0;
     display: flex;
     align-items: center;
+    justify-content: space-between;
     padding: 1rem 2rem;
     position: sticky;
     top: 0;
@@ -63,6 +72,14 @@ html, body, #app, #__nuxt {
     span {
       font-weight: bold;
     }
+  }
+
+  section {
+    flex: 1;
+    height: 100%;
+    width: 100%;
+    padding: 2rem;
+    z-index: 50;
   }
 
   footer {

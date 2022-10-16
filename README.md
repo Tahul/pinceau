@@ -170,13 +170,12 @@ As an example, this configuration helped us at NuxtLabs to create a sync between
 import { defineTheme } from 'pinceau'
 
 export default defineTheme({
-  screens: {
-    'xs': { value: '475px' },
-    'sm': { value: '640px' },
-    'md': { value: '768px' },
-    'lg': { value: '1024px' },
-    'xl': { value: '1280px' },
-    '2xl': { value: '1536px' },
+  media: {
+    sm: { value: '(min-width: 640px)' },
+    md: { value: '(min-width: 768px)' },
+    lg: { value: '(min-width: 1024px)' },
+    xl: { value: '(min-width: 1280px)' },
+    xxl: { value: '(min-width: 1536px)' },
   },
   colors: {
     primary: {
@@ -227,12 +226,6 @@ export default defineTheme({
 
 ```css
 :root {
-  --screens-xs: 475px;
-  --screens-sm: 640px;
-  --screens-md: 768px;
-  --screens-lg: 1024px;
-  --screens-xl: 1280px;
-  --screens-2xl: 1536px;
   --color-primary: #B6465F;
   --colors-orange-50: #ffe9d9;
   --colors-orange-100: #ffd3b3;
@@ -466,12 +459,12 @@ The `css()` function has mutliple features:
 
   export default defineTheme({
     media: {
-      'sm': { value: '(min-width: 640px)' },
-      'md': { value: '(min-width: 768px)' },
-      'lg': { value: '(min-width: 1024px)' },
-      'xl': { value: '(min-width: 1280px)' },
-      '2xl': { value: '(min-width: 1536px)' },
-      'rm': { value: '(prefers-reduced-motion: reduce)' },
+      sm: { value: '(min-width: 640px)' },
+      md: { value: '(min-width: 768px)' },
+      lg: { value: '(min-width: 1024px)' },
+      xl: { value: '(min-width: 1280px)' },
+      xxl: { value: '(min-width: 1536px)' },
+      rm: { value: '(prefers-reduced-motion: reduce)' },
     },
   })
   ```
@@ -575,12 +568,12 @@ The `css()` function has mutliple features:
   // You must specify a key for props when using Variants
   const props = defineProps({
     // This part is optional, it provides typings
-    ...variantsProps
+    ...$variantsProps
   })
   </script>
   
   <template>
-    <div class="block" />
+    <div class="block" :class="[$pinceau]" />
   </template>
 
   <style lang="ts">
