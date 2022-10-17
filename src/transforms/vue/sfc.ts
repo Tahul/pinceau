@@ -121,7 +121,7 @@ export function transformComputedStyles(newScriptSetup: string, computedStyles: 
     .entries(computedStyles)
     .map(
       ([key, styleFunction]) => {
-        return `const ${key} = computed(() => ((props = __$pProps, utils = __$pUtils) => ${styleFunction})())\n`
+        return `\nconst ${key} = computed(() => ((props = __$pProps, utils = __$pUtils) => ${styleFunction})())\n`
       },
     ).join('\n') + newScriptSetup
 
