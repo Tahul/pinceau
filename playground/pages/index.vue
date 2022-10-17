@@ -4,9 +4,13 @@
 <template>
   <section>
     <PlaygroundGrid>
-      <Card success>
+      <Alert :color="{ dark: '{colors.yellow.200}', light: '{colors.yellow.200}' }">
         Hello World
-      </Card>
+      </Alert>
+
+      <Alert primary :color="{ dark: '{colors.red.100}', light: '{colors.yellow.200}' }">
+        Hello World
+      </Alert>
     </PlaygroundGrid>
   </section>
 </template>

@@ -4,7 +4,7 @@ import { RouterView, createRouter, createWebHistory } from 'vue-router'
 
 import App from './app.vue'
 import Block from './components/Block.vue'
-import Card from './components/Card.vue'
+import Alert from './components/Alert.vue'
 import PlaygroundGrid from './components/PlaygroundGrid.vue'
 import NuxtLayout from './layouts/default.vue'
 import Index from './pages/index.vue'
@@ -33,7 +33,7 @@ app.use(pinceau, { theme })
 
 // Components
 app.component('Block', Block)
-app.component('Card', Card)
+app.component('Alert', Alert)
 app.component('PlaygroundGrid', PlaygroundGrid)
 app.component('NuxtLayout', NuxtLayout)
 app.component('NuxtPage', RouterView)

@@ -1,15 +1,12 @@
-import { ref, watch } from 'vue'
-import type { TokensFunction } from '../types'
-import { resolveCssProperty, stringify, transformStateToDeclaration } from './utils'
+import { ref } from 'vue'
 
-export function usePinceauStylesheet(state: any, $tokens: TokensFunction, appId?: string) {
-  const declaration = ref({})
+export function usePinceauStylesheet(appId?: string) {
+  let _sheet
 
-  const stylesheet = ref<any>()
+  const resolveStylesheet = (): CSSStyleSheet => {
+    // Sheet already resolved
+    if (_sheet) { return _sheet }
 
-  const declarationToCss = () => stringify(declaration.value, (property: any, value: any, style: any, selectors: any) => resolveCssProperty(property, value, style, selectors, $tokens))
-
-  const resolveStylesheet = () => {
     // Only update stylesheet on client-side
     // SSR Rendering occurs in `app:rendered` hook, or via `getStylesheetContent`
     const global = globalThis || window
@@ -29,38 +26,35 @@ export function usePinceauStylesheet(state: any, $tokens: TokensFunction, appId?
       doc.head.appendChild(style)
     }
 
-    return style
+    _sheet = style?.sheet || {
+      cssRules: [],
+      insertRule(cssText: any, index = this.cssRules.length) {
+        (this.cssRules as any[]).splice(index, 1, { cssText })
+        return index
+      },
+      deleteRule(index: any) {
+        delete this.cssRules[index]
+      },
+    }
+
+    return _sheet
   }
 
-  const writeStylesheet = (stylesheet: any, content: string) => {
-    if (!content || !stylesheet) { return }
-    if (content !== stylesheet.textContent) { stylesheet.textContent = content }
+  const sheet = ref(resolveStylesheet())
+
+  const toString = () => {
+    if (!sheet.value) { return '' }
+    return Object.entries(sheet.value.cssRules).reduce(
+      (acc, [, rule]: any) => {
+        acc += `${rule?.cssText}\n` || ''
+        return acc
+      },
+      '',
+    )
   }
-
-  watch(
-    [state.variants, state.props, state.computedStyles],
-    (newState, oldState) => {
-      if (!newState || newState === oldState) { return }
-
-      stylesheet.value = resolveStylesheet()
-
-      declaration.value = transformStateToDeclaration(newState[0], newState[1], newState[2])
-    },
-    {
-      immediate: true,
-    },
-  )
-
-  watch(
-    declaration,
-    (newDecl, oldDecl) => {
-      if (newDecl === oldDecl) { return }
-      writeStylesheet(stylesheet.value, declarationToCss())
-    },
-  )
 
   return {
-    get: () => declarationToCss(),
-    update: writeStylesheet,
+    sheet,
+    toString,
   }
 }

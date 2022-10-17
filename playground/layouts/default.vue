@@ -34,10 +34,8 @@ html, body, #app, #__nuxt {
 
   font-family: $dt('fonts.primary') !important;
 
-  @light {
-    color: black;
-    background-color: red;
-  }
+  color: black;
+  background-color: white;
 
   @dark {
     color: white;
@@ -54,7 +52,6 @@ html, body, #app, #__nuxt {
   align-items: center;
   flex-direction: column;
   overflow-y: auto;
-  color: white;
   margin: 0;
   padding: 0;
 

@@ -1,5 +1,10 @@
 <script setup lang="ts">
+import type { PropType } from 'vue'
+
 defineProps({
+  color: {
+    type: [String, Object] as PropType<ComputedStyleProp<'color'>>,
+  },
   ...$variantsProps,
 })
 </script>
@@ -7,14 +12,27 @@ defineProps({
 <template>
   <div :class="$pinceau">
     <slot />
+    <span>
+      {{ $pinceau }}
+    </span>
   </div>
 </template>
 
 <style scoped lang="ts">
 css({
   div: {
+    backgroundColor: (props) => {
+      return props.color
+    },
+    color: (props) => {
+      return props.color
+    },
+    display: 'block',
     borderRadius: '{radii.lg}',
     borderWidth: '{borderWidths.md}',
+    span: {
+      color: 'black'
+    }
   },
   variants: {
     size: {
@@ -35,7 +53,7 @@ css({
         fontSize: '{fontSizes.xl}'
       },
       options: {
-        default: 'lg'
+        default: 'xl'
       }
     },
     primary: {

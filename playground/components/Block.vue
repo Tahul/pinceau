@@ -6,7 +6,7 @@ import { cssProp } from 'pinceau/runtime'
 defineProps({
   palette: {
     type: [String, Object] as PropType<ComputedStyleProp<'color'>>,
-    default: '{colors.primary.600}',
+    default: 'green',
   },
   css: cssProp,
   ...$variantsProps,
@@ -30,9 +30,9 @@ const propsToHtml = computed(
 <style lang="ts" scoped>
 css({
   '.block': {
-    backgroundColor: (props, utils) => utils.scale('color', props.palette, '300'),
+    backgroundColor: (props) => `{colors.${props.palette}.600}`,
     '&:hover': {
-      border: (props) => `8px solid {colors.${props.palette}}`,
+      border: (props) => `8px solid {colors.${props.palette}.200}`,
     },
     display: 'flex',
     alignItems: 'center',
@@ -42,10 +42,11 @@ css({
     height: '320px',
     border: '4px solid {colors.gray.600}',
     position: 'relative',
+    color: 'black',
     '& > p': {
       fontSize: '16px',
       textDecoration: 'underline',
-    }
+    },
   },
   variants: {
     shadow: {
@@ -57,6 +58,9 @@ css({
       },
       giant: {
         boxShadow: '{shadows.xl}'
+      },
+      options: {
+        default: 'medium'
       }
     },
     bordered: {

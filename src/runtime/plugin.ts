@@ -1,10 +1,11 @@
 import type { Plugin, PropType } from 'vue'
-import { computed, getCurrentInstance, onScopeDispose, watch } from 'vue'
+import { computed, getCurrentInstance, onScopeDispose, reactive, watch } from 'vue'
 import { defu } from 'defu'
 import { nanoid } from 'nanoid'
 import type { CSS, PinceauTheme } from '../types'
-import { createTokensHelper, getIds, sanitizeProps } from './utils'
-import { usePinceauRuntimeState } from './state'
+import { resolveCssProperty } from '../utils/css'
+import { stringify } from '../utils/stringify'
+import { createTokensHelper, getIds, sanitizeProps, transformComputedStylesToDeclaration, transformCssPropToDeclaration, transformVariantsToDeclaration } from './utils'
 import { usePinceauStylesheet } from './stylesheet'
 
 export const plugin: Plugin = {
@@ -17,59 +18,152 @@ export const plugin: Plugin = {
 
     const $tokens = createTokensHelper(theme.theme, theme.aliases, helpersConfig)
 
-    const state = usePinceauRuntimeState()
+    const { sheet, toString: sheetToString } = usePinceauStylesheet(multiAppId)
 
-    const { get, update } = usePinceauStylesheet(state, $tokens, multiAppId)
+    const declarationToCss = (decl: any) => stringify(decl, (property: any, value: any, style: any, selectors: any) => resolveCssProperty(property, value, style, selectors, $tokens))
+
+    const pushDeclaration = (
+      declaration: any,
+      previousRule?: any,
+    ): CSSRule => {
+      const cssText = declarationToCss({ '@media': declaration })
+
+      if (!cssText) { return }
+
+      const index = previousRule
+        ? Object.values(sheet.value.cssRules).indexOf(previousRule)
+        : sheet.value.cssRules.length
+
+      const ruleId = sheet.value.insertRule(cssText, index)
+
+      return sheet.value.cssRules[ruleId]
+    }
 
     const setupPinceauRuntime = (
-      _props: any,
+      props: any,
       variants: any,
       computedStyles: any,
     ) => {
       const instance = getCurrentInstance()
+      const variantsProps = computed(() => sanitizeProps(props, variants.value))
+      const css = computed(() => props?.css || undefined)
 
-      const instanceId = (instance?.vnode?.type as any)?.__scopeId || 'data-v-unknown'
-
-      const instanceUid = instance?.uid?.toString?.() || '0'
-
-      const props = computed(() => {
-        return _props
-      })
-
-      const variantsPropsValues = computed(() => sanitizeProps(props.value, variants.value))
-
-      const css = computed(() => props.value?.css)
-
-      const ids = computed(
-        () => getIds(
-          instanceId,
-          instanceUid,
-          css.value,
-          variants.value,
-        ),
+      /**
+       * Generate IDs for current component instance.
+       */
+      const ids = getIds(
+        instance,
+        variantsProps.value,
+        variants.value,
       )
 
-      const push = (_ids = ids.value) => {
-        state.push(
-          _ids,
-          variants.value,
-          variantsPropsValues.value,
-          css.value,
-          computedStyles,
+      /**
+       * Exposed `class` array
+       */
+      const $pinceau = computed(() => [ids.uniqueClassName, ids.variantsClassName].filter(Boolean).join(' '))
+
+      /**
+       * Rules state
+       */
+      const rules = reactive({
+        variants: undefined,
+        computedStyles: undefined,
+        css: undefined,
+      })
+
+      /**
+       * Register a feature and watch its event source to update according styling.
+       *
+       * Currently supports: Variants, Computed Styles, CSS Prop
+       */
+      const registerFeature = (source: any, transform: any, key: string) => {
+        watch(
+          source,
+          (newSource) => {
+            const sourceDeclaration = transform(newSource)
+            rules[key] = pushDeclaration(sourceDeclaration)
+          },
+          {
+            immediate: true,
+            deep: true,
+          },
         )
       }
 
-      watch([variantsPropsValues, css], () => push(ids.value), { immediate: true })
+      // Register Variants if related props exists.
+      if (variants?.value && Object.keys(variants.value || {}).length > 0) {
+        registerFeature(
+          variantsProps,
+          newVariantsProps => transformVariantsToDeclaration(ids, variants.value, newVariantsProps),
+          'variants',
+        )
+      }
 
-      onScopeDispose(() => state.drop(ids.value))
+      // Register CSS is some provided.
+      if (css?.value && Object.keys(css.value).length > 0) {
+        registerFeature(
+          css,
+          newCss => transformCssPropToDeclaration(ids, newCss),
+          'css',
+        )
+      }
 
-      const $pinceau = computed(() => [ids.value.variantsClassName, ids.value.uniqueClassName].filter(Boolean).join(' '))
+      // Register computed styles if some provided.
+      if (computedStyles?.value && Object.keys(computedStyles.value || {}).length > 0) {
+        registerFeature(
+          computedStyles,
+          newComputedStyles => transformComputedStylesToDeclaration(ids, newComputedStyles),
+          'computedStyles',
+        )
+      }
 
-      return { $pinceau, push }
+      const deleteRule = (rule: CSSRule) => {
+        const ruleIndex = parseInt(
+          Object.entries<any>(sheet.value.cssRules).find(
+            ([, sheetRule]: [string, CSSRule]) => (sheetRule.cssText === rule.cssText),
+          )?.[0],
+        )
+
+        if (typeof ruleIndex === 'undefined' || isNaN(ruleIndex)) { return }
+
+        try {
+          sheet.value.deleteRule(ruleIndex)
+        }
+        catch (e) {
+          // Continue regardless of error
+        }
+      }
+
+      const cleanup = () => {
+        for (const rule of Object.values(rules)) {
+          if (!rule) { continue }
+          deleteRule(rule)
+        }
+      }
+
+      onScopeDispose(cleanup)
+
+      watch(
+        rules,
+        (newRules, oldRules) => {
+          if (!oldRules) { return }
+          for (const [key, rule] of Object.entries(newRules)) {
+            if (rule !== oldRules[key]) { deleteRule(oldRules[key]) }
+          }
+        },
+        {
+          immediate: true,
+          deep: true,
+        },
+      )
+
+      return { $pinceau }
     }
 
     app.config.globalProperties.$pinceauRuntime = setupPinceauRuntime
-    app.config.globalProperties.$pinceauSsr = { getStylesheetContent: get, updateStylesheet: update }
+    app.config.globalProperties.$pinceauSsr = {
+      get: () => sheetToString(),
+    }
     app.provide('pinceauRuntime', setupPinceauRuntime)
   },
 }
