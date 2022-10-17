@@ -51,16 +51,16 @@ export const plugin: Plugin = {
       /**
        * Generate IDs for current component instance.
        */
-      const ids = getIds(
+      const ids = computed(() => getIds(
         instance,
         variantsProps.value,
         variants.value,
-      )
+      ))
 
       /**
        * Exposed `class` array
        */
-      const $pinceau = computed(() => [ids.uniqueClassName, ids.variantsClassName].filter(Boolean).join(' '))
+      const $pinceau = computed(() => [ids.value.uniqueClassName, ids.value.variantsClassName].filter(Boolean).join(' '))
 
       /**
        * Rules state
@@ -94,7 +94,7 @@ export const plugin: Plugin = {
       if (variants?.value && Object.keys(variants.value || {}).length > 0) {
         registerFeature(
           variantsProps,
-          newVariantsProps => transformVariantsToDeclaration(ids, variants.value, newVariantsProps),
+          newVariantsProps => transformVariantsToDeclaration(ids.value, variants.value, newVariantsProps),
           'variants',
         )
       }
@@ -103,7 +103,7 @@ export const plugin: Plugin = {
       if (css?.value && Object.keys(css.value).length > 0) {
         registerFeature(
           css,
-          newCss => transformCssPropToDeclaration(ids, newCss),
+          newCss => transformCssPropToDeclaration(ids.value, newCss),
           'css',
         )
       }
@@ -112,7 +112,7 @@ export const plugin: Plugin = {
       if (computedStyles?.value && Object.keys(computedStyles.value || {}).length > 0) {
         registerFeature(
           computedStyles,
-          newComputedStyles => transformComputedStylesToDeclaration(ids, newComputedStyles),
+          newComputedStyles => transformComputedStylesToDeclaration(ids.value, newComputedStyles),
           'computedStyles',
         )
       }
