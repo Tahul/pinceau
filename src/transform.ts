@@ -20,7 +20,7 @@ function exposedTransform(code: string, id: string) {
   // Transform <script setup> blocks
   if (parsedComponent.descriptor.scriptSetup) { resolveScriptSetup(id, parsedComponent, magicString, variants, computedStyles, parsedComponent.descriptor.scriptSetup.lang === 'ts') }
 
-  return code
+  return magicString.toString()
 }
 
 export { exposedTransform as transformSfc }
