@@ -58,7 +58,7 @@ export const plugin: Plugin = {
       computedStyles: any,
     ) => {
       const instance = getCurrentInstance()
-      const variantsProps = computed(() => sanitizeProps(props, variants.value))
+      const variantsProps = computed(() => variants && variants?.value ? sanitizeProps(props, variants.value) : {})
       const css = computed(() => props?.css || undefined)
 
       /**
@@ -70,7 +70,7 @@ export const plugin: Plugin = {
           (uid = nanoid(6)) && uid,
           instance,
           variantsProps.value,
-          variants.value,
+          variants?.value || {},
           dev,
         ),
         `p-${uid}`,
