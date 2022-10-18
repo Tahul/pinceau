@@ -77,11 +77,12 @@ const module: any = defineNuxtModule<PinceauOptions>({
       filename: 'pinceau-imports.mjs',
       getContents() {
         const lines = [
+          'import { useState } from \'#app\'',
           'import \'pinceau.css\'',
           'import { plugin as pinceau } from \'pinceau/runtime\'',
           'import theme from \'#pinceau/theme/flat\'',
           `export default defineNuxtPlugin((nuxtApp) => {
-            nuxtApp.vueApp.use(pinceau, { theme })
+            nuxtApp.vueApp.use(pinceau, { theme, idStorage: (id, key) => useState(key, () => id) })
 
             // Handle first render of SSR styles
             nuxtApp.hook('app:rendered', (app) => {

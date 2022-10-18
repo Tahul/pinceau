@@ -11,7 +11,7 @@ import { resolvePropsKey } from './props'
 
 export function transformVueSFC(code: string, id: string, magicString: MagicString, ctx: PinceauContext, query: VueQuery): { code: string; early: boolean; magicString: MagicString } {
   // Handle <style> tags scoped queries
-  if (query.type === 'style') { return resolveStyleQuery(id, code, magicString, ctx.$tokens) }
+  if (query.type === 'style') { return resolveStyleQuery(code, magicString, ctx.$tokens) }
 
   // Resolve from parsing the <style lang="ts"> tag for current component
   const variants = {}
@@ -37,8 +37,8 @@ export function transformVueSFC(code: string, id: string, magicString: MagicStri
  *
  * These does not need to resolve variants or populate computed styles.
  */
-export function resolveStyleQuery(id: string, code: string, magicString: MagicString, $tokens: TokensFunction) {
-  code = transformCssFunction(id, code, undefined, undefined, $tokens)
+export function resolveStyleQuery(code: string, magicString: MagicString, $tokens: TokensFunction) {
+  code = transformCssFunction(code, undefined, undefined, $tokens)
   code = transformStyle(code, $tokens)
   return { code, early: true, magicString }
 }
@@ -66,7 +66,7 @@ export function resolveStyle(id: string, parsedComponent: SFCParseResult, magicS
       const { loc, content } = styleBlock
       let newStyle = content
 
-      newStyle = transformCssFunction(id, newStyle, variants, computedStyles, $tokens)
+      newStyle = transformCssFunction(newStyle, variants, computedStyles, $tokens)
       newStyle = transformStyle(newStyle, $tokens)
 
       magicString.remove(loc.start.offset, loc.end.offset)
@@ -149,7 +149,7 @@ export function transformAddRuntimeImports(code: string): string {
   const { propsKey, code: _code } = resolvePropsKey(code)
   code = _code
   if (propsKey && propsKey !== '__$pProps') {
-    code += `\nconst __$pProps = ${propsKey}`
+    code += `\nconst __$pProps = ${propsKey}\n`
   }
 
   return code

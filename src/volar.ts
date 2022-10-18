@@ -55,13 +55,7 @@ const plugin: VueLanguagePlugin = _ => ({
 
         const variantProps = resolveVariantsProps(variants, isTs)
 
-        let variantsPropsAst = propStringToAst(JSON.stringify({
-          ...variantProps,
-          // $pinceau inference
-          $pinceau: { type: 'String', default: '', required: false, validator: () => false },
-          // $dt inference
-          $dt: { type: 'Function as PropType<(value: PinceauThemePaths) => string>', required: false, validator: () => false },
-        }))
+        let variantsPropsAst = propStringToAst(JSON.stringify(variantProps))
 
         variantsPropsAst = castVariantsPropsAst(variantsPropsAst)
 

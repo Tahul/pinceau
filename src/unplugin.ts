@@ -4,7 +4,7 @@ import MagicString from 'magic-string'
 import { join } from 'pathe'
 import { createContext } from './theme'
 import { registerPostCssPlugins } from './utils/plugin'
-import { replaceStyleTs, transformStyle, transformVueSFC, transformVueStyle } from './transforms'
+import { replaceStyleTs, resolveStyleQuery, transformVueSFC, transformVueStyle } from './transforms'
 import { parseVueQuery } from './utils/query'
 import { logger } from './utils/logger'
 import type { PinceauOptions } from './types'
@@ -20,6 +20,7 @@ export const defaultOptions: PinceauOptions = {
   includes: [],
   excludes: [
     'node_modules/nuxt/dist/',
+    'node_modules/@nuxt/ui-templates/',
     'node_modules/@vue/',
     'node_modules/pinceau/',
   ],
@@ -82,14 +83,14 @@ export default createUnplugin<PinceauOptions>(
         const query = parseVueQuery(id)
 
         const magicString = new MagicString(code, { filename: query.filename })
-        const result = () => ({ code: magicString.toString(), map: magicString.generateMap({ source: id, includeContent: true }) })
+        const result = (code = magicString.toString(), ms = magicString) => ({ code, map: ms.generateMap({ source: id, includeContent: true }) })
         const missingMap = (code: string) => ({ code, map: new MagicString(code, { filename: query.filename }).generateMap() })
 
         try {
           // Handle CSS files
           if (query.css && !query.vue) {
-            const _code = transformStyle(code, ctx.$tokens)
-            return _code ? missingMap(_code) : null
+            const { code: _code } = resolveStyleQuery(code, magicString, ctx.$tokens)
+            return missingMap(_code)
           }
 
           // Return early when the query is scoped (usually style tags)

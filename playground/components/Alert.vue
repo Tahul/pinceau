@@ -12,9 +12,6 @@ defineProps({
 <template>
   <div :class="$pinceau">
     <slot />
-    <span>
-      {{ $pinceau }}
-    </span>
   </div>
 </template>
 

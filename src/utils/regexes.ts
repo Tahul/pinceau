@@ -26,4 +26,6 @@ export const DARK = '@dark'
 
 export const LIGHT = '@light'
 
+export const INITIAL = '@initial'
+
 export const dtRegex = /\$dt\('(.*?)'\)/g

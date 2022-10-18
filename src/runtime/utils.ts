@@ -83,15 +83,16 @@ export const transformVariantsToDeclaration = (
       // Prop value is an object, iterate through each `@mq`
       if (typeof propValue === 'object') {
         for (const [mqId, mqPropValue] of Object.entries(propValue)) {
+          const variantValue = variants[propName][(mqPropValue as any)?.toString?.() || (mqPropValue as string)]
+
           if (!declaration[targetId]) { declaration[targetId] = {} }
 
           if (mqId === 'initial') {
-            declaration[targetId] = defu(declaration[targetId], mqPropValue)
-            continue
+            if (!declaration[targetId]['@initial']) { declaration[targetId]['@initial'] = {} }
+            declaration[targetId]['@initial'] = defu(declaration[targetId]['@initial'], variantValue)
           }
 
           const mediaId = (mqId === 'dark' || mqId === 'light') ? `@${mqId}` : `@mq.${mqId}`
-          const variantValue = variants[propName][mqPropValue?.toString?.()]
 
           if (!declaration[mediaId]) { declaration[mediaId] = {} }
           if (!declaration[mediaId][targetId]) { declaration[mediaId][targetId] = {} }
@@ -150,15 +151,20 @@ export function transformComputedStylesToDeclaration(
       // Handle CSS Prop
       if (varName === 'css') {
         declaration[targetId] = defu(declaration[targetId], value)
-        return
+        continue
       }
 
       // Prop value is an object, iterate through each `@mq`
       if (typeof value === 'object') {
         for (const [mqId, mqPropValue] of Object.entries(value)) {
+          const _value = unref(mqPropValue) as string
+
+          if (!_value) { continue }
+
           if (mqId === 'initial') {
             if (!declaration[targetId]) { declaration[targetId] = {} }
-            declaration[targetId][`--${varName}`] = transformTokensToVariable(unref(mqPropValue) as string)
+            if (!declaration[targetId]['@initial']) { declaration[targetId]['@initial'] = {} }
+            declaration[targetId]['@initial'][`--${varName}`] = transformTokensToVariable(_value)
           }
 
           const mediaId = (mqId === 'dark' || mqId === 'light') ? `@${mqId}` : `@mq.${mqId}`
@@ -166,11 +172,14 @@ export function transformComputedStylesToDeclaration(
           if (!declaration[mediaId]) { declaration[mediaId] = {} }
           if (!declaration[mediaId][targetId]) { declaration[mediaId][targetId] = {} }
 
-          declaration[mediaId][targetId][`--${kebabCase(varName)}`] = transformTokensToVariable(unref(mqPropValue) as string)
+          declaration[mediaId][targetId][`--${kebabCase(varName)}`] = transformTokensToVariable(_value)
         }
       }
       else {
-        declaration[targetId][`--${kebabCase(varName)}`] = transformTokensToVariable(unref(value))
+        const _value = unref(value)
+        if (_value) {
+          declaration[targetId][`--${kebabCase(varName)}`] = transformTokensToVariable(_value)
+        }
       }
     }
   }
@@ -178,23 +187,23 @@ export function transformComputedStylesToDeclaration(
   return declaration
 }
 
-export const getIds = (instance: ComponentInternalInstance, props: any, variants: any): PinceauRuntimeIds => {
+export const getIds = (uid: string, instance: ComponentInternalInstance, props: any, variants: any, dev = false): PinceauRuntimeIds => {
   const instanceId = (instance?.vnode?.type as any)?.__scopeId || 'data-v-unknown'
-
-  const instanceUid = instance?.uid?.toString?.() || '0'
 
   const componentId = `[${instanceId}]`
 
   const hashed = hash({
-    instanceUid,
+    uid,
     componentId,
     props: JSON.stringify(props),
     variants: JSON.stringify(variants),
   })
 
-  const variantsClassName = `p-v-${hashed}`
+  const devPrefix = `${dev ? `-${(instance?.vnode?.type as any)?.__name}-` : '-'}`
 
-  const uniqueClassName = instanceUid ? `p-${hash({ componentId, instanceUid })}` : undefined
+  const variantsClassName = `p${devPrefix}v${dev ? 'ariants' : ''}-${hashed}`
 
-  return { uid: instanceUid, componentId, variantsClassName, uniqueClassName }
+  const uniqueClassName = uid ? `p${devPrefix}${hash({ componentId, uid })}` : undefined
+
+  return { uid, componentId, variantsClassName, uniqueClassName }
 }

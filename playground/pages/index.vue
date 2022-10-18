@@ -1,16 +1,17 @@
 <script setup>
+import { ref } from 'vue'
 </script>
 
 <template>
   <section>
     <PlaygroundGrid>
-      <Alert :color="{ dark: '{colors.yellow.200}', light: '{colors.yellow.200}' }">
+      <Alert size="xl">
         Hello World
       </Alert>
 
-      <Alert primary :color="{ dark: '{colors.red.100}', light: '{colors.yellow.200}' }">
+      <Block :css="css" palette="green">
         Hello World
-      </Alert>
+      </Block>
     </PlaygroundGrid>
   </section>
 </template>
@@ -18,7 +19,6 @@
 <style scoped lang="ts">
 css({
   button: {
-    backgroundColor: '{colors.primary.900}',
     padding: '1rem',
     borderRadius: '1rem'
   },

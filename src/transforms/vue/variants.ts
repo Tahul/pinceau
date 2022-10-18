@@ -80,7 +80,7 @@ export function resolveVariantsProps(variants, isTs: boolean) {
         prop.default = false
       }
       else {
-        const possibleValues = `\'${Object.keys(variant).join('\' | \'')}\'`
+        const possibleValues = `\'${Object.keys(variant).filter(key => key !== 'options').join('\' | \'')}\'`
         prop.type = ` [String, Object]${isTs ? ` as PropType<${possibleValues} | ({ [key in MediaQueriesKeys]: ${possibleValues} }) | ({ [key: string]: ${possibleValues} })>` : ''}`
         prop.default = undefined
       }

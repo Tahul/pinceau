@@ -28,7 +28,7 @@ export const resolvePropsKey = (code: string, add = true) => {
       },
     )
 
-    if (add && hasDefineProps) {
+    if (add && hasDefineProps && !propsKey) {
       code = code.replace(
         /defineProps/g,
         () => {

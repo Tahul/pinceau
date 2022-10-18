@@ -1,7 +1,7 @@
 import { kebabCase } from 'scule'
 import color from 'tinycolor2'
 import type { DesignToken, TokensFunction } from '../types'
-import { DARK, LIGHT, keyRegex, mqPlainRegex, referencesRegex, rgbaRegex } from './regexes'
+import { DARK, INITIAL, LIGHT, keyRegex, mqPlainRegex, referencesRegex, rgbaRegex } from './regexes'
 
 /**
  * Resolve a css function property to a stringifiable declaration.
@@ -133,6 +133,16 @@ export function resolveCustomDirectives(property: any, value: any, $tokens: Toke
     if (property === LIGHT) {
       return {
         '@media (prefers-color-scheme: light)': value,
+      }
+    }
+
+    if (property === INITIAL) {
+      let token = $tokens('media.initial' as any, { key: 'value' })
+      if (!token) {
+        token = '(min-width: 0px)'
+      }
+      return {
+        [`@media ${token}`]: value,
       }
     }
 

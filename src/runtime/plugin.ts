@@ -1,5 +1,5 @@
 import type { Plugin, PropType } from 'vue'
-import { computed, getCurrentInstance, onScopeDispose, reactive, watch } from 'vue'
+import { computed, getCurrentInstance, onScopeDispose, reactive, ref, watch } from 'vue'
 import { defu } from 'defu'
 import { nanoid } from 'nanoid'
 import type { CSS, PinceauTheme } from '../types'
@@ -9,7 +9,7 @@ import { createTokensHelper, getIds, sanitizeProps, transformComputedStylesToDec
 import { usePinceauStylesheet } from './stylesheet'
 
 export const plugin: Plugin = {
-  install(app, { theme, helpersConfig, multiApp = false }) {
+  install(app, { theme, helpersConfig, multiApp = false, idStorage = (id, _) => ref(id), dev = import.meta.env.DEV }) {
     theme = defu(theme || {}, { theme: {}, aliases: {} })
 
     helpersConfig = defu(helpersConfig, { flattened: true })
@@ -39,6 +39,19 @@ export const plugin: Plugin = {
       return sheet.value.cssRules[ruleId]
     }
 
+    const deleteRule = (rule: CSSRule) => {
+      const ruleIndex = Object.values(sheet.value.cssRules).indexOf(rule)
+
+      if (typeof ruleIndex === 'undefined' || isNaN(ruleIndex)) { return }
+
+      try {
+        sheet.value.deleteRule(ruleIndex)
+      }
+      catch (e) {
+        // Continue regardless of error
+      }
+    }
+
     const setupPinceauRuntime = (
       props: any,
       variants: any,
@@ -51,11 +64,17 @@ export const plugin: Plugin = {
       /**
        * Generate IDs for current component instance.
        */
-      const ids = computed(() => getIds(
-        instance,
-        variantsProps.value,
-        variants.value,
-      ))
+      let uid
+      const ids = idStorage(
+        getIds(
+          (uid = nanoid(6)) && uid,
+          instance,
+          variantsProps.value,
+          variants.value,
+          dev,
+        ),
+        `p-${uid}`,
+      )
 
       /**
        * Exposed `class` array
@@ -81,6 +100,7 @@ export const plugin: Plugin = {
           source,
           (newSource) => {
             const sourceDeclaration = transform(newSource)
+            if (rules[key]) { deleteRule(rules[key]) }
             rules[key] = pushDeclaration(sourceDeclaration)
           },
           {
@@ -90,17 +110,8 @@ export const plugin: Plugin = {
         )
       }
 
-      // Register Variants if related props exists.
-      if (variants?.value && Object.keys(variants.value || {}).length > 0) {
-        registerFeature(
-          variantsProps,
-          newVariantsProps => transformVariantsToDeclaration(ids.value, variants.value, newVariantsProps),
-          'variants',
-        )
-      }
-
       // Register CSS is some provided.
-      if (css?.value && Object.keys(css.value).length > 0) {
+      if (Object.hasOwn(props, 'css')) {
         registerFeature(
           css,
           newCss => transformCssPropToDeclaration(ids.value, newCss),
@@ -109,7 +120,7 @@ export const plugin: Plugin = {
       }
 
       // Register computed styles if some provided.
-      if (computedStyles?.value && Object.keys(computedStyles.value || {}).length > 0) {
+      if (computedStyles && computedStyles?.value && Object.keys(computedStyles.value || {}).length > 0) {
         registerFeature(
           computedStyles,
           newComputedStyles => transformComputedStylesToDeclaration(ids.value, newComputedStyles),
@@ -117,21 +128,13 @@ export const plugin: Plugin = {
         )
       }
 
-      const deleteRule = (rule: CSSRule) => {
-        const ruleIndex = parseInt(
-          Object.entries<any>(sheet.value.cssRules).find(
-            ([, sheetRule]: [string, CSSRule]) => (sheetRule.cssText === rule.cssText),
-          )?.[0],
+      // Register Variants if related props exists.
+      if (variants && variants?.value && Object.keys(variants.value || {}).length > 0) {
+        registerFeature(
+          variantsProps,
+          newVariantsProps => transformVariantsToDeclaration(ids.value, variants.value, newVariantsProps),
+          'variants',
         )
-
-        if (typeof ruleIndex === 'undefined' || isNaN(ruleIndex)) { return }
-
-        try {
-          sheet.value.deleteRule(ruleIndex)
-        }
-        catch (e) {
-          // Continue regardless of error
-        }
       }
 
       const cleanup = () => {
@@ -147,6 +150,7 @@ export const plugin: Plugin = {
         rules,
         (newRules, oldRules) => {
           if (!oldRules) { return }
+
           for (const [key, rule] of Object.entries(newRules)) {
             if (rule !== oldRules[key]) { deleteRule(oldRules[key]) }
           }

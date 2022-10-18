@@ -6,6 +6,7 @@ import { cssProp } from 'pinceau/runtime'
 defineProps({
   palette: {
     type: [String, Object] as PropType<ComputedStyleProp<'color'>>,
+    required: true,
     default: 'green',
   },
   css: cssProp,
@@ -31,6 +32,7 @@ const propsToHtml = computed(
 css({
   '.block': {
     backgroundColor: (props) => `{colors.${props.palette}.600}`,
+    border: (props) => `6px solid {colors.${props.palette}.200}`,
     '&:hover': {
       border: (props) => `8px solid {colors.${props.palette}.200}`,
     },
@@ -40,7 +42,6 @@ css({
     borderRadius: '16px',
     width: '320px',
     height: '320px',
-    border: '4px solid {colors.gray.600}',
     position: 'relative',
     color: 'black',
     '& > p': {
@@ -65,7 +66,7 @@ css({
     },
     bordered: {
       true: {
-        borderSize: '4px'
+        borderRadius: '120px'
       },
       options: {
         default: true

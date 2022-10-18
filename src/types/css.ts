@@ -138,7 +138,7 @@ export type ThemeKey<K extends keyof DefaultThemeMap> = Utils.WrapUnion<Utils.Fi
 
 export type MediaQueriesKeys = keyof PinceauTheme['media'] | 'dark' | 'light' | 'initial'
 
-export type TokenOrThemeKey<T extends keyof NativeProperties> = (T extends keyof DefaultThemeMap ? (ThemeKey<T> | keyof PinceauTheme[DefaultThemeMap[T]]) : '') | NativeProperties[T]
+export type TokenOrThemeKey<T extends keyof NativeProperties> = (T extends keyof DefaultThemeMap ? (ThemeKey<T> | keyof PinceauTheme[DefaultThemeMap[T]]) : string)
 
 export type ComputedStyleProp<T extends keyof NativeProperties> = TokenOrThemeKey<T> | ({ [key in MediaQueriesKeys]: TokenOrThemeKey<T> }) | ({ [key: string]: TokenOrThemeKey<T> })
 
