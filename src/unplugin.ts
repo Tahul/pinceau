@@ -3,7 +3,7 @@ import { createUnplugin } from 'unplugin'
 import MagicString from 'magic-string'
 import { join } from 'pathe'
 import { createContext } from './theme'
-import { registerPostCssPlugins } from './utils/plugin'
+import { registerAliases, registerPostCssPlugins } from './utils/plugin'
 import { replaceStyleTs, resolveStyleQuery, transformVueSFC, transformVueStyle } from './transforms'
 import { parseVueQuery } from './utils/query'
 import { logger } from './utils/logger'
@@ -42,7 +42,7 @@ export default createUnplugin<PinceauOptions>(
 
       vite: {
         config(config) {
-          // registerAliases(config, options)
+          registerAliases(config, options)
           registerPostCssPlugins(config, options)
         },
         async configResolved(config) {
