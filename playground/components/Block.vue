@@ -66,10 +66,7 @@ css({
     },
     bordered: {
       true: {
-        borderRadius: '120px'
-      },
-      options: {
-        default: true
+        borderRadius: '120px !important'
       }
     }
   }

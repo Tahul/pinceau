@@ -1,7 +1,3 @@
-<script setup>
-import { ref } from 'vue'
-</script>
-
 <template>
   <section>
     <PlaygroundGrid>
@@ -9,7 +5,7 @@ import { ref } from 'vue'
         Hello World
       </Alert>
 
-      <Block :css="css" palette="green">
+      <Block bordered palette="green">
         Hello World
       </Block>
     </PlaygroundGrid>
