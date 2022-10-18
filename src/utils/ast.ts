@@ -2,13 +2,14 @@ import type { SFCParseOptions } from 'vue/compiler-sfc'
 import { parse as sfcParse } from 'vue/compiler-sfc'
 import * as recast from 'recast'
 import type { Options } from 'recast'
-import defu from 'defu'
+import { defu } from 'defu'
+import { parse as tsParse } from 'recast/parsers/typescript'
 
 /**
  * Parse AST with TypeScript parser.
  */
 export function parseAst(source: string, options?: Partial<Options>) {
-  return recast.parse(source, defu({ parser: require('recast/parsers/typescript') }, options))
+  return recast.parse(source, defu({ parser: { parse: tsParse } }, options))
 }
 
 /**
@@ -22,7 +23,7 @@ export function parseVueComponent(source: string, options: Partial<SFCParseOptio
  * Cast a `props.type` string into an AST declaration.
  */
 export function propStringToAst(type: string) {
-  const parsed = recast.parse(`const toAst = ${type}`, { parser: require('recast/parsers/typescript') })
+  const parsed = recast.parse(`const toAst = ${type}`, { parser: { parse: tsParse } })
   return parsed.program.body[0].declarations[0].init
 }
 
