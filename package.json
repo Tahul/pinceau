@@ -42,6 +42,10 @@
       "require": "./dist/nitro.cjs",
       "import": "./dist/nitro.mjs"
     },
+    "./transform": {
+      "require": "./dist/transform.cjs",
+      "import": "./dist/transform.mjs"
+    },
     "./volar": "./dist/volar.cjs"
   },
   "main": "dist/index.mjs",

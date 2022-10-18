@@ -5,6 +5,7 @@ import { addPluginTemplate, createResolver, defineNuxtModule } from '@nuxt/kit'
 import { withoutLeadingSlash } from 'ufo'
 import type { PinceauOptions } from './types'
 import pinceau, { defaultOptions } from './unplugin'
+import { transformSfc } from './transform'
 
 const module: any = defineNuxtModule<PinceauOptions>({
   meta: {
@@ -111,6 +112,14 @@ const module: any = defineNuxtModule<PinceauOptions>({
       vite.config.plugins = vite.config.plugins || []
       vite.config.plugins.push(pinceau.vite(options))
     })
+
+    // Push transform to component meta
+    nuxt.hook(
+      'component-meta:transformers' as any,
+      ({ transformers }) => {
+        transformers.push(transformSfc)
+      },
+    )
   },
 })
 

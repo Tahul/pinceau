@@ -9,6 +9,7 @@ export default defineBuildConfig({
     'src/runtime',
     'src/nitro',
     'src/volar',
+    'src/transform',
   ],
   failOnWarn: false,
   clean: true,
