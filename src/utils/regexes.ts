@@ -14,6 +14,8 @@ export const cssContentRegex = /css\(({.*?\})\)/mgs
 
 export const rgbaRegex = /rgb(a?)?\(((.*?)(,.*)?)\)/mg
 
+export const calcRegex = /calc\((.*?)\)/mg
+
 export const mqPlainRegex = /@mq\.(.*)/
 
 export const mqCssRegex = /(@mq.(.*?)\s{)/g

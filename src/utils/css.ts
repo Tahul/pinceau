@@ -1,7 +1,7 @@
 import { kebabCase } from 'scule'
 import color from 'tinycolor2'
 import type { DesignToken, TokensFunction } from '../types'
-import { DARK, INITIAL, LIGHT, keyRegex, mqPlainRegex, referencesRegex, rgbaRegex } from './regexes'
+import { DARK, INITIAL, LIGHT, calcRegex, keyRegex, mqPlainRegex, referencesRegex, rgbaRegex } from './regexes'
 
 /**
  * Resolve a css function property to a stringifiable declaration.
@@ -53,6 +53,8 @@ export function castValue(property: any, value: any, $tokens: TokensFunction) {
 
   value = resolveRgbaTokens(property, value, $tokens)
 
+  value = resolveCalcTokens(property, value, $tokens)
+
   value = resolveReferences(property, value, $tokens)
 
   if (value === '{}') { return '' }
@@ -85,7 +87,7 @@ export function resolveReferences(property: string, value: string, $tokens: Toke
 }
 
 /**
- * Resolve rgba() value properly
+ * Resolve rgba() value
  */
 export function resolveRgbaTokens(property: string, value: string, $tokens: TokensFunction) {
   if (!(typeof value === 'string')) { return value }
@@ -107,6 +109,33 @@ export function resolveRgbaTokens(property: string, value: string, $tokens: Toke
           tokenValue = color(tokenValue).toRgb()
 
           return `${tokenValue.r},${tokenValue.g},${tokenValue.b}`
+        },
+      )
+
+      return newValue
+    },
+  )
+
+  return value
+}
+
+/**
+ * Resolve calc() value
+ */
+export function resolveCalcTokens(property: string, value: string, $tokens: TokensFunction) {
+  if (!(typeof value === 'string')) { return value }
+
+  value = value.replace(
+    calcRegex,
+    (...parts) => {
+      let newValue = parts[0]
+
+      newValue = newValue.replace(
+        referencesRegex,
+        (...reference) => {
+          const token = $tokens(reference[1], { key: 'original' }) as DesignToken
+
+          return token?.value || token
         },
       )
 

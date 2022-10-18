@@ -1,10 +1,6 @@
 <template>
   <section>
     <PlaygroundGrid>
-      <Alert size="xl">
-        Hello World
-      </Alert>
-
       <Block bordered palette="green">
         Hello World
       </Block>
@@ -16,7 +12,6 @@
 css({
   button: {
     padding: '1rem',
-    borderRadius: '1rem'
   },
   section: {
     display: 'flex',

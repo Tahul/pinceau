@@ -515,6 +515,24 @@ The `css()` function has mutliple features:
 
   </details>
 
+
+- Supports `calc()` conversions
+  <details>
+  <summary>💡 Example</summary>
+  <br>
+
+  ```vue
+  <style lang="ts">
+  css({
+    '.block': {
+      backgroundColor: 'calc({space.32} - 4px)'
+    }
+  })
+  </style>
+  ```
+
+  </details>
+
 - Supports `computed styles` **`💡 new`**
 
   <details>
