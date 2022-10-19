@@ -15,7 +15,7 @@ function exposedTransform(code: string, id: string) {
   if (parsedComponent.descriptor.template) { resolveTemplate(id, parsedComponent, magicString) }
 
   // Transform <style> blocks
-  if (parsedComponent.descriptor.styles) { resolveStyle(id, parsedComponent, magicString, variants, computedStyles, () => '' as any) }
+  if (parsedComponent.descriptor.styles) { resolveStyle(id, parsedComponent, magicString, variants, computedStyles, () => '' as any, 'media') }
 
   // Transform <script setup> blocks
   if (parsedComponent.descriptor.scriptSetup) { resolveScriptSetup(id, parsedComponent, magicString, variants, computedStyles, parsedComponent.descriptor.scriptSetup.lang === 'ts') }
