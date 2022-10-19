@@ -89,7 +89,7 @@ export default createUnplugin<PinceauOptions>(
         try {
           // Handle CSS files
           if (query.css && !query.vue) {
-            const { code: _code } = resolveStyleQuery(code, magicString, ctx.$tokens)
+            const { code: _code } = resolveStyleQuery(code, magicString, ctx.$tokens, options.colorSchemeMode)
             return missingMap(_code)
           }
 

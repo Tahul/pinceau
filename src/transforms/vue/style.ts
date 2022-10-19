@@ -20,7 +20,7 @@ export const transformVueStyle = (id: string, query: VueQuery, ctx: PinceauConte
 
   let source = style?.content || ''
 
-  source = transformCssFunction(source, undefined, undefined, ctx.$tokens)
+  source = transformCssFunction(source, undefined, undefined, ctx.$tokens, ctx.options.colorSchemeMode)
   source = transformStyle(source, ctx.$tokens)
 
   if (style?.content !== source) { return source }

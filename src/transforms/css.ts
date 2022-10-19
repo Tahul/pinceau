@@ -1,7 +1,7 @@
 import type { ASTNode } from 'ast-types'
 import { defu } from 'defu'
 import { resolveCssProperty, stringify } from '../utils'
-import type { TokensFunction } from '../types'
+import type { ColorSchemeModes, TokensFunction } from '../types'
 import { parseAst, printAst, visitAst } from '../utils/ast'
 import { resolveComputedStyles } from './vue/computed'
 
@@ -13,6 +13,7 @@ export const transformCssFunction = (
   variants: any | undefined = {},
   computedStyles: any | undefined,
   $tokens: TokensFunction,
+  colorSchemeMode: ColorSchemeModes,
 ) => {
   try {
     const declaration = resolveCssCallees(
@@ -28,7 +29,7 @@ export const transformCssFunction = (
 
     const style = stringify(
       declaration,
-      (property: any, value: any, _style: any, _selectors: any) => resolveCssProperty(property, value, _style, _selectors, $tokens),
+      (property: any, value: any, _style: any, _selectors: any) => resolveCssProperty(property, value, _style, _selectors, $tokens, colorSchemeMode),
     )
 
     if (style) { code = style }

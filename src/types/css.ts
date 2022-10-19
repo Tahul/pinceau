@@ -1,11 +1,11 @@
 import type * as CSSType from 'csstype'
+import type { utils } from '../runtime/utils'
 import type * as Utils from './utils'
 import type { DefaultThemeMap, PinceauTheme, PinceauThemePaths } from './theme'
 
-export interface ComputedPropertiesUtils {
-  isToken: (value: any) => boolean
-  scale: (type: string, value: any, base: any) => string
-}
+export type ComputedStylesUtils = typeof utils
+
+export type ColorSchemeModes = 'media' | 'class'
 
 export type VuePseudos =
 | '&:deep('
@@ -140,7 +140,7 @@ export type MediaQueriesKeys = keyof PinceauTheme['media'] | 'dark' | 'light' | 
 
 export type TokenOrThemeKey<T extends keyof NativeProperties> = (T extends keyof DefaultThemeMap ? (ThemeKey<T> | keyof PinceauTheme[DefaultThemeMap[T]]) : string)
 
-export type ComputedStyleProp<T extends keyof NativeProperties> = TokenOrThemeKey<T> | ({ [key in MediaQueriesKeys]: TokenOrThemeKey<T> }) | ({ [key: string]: TokenOrThemeKey<T> })
+export type ComputedStyleProp<T extends keyof DefaultThemeMap> = TokenOrThemeKey<T> | ({ [key in MediaQueriesKeys]: TokenOrThemeKey<T> }) | ({ [key: string]: TokenOrThemeKey<T> })
 
 export type CSS<
   Theme extends object = PinceauTheme,
@@ -188,7 +188,7 @@ export type CSS<
     [K in keyof DefaultThemeMap]?: (
       | ThemeKey<K>
       | CssProperties[K]
-      | ((props: TemplateProps, utils: ComputedPropertiesUtils) => ThemeKey<K> | CssProperties[K] | ({ [key in MediaQueriesKeys]?: ThemeKey<K> | CssProperties[K] }))
+      | ((props: TemplateProps, utils: ComputedStylesUtils) => ThemeKey<K> | CssProperties[K] | ({ [key in MediaQueriesKeys]?: ThemeKey<K> | CssProperties[K] }))
       | CSS<Theme, TemplateTags, TemplateProps, false>
       | {}
       | undefined
@@ -199,7 +199,7 @@ export type CSS<
   {
     [K in Exclude<keyof CssProperties, keyof DefaultThemeMap>]?: (
       | CssProperties[K]
-      | ((props: TemplateProps, utils: ComputedPropertiesUtils) => CssProperties[K] | ({ [key in MediaQueriesKeys]?: CssProperties[K] }))
+      | ((props: TemplateProps, utils: ComputedStylesUtils) => CssProperties[K] | ({ [key in MediaQueriesKeys]?: CssProperties[K] }))
       | {}
       | undefined
     )
@@ -209,7 +209,7 @@ export type CSS<
   {
     [K: string]: (
       | CSS<Theme, TemplateTags, TemplateProps, false>
-      | ((props: TemplateProps, utils: ComputedPropertiesUtils) => string | ({ [key in MediaQueriesKeys]?: string }))
+      | ((props: TemplateProps, utils: ComputedStylesUtils) => string | ({ [key in MediaQueriesKeys]?: string }))
       | { [key: string]: CSS<Theme, TemplateTags, TemplateProps, false> }
       | {}
       | number

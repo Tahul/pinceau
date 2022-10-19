@@ -1,14 +1,14 @@
 import { kebabCase } from 'scule'
 import color from 'tinycolor2'
-import type { DesignToken, TokensFunction } from '../types'
+import type { ColorSchemeModes, DesignToken, TokensFunction } from '../types'
 import { DARK, INITIAL, LIGHT, calcRegex, keyRegex, mqPlainRegex, referencesRegex, rgbaRegex } from './regexes'
 
 /**
  * Resolve a css function property to a stringifiable declaration.
  */
-export function resolveCssProperty(property: any, value: any, style: any, selectors: any, $tokens: TokensFunction) {
+export function resolveCssProperty(property: any, value: any, style: any, selectors: any, $tokens: TokensFunction, colorSchemeMode: ColorSchemeModes) {
   // Resolve custom style directives
-  const directive = resolveCustomDirectives(property, value, $tokens)
+  const directive = resolveCustomDirectives(property, value, $tokens, colorSchemeMode)
   if (directive) { return directive }
 
   // Resolve final value
@@ -149,19 +149,28 @@ export function resolveCalcTokens(property: string, value: string, $tokens: Toke
 /**
  * Resolve custom directives (@mq, @dark).
  */
-export function resolveCustomDirectives(property: any, value: any, $tokens: TokensFunction) {
+export function resolveCustomDirectives(
+  property: any,
+  value: any,
+  $tokens: TokensFunction,
+  colorSchemesMode: ColorSchemeModes,
+) {
   if (property.startsWith('@')) {
     const mqMatches = property.match(mqPlainRegex)
 
+    const resolveColorScheme = (scheme: string) => {
+      return colorSchemesMode === 'class' ? `html.${scheme}` : `@media (prefers-color-scheme: ${scheme})`
+    }
+
     if (property === DARK) {
       return {
-        '@media (prefers-color-scheme: dark)': value,
+        [resolveColorScheme('dark')]: value,
       }
     }
 
     if (property === LIGHT) {
       return {
-        '@media (prefers-color-scheme: light)': value,
+        [resolveColorScheme('light')]: value,
       }
     }
 

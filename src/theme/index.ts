@@ -33,6 +33,9 @@ export const createContext = <UserOptions extends PinceauOptions = PinceauOption
   const context = {
     // Local context
     env,
+    options,
+
+    // $tokens
     get tokens() {
       return tokens
     },

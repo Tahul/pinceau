@@ -9,6 +9,7 @@ export interface PinceauContext<UserOptions extends PinceauOptions = PinceauOpti
   env: 'prod' | 'dev'
   tokens: PinceauTheme
   $tokens: TokensFunction
+  options: PinceauOptions
 
   // Vite
   viteServer: ViteDevServer

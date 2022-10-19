@@ -9,7 +9,7 @@ import { createTokensHelper, getIds, sanitizeProps, transformComputedStylesToDec
 import { usePinceauStylesheet } from './stylesheet'
 
 export const plugin: Plugin = {
-  install(app, { theme, helpersConfig, multiApp = false, idStorage = (id, _) => ref(id), dev = process.env.NODE_ENV !== 'production' }) {
+  install(app, { theme, helpersConfig, multiApp = false, idStorage = (id, _) => ref(id), colorSchemeMode = 'media', dev = process.env.NODE_ENV !== 'production' }) {
     theme = defu(theme || {}, { theme: {}, aliases: {} })
 
     helpersConfig = defu(helpersConfig, { flattened: true })
@@ -20,7 +20,7 @@ export const plugin: Plugin = {
 
     const { sheet, toString: sheetToString } = usePinceauStylesheet(multiAppId)
 
-    const declarationToCss = (decl: any) => stringify(decl, (property: any, value: any, style: any, selectors: any) => resolveCssProperty(property, value, style, selectors, $tokens))
+    const declarationToCss = (decl: any) => stringify(decl, (property: any, value: any, style: any, selectors: any) => resolveCssProperty(property, value, style, selectors, $tokens, colorSchemeMode))
 
     const pushDeclaration = (
       declaration: any,

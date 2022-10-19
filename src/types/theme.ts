@@ -1,3 +1,4 @@
+import type { NativeProperties } from './css'
 import type { GeneratedPinceauTheme, GeneratedTokensPaths } from '#pinceau/types'
 
 export interface DesignToken<

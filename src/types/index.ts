@@ -1,5 +1,6 @@
 import type { DtFunction, PinceauTheme } from './theme'
 import type { ConfigOrPaths } from './context'
+import type { ColorSchemeModes } from './css'
 
 export * from './utils'
 export * from './theme'
@@ -69,7 +70,7 @@ export interface PinceauOptions {
    *
    * @default 'class'
    */
-  colorSchemeMode?: 'media' | 'class'
+  colorSchemeMode?: ColorSchemeModes
   /**
    * Enables extra logging on transform failures.
    */

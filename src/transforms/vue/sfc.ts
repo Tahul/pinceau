@@ -2,7 +2,7 @@ import type { SFCParseResult } from 'vue/compiler-sfc'
 import type MagicString from 'magic-string'
 import { parseVueComponent } from '../../utils/ast'
 import type { VueQuery } from '../../utils/query'
-import type { PinceauContext, TokensFunction } from '../../types'
+import type { ColorSchemeModes, PinceauContext, TokensFunction } from '../../types'
 import { transformDtHelper } from '../dt'
 import { transformCssFunction } from '../css'
 import { transformStyle } from './style'
@@ -11,7 +11,7 @@ import { resolvePropsKey } from './props'
 
 export function transformVueSFC(code: string, id: string, magicString: MagicString, ctx: PinceauContext, query: VueQuery): { code: string; early: boolean; magicString: MagicString } {
   // Handle <style> tags scoped queries
-  if (query.type === 'style') { return resolveStyleQuery(code, magicString, ctx.$tokens) }
+  if (query.type === 'style') { return resolveStyleQuery(code, magicString, ctx.$tokens, ctx.options.colorSchemeMode) }
 
   // Resolve from parsing the <style lang="ts"> tag for current component
   const variants = {}
@@ -24,7 +24,7 @@ export function transformVueSFC(code: string, id: string, magicString: MagicStri
   if (parsedComponent.descriptor.template) { resolveTemplate(id, parsedComponent, magicString) }
 
   // Transform <style> blocks
-  if (parsedComponent.descriptor.styles) { resolveStyle(id, parsedComponent, magicString, variants, computedStyles, ctx.$tokens) }
+  if (parsedComponent.descriptor.styles) { resolveStyle(id, parsedComponent, magicString, variants, computedStyles, ctx.$tokens, ctx.options.colorSchemeMode) }
 
   // Transform <script setup> blocks
   if (parsedComponent.descriptor.scriptSetup) { resolveScriptSetup(id, parsedComponent, magicString, variants, computedStyles, parsedComponent.descriptor.scriptSetup.lang === 'ts') }
@@ -37,8 +37,8 @@ export function transformVueSFC(code: string, id: string, magicString: MagicStri
  *
  * These does not need to resolve variants or populate computed styles.
  */
-export function resolveStyleQuery(code: string, magicString: MagicString, $tokens: TokensFunction) {
-  code = transformCssFunction(code, undefined, undefined, $tokens)
+export function resolveStyleQuery(code: string, magicString: MagicString, $tokens: TokensFunction, colorSchemeMode: ColorSchemeModes) {
+  code = transformCssFunction(code, undefined, undefined, $tokens, colorSchemeMode)
   code = transformStyle(code, $tokens)
   return { code, early: true, magicString }
 }
@@ -59,14 +59,14 @@ export function resolveTemplate(id: string, parsedComponent: SFCParseResult, mag
 /**
  * Transform all <style> blocks.
  */
-export function resolveStyle(id: string, parsedComponent: SFCParseResult, magicString: MagicString, variants: any, computedStyles: any, $tokens: TokensFunction) {
+export function resolveStyle(id: string, parsedComponent: SFCParseResult, magicString: MagicString, variants: any, computedStyles: any, $tokens: TokensFunction, colorSchemeMode: ColorSchemeModes) {
   const styles = parsedComponent.descriptor.styles
   styles.forEach(
     (styleBlock) => {
       const { loc, content } = styleBlock
       let newStyle = content
 
-      newStyle = transformCssFunction(newStyle, variants, computedStyles, $tokens)
+      newStyle = transformCssFunction(newStyle, variants, computedStyles, $tokens, colorSchemeMode)
       newStyle = transformStyle(newStyle, $tokens)
 
       magicString.remove(loc.start.offset, loc.end.offset)
