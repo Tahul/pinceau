@@ -31,10 +31,24 @@ const propsToHtml = computed(
 <style lang="ts" scoped>
 css({
   '.block': {
-    backgroundColor: (props) => `{colors.${props.palette}.600}`,
-    border: (props) => `6px solid {colors.${props.palette}.200}`,
+    backgroundColor: (props, utils) => utils.scale(
+      'colors',
+      props.palette,
+      { light: '100', dark: '500' },
+    ),
+    border: (props, utils) => utils.scale(
+      'colors',
+      props.palette,
+      { light: '600', dark: '200' },
+      (token) => `6px solid ${token}`
+    ),
     '&:hover': {
-      border: (props) => `8px solid {colors.${props.palette}.200}`,
+      border: (props, utils) => utils.scale(
+        'colors',
+        props.palette,
+        { light: '700', dark: '300' },
+        (token) => `10px solid ${token}`
+      ),
     },
     display: 'flex',
     alignItems: 'center',
