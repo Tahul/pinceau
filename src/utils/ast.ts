@@ -3,7 +3,7 @@ import { parse as sfcParse } from 'vue/compiler-sfc'
 import * as recast from 'recast'
 import type { Options } from 'recast'
 import { defu } from 'defu'
-import { parse as tsParse } from 'recast/parsers/typescript'
+import { parse as tsParse } from 'recast/parsers/typescript.js'
 
 /**
  * Parse AST with TypeScript parser.

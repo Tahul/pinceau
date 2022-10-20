@@ -220,9 +220,9 @@ export function transformComputedStylesToDeclaration(
 }
 
 export const getIds = (uid: string, instance: ComponentInternalInstance, props: any, variants: any, dev = false): PinceauRuntimeIds => {
-  const instanceId = (instance?.vnode?.type as any)?.__scopeId || 'data-v-unknown'
+  const instanceId = (instance?.vnode?.type as any)?.__scopeId || ''
 
-  const componentId = `[${instanceId}]`
+  const componentId = instanceId ? `[${instanceId}]` : ''
 
   const hashed = hash({
     uid,
@@ -231,7 +231,8 @@ export const getIds = (uid: string, instance: ComponentInternalInstance, props: 
     variants: JSON.stringify(variants),
   })
 
-  const devPrefix = `${dev ? `-${(instance?.vnode?.type as any)?.__name}-` : '-'}`
+  const componentName = (instance?.vnode?.type as any)?.name || (instance?.vnode?.type as any)?.__name
+  const devPrefix = `${dev ? `-${componentName}-` : '-'}`
 
   const variantsClassName = `p${devPrefix}v${dev ? 'ariants' : ''}-${hashed}`
 

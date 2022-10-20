@@ -9,7 +9,7 @@ import { createTokensHelper, getIds, sanitizeProps, transformComputedStylesToDec
 import { usePinceauStylesheet } from './stylesheet'
 
 export const plugin: Plugin = {
-  install(app, { theme, helpersConfig, multiApp = false, idStorage = (id, _) => ref(id), colorSchemeMode = 'media', dev = process.env.NODE_ENV !== 'production' }) {
+  install(app, { theme, helpersConfig, multiApp = false, idStorage = (id, _) => ref(id), colorSchemeMode = 'media', dev = process.env.NODE_ENV !== 'production' } = {}) {
     theme = defu(theme || {}, { theme: {}, aliases: {} })
 
     helpersConfig = defu(helpersConfig, { flattened: true })
