@@ -2,6 +2,7 @@ import { join } from 'pathe'
 import type { UserConfig as ViteConfig } from 'vite'
 import postCssNested from 'postcss-nested'
 import postCssCustomProperties from 'postcss-custom-properties'
+import postCssDarkThemeClass from 'postcss-dark-theme-class'
 import type { PinceauOptions } from '../types'
 
 export function registerAliases(config: ViteConfig, options: PinceauOptions) {
@@ -14,7 +15,7 @@ export function registerAliases(config: ViteConfig, options: PinceauOptions) {
   }
 }
 
-export function registerPostCssPlugins(config: ViteConfig, _: PinceauOptions) {
+export function registerPostCssPlugins(config: ViteConfig, options: PinceauOptions) {
   if (!config?.css) { config.css = {} }
   if (!config.css?.postcss) { config.css.postcss = {} }
   // @ts-expect-error - PostCSS typings wrong?
@@ -26,4 +27,13 @@ export function registerPostCssPlugins(config: ViteConfig, _: PinceauOptions) {
     postCssNested,
     postCssCustomProperties,
   )
+
+  if (options?.colorSchemeMode === 'class') {
+    (config.css.postcss as any).plugins.push(
+      postCssDarkThemeClass({
+        darkSelector: '.dark',
+        lightSelector: '.light',
+      }),
+    )
+  }
 }

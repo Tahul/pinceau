@@ -89,6 +89,7 @@
     "nanoid": "^4.0.0",
     "ohash": "^0.1.5",
     "postcss-custom-properties": "^12.1.9",
+    "postcss-dark-theme-class": "^0.7.3",
     "postcss-nested": "^6.0.0",
     "recast": "^0.21.5",
     "scule": "^0.3.2",

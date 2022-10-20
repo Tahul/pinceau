@@ -37,22 +37,16 @@ export function transformStyle(code = '', $tokens: TokensFunction, mode: ColorSc
   return code
 }
 
-export function transformScheme(code = '', scheme: 'light' | 'dark', mode: ColorSchemeModes) {
+export function transformScheme(code = '', scheme: 'light' | 'dark', _: ColorSchemeModes) {
   // Only supports `light` and `dark` schemes as they are native from browsers.
   const schemesRegex = {
     light: lightRegex,
     dark: darkRegex,
   }
 
-  const resolveColorScheme = (scheme: string) => {
-    return mode === 'class'
-      ? `.${scheme} & {`
-      : `@media (prefers-color-scheme: ${scheme}) {`
-  }
-
   code = code.replace(
     schemesRegex[scheme],
-    resolveColorScheme(scheme),
+    () => `@media (prefers-color-scheme: ${scheme}) {`,
   )
 
   return code

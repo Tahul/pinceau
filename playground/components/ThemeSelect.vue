@@ -3,18 +3,12 @@ import { computed, ref } from 'vue'
 
 const toggleCount = ref(0)
 const preference = computed(() => {
-  const test = toggleCount.value
-
-  if (!document) {
-    return 'dark'
-  }
-
+  const _ = toggleCount.value
+  if (!globalThis || !globalThis.document) { return 'dark' }
   const cl = document.querySelector('html').classList
-
   if (cl.contains('light')) {
     return 'light'
   }
-
   return 'dark'
 })
 

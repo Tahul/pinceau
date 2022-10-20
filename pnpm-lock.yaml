@@ -27,6 +27,7 @@ importers:
       ohash: ^0.1.5
       playwright: ^1.27.1
       postcss-custom-properties: ^12.1.9
+      postcss-dark-theme-class: ^0.7.3
       postcss-nested: ^6.0.0
       recast: ^0.21.5
       release-it: ^15.5.0
@@ -52,6 +53,7 @@ importers:
       nanoid: 4.0.0
       ohash: 0.1.5
       postcss-custom-properties: 12.1.9
+      postcss-dark-theme-class: 0.7.3
       postcss-nested: 6.0.0
       recast: 0.21.5
       scule: 0.3.2
@@ -6417,6 +6419,16 @@ packages:
         optional: true
     dependencies:
       postcss-value-parser: 4.2.0
+    dev: false
+
+  /postcss-dark-theme-class/0.7.3:
+    resolution: {integrity: sha512-M9vtfh8ORzQsVdT9BWb+xpEDAzC7nHBn7wVc988/JkEVLPupKcUnV0jw7RZ8sSj0ovpqN1POf6PLdt19JCHfhQ==}
+    engines: {node: '>=12.0'}
+    peerDependencies:
+      postcss: ^8.2.14
+    peerDependenciesMeta:
+      postcss:
+        optional: true
     dev: false
 
   /postcss-discard-comments/5.1.2_postcss@8.4.18:
