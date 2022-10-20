@@ -61,7 +61,7 @@ export const stringify = (
     let cssText = ''
 
     for (let name in style) {
-      // Support both `@` and `$` as atRuleLike values>
+      // Support both `@` and `$` as atRuleLike values
       const isAtRuleLike = name.charCodeAt(0) === 64 || name.charCodeAt(0) === 36
       // const isAttrRuleLike = name.charCodeAt(0) === 91 && name.charCodeAt(name.length - 1) === 93
 
