@@ -25,7 +25,9 @@ const propsToHtml = computed(
 </script>
 
 <template>
-  <button class="block" :class="[$pinceau]" v-html="propsToHtml" />
+  <button
+    class="block" :class="[$pinceau]" v-html="propsToHtml"
+  />
 </template>
 
 <style lang="ts" scoped>
@@ -34,7 +36,7 @@ css({
     backgroundColor: (props, utils) => utils.scale(
       'colors',
       props.palette,
-      { light: '100', dark: '500' },
+      { light: '600', dark: '200' }
     ),
     border: (props, utils) => utils.scale(
       'colors',
@@ -66,16 +68,19 @@ css({
   variants: {
     shadow: {
       light: {
-        boxShadow: '{shadows.sm}'
+        boxShadow: '{shadows.sm}',
+        border: '2px solid {colors.blue.400}',
       },
       medium: {
-        boxShadow: '{shadows.md}'
+        boxShadow: '{shadows.md}',
+        border: '2px solid {colors.red.400}',
       },
       giant: {
-        boxShadow: '{shadows.xl}'
+        boxShadow: '{shadows.xl}',
+        border: '2px solid {colors.green.400}',
       },
       options: {
-        default: 'medium'
+        default: 'medium',
       }
     },
     bordered: {

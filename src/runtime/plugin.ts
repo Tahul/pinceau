@@ -10,13 +10,13 @@ import { usePinceauStylesheet } from './stylesheet'
 
 export const plugin: Plugin = {
   install(app, { theme, helpersConfig, multiApp = false, idStorage = (id, _) => ref(id), colorSchemeMode = 'media', dev = process.env.NODE_ENV !== 'production' }) {
-    theme = defu(theme || {}, { theme: {}, aliases: {} })
+    theme = defu(theme || {}, { theme: {} })
 
     helpersConfig = defu(helpersConfig, { flattened: true })
 
     const multiAppId = multiApp ? nanoid(6) : undefined
 
-    const $tokens = createTokensHelper(theme.theme, theme.aliases, helpersConfig)
+    const $tokens = createTokensHelper(theme.theme, helpersConfig)
 
     const { sheet, toString: sheetToString } = usePinceauStylesheet(multiAppId)
 

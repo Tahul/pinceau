@@ -29,7 +29,7 @@ const router = createRouter({
 
 // Plugins
 app.use(router)
-app.use(pinceau, { theme })
+app.use(pinceau, { theme, colorSchemeMode: 'class' })
 
 // Components
 app.component('Block', Block)

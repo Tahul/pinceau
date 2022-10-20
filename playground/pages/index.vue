@@ -1,7 +1,10 @@
 <template>
   <section>
     <PlaygroundGrid>
-      <Block bordered palette="red">
+      <Block
+        bordered
+        palette="red"
+      >
         Hello World
       </Block>
     </PlaygroundGrid>

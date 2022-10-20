@@ -1,4 +1,3 @@
-import type { NativeProperties } from './css'
 import type { GeneratedPinceauTheme, GeneratedTokensPaths } from '#pinceau/types'
 
 export interface DesignToken<
@@ -280,6 +279,5 @@ export type DtFunction = (
 export type TokensFunction = (
   path?: PinceauThemePaths,
   options?: TokensFunctionOptions,
-  theme?: PinceauTheme,
-  aliases?: { [key: string]: string }
+  theme?: PinceauTheme
 ) => PinceauTokens | DesignToken | number | string

@@ -2,17 +2,14 @@ import type { Core as Instance } from 'style-dictionary-esm'
 import StyleDictionary from 'style-dictionary-esm'
 import { isShadowToken, transformShadow } from '../utils/shadows'
 import type { PinceauOptions, PinceauTheme, PinceauTokens, ThemeGenerationOutput } from '../types'
-import { logger, referencesRegex, resolveVariableFromPath, walkTokens } from '../utils'
+import { logger, walkTokens } from '../utils'
 import { jsFlat, jsFull, tsFlat, tsFull, tsTypesDeclaration } from './formats'
 
 export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath, debug }: PinceauOptions, silent = true): Promise<ThemeGenerationOutput> {
   let styleDictionary: Instance = StyleDictionary
 
   // Tokens outputs as in-memory objects
-  const outputs: ThemeGenerationOutput['outputs'] = {
-    // Aliased tokens detected (a token which only uses an alias as a value)
-    aliases: {},
-  }
+  const outputs: ThemeGenerationOutput['outputs'] = {}
 
   let result = {
     tokens: {} as PinceauTheme,
@@ -46,22 +43,10 @@ export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath
             || !(typeof token.original.value === 'string' || typeof token.original.value === 'string')
           ) { return token }
 
-          // Resolve aliased properties
-          const keyRegex = /{(.*)}/g
-          const hasReference = token?.original?.value?.match(referencesRegex) || false
-          const reference = token.name
-          if (hasReference?.[0] && hasReference[0] === token.original.value) {
-            token.value = (token.original.value as string).replace(
-              keyRegex,
-              (_, tokenPath) => {
-                outputs.aliases[reference] = resolveVariableFromPath(tokenPath)
-                return outputs.aliases[reference]
-              },
-            )
-          }
           return token
         },
       )
+
       transformedTokensTyping = walkTokens(
         dictionary.tokens,
         () => {
@@ -149,7 +134,6 @@ export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath
       const selector = options.selector ? options.selector : ':root'
       const { outputReferences } = options
       const { formattedVariables } = StyleDictionary.formatHelpers
-      dictionary.allTokens = dictionary.allTokens.filter(token => !outputs.aliases[token.name])
       const css = `${selector} {\n${formattedVariables({ format: 'css', dictionary, outputReferences })}\n}\n`
       outputs.css = css
       return css
@@ -172,7 +156,7 @@ export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath
   styleDictionary.registerFormat({
     name: 'pinceau/typescript',
     formatter() {
-      const ts = tsFull(transformedTokens, outputs.aliases)
+      const ts = tsFull(transformedTokens)
       outputs.ts = ts
       return ts
     },
@@ -182,7 +166,7 @@ export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath
   styleDictionary.registerFormat({
     name: 'pinceau/javascript',
     formatter() {
-      const js = jsFull(transformedTokens, outputs.aliases)
+      const js = jsFull(transformedTokens)
       outputs.js = js
       return js
     },
@@ -192,7 +176,7 @@ export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath
   styleDictionary.registerFormat({
     name: 'pinceau/typescript-flat',
     formatter() {
-      const _tsFlat = tsFlat(transformedTokens, outputs.aliases)
+      const _tsFlat = tsFlat(transformedTokens)
       outputs.flat_ts = _tsFlat
       return _tsFlat
     },
@@ -202,7 +186,7 @@ export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath
   styleDictionary.registerFormat({
     name: 'pinceau/javascript-flat',
     formatter() {
-      const _jsFlat = jsFlat(transformedTokens, outputs.aliases)
+      const _jsFlat = jsFlat(transformedTokens)
       outputs.flat_js = _jsFlat
       return _jsFlat
     },

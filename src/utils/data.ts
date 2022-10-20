@@ -17,7 +17,7 @@ export const get = (obj: any, path: string | string[], defValue = undefined) => 
 }
 
 /**
- * Walk through tokens and resolve aliased references.
+ * Walk through tokens definition.
  */
 export const walkTokens = (
   obj: any,

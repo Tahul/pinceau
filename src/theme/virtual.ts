@@ -7,12 +7,11 @@ export const RESOLVED_ID_RE = /\/__pinceau(?:(_.*?))?\.(css|ts|js)(\?.*)?$/
 export function usePinceauVirtualStore(): PinceauVirtualContext {
   const outputs: ThemeGenerationOutput['outputs'] = {
     _css: '/* This file is empty because no tokens has been provided. */',
-    _flat_ts: tsFlat({}, []),
-    _flat_js: jsFlat({}, []),
-    _ts: tsFull({}, []),
-    _js: jsFull({}, []),
+    _flat_ts: tsFlat({}),
+    _flat_js: jsFlat({}),
+    _ts: tsFull({}),
+    _js: jsFull({}),
     _json: '{}',
-    _aliases: '{}',
   }
 
   function updateOutputs(generatedTheme: ThemeGenerationOutput) {

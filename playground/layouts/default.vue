@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import BreakpointDisplay from '../components/BreakpointDisplay.vue'
+import ThemeSelect from '../components/ThemeSelect.vue'
 </script>
 
 <template>
@@ -10,6 +11,8 @@ import BreakpointDisplay from '../components/BreakpointDisplay.vue'
       <span>
         🖌&nbsp;Pinceau
       </span>
+
+      <ThemeSelect />
 
       <BreakpointDisplay />
     </header>

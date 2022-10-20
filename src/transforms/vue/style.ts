@@ -1,6 +1,6 @@
 import fs from 'fs'
 import { parseVueComponent } from '../../utils/ast'
-import type { PinceauContext, TokensFunction } from '../../types'
+import type { ColorSchemeModes, PinceauContext, TokensFunction } from '../../types'
 import { logger } from '../../utils'
 import type { VueQuery } from '../../utils/query'
 import { darkRegex, lightRegex, mqCssRegex } from '../../utils/regexes'
@@ -21,7 +21,7 @@ export const transformVueStyle = (id: string, query: VueQuery, ctx: PinceauConte
   let source = style?.content || ''
 
   source = transformCssFunction(source, undefined, undefined, ctx.$tokens, ctx.options.colorSchemeMode)
-  source = transformStyle(source, ctx.$tokens)
+  source = transformStyle(source, ctx.$tokens, ctx.options.colorSchemeMode)
 
   if (style?.content !== source) { return source }
 }
@@ -29,22 +29,31 @@ export const transformVueStyle = (id: string, query: VueQuery, ctx: PinceauConte
 /**
  * Helper grouping all resolvers applying to <style>
  */
-export function transformStyle(code = '', $tokens: TokensFunction) {
+export function transformStyle(code = '', $tokens: TokensFunction, mode: ColorSchemeModes) {
   code = transformDtHelper(code)
   code = transformMediaQueries(code, $tokens)
-  code = transformScheme(code, 'dark')
-  code = transformScheme(code, 'light')
+  code = transformScheme(code, 'dark', mode)
+  code = transformScheme(code, 'light', mode)
   return code
 }
 
-export function transformScheme(code = '', scheme: 'light' | 'dark') {
+export function transformScheme(code = '', scheme: 'light' | 'dark', mode: ColorSchemeModes) {
   // Only supports `light` and `dark` schemes as they are native from browsers.
   const schemesRegex = {
     light: lightRegex,
     dark: darkRegex,
   }
 
-  code = code.replace(schemesRegex[scheme], `@media (prefers-color-scheme: ${scheme}) {`)
+  const resolveColorScheme = (scheme: string) => {
+    return mode === 'class'
+      ? `.${scheme} & {`
+      : `@media (prefers-color-scheme: ${scheme}) {`
+  }
+
+  code = code.replace(
+    schemesRegex[scheme],
+    resolveColorScheme(scheme),
+  )
 
   return code
 }
