@@ -24,6 +24,8 @@ import ThemeSelect from '../components/ThemeSelect.vue'
         🖌&nbsp;Pinceau
       </span>
 
+      <ThemeSelect />
+
       <BreakpointDisplay />
     </footer>
   </div>
