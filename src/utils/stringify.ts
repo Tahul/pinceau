@@ -62,7 +62,6 @@ export const stringify = (
 
     for (let name in style) {
       const isAtRuleLike = name.charCodeAt(0) === 64
-      const is$RuleLike = name.charCodeAt(0) === 36
 
       for (const data of isAtRuleLike && Array.isArray(style[name]) ? style[name] : [style[name]]) {
         if (replacer && (name !== prevName || data !== prevData)) {
@@ -76,11 +75,6 @@ export const stringify = (
         }
 
         const isObjectLike = typeof data === 'object' && data && data.toString === toString
-
-        // Strip `$` unwrapping char
-        if (is$RuleLike) {
-          name = name.slice(1, name.length)
-        }
 
         if (isObjectLike) {
           if (used.has(selectors)) {

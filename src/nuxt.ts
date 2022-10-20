@@ -111,18 +111,6 @@ const module: any = defineNuxtModule<PinceauOptions>({
       vite.config.plugins = vite.config.plugins || []
       vite.config.plugins.push(pinceau.vite(options))
     })
-
-    // Push transform to component meta
-    // Not necessary as Volar plugin works with vue-component-meta
-
-    /*
-    nuxt.hook(
-      'component-meta:transformers' as any,
-      ({ transformers }) => {
-        transformers.push(transformSfc)
-      },
-    )
-    */
   },
 })
 

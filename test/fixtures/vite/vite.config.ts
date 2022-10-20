@@ -11,7 +11,7 @@ export default defineConfig({
       configOrPaths: [
         resolve(__dirname, '../theme'),
       ],
-      colorSchemeMode: 'class',
+      colorSchemeMode: 'media',
     }),
     Vue(),
   ],

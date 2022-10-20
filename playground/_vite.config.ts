@@ -23,6 +23,7 @@ export default defineConfig({
         resolve(__dirname, 'theme'),
       ],
       debug: true,
+      colorSchemeMode: 'class',
     }),
     Vue(),
   ],
