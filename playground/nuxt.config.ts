@@ -2,7 +2,7 @@ import { resolve } from 'path'
 
 export default defineNuxtConfig({
   extends: [resolve(__dirname, './theme')],
-  modules: ['../src/nuxt.ts'],
+  modules: ['../src/nuxt.ts', '@nuxtjs/color-mode'],
   alias: {
     'pinceau/runtime': resolve(__dirname, '../src/runtime.ts'),
     'pinceau': resolve(__dirname, '../src/index.ts'),
@@ -22,5 +22,8 @@ export default defineNuxtConfig({
     vue: {
       reactivityTransform: true,
     },
+  },
+  colorMode: {
+    classSuffix: '',
   },
 })

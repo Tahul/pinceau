@@ -21,6 +21,8 @@ import BreakpointDisplay from '../components/BreakpointDisplay.vue'
         🖌&nbsp;Pinceau
       </span>
 
+      <ThemeSelect />
+
       <BreakpointDisplay />
     </footer>
   </div>
