@@ -62,6 +62,7 @@ export const stringify = (
 
     for (let name in style) {
       const isAtRuleLike = name.charCodeAt(0) === 64
+      const is$RuleLike = name.charCodeAt(0) === 36
 
       for (const data of isAtRuleLike && Array.isArray(style[name]) ? style[name] : [style[name]]) {
         if (replacer && (name !== prevName || data !== prevData)) {
@@ -85,17 +86,29 @@ export const stringify = (
 
           const usedName = Object(name)
 
-          const nextSelectors = isAtRuleLike
-            ? selectors
-            : selectors.length
+          let nextSelectors
+          if (is$RuleLike) {
+            name = name.replace('$', '')
+            nextSelectors = selectors
+          }
+          if (isAtRuleLike) {
+            nextSelectors = selectors
+            cssText += parse(
+              data,
+              nextSelectors,
+              conditions.concat(usedName),
+            )
+          }
+          else {
+            nextSelectors = selectors.length
               ? getResolvedSelectors(selectors, name.split(comma))
               : name.split(comma)
-
-          cssText += parse(
-            data,
-            nextSelectors,
-            isAtRuleLike ? conditions.concat(usedName) : conditions,
-          )
+            cssText += parse(
+              data,
+              nextSelectors,
+              conditions,
+            )
+          }
 
           if (used.has(usedName)) {
             used.delete(usedName)

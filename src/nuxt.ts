@@ -1,4 +1,3 @@
-import { defu } from 'defu'
 import { join, resolve } from 'pathe'
 import glob from 'fast-glob'
 import { addPluginTemplate, createResolver, defineNuxtModule } from '@nuxt/kit'
@@ -11,11 +10,12 @@ const module: any = defineNuxtModule<PinceauOptions>({
     name: 'pinceau/nuxt',
     configKey: 'pinceau',
   },
+  defaults: {
+    ...defaultOptions,
+    colorSchemeMode: 'class',
+  },
   async setup(options: PinceauOptions, nuxt) {
     const modulePath = createResolver(import.meta.url)
-
-    // Merge options here in Nuxt context so we have access to proper values for local features
-    options = defu(options, defaultOptions)
 
     // Call options hook
     await nuxt.callHook('pinceau:options', options)
