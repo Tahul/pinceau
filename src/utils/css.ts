@@ -160,7 +160,7 @@ export function resolveCustomDirectives(
 
     const resolveColorScheme = (scheme: string) => {
       scheme = colorSchemesMode === 'class'
-        ? `$.${scheme}`
+        ? `html.${scheme} &`
         : `@media (prefers-color-scheme: ${scheme})`
 
       return {
