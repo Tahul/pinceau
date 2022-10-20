@@ -159,15 +159,13 @@ export function resolveCustomDirectives(
     const mqMatches = property.match(mqPlainRegex)
 
     const resolveColorScheme = (scheme: string) => {
-      const toRet = {
-        [`@media (prefers-color-scheme: ${scheme})`]: value,
-      }
+      scheme = colorSchemesMode === 'class'
+        ? `$.${scheme} &`
+        : `@media (prefers-color-scheme: ${scheme})`
 
-      if (colorSchemesMode === 'class') {
-        toRet[`$html.${scheme}`] = {}
+      return {
+        [scheme]: value,
       }
-
-      return toRet
     }
 
     if (property === DARK) {
