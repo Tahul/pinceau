@@ -22,14 +22,12 @@ export const tsTypesDeclaration = (typesObject: any) => {
 /**
  * import theme from '#pinceau/theme'
  */
-export const tsFull = (tokensObject: any, aliased: any) => {
+export const tsFull = (tokensObject: any) => {
   let result = 'import type { GeneratedPinceauTheme } from \'./types\'\n\n'
-
-  result += `export const aliases = ${JSON.stringify(aliased, null, 2)} as const\n\n`
 
   result += `export const theme: GeneratedPinceauTheme = ${JSON.stringify(tokensObject, null, 2)} as const\n\n`
 
-  result += 'export default { aliases, theme }'
+  result += 'export default { theme }'
 
   return result
 }
@@ -37,12 +35,10 @@ export const tsFull = (tokensObject: any, aliased: any) => {
 /**
  * import theme from '#pinceau/theme/flat'
  */
-export const tsFlat = (tokensObject: any, aliased: any) => {
-  let result = `export const aliases = ${JSON.stringify(aliased, null, 2)}\n\n`
+export const tsFlat = (tokensObject: any) => {
+  let result = `export const theme = ${JSON.stringify(flattenTokens(tokensObject), null, 2)}\n\n`
 
-  result += `export const theme = ${JSON.stringify(flattenTokens(tokensObject), null, 2)}\n\n`
-
-  result += 'export default { aliases, theme }'
+  result += 'export default { theme }'
 
   return result
 }
@@ -52,12 +48,10 @@ export const tsFlat = (tokensObject: any, aliased: any) => {
  *
  * In JS contexts.
  */
-export const jsFull = (tokensObject: any, aliased: any) => {
-  let result = `export const aliases = ${JSON.stringify(aliased, null, 2)}\n\n`
+export const jsFull = (tokensObject: any) => {
+  let result = `export const theme = ${JSON.stringify(tokensObject, null, 2)}\n\n`
 
-  result += `export const theme = ${JSON.stringify(tokensObject, null, 2)}\n\n`
-
-  result += 'export default { aliases, theme }'
+  result += 'export default { theme }'
 
   return result
 }
@@ -67,12 +61,10 @@ export const jsFull = (tokensObject: any, aliased: any) => {
  *
  * In JS contexts.
  */
-export const jsFlat = (tokensObject: any, aliased: any) => {
-  let result = `export const aliases = ${JSON.stringify(aliased, null, 2)}\n\n`
+export const jsFlat = (tokensObject: any) => {
+  let result = `export const theme = ${JSON.stringify(flattenTokens(tokensObject), null, 2)}\n\n`
 
-  result += `export const theme = ${JSON.stringify(flattenTokens(tokensObject), null, 2)}\n\n`
-
-  result += 'export default { aliases, theme }'
+  result += 'export default { theme }'
 
   return result
 }

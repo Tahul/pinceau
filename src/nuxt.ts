@@ -1,4 +1,3 @@
-import { defu } from 'defu'
 import { join, resolve } from 'pathe'
 import glob from 'fast-glob'
 import { addPluginTemplate, createResolver, defineNuxtModule } from '@nuxt/kit'
@@ -11,11 +10,12 @@ const module: any = defineNuxtModule<PinceauOptions>({
     name: 'pinceau/nuxt',
     configKey: 'pinceau',
   },
+  defaults: {
+    ...defaultOptions,
+    colorSchemeMode: 'class',
+  },
   async setup(options: PinceauOptions, nuxt) {
     const modulePath = createResolver(import.meta.url)
-
-    // Merge options here in Nuxt context so we have access to proper values for local features
-    options = defu(options, defaultOptions)
 
     // Call options hook
     await nuxt.callHook('pinceau:options', options)
@@ -82,7 +82,7 @@ const module: any = defineNuxtModule<PinceauOptions>({
           'import { plugin as pinceau } from \'pinceau/runtime\'',
           'import theme from \'#pinceau/theme/flat\'',
           `export default defineNuxtPlugin((nuxtApp) => {
-            nuxtApp.vueApp.use(pinceau, { theme, idStorage: (id, key) => useState(key, () => id), colorSchemeMode: 'class' })
+            nuxtApp.vueApp.use(pinceau, { theme, colorSchemeMode: 'class' })
 
             // Handle first render of SSR styles
             nuxtApp.hook('app:rendered', (app) => {
@@ -111,18 +111,6 @@ const module: any = defineNuxtModule<PinceauOptions>({
       vite.config.plugins = vite.config.plugins || []
       vite.config.plugins.push(pinceau.vite(options))
     })
-
-    // Push transform to component meta
-    // Not necessary as Volar plugin works with vue-component-meta
-
-    /*
-    nuxt.hook(
-      'component-meta:transformers' as any,
-      ({ transformers }) => {
-        transformers.push(transformSfc)
-      },
-    )
-    */
   },
 })
 

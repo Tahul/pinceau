@@ -13,7 +13,8 @@ export const transformCssFunction = (
   variants: any | undefined = {},
   computedStyles: any | undefined,
   $tokens: TokensFunction,
-  colorSchemeMode: ColorSchemeModes,
+  // Enforce `media` for static CSS as this is processed by PostCSS plugin.
+  _: ColorSchemeModes,
 ) => {
   try {
     const declaration = resolveCssCallees(
@@ -29,7 +30,7 @@ export const transformCssFunction = (
 
     const style = stringify(
       declaration,
-      (property: any, value: any, _style: any, _selectors: any) => resolveCssProperty(property, value, _style, _selectors, $tokens, colorSchemeMode),
+      (property: any, value: any, _style: any, _selectors: any) => resolveCssProperty(property, value, _style, _selectors, $tokens, 'media'),
     )
 
     if (style) { code = style }

@@ -40,7 +40,7 @@ export const createContext = <UserOptions extends PinceauOptions = PinceauOption
       return tokens
     },
     get $tokens() {
-      return createTokensHelper(tokens, getOutput('aliases'))
+      return createTokensHelper(tokens)
     },
 
     // Vite

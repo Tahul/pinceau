@@ -5,6 +5,7 @@ import { RouterView, createRouter, createWebHistory } from 'vue-router'
 import App from './app.vue'
 import Block from './components/Block.vue'
 import Alert from './components/Alert.vue'
+import ClientOnly from './theme/ClientOnly.vue'
 import PlaygroundGrid from './components/PlaygroundGrid.vue'
 import NuxtLayout from './layouts/default.vue'
 import Index from './pages/index.vue'
@@ -29,11 +30,12 @@ const router = createRouter({
 
 // Plugins
 app.use(router)
-app.use(pinceau, { theme })
+app.use(pinceau, { theme, colorSchemeMode: 'class' })
 
 // Components
 app.component('Block', Block)
 app.component('Alert', Alert)
+app.component('ClientOnly', ClientOnly)
 app.component('PlaygroundGrid', PlaygroundGrid)
 app.component('NuxtLayout', NuxtLayout)
 app.component('NuxtPage', RouterView)

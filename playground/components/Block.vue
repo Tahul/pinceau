@@ -17,6 +17,7 @@ const propsToHtml = computed(
   () => {
     return Object.entries(__$pProps).map(
       ([key, value]) => {
+        if (!value) { return '' }
         return `<b>⚙&nbsp;${key}</b>${typeof value === 'object' ? JSON.stringify(value) : value}<br />`
       },
     ).join('\n')
@@ -25,7 +26,9 @@ const propsToHtml = computed(
 </script>
 
 <template>
-  <button class="block" :class="[$pinceau]" v-html="propsToHtml" />
+  <button
+    class="block" :class="[$pinceau]" v-html="propsToHtml"
+  />
 </template>
 
 <style lang="ts" scoped>
@@ -34,26 +37,16 @@ css({
     backgroundColor: (props, utils) => utils.scale(
       'colors',
       props.palette,
-      { light: '100', dark: '500' },
+      { light: '600', dark: '200' }
     ),
-    border: (props, utils) => utils.scale(
+    borderColor: (props, utils) => utils.scale(
       'colors',
       props.palette,
-      { light: '600', dark: '200' },
-      (token) => `6px solid ${token}`
+      { light: '400', dark: '600' },
     ),
-    '&:hover': {
-      border: (props, utils) => utils.scale(
-        'colors',
-        props.palette,
-        { light: '700', dark: '300' },
-        (token) => `10px solid ${token}`
-      ),
-    },
     display: 'flex',
     alignItems: 'center',
     flexDirection: 'column',
-    borderRadius: '16px',
     width: '320px',
     height: '320px',
     position: 'relative',
@@ -66,21 +59,23 @@ css({
   variants: {
     shadow: {
       light: {
-        boxShadow: '{shadows.sm}'
+        boxShadow: '{shadows.sm}',
       },
       medium: {
-        boxShadow: '{shadows.md}'
+        boxShadow: '{shadows.md}',
       },
       giant: {
-        boxShadow: '{shadows.xl}'
+        boxShadow: '{shadows.xl}',
       },
       options: {
-        default: 'medium'
+        default: 'medium',
       }
     },
     bordered: {
       true: {
-        borderRadius: '120px !important'
+        borderRadius: '84px',
+        borderStyle: 'solid',
+        borderWidth: '4px',
       }
     }
   }

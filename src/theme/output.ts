@@ -31,6 +31,6 @@ export async function stubOutputs(buildPath: string, force = false) {
 
     if (force && existsSync(path)) { rmSync(path) }
 
-    if (!existsSync(path)) { writeFileSync(path, stubbingFunction ? stubbingFunction({ tokens: {}, allTokens: [] } as any, {}) : '') }
+    if (!existsSync(path)) { writeFileSync(path, stubbingFunction ? stubbingFunction({ tokens: {}, allTokens: [] } as any) : '') }
   }
 }

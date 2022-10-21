@@ -25,7 +25,7 @@ export const defaultOptions: PinceauOptions = {
     'node_modules/pinceau/',
   ],
   followSymbolicLinks: true,
-  colorSchemeMode: 'class',
+  colorSchemeMode: 'media',
   debug: false,
 }
 
