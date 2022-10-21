@@ -1,5 +1,5 @@
 import type { ComputedRef, Ref } from 'vue'
-import { onScopeDispose, reactive, watch } from 'vue'
+import { onScopeDispose, reactive, unref, watch } from 'vue'
 import defu from 'defu'
 import { kebabCase } from 'scule'
 import type { PinceauRuntimeIds } from '../types'
