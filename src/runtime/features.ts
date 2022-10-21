@@ -3,7 +3,7 @@ import { onScopeDispose, reactive, unref, watch } from 'vue'
 import defu from 'defu'
 import { kebabCase } from 'scule'
 import type { PinceauRuntimeIds } from '../types'
-import { keyRegex } from '../utils'
+import { keyRegex } from '../utils/regexes'
 import type { usePinceauStylesheet } from './stylesheet'
 
 /**
