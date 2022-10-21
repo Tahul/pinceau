@@ -3,7 +3,7 @@
     <PlaygroundGrid>
       <Block
         bordered
-        palette="red"
+        palette="blue"
       >
         Hello World
       </Block>

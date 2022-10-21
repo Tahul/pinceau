@@ -12,9 +12,10 @@ import ThemeSelect from '../components/ThemeSelect.vue'
         🖌&nbsp;Pinceau
       </span>
 
-      <ThemeSelect />
-
-      <BreakpointDisplay />
+      <div>
+        <ThemeSelect />
+        <BreakpointDisplay />
+      </div>
     </header>
 
     <slot />
@@ -24,9 +25,10 @@ import ThemeSelect from '../components/ThemeSelect.vue'
         🖌&nbsp;Pinceau
       </span>
 
-      <ThemeSelect />
-
-      <BreakpointDisplay />
+      <div>
+        <ThemeSelect />
+        <BreakpointDisplay />
+      </div>
     </footer>
   </div>
 </template>
@@ -37,7 +39,7 @@ html, body, #app, #__nuxt {
   min-height: 100vh;
   width: 100vw;
 
-  font-family: $dt('fonts.primary') !important;
+  font-family: $dt('fonts.primary');
 
   color: black;
   background-color: white;
@@ -60,7 +62,10 @@ html, body, #app, #__nuxt {
   margin: 0;
   padding: 0;
 
-  header {
+  header,
+  footer {
+    background-color: $dt('colors.black');
+    color: $dt('colors.white');
     flex: 0;
     display: flex;
     align-items: center;
@@ -69,10 +74,16 @@ html, body, #app, #__nuxt {
     position: sticky;
     top: 0;
     width: 100%;
-    background-color: $dt('colors.black');
     z-index: 50;
+
     span {
       font-weight: bold;
+    }
+    div {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 1em;
     }
   }
 
@@ -82,22 +93,6 @@ html, body, #app, #__nuxt {
     width: 100%;
     padding: 2rem;
     z-index: 50;
-  }
-
-  footer {
-    flex: 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 2rem;
-    position: sticky;
-    top: 0;
-    width: 100%;
-    background-color: $dt('colors.black');
-    z-index: 50;
-    span {
-      font-weight: bold;
-    }
   }
 }
 </style>

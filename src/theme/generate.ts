@@ -2,7 +2,7 @@ import type { Core as Instance } from 'style-dictionary-esm'
 import StyleDictionary from 'style-dictionary-esm'
 import { isShadowToken, transformShadow } from '../utils/shadows'
 import type { PinceauOptions, PinceauTheme, PinceauTokens, ThemeGenerationOutput } from '../types'
-import { logger, walkTokens } from '../utils'
+import { logger } from '../utils'
 import { jsFlat, jsFull, tsFlat, tsFull, tsTypesDeclaration } from './formats'
 
 export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath, debug }: PinceauOptions, silent = true): Promise<ThemeGenerationOutput> {
@@ -263,6 +263,27 @@ export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath
   catch (e) {
     logger.error('Pinceau could not build your design tokens configuration!')
     if (debug) { logger.error(e) }
+  }
+
+  return result
+}
+
+/**
+ * Walk through tokens definition.
+ */
+export function walkTokens(
+  obj: any,
+  cb: (value: any, obj: any) => any,
+) {
+  let result: { [key: string]: any } = {}
+
+  if (obj.value) {
+    result = cb(obj, result)
+  }
+  else {
+    for (const k in obj) {
+      if (obj[k] && typeof obj[k] === 'object') { result[k] = walkTokens(obj[k], cb) }
+    }
   }
 
   return result

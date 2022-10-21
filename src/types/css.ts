@@ -147,7 +147,8 @@ export type CSS<
   TemplateTags extends object = {},
   TemplateProps extends object = {},
   Root extends boolean = true,
-> =
+  > =
+  // Support media queries
   {
     [key in keyof Utils.PrefixObjectKeys<
       // @ts-expect-error - Might not be defined by the user
@@ -158,6 +159,7 @@ export type CSS<
     )
   }
   &
+  // Support color schemes
   {
     [key in keyof typeof schemes]?: (
       | CSS<Theme, TemplateTags, TemplateProps, false>
@@ -184,12 +186,12 @@ export type CSS<
     )
   }
   &
+  // Theme-based tokens (supports {token.path} autocompletion)
   {
     [K in keyof DefaultThemeMap]?: (
       | ThemeKey<K>
       | CssProperties[K]
       | ((props: TemplateProps, utils: ComputedStylesUtils) => ThemeKey<K> | CssProperties[K] | ({ [key in MediaQueriesKeys]?: ThemeKey<K> | CssProperties[K] }))
-      | CSS<Theme, TemplateTags, TemplateProps, false>
       | {}
       | undefined
     )
@@ -217,13 +219,3 @@ export type CSS<
       | undefined
     )
   }
-
-export function css(
-  declaration: CSS<
-    PinceauTheme,
-    {},
-    {}
-  >,
-) { return declaration }
-
-export type CssFunctionType = typeof css

@@ -15,24 +15,3 @@ export const get = (obj: any, path: string | string[], defValue = undefined) => 
 
   return result === undefined ? defValue : result
 }
-
-/**
- * Walk through tokens definition.
- */
-export const walkTokens = (
-  obj: any,
-  cb: (value: any, obj: any) => any,
-) => {
-  let result: { [key: string]: any } = {}
-
-  if (obj.value) {
-    result = cb(obj, result)
-  }
-  else {
-    for (const k in obj) {
-      if (obj[k] && typeof obj[k] === 'object') { result[k] = walkTokens(obj[k], cb) }
-    }
-  }
-
-  return result
-}

@@ -6,14 +6,14 @@ import { get } from './data'
  * Get a theme token by its path
  */
 
-export const createTokensHelper = (theme: any = {}, defaultOptions: TokensFunctionOptions = {}): TokensFunction => {
-  const defaultHelperOptions: TokensFunctionOptions = defu(
-    defaultOptions,
+export const createTokensHelper = (theme: any = {}, options: TokensFunctionOptions = {}): TokensFunction => {
+  const defaultHelperOptions: TokensFunctionOptions = Object.assign(
     {
       key: 'attributes.variable',
       silent: false,
       flattened: false,
     },
+    options,
   )
 
   const $tokens: TokensFunction = (path = undefined, options: TokensFunctionOptions) => {
