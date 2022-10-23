@@ -1,34 +1,19 @@
 <script setup lang="ts">
-import type { PropType } from 'vue'
-import { computed } from 'vue'
-import { cssProp } from 'pinceau/runtime'
+import { computedStyle, cssProp } from 'pinceau/runtime'
 
 defineProps({
-  palette: {
-    type: [String, Object] as PropType<ComputedStyleProp<'color'>>,
-    required: true,
-    default: 'green',
-  },
+  palette: computedStyle('color', 'green', false),
   css: cssProp,
-  ...$variantsProps,
+  ...variants,
 })
-
-const propsToHtml = computed(
-  () => {
-    return Object.entries(__$pProps).map(
-      ([key, value]) => {
-        if (!value) { return '' }
-        return `<b>⚙&nbsp;${key}</b>${typeof value === 'object' ? JSON.stringify(value) : value}<br />`
-      },
-    ).join('\n')
-  },
-)
 </script>
 
 <template>
   <button
-    class="block" :class="[$pinceau]" v-html="propsToHtml"
-  />
+    class="block"
+  >
+    <slot />
+  </button>
 </template>
 
 <style lang="ts" scoped>

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 const props = defineProps({
-  ...$variantsProps,
+  ...variants,
 })
 </script>
 
 <template>
-  <div :class="$pinceau" />
+  <div />
 </template>
 
 <style lang="ts">

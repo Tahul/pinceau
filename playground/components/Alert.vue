@@ -5,12 +5,12 @@ defineProps({
   color: {
     type: [String, Object] as PropType<ComputedStyleProp<'color'>>,
   },
-  ...$variantsProps,
+  ...variants,
 })
 </script>
 
 <template>
-  <div :class="$pinceau">
+  <div>
     <slot />
   </div>
 </template>

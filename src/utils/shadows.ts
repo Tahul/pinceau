@@ -12,7 +12,8 @@ import type { ShadowTokenValue } from '../types'
 */
 
 export const isShadowToken = (value: any): value is ShadowTokenValue => {
-  return !!((value?.color || value?.type) && (value?.x || value?.y || value?.blur || value?.spread))
+  const _isShadow = _value => !!((_value?.color && _value?.type) && (_value?.x || _value?.y || _value?.blur || _value?.spread))
+  return Array.isArray(value) ? value.some(_value => _isShadow(_value)) : _isShadow(value)
 }
 
 export const transformShadow = (value: ShadowTokenValue): string => {

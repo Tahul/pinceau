@@ -52,7 +52,7 @@ export interface DesignToken<
 }
 
 export interface PinceauTokens {
-  [key: string]: PinceauTokens | DesignToken | undefined
+  [key: string]: PinceauTokens | DesignToken | string | number | undefined
 }
 
 export interface ShadowTokenValue {
@@ -66,18 +66,18 @@ export interface ShadowTokenValue {
 
 export interface ScaleTokens extends PinceauTokens {
   [key: string]: {
-    default?: DesignToken | PinceauTokens
-    50?: DesignToken | PinceauTokens
-    100?: DesignToken | PinceauTokens
-    200?: DesignToken | PinceauTokens
-    300?: DesignToken | PinceauTokens
-    400?: DesignToken | PinceauTokens
-    500?: DesignToken | PinceauTokens
-    600?: DesignToken | PinceauTokens
-    700?: DesignToken | PinceauTokens
-    800?: DesignToken | PinceauTokens
-    900?: DesignToken | PinceauTokens
-  } | DesignToken
+    default?: DesignToken
+    50?: DesignToken
+    100?: DesignToken
+    200?: DesignToken
+    300?: DesignToken
+    400?: DesignToken
+    500?: DesignToken
+    600?: DesignToken
+    700?: DesignToken
+    800?: DesignToken
+    900?: DesignToken
+  } | DesignToken | string
 }
 
 export interface BreakpointsTokens extends PinceauTokens {
@@ -91,6 +91,8 @@ export interface BreakpointsTokens extends PinceauTokens {
   '3xl'?: DesignToken
   '4xl'?: DesignToken
   '5xl'?: DesignToken
+  '6xl'?: DesignToken
+  '7xl'?: DesignToken
 }
 
 export interface FontWeightTokens extends PinceauTokens {
@@ -108,22 +110,22 @@ export interface FontWeightTokens extends PinceauTokens {
 
 export interface ConfigTokens extends PinceauTokens {
   media?: PinceauTokens
-  colors?: ScaleTokens
+  colors?: ScaleTokens | PinceauTokens
   fonts?: PinceauTokens
-  fontWeights?: FontWeightTokens
-  fontSizes?: BreakpointsTokens
-  size?: BreakpointsTokens
-  space?: BreakpointsTokens
-  radii?: BreakpointsTokens
-  borders?: BreakpointsTokens
-  borderWidths?: BreakpointsTokens
-  borderStyles?: BreakpointsTokens
-  shadows?: BreakpointsTokens
-  opacity?: BreakpointsTokens
-  leads?: BreakpointsTokens
-  letterSpacings?: BreakpointsTokens
-  transitions?: PinceauTokens
-  zIndices?: PinceauTokens
+  fontWeights?: FontWeightTokens | PinceauTokens
+  fontSizes?: BreakpointsTokens | PinceauTokens
+  size?: BreakpointsTokens | PinceauTokens
+  space?: BreakpointsTokens | PinceauTokens
+  radii?: BreakpointsTokens | PinceauTokens
+  borders?: BreakpointsTokens | PinceauTokens
+  borderWidths?: BreakpointsTokens | PinceauTokens
+  borderStyles?: BreakpointsTokens | PinceauTokens
+  shadows?: BreakpointsTokens | PinceauTokens
+  opacity?: BreakpointsTokens | PinceauTokens
+  leads?: BreakpointsTokens | PinceauTokens
+  letterSpacings?: BreakpointsTokens | PinceauTokens
+  transitions?: PinceauTokens | PinceauTokens
+  zIndices?: PinceauTokens | PinceauTokens
 }
 
 export interface DefaultThemeMap {

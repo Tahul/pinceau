@@ -1,5 +1,9 @@
 import type { ASTNode } from 'ast-types'
+import type { ColorSchemeModes, TokensFunction } from 'src/types'
+import { hash } from 'ohash'
+import { stringify } from '../../utils/stringify'
 import { astTypes, parseAst, printAst, propStringToAst, visitAst } from '../../utils/ast'
+import { resolveCssProperty } from '../../utils/css'
 
 export interface PropOptions {
   type?: any
@@ -11,10 +15,10 @@ export interface PropOptions {
 /**
  * Takes variants object and turns it into a `const` inside `<script setup>`
  */
-export function transformVariants(code = '', variants: any = {}, isTs: boolean): string {
+export function transformVariants(code = '', variants: any = {}, isTs: boolean, $tokens: TokensFunction, colorSchemeMode: ColorSchemeModes): string {
   const variantsProps = resolveVariantsProps(variants, isTs)
 
-  code = code.replace(/(...)?\$variantsProps(,)?/mg, '')
+  code = code.replace(/(...)?variants(,)?/mg, '')
 
   const sanitizedVariants = Object.entries(variants || {}).reduce(
     (acc, [key, variant]: any) => {
@@ -25,11 +29,32 @@ export function transformVariants(code = '', variants: any = {}, isTs: boolean):
     {},
   )
 
-  code += `\nconst __$pVariants = ref(${JSON.stringify(sanitizedVariants)})\n`
+  const compiledVariants = compileVariants(sanitizedVariants, $tokens, colorSchemeMode)
+
+  code += `\nconst __$pVariants = ref(${JSON.stringify(compiledVariants)})\n`
 
   if (variantsProps) { code = pushVariantsProps(code, variantsProps) }
 
   return code
+}
+
+export function compileVariants(
+  variantsObject: any,
+  $tokens: TokensFunction,
+  colorSchemeMode: ColorSchemeModes,
+) {
+  variantsObject = JSON.parse(JSON.stringify(variantsObject))
+  for (const [key, values] of Object.entries(variantsObject)) {
+    for (const [variantValueKey, variantValue] of Object.entries(values)) {
+      const cssString = stringify(variantValue, (property, value, style, selectors) => resolveCssProperty(property, value, style, selectors, $tokens, colorSchemeMode))
+      const variantHash = hash(variantValue)
+      variantsObject[key][variantValueKey] = {
+        hash: variantHash,
+        css: `$raw\\${cssString}`,
+      }
+    }
+  }
+  return variantsObject
 }
 
 /**

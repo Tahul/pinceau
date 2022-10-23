@@ -32,7 +32,7 @@ const plugin: VueLanguagePlugin = _ => ({
         '\nimport type { TokensFunction, CSS, PinceauTheme, PinceauThemePaths, TokensFunctionOptions, TokenOrThemeKey, ComputedStyleProp, MediaQueriesKeys } from \'pinceau\'\n',
         '\ntype __VLS_InstanceOmittedKeys = \'onVnodeBeforeMount\' | \'onVnodeBeforeUnmount\' | \'onVnodeBeforeUpdate\' | \'onVnodeMounted\' | \'onVnodeUnmounted\' | \'onVnodeUpdated\' | \'key\' | \'ref\' | \'ref_for\' | \'ref_key\' | \'style\' | \'class\'\n',
         `\ntype __VLS_PropsType = (Omit<InstanceType<typeof import('${fileName}').default>['$props'], __VLS_InstanceOmittedKeys>)\n`,
-        '\nconst css = (declaration: CSS<PinceauTheme, __VLS_ComponentTemplateTags, __VLS_PropsType>) => ({ declaration })\n',
+        '\nfunction css (declaration: CSS<PinceauTheme, __VLS_ComponentTemplateTags, __VLS_PropsType>) ( return { declaration } )\n',
       ]
       embeddedFile.content.push(...imports)
 
@@ -59,12 +59,7 @@ const plugin: VueLanguagePlugin = _ => ({
 
         variantsPropsAst = castVariantsPropsAst(variantsPropsAst)
 
-        embeddedFile.content.push(`\nconst $variantsProps = ${printAst(variantsPropsAst).code}\n`)
-      }
-
-      // No <script setup>
-      if (!sfc.scriptSetup) {
-        embeddedFile.content.push()
+        embeddedFile.content.push(`\nconst variants = ${printAst(variantsPropsAst).code}\n`)
       }
     }
   },

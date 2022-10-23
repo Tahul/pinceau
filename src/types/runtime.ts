@@ -1,6 +1,13 @@
 export interface PinceauRuntimeIds {
   uid: string
   componentId: string
-  variantsClassName?: string
   uniqueClassName?: string
 }
+
+export type PinceauUidTypes =
+  /* Variants */
+  | 'v'
+  /* Computed Styles */
+  | 'c'
+  /* CSS Prop */
+  | 'p'

@@ -77,7 +77,7 @@ export default createUnplugin<PinceauOptions>(
         if (query?.vue || query?.css) { return true }
       },
 
-      transform(code, id) {
+      async transform(code, id) {
         code = replaceStyleTs(code, id)
 
         const query = parseVueQuery(id)
@@ -94,7 +94,7 @@ export default createUnplugin<PinceauOptions>(
           }
 
           // Return early when the query is scoped (usually style tags)
-          const { code: _code, early } = transformVueSFC(code, id, magicString, ctx, query)
+          const { code: _code, early } = await transformVueSFC(code, id, magicString, ctx, query)
           if (early) { return missingMap(_code) }
         }
         catch (e) {

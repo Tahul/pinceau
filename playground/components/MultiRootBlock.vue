@@ -6,7 +6,7 @@ const props = defineProps({
     type: String as PropType<TokenOrThemeKey<'color'>>,
     default: '{colors.primary.600}',
   },
-  ...$variantsProps,
+  ...variants,
 })
 </script>
 
@@ -32,7 +32,7 @@ const props = defineProps({
 <style lang="ts" scoped>
 css({
   button: {
-    backgroundColor: (props, utils) => utils.scale('color', props.color, 600),
+    backgroundColor: (props, utils) => utils.scale('color', props.color, '600'),
     '&:hover': {
       border: (props) => `8px solid {colors.${props.color}}`,
     },

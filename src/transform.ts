@@ -11,14 +11,16 @@ function exposedTransform(code: string, id: string) {
   // Parse component with compiler-sfc
   const parsedComponent = parseVueComponent(code, { filename: id })
 
-  // Transform <template> blocks
-  if (parsedComponent.descriptor.template) { resolveTemplate(id, parsedComponent, magicString) }
-
   // Transform <style> blocks
   if (parsedComponent.descriptor.styles) { resolveStyle(id, parsedComponent, magicString, variants, computedStyles, () => '' as any, 'media') }
 
+  const hasRuntimeStyles = Object.keys(variants).length > 0 || Object.keys(computedStyles).length > 0
+
+  // Transform <template> blocks
+  if (parsedComponent.descriptor.template) { resolveTemplate(id, parsedComponent, magicString, hasRuntimeStyles) }
+
   // Transform <script setup> blocks
-  if (parsedComponent.descriptor.scriptSetup) { resolveScriptSetup(id, parsedComponent, magicString, variants, computedStyles, parsedComponent.descriptor.scriptSetup.lang === 'ts') }
+  if (parsedComponent.descriptor.scriptSetup) { resolveScriptSetup(id, parsedComponent, magicString, variants, computedStyles, () => '', 'media', parsedComponent.descriptor.scriptSetup.lang === 'ts') }
 
   return magicString.toString()
 }

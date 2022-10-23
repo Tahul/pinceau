@@ -1,14 +1,14 @@
-import type { Plugin, PropType } from 'vue'
-import { computed, getCurrentInstance } from 'vue'
+import type { ComputedRef, Plugin, Ref } from 'vue'
+import { computed, getCurrentInstance, ref } from 'vue'
 import { nanoid } from 'nanoid'
-import type { CSS, PinceauTheme } from '../types'
 import {
   createTokensHelper,
-  sanitizeProps,
 } from './utils'
 import { usePinceauStylesheet } from './stylesheet'
 import { usePinceauRuntimeIds } from './ids'
-import { usePinceauRuntimeFeatures } from './features'
+import { usePinceauComputedStyles } from './features/computedStyles'
+import { usePinceauVariants } from './features/variants'
+import { usePinceauCssProp } from './features/cssProp'
 
 export const plugin: Plugin = {
   install(
@@ -22,17 +22,21 @@ export const plugin: Plugin = {
     },
   ) {
     theme = Object.assign({}, theme || {})
+
     tokensHelperConfig = Object.assign({ flattened: true }, tokensHelperConfig)
+
     const multiAppId = multiApp ? nanoid(6) : undefined
 
     const $tokens = createTokensHelper(theme.theme, tokensHelperConfig)
 
     const sheet = usePinceauStylesheet($tokens, colorSchemeMode, multiAppId)
 
+    const cache = {}
+
     const setupPinceauRuntime = (
-      props: any,
-      variants: any,
-      computedStyles: any,
+      props: ComputedRef<any>,
+      variants: Ref<any>,
+      computedStyles: Ref<any>,
     ) => {
       /**
        * Current component instance
@@ -40,51 +44,45 @@ export const plugin: Plugin = {
       const instance = getCurrentInstance()
 
       /**
-       * Runtime state
+       * Current component classes
        */
-      const variantsProps = computed(() => variants && variants?.value ? sanitizeProps(props, variants.value) : {})
-      const css = computed(() => props?.css || undefined)
+      const classes = ref({
+        v: '',
+        c: '',
+      })
 
       /**
        * Component ids and classes with persisted uid
        */
-      const ids = usePinceauRuntimeIds(instance, props, variantsProps, dev)
+      const ids = usePinceauRuntimeIds(instance, classes, dev)
 
-      /**
-       * Runtime features registering:
-       * Variants, Computed Styles, CSS Prop
-       */
-      usePinceauRuntimeFeatures(
-        ids,
-        props,
-        variants,
-        variantsProps,
-        computedStyles,
-        css,
-        sheet,
-      )
+      // Computed styles setup
+      if (computedStyles && computedStyles?.value && Object.keys(computedStyles.value).length > 0) {
+        usePinceauComputedStyles(ids, computedStyles, sheet)
+      }
 
-      /**
-       * Exposed `class` string
-       */
-      const $pinceau = computed(() => [ids.uniqueClassName, ids.variantsClassName].filter(Boolean).join(' '))
+      // Variants setup
+      if (variants && variants?.value && Object.keys(variants.value).length > 0) {
+        usePinceauVariants(ids, variants, props, sheet, classes, cache)
+      }
 
-      return { $pinceau }
+      // CSS Prop setup
+      if (props.value.css && Object.keys(props.value.css).length > 0) {
+        usePinceauCssProp(ids, props, sheet)
+      }
+
+      return {
+        $pinceau: computed(() => `${classes.value.v} ${classes.value.c}`),
+      }
     }
 
+    /**
+     * Install global variables, expose `sheet.toString()` for SSR
+     */
     app.config.globalProperties.$pinceauRuntime = setupPinceauRuntime
     app.config.globalProperties.$pinceauSsr = {
       get: () => sheet.toString(),
     }
     app.provide('pinceauRuntime', setupPinceauRuntime)
   },
-}
-
-/**
- * A prop to be used on any component to enable `:css` prop.
- */
-export const cssProp = {
-  type: Object as PropType<CSS<PinceauTheme, {}, {}, false>>,
-  required: false,
-  default: undefined,
 }

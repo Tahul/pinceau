@@ -57,8 +57,45 @@ export const stringify = (
   /** Set used to manage the opened and closed state of rules. */
   const used = new WeakSet()
 
+  const write = (cssText, selectors, conditions, name, data, isAtRuleLike, isRawLike) => {
+    for (let i = 0; i < conditions.length; ++i) {
+      if (!used.has(conditions[i])) {
+        used.add(conditions[i])
+        cssText += `${conditions[i]}{`
+      }
+    }
+
+    if (selectors.length && !used.has(selectors)) {
+      used.add(selectors)
+      cssText += `${selectors}{`
+    }
+
+    if (isRawLike) {
+      name = ''
+    }
+    else if (isAtRuleLike) {
+      name = `${name} `
+    }
+    else {
+      name = `${kebabCase(name)}:`
+    }
+
+    cssText += `${
+      name + String(data)
+    }${!isRawLike ? ';' : ''}`
+
+    return cssText
+  }
+
   const parse = (style, selectors, conditions, prevName?, prevData?) => {
     let cssText = ''
+
+    // Handle $raw\\ CSS
+    if (typeof style === 'string' && style.startsWith('$raw\\')) {
+      const isAtRuleLike = (prevName || '').charCodeAt(0) === 64
+      cssText = write(cssText, selectors, conditions, prevName, style.replace(/\$raw\\/g, ''), isAtRuleLike, true)
+      return cssText
+    }
 
     for (let name in style) {
       const isAtRuleLike = name.charCodeAt(0) === 64
@@ -76,8 +113,9 @@ export const stringify = (
         }
 
         const isObjectLike = typeof data === 'object' && data && data.toString === toString
+        const isRawLike = typeof data === 'string' && data.startsWith('$raw\\')
 
-        if (isObjectLike) {
+        if (isObjectLike || isRawLike) {
           if (used.has(selectors)) {
             used.delete(selectors)
 
@@ -121,28 +159,7 @@ export const stringify = (
           }
         }
         else {
-          for (let i = 0; i < conditions.length; ++i) {
-            if (!used.has(conditions[i])) {
-              used.add(conditions[i])
-              cssText += `${conditions[i]}{`
-            }
-          }
-
-          if (selectors.length && !used.has(selectors)) {
-            used.add(selectors)
-            cssText += `${selectors}{`
-          }
-
-          if (isAtRuleLike) {
-            name = `${name} `
-          }
-          else {
-            name = `${kebabCase(name)}:`
-          }
-
-          cssText += `${
-            name + String(data)
-          };`
+          cssText = write(cssText, selectors, conditions, name, data, isAtRuleLike, false)
         }
       }
     }

@@ -586,7 +586,7 @@ The `css()` function has mutliple features:
   // You must specify a key for props when using Variants
   const props = defineProps({
     // This part is optional, it provides typings
-    ...$variantsProps
+    ...variants
   })
   </script>
   

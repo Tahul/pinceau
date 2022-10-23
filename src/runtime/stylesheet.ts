@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import type { ColorSchemeModes, TokensFunction } from '../types'
+import type { ColorSchemeModes, PinceauUidTypes, TokensFunction } from '../types'
 import { resolveCssProperty } from '../utils/css'
 import { stringify } from '../utils/stringify'
 
@@ -8,11 +8,11 @@ export function usePinceauStylesheet(
   colorSchemeMode: ColorSchemeModes,
   appId?: string,
 ) {
-  const sheet = ref()
+  const sheet = ref<CSSStyleSheet>()
 
   const declarationToCss = (decl: any) => stringify(decl, (property: any, value: any, style: any, selectors: any) => resolveCssProperty(property, value, style, selectors, $tokens, colorSchemeMode))
 
-  const resolveStylesheet = (): CSSStyleSheet => {
+  function resolveStylesheet() {
     // Sheet already resolved
     if (sheet.value) { return sheet.value }
 
@@ -20,17 +20,21 @@ export function usePinceauStylesheet(
     // SSR Rendering occurs in `app:rendered` hook, or via `getStylesheetContent`
     const global = globalThis || window
 
-    let style
+    let isHydratable = false
+
+    let style: HTMLStyleElement
     if (global && global.document) {
       const doc = global.document
-      style = doc.querySelector(`style#pinceau${appId ? `-${appId}` : ''}`)
+      style = doc.querySelector(`style#pinceau${appId ? `-${appId}` : ''}`) as HTMLStyleElement | null
 
       if (!style) {
         const styleTag = doc.createElement('style')
         styleTag.id = `pinceau${appId ? `-${appId}` : ''}`
         styleTag.type = 'text/css'
-        style = styleTag
+        style = styleTag as HTMLStyleElement
       }
+
+      if (style.attributes.getNamedItem('data-hydratable')) { isHydratable = true }
 
       doc.head.appendChild(style)
     }
@@ -44,13 +48,51 @@ export function usePinceauStylesheet(
       deleteRule(index: any) {
         delete this.cssRules[index]
       },
+    } as any as CSSStyleSheet
+
+    return isHydratable ? hydrateStylesheet() : undefined
+  }
+
+  function hydrateStylesheet() {
+    const hydratableRules = {}
+
+    const resolveUid = (rule: CSSMediaRule) => {
+      const uidRule: any = rule.cssRules && rule.cssRules.length
+        ? Object.entries((rule as any)?.cssRules).find(
+          ([_, rule]: any) => {
+            if (rule.selectorText !== ':--p') { return false }
+
+            return true
+          },
+        )
+        : undefined
+
+      if (!uidRule) { return }
+
+      const uidRegex = /--puid:(.*)?-(c|v|p)?/m
+      const [, uid, type] = uidRule[1].cssText.match(uidRegex)
+
+      if (!uid) { return }
+
+      return { uid, type }
     }
 
-    return sheet.value
-  }
-  resolveStylesheet()
+    for (const _rule of Object.entries(sheet.value.cssRules)) {
+      const [, rule] = _rule as [string, CSSMediaRule]
 
-  const toString = () => {
+      const uids = resolveUid(rule)
+
+      if (!uids || !uids.uid) { continue }
+
+      if (!hydratableRules[uids.uid]) { hydratableRules[uids.uid] = {} }
+
+      hydratableRules[uids.uid][uids.type] = rule
+    }
+
+    return hydratableRules
+  }
+
+  function toString() {
     if (!sheet.value) { return '' }
     return Object.entries(sheet.value.cssRules).reduce(
       (acc, [, rule]: any) => {
@@ -61,11 +103,23 @@ export function usePinceauStylesheet(
     )
   }
 
-  const pushDeclaration = (
+  function pushDeclaration(
+    uid: string,
+    type: PinceauUidTypes,
     declaration: any,
     previousRule?: any,
-  ): CSSRule => {
-    const cssText = declarationToCss({ '@media': declaration })
+  ): CSSRule {
+    if (!Object.keys(declaration).length) { return }
+
+    const cssText = declarationToCss({
+      '@media': {
+        ...declaration,
+        ':--p': {
+          // Mark inserted declaration with unique id and type of runtime style
+          '--puid': `${uid}-${type}`,
+        },
+      },
+    })
 
     if (!cssText) { return }
 
@@ -73,12 +127,15 @@ export function usePinceauStylesheet(
       ? Object.values(sheet.value.cssRules).indexOf(previousRule)
       : sheet.value.cssRules.length
 
-    const ruleId = sheet.value.insertRule(cssText, index)
+    const ruleId = sheet.value.insertRule(
+      cssText,
+      index,
+    )
 
     return sheet.value.cssRules[ruleId]
   }
 
-  const deleteRule = (rule: CSSRule) => {
+  function deleteRule(rule: CSSRule) {
     const ruleIndex = Object.values(sheet.value.cssRules).indexOf(rule)
 
     if (typeof ruleIndex === 'undefined' || isNaN(ruleIndex)) { return }
@@ -91,10 +148,14 @@ export function usePinceauStylesheet(
     }
   }
 
+  const hydratableRules = resolveStylesheet()
+
   return {
+    declarationToCss,
     pushDeclaration,
     deleteRule,
     sheet,
     toString,
+    hydratableRules,
   }
 }
