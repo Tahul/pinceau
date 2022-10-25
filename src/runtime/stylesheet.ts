@@ -1,3 +1,4 @@
+import { logger } from 'src/utils'
 import { ref } from 'vue'
 import type { ColorSchemeModes, PinceauUidTypes, TokensFunction } from '../types'
 import { resolveCssProperty } from '../utils/css'
@@ -23,20 +24,22 @@ export function usePinceauStylesheet(
     let isHydratable = false
 
     let style: HTMLStyleElement
-    if (global && global.document) {
-      const doc = global.document
-      style = doc.querySelector(`style#pinceau${appId ? `-${appId}` : ''}`) as HTMLStyleElement | null
-
-      if (!style) {
-        const styleTag = doc.createElement('style')
-        styleTag.id = `pinceau${appId ? `-${appId}` : ''}`
-        styleTag.type = 'text/css'
-        style = styleTag as HTMLStyleElement
+    try {
+      if (global && global.document) {
+        const doc = global.document
+        style = doc.querySelector(`style#pinceau${appId ? `-${appId}` : ''}`) as HTMLStyleElement | null
+        if (!style) {
+          const styleTag = doc.createElement('style')
+          styleTag.id = `pinceau${appId ? `-${appId}` : ''}`
+          styleTag.type = 'text/css'
+          style = styleTag as HTMLStyleElement
+        }
+        if (style.attributes.getNamedItem('data-hydratable')) { isHydratable = true }
+        doc.head.appendChild(style)
       }
-
-      if (style.attributes.getNamedItem('data-hydratable')) { isHydratable = true }
-
-      doc.head.appendChild(style)
+    }
+    catch (error) {
+      logger.error(error)
     }
 
     sheet.value = style?.sheet || {
