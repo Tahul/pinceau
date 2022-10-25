@@ -203,7 +203,12 @@ export function transformAddRuntimeImports(code: string): string {
   // Resolve defineProps reference or add it
   const { propsKey, code: _code } = resolvePropsKey(code)
   code = _code
-  code += `\nconst __$pProps = ${propsKey && propsKey !== '__$pProps' ? '__$pProps' : '{}'}\n`
+
+  // Props w/o const
+  if (propsKey && propsKey === '__$pProps') { return code }
+
+  // Props w/ const or no props
+  code += `\nconst __$pProps = ${propsKey ? '__$pProps' : '{}'}\n`
 
   return code
 }
