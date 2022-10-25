@@ -102,7 +102,7 @@ export function resolveScriptSetup(id: string, parsedComponent: SFCParseResult, 
 
   // Check for variant props
   if (hasVariants) {
-    newScriptSetup = transformVariants(newScriptSetup, variants, isTs, $tokens, colorSchemeMode)
+    newScriptSetup = transformVariants(newScriptSetup, variants, isTs)
   }
 
   // Check for computed styles
@@ -203,9 +203,7 @@ export function transformAddRuntimeImports(code: string): string {
   // Resolve defineProps reference or add it
   const { propsKey, code: _code } = resolvePropsKey(code)
   code = _code
-  if (propsKey && propsKey !== '__$pProps') {
-    code += `\nconst __$pProps = ${propsKey}\n`
-  }
+  code += `\nconst __$pProps = ${propsKey && propsKey !== '__$pProps' ? '__$pProps' : '{}'}\n`
 
   return code
 }
