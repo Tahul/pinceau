@@ -2,11 +2,7 @@ import { defineTheme } from '../src/index'
 
 export default defineTheme({
   colors: {
-    white: {
-      value: '#FFFFFF',
-    },
-    black: {
-      value: '#191919',
-    },
+    white: '#FFFFFF',
+    black: '#191919',
   },
 })

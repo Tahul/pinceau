@@ -1,6 +1,7 @@
 import type { SFCParseResult } from 'vue/compiler-sfc'
 import type MagicString from 'magic-string'
-import { parseVueComponent } from '../../utils/ast'
+import { ELEMENT_NODE } from '../../utils/ultrahtml'
+import { astTypes, parseTemplate, parseVueComponent, printAst, propStringToAst, renderHtml, walkHtml } from '../../utils/ast'
 import type { VueQuery } from '../../utils/query'
 import type { ColorSchemeModes, PinceauContext, TokensFunction } from '../../types'
 import { transformDtHelper } from '../dt'
@@ -9,7 +10,7 @@ import { transformStyle } from './style'
 import { transformVariants } from './variants'
 import { resolvePropsKey } from './props'
 
-export function transformVueSFC(code: string, id: string, magicString: MagicString, ctx: PinceauContext, query: VueQuery): { code: string; early: boolean; magicString: MagicString } {
+export async function transformVueSFC(code: string, id: string, magicString: MagicString, ctx: PinceauContext, query: VueQuery): Promise<{ code: string; early: boolean; magicString: MagicString }> {
   // Handle <style> tags scoped queries
   if (query.type === 'style') { return resolveStyleQuery(code, magicString, ctx.$tokens, ctx.options.colorSchemeMode) }
 
@@ -20,14 +21,16 @@ export function transformVueSFC(code: string, id: string, magicString: MagicStri
   // Parse component with compiler-sfc
   const parsedComponent = parseVueComponent(code, { filename: id })
 
-  // Transform <template> blocks
-  if (parsedComponent.descriptor.template) { resolveTemplate(id, parsedComponent, magicString) }
-
   // Transform <style> blocks
   if (parsedComponent.descriptor.styles) { resolveStyle(id, parsedComponent, magicString, variants, computedStyles, ctx.$tokens, ctx.options.colorSchemeMode) }
 
+  const hasRuntimeStyles = Object.keys(variants).length > 0 || Object.keys(computedStyles).length > 0
+
+  // Transform <template> blocks
+  if (parsedComponent.descriptor.template) { await resolveTemplate(id, parsedComponent, magicString, hasRuntimeStyles) }
+
   // Transform <script setup> blocks
-  if (parsedComponent.descriptor.scriptSetup) { resolveScriptSetup(id, parsedComponent, magicString, variants, computedStyles, parsedComponent.descriptor.scriptSetup.lang === 'ts') }
+  if (parsedComponent.descriptor.scriptSetup) { resolveScriptSetup(id, parsedComponent, magicString, variants, computedStyles, ctx.$tokens, ctx.options.colorSchemeMode, parsedComponent.descriptor.scriptSetup.lang === 'ts') }
 
   return { code, early: false, magicString }
 }
@@ -39,18 +42,20 @@ export function transformVueSFC(code: string, id: string, magicString: MagicStri
  */
 export function resolveStyleQuery(code: string, magicString: MagicString, $tokens: TokensFunction, colorSchemeMode: ColorSchemeModes) {
   code = transformCssFunction(code, undefined, undefined, $tokens, colorSchemeMode)
-  code = transformStyle(code, $tokens)
+  code = transformStyle(code, $tokens, colorSchemeMode)
   return { code, early: true, magicString }
 }
 
 /**
  * Transform <template> blocks.
  */
-export function resolveTemplate(id: string, parsedComponent: SFCParseResult, magicString: MagicString) {
+export async function resolveTemplate(_: string, parsedComponent: SFCParseResult, magicString: MagicString, hasRuntimeStyles: boolean) {
   const templateContent = parsedComponent.descriptor.template
   let newTemplateContent = templateContent.content
   newTemplateContent = transformDtHelper(newTemplateContent, '\'')
-
+  if (hasRuntimeStyles) {
+    newTemplateContent = await transformAddPinceauClass(newTemplateContent)
+  }
   if (templateContent.loc.end?.offset && templateContent.loc.end?.offset > templateContent.loc.start.offset) {
     magicString.overwrite(templateContent.loc.start.offset, templateContent.loc.end.offset, newTemplateContent)
   }
@@ -59,7 +64,7 @@ export function resolveTemplate(id: string, parsedComponent: SFCParseResult, mag
 /**
  * Transform all <style> blocks.
  */
-export function resolveStyle(id: string, parsedComponent: SFCParseResult, magicString: MagicString, variants: any, computedStyles: any, $tokens: TokensFunction, colorSchemeMode: ColorSchemeModes) {
+export function resolveStyle(_: string, parsedComponent: SFCParseResult, magicString: MagicString, variants: any, computedStyles: any, $tokens: TokensFunction, colorSchemeMode: ColorSchemeModes) {
   const styles = parsedComponent.descriptor.styles
   styles.forEach(
     (styleBlock) => {
@@ -67,7 +72,7 @@ export function resolveStyle(id: string, parsedComponent: SFCParseResult, magicS
       let newStyle = content
 
       newStyle = transformCssFunction(newStyle, variants, computedStyles, $tokens, colorSchemeMode)
-      newStyle = transformStyle(newStyle, $tokens)
+      newStyle = transformStyle(newStyle, $tokens, colorSchemeMode)
 
       magicString.remove(loc.start.offset, loc.end.offset)
       magicString.appendRight(
@@ -81,7 +86,7 @@ export function resolveStyle(id: string, parsedComponent: SFCParseResult, magicS
 /**
  * Transforms <script setup> blocks.
  */
-export function resolveScriptSetup(id: string, parsedComponent: SFCParseResult, magicString: MagicString, variants: any, computedStyles: any, isTs: boolean) {
+export function resolveScriptSetup(id: string, parsedComponent: SFCParseResult, magicString: MagicString, variants: any, computedStyles: any, $tokens: TokensFunction, colorSchemeMode: ColorSchemeModes, isTs: boolean) {
   const scriptSetup = parsedComponent.descriptor.scriptSetup
   const hasVariants = Object.keys(variants).length
   const hasComputedStyles = Object.keys(computedStyles).length
@@ -97,7 +102,7 @@ export function resolveScriptSetup(id: string, parsedComponent: SFCParseResult, 
 
   // Check for variant props
   if (hasVariants) {
-    newScriptSetup = transformVariants(newScriptSetup, variants, isTs)
+    newScriptSetup = transformVariants(newScriptSetup, variants, isTs, $tokens, colorSchemeMode)
   }
 
   // Check for computed styles
@@ -126,6 +131,56 @@ export function transformComputedStyles(newScriptSetup: string, computedStyles: 
     ).join('\n') + newScriptSetup
 
   return newScriptSetup
+}
+
+export async function transformAddPinceauClass(code: string): Promise<string> {
+  try {
+    const templateAst = parseTemplate(code)
+    let classAdded
+    await walkHtml(
+      templateAst,
+      (node) => {
+        if (node.type === ELEMENT_NODE) {
+          if (!classAdded) {
+            const classAttributeValue = node.attributes?.[':class']
+
+            // No class attribute found, push $pinceau
+            if (!classAttributeValue) {
+              node.attributes[':class'] = '$pinceau'
+            }
+
+            const classAttributeAst = propStringToAst(classAttributeValue)
+
+            const valueAst = astTypes.builders.arrayExpression(
+              [
+                classAttributeAst,
+                astTypes.builders.identifier('$pinceau'),
+              ],
+            )
+
+            node.attributes[':class'] = printAst(valueAst).code
+
+            classAdded = true
+          }
+        }
+
+        // Cleanup attributes
+        node.attributes = Object
+          .entries(node?.attributes || {})
+          .reduce(
+            (acc: Record<string, any>, [key, value]) => {
+              if (key !== '') {
+                acc[key] = value
+              }
+              return acc
+            }, {})
+      },
+    )
+    return await renderHtml(templateAst)
+  }
+  catch (e) {
+  }
+  return code
 }
 
 export function transformAddRuntimeImports(code: string): string {
@@ -161,7 +216,7 @@ export function transformFinishRuntimeSetup(
   hasVariants,
   computedStyles,
 ) {
-  newScriptSetup += `\n${hasVariants ? 'const { $pinceau } = ' : ''}usePinceauRuntime(__$pProps, ${hasVariants ? '__$pVariants' : 'undefined'}, ${hasComputedStyles ? `ref({ ${Object.keys(computedStyles).map(key => `${key}`).join(',')} })` : 'undefined'})\n`
+  newScriptSetup += `\n${hasVariants || hasComputedStyles ? 'const { $pinceau } = ' : ''}usePinceauRuntime(computed(() => __$pProps), ${hasVariants ? '__$pVariants' : 'undefined'}, ${hasComputedStyles ? `ref({ ${Object.keys(computedStyles).map(key => `${key}`).join(',')} })` : 'undefined'})\n`
 
   return newScriptSetup
 }

@@ -64,20 +64,3 @@ export const utils = {
   scale,
 }
 
-/**
- * Takes a props object and a variants and remove unnecessary props.
- */
-export function sanitizeProps(propsObject: any, variants: any): any {
-  if (!propsObject || !variants) {
-    return {}
-  }
-
-  return Object.entries(propsObject)
-    .reduce(
-      (acc: any, [key, value]) => {
-        if (variants[key]) { acc[key] = value }
-        return acc
-      },
-      {},
-    )
-}
