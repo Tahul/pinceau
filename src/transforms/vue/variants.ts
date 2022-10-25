@@ -15,7 +15,7 @@ export interface PropOptions {
 /**
  * Takes variants object and turns it into a `const` inside `<script setup>`
  */
-export function transformVariants(code = '', variants: any = {}, isTs: boolean, $tokens: TokensFunction, colorSchemeMode: ColorSchemeModes): string {
+export function transformVariants(code = '', variants: any = {}, isTs: boolean/* , $tokens: TokensFunction, colorSchemeMode: ColorSchemeModes */): string {
   const variantsProps = resolveVariantsProps(variants, isTs)
 
   code = code.replace(/(...)?variants(,)?/mg, '')
@@ -29,9 +29,7 @@ export function transformVariants(code = '', variants: any = {}, isTs: boolean, 
     {},
   )
 
-  const compiledVariants = compileVariants(sanitizedVariants, $tokens, colorSchemeMode)
-
-  code += `\nconst __$pVariants = ref(${JSON.stringify(compiledVariants)})\n`
+  code += `\nconst __$pVariants = ref(${JSON.stringify(sanitizedVariants)})\n`
 
   if (variantsProps) { code = pushVariantsProps(code, variantsProps) }
 

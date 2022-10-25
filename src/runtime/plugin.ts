@@ -31,7 +31,17 @@ export const plugin: Plugin = {
 
     const sheet = usePinceauStylesheet($tokens, colorSchemeMode, multiAppId)
 
-    const cache = {}
+    let cache = {}
+
+    // Cleanup cache on HMR
+    if (import.meta.hot) {
+      import.meta.hot.on(
+        'vite:beforeUpdate',
+        () => {
+          cache = {}
+        },
+      )
+    }
 
     const setupPinceauRuntime = (
       props: ComputedRef<any>,
