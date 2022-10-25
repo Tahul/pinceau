@@ -1,4 +1,3 @@
-import { defu } from 'defu'
 import type { TokensFunction, TokensFunctionOptions } from '../types'
 import { get } from './data'
 
@@ -17,7 +16,7 @@ export const createTokensHelper = (theme: any = {}, options: TokensFunctionOptio
   )
 
   const $tokens: TokensFunction = (path = undefined, options: TokensFunctionOptions) => {
-    const { key, flattened } = defu(options, defaultHelperOptions)
+    const { key, flattened } = Object.assign(defaultHelperOptions, options)
 
     if (!path) { return theme }
 

@@ -24,6 +24,8 @@ export const createContext = <UserOptions extends PinceauOptions = PinceauOption
     async (resolvedConfig) => {
       const builtTheme = await generateTheme(resolvedConfig.config, options)
 
+      if (!builtTheme) { return }
+
       updateOutputs(builtTheme)
 
       tokens = builtTheme.tokens

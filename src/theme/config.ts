@@ -1,9 +1,9 @@
 import { resolve } from 'path'
 import { existsSync } from 'fs'
-import { defu } from 'defu'
 import jiti from 'jiti'
 import type { Update, ViteDevServer } from 'vite'
 import { logger } from '../utils/logger'
+import { merger } from '../utils/merger'
 import type { ConfigLayer, LoadConfigResult, PinceauConfigContext, PinceauOptions, PinceauTheme, ResolvedConfigLayer } from '../types'
 
 const extensions = ['.js', '.ts', '.mjs', '.cjs']
@@ -18,9 +18,7 @@ export function usePinceauConfig<UserOptions extends PinceauOptions = PinceauOpt
 
   let ready = reloadConfig()
 
-  async function reloadConfig(newOptions?: UserOptions): Promise<LoadConfigResult<PinceauTheme>> {
-    if (!newOptions) { newOptions = options }
-
+  async function reloadConfig(newOptions: UserOptions = options): Promise<LoadConfigResult<PinceauTheme>> {
     const result = await loadConfig(newOptions || options)
 
     cwd = newOptions?.cwd ?? process.cwd()
@@ -128,7 +126,6 @@ export async function loadConfig<U extends PinceauTheme>(
     cwd = process.cwd(),
     configOrPaths = [cwd],
     configFileName = 'pinceau.config',
-    debug = false,
   }: PinceauOptions,
 ): Promise<LoadConfigResult<U>> {
   let _sources: string[] = []
@@ -193,8 +190,8 @@ export async function loadConfig<U extends PinceauTheme>(
     [],
   )
 
-  const resolveConfig = <U extends PinceauTheme>(layer: ConfigLayer): ResolvedConfigLayer<U> => {
-    const empty = () => ({ path: undefined, config: {} as any })
+  function resolveConfig <U extends PinceauTheme>(layer: ConfigLayer): ResolvedConfigLayer<U> {
+    const empty = (path = undefined) => ({ path, config: {} as any })
 
     let path = ''
 
@@ -220,17 +217,13 @@ export async function loadConfig<U extends PinceauTheme>(
 
     if (!filePath) { return empty() }
 
-    if (filePath) {
-      try {
-        return loadConfigFile(filePath) as ResolvedConfigLayer<U>
-      }
-      catch (e) {
-        if (debug) { logger.error({ filePath, e }) }
-        return empty()
-      }
+    try {
+      return loadConfigFile(filePath) as ResolvedConfigLayer<U>
     }
-
-    return empty()
+    catch (e) {
+      logger.error({ filePath, e })
+      return empty(filePath)
+    }
   }
 
   const result: LoadConfigResult<U> = {
@@ -246,7 +239,7 @@ export async function loadConfig<U extends PinceauTheme>(
     }
 
     if (config) {
-      result.config = defu(config, result.config) as U
+      result.config = merger(config, result.config) as U
     }
   }
 

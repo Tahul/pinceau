@@ -62,7 +62,13 @@ const getRandomPalette = () => {
 <template>
   <section>
     <PlaygroundGrid>
-      <Block v-for="test in 10" :key="test" :shadow="getRandomShadow()" :palette="getRandomPalette()" :bordered="getRandomBorder()">
+      <Block
+        v-for="test in 100"
+        :key="test"
+        :shadow="getRandomShadow()"
+        :palette="getRandomPalette()"
+        :bordered="getRandomBorder()"
+      >
         Hello World
       </Block>
     </PlaygroundGrid>

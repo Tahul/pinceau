@@ -255,7 +255,6 @@ export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath
           },
           undo: () => {},
         })
-        styleDictionary.cleanAllPlatforms()
         styleDictionary.buildAllPlatforms()
       },
     )
