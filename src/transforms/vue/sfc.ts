@@ -208,7 +208,7 @@ export function transformAddRuntimeImports(code: string): string {
   if (propsKey && propsKey === '__$pProps') { return code }
 
   // Props w/ const or no props
-  code += `\nconst __$pProps = ${propsKey ? '__$pProps' : '{}'}\n`
+  code += `\nconst __$pProps = ${propsKey || '{}'}\n`
 
   return code
 }

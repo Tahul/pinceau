@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computedStyle, cssProp } from 'pinceau/runtime'
 
-defineProps({
+const props = defineProps({
   palette: computedStyle('color', 'green', false),
   css: cssProp,
   ...variants,
