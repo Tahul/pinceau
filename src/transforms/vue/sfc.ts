@@ -1,7 +1,6 @@
 import type { SFCParseResult } from 'vue/compiler-sfc'
 import type MagicString from 'magic-string'
-import { ELEMENT_NODE } from '../../utils/ultrahtml'
-import { astTypes, parseTemplate, parseVueComponent, printAst, propStringToAst, renderHtml, walkHtml } from '../../utils/ast'
+import { parseVueComponent } from '../../utils/ast'
 import type { VueQuery } from '../../utils/query'
 import type { ColorSchemeModes, PinceauContext, TokensFunction } from '../../types'
 import { transformDtHelper } from '../dt'
@@ -132,54 +131,22 @@ export function transformComputedStyles(newScriptSetup: string, computedStyles: 
 
   return newScriptSetup
 }
-
 export async function transformAddPinceauClass(code: string): Promise<string> {
-  try {
-    const templateAst = parseTemplate(code)
-    let classAdded
-    await walkHtml(
-      templateAst,
-      (node) => {
-        if (node.type === ELEMENT_NODE) {
-          if (!classAdded) {
-            const classAttributeValue = node.attributes?.[':class']
+  if (code.includes('$pinceau')) { return code }
 
-            // No class attribute found, push $pinceau
-            if (!classAttributeValue) {
-              node.attributes[':class'] = '$pinceau'
-            }
+  let firstTag: any = code.match(/<([a-z]+)([^>]+)*>/)
 
-            const classAttributeAst = propStringToAst(classAttributeValue)
-
-            const valueAst = astTypes.builders.arrayExpression(
-              [
-                classAttributeAst,
-                astTypes.builders.identifier('$pinceau'),
-              ],
-            )
-
-            node.attributes[':class'] = printAst(valueAst).code
-
-            classAdded = true
-          }
-        }
-
-        // Cleanup attributes
-        node.attributes = Object
-          .entries(node?.attributes || {})
-          .reduce(
-            (acc: Record<string, any>, [key, value]) => {
-              if (key !== '') {
-                acc[key] = value
-              }
-              return acc
-            }, {})
-      },
-    )
-    return await renderHtml(templateAst)
+  if (firstTag[0]) {
+    const _source = String(firstTag[0])
+    if (firstTag.includes('/>')) {
+      firstTag = firstTag[0].replace('/>', ' :class="[$pinceau]" />')
+    }
+    else {
+      firstTag = firstTag[0].replace('>', ' :class="[$pinceau]">')
+    }
+    code = code.replace(_source, firstTag)
   }
-  catch (e) {
-  }
+
   return code
 }
 
