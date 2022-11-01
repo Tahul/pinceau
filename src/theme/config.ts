@@ -190,7 +190,7 @@ export async function loadConfig<U extends PinceauTheme>(
     [],
   )
 
-  function resolveConfig <U extends PinceauTheme>(layer: ConfigLayer): ResolvedConfigLayer<U> {
+  function resolveConfig<U extends PinceauTheme>(layer: ConfigLayer): ResolvedConfigLayer<U> {
     const empty = (path = undefined) => ({ path, config: {} as any })
 
     let path = ''

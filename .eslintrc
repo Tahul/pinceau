@@ -3,7 +3,8 @@
   "rules": {
     "curly": ["error", "multi-line", "consistent"],
     "quotes": ["error", "single"],
-    "@typescript-eslint/ban-ts-comment": "off"
+    "@typescript-eslint/ban-ts-comment": "off",
+    "antfu/generic-spacing": "off"
   },
   "ignorePatterns": "**/*.md,test/fixtures/**/*.vue"
 }
