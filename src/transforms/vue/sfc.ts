@@ -138,11 +138,11 @@ export async function transformAddPinceauClass(code: string): Promise<string> {
 
   if (firstTag[0]) {
     const _source = String(firstTag[0])
-    if (firstTag.includes('/>')) {
-      firstTag = firstTag[0].replace('/>', ' :class="[$pinceau]" />')
+    if (_source.includes('/>')) {
+      firstTag = _source.replace('/>', ' :class="[$pinceau]" />')
     }
     else {
-      firstTag = firstTag[0].replace('>', ' :class="[$pinceau]">')
+      firstTag = _source.replace('>', ' :class="[$pinceau]">')
     }
     code = code.replace(_source, firstTag)
   }
