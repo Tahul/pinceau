@@ -134,9 +134,9 @@ export function transformComputedStyles(newScriptSetup: string, computedStyles: 
 export async function transformAddPinceauClass(code: string): Promise<string> {
   if (code.includes('$pinceau')) { return code }
 
-  let firstTag: any = code.match(/<([a-z]+)([^>]+)*>/)
+  let firstTag: any = code.match(/<([a-zA-Z]+)([^>]+)*>/)
 
-  if (firstTag[0]) {
+  if (firstTag?.[0]) {
     const _source = String(firstTag[0])
     if (_source.includes('/>')) {
       firstTag = _source.replace('/>', ' :class="[$pinceau]" />')
