@@ -1,4 +1,3 @@
-// @ts-expect-error
 import type { GeneratedPinceauTheme, GeneratedTokensPaths } from '#pinceau/types'
 
 export interface DesignToken<
