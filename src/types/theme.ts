@@ -1,12 +1,19 @@
+import type { CSS, MediaQueriesKeys } from './css'
 import type { GeneratedPinceauTheme, GeneratedTokensPaths } from '#pinceau/types'
 
+export type RawTokenType = string | number | ShadowTokenValue
+
+export type ResponsiveToken<T = RawTokenType> = {
+  [key in MediaQueriesKeys]?: T
+}
+
 export interface DesignToken<
-  T = string | number | ShadowTokenValue | any,
+  T = RawTokenType,
 > {
   /**
    * The raw value of the token.
    */
-  value?: T
+  value?: T | ResponsiveToken<T>
   /**
    * CSS Variable reference that gets generated out of the token path.
    */
@@ -51,8 +58,12 @@ export interface DesignToken<
   [key: string]: any
 }
 
+export interface PinceauUtilsProperties {
+  [key: string]: CSS | ((value: any) => CSS)
+}
+
 export interface PinceauTokens {
-  [key: string]: PinceauTokens | DesignToken | string | number | undefined
+  [key: string]: PinceauTokens | DesignToken | RawTokenType | ResponsiveToken
 }
 
 export interface ShadowTokenValue {
@@ -126,6 +137,7 @@ export interface ConfigTokens extends PinceauTokens {
   letterSpacings?: BreakpointsTokens | PinceauTokens
   transitions?: PinceauTokens | PinceauTokens
   zIndices?: PinceauTokens | PinceauTokens
+  utils?: PinceauUtilsProperties
 }
 
 export interface DefaultThemeMap {

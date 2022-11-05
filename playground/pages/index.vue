@@ -49,6 +49,7 @@ const getRandomBorder = () => {
 
 const getRandomPalette = () => {
   return getRandom([
+    'primary',
     'blue',
     'yellow',
     'red',
