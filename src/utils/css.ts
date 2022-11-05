@@ -102,7 +102,7 @@ export function resolveRgbaTokens(property: string, value: string, $tokens: Toke
         (...reference) => {
           const token = $tokens(reference[1], { key: 'original' }) as DesignToken
 
-          let tokenValue = token?.value || token
+          let tokenValue: any = token?.value || token
 
           if (!tokenValue) { return '0,0,0' }
 
@@ -133,7 +133,7 @@ export function resolveCalcTokens(property: string, value: string, $tokens: Toke
       newValue = newValue.replace(
         referencesRegex,
         (...reference) => {
-          const token = $tokens(reference[1], { key: 'original' }) as DesignToken
+          const token = $tokens(reference[1], { key: 'original' }) as any
 
           return token?.value || token
         },
