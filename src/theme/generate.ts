@@ -176,7 +176,7 @@ export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath
           let responsiveSelector
           if (key === 'dark' || key === 'light') {
             if (colorSchemeMode === 'class') {
-              responsiveSelector = `html.${key} :root`
+              responsiveSelector = `:root.${key}`
             }
             else {
               responsiveSelector = `@media (prefers-color-scheme: ${key})`
@@ -185,7 +185,13 @@ export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath
           else {
             responsiveSelector = dictionary.allTokens.find(token => token.name === `media.${key}`)
           }
-          css += `\n${responsiveSelector} {\n${formattedResponsiveContent}\n}\n`
+
+          if (responsiveSelector.startsWith('@media')) {
+            css += `\n${responsiveSelector} { :root {\n${formattedResponsiveContent}\n}\n}\n`
+          }
+          else {
+            css += `\n${responsiveSelector} {\n${formattedResponsiveContent}\n}\n`
+          }
         },
       )
       outputs.css = css
