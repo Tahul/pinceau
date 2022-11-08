@@ -49,6 +49,7 @@ const getRandomBorder = () => {
 
 const getRandomPalette = () => {
   return getRandom([
+    'primary',
     'blue',
     'yellow',
     'red',
@@ -62,7 +63,13 @@ const getRandomPalette = () => {
 <template>
   <section>
     <PlaygroundGrid>
-      <Block v-for="test in 10" :key="test" :shadow="getRandomShadow()" :palette="getRandomPalette()" :bordered="getRandomBorder()">
+      <Block
+        v-for="test in 100"
+        :key="test"
+        :shadow="getRandomShadow()"
+        :palette="getRandomPalette()"
+        :bordered="getRandomBorder()"
+      >
         Hello World
       </Block>
     </PlaygroundGrid>
@@ -72,7 +79,9 @@ const getRandomPalette = () => {
 <style scoped lang="ts">
 css({
   button: {
-    padding: '5rem',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   section: {
     '& > div': {

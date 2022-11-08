@@ -26,6 +26,8 @@ export function usePinceauRuntimeIds(
     uid = nanoid(6)
   }
 
+  const scopeId = (instance?.vnode?.type as any)?.__scopeId
+
   const ids = {
     uid,
     componentId: (instance?.vnode?.type as any)?.__scopeId ? `[${(instance?.vnode?.type as any)?.__scopeId || undefined}]` : "",

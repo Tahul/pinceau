@@ -5,7 +5,7 @@ import type { PinceauOptions, PinceauTheme, PinceauTokens, ThemeGenerationOutput
 import { logger } from '../utils'
 import { jsFlat, jsFull, tsFlat, tsFull, tsTypesDeclaration } from './formats'
 
-export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath, debug }: PinceauOptions, silent = true): Promise<ThemeGenerationOutput> {
+export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath, colorSchemeMode, debug }: PinceauOptions, silent = true): Promise<ThemeGenerationOutput> {
   let styleDictionary: Instance = StyleDictionary
 
   // Tokens outputs as in-memory objects
@@ -21,6 +21,14 @@ export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath
   if (!tokens || typeof tokens !== 'object' || !Object.keys(tokens).length) {
     return result
   }
+
+  // Custom properties
+  const customProperties = { ...(tokens?.utils as any || {}) }
+  if (tokens?.utils) { delete tokens?.utils }
+
+  // Responsive tokens
+  const mqKeys = ['dark', 'light', Object.keys(tokens?.media || [])]
+  const responsiveTokens = {}
 
   // Tokens processed through dictionary
   let transformedTokens: PinceauTokens
@@ -54,9 +62,7 @@ export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath
         },
       )
     },
-    undo: () => {
-      //
-    },
+    undo: () => {},
   })
 
   // Add `variable` key to attributes
@@ -78,6 +84,39 @@ export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath
     matcher: () => true,
     transformer(token) {
       return token.name.replaceAll('-', '.')
+    },
+  })
+
+  // Handle responsive tokens
+  styleDictionary.registerTransform({
+    name: 'pinceau/responsiveTokens',
+    type: 'value',
+    transitive: true,
+    matcher: (token) => {
+      // Handle responsive tokens
+      const keys = typeof token.value === 'object' ? Object.keys(token.value) : []
+      if (
+        keys
+        && keys.includes('initial')
+        && keys.some(key => mqKeys.includes(key))
+      ) {
+        return true
+      }
+
+      return false
+    },
+    transformer: (token) => {
+      Object.entries(token.value).forEach(
+        ([key, value]) => {
+          if (key === 'initial') { return }
+          if (!responsiveTokens[key]) { responsiveTokens[key] = [] }
+          const responsiveToken = { ...token, value }
+          if (!(responsiveTokens[key].some(token => token.name === responsiveToken.name))) {
+            responsiveTokens[key].push(responsiveToken)
+          }
+        },
+      )
+      return token.value.initial
     },
   })
 
@@ -116,14 +155,14 @@ export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath
   // Transform group used accross all tokens formats
   styleDictionary.registerTransformGroup({
     name: 'pinceau',
-    transforms: ['name/cti/kebab', 'size/px', 'color/hex', 'pinceau/variable', 'pinceau/boxShadows'],
+    transforms: ['name/cti/kebab', 'size/px', 'color/hex', 'pinceau/variable', 'pinceau/boxShadows', 'pinceau/responsiveTokens'],
   })
 
   // types.ts
   styleDictionary.registerFormat({
     name: 'pinceau/types',
     formatter() {
-      return tsTypesDeclaration(transformedTokensTyping)
+      return tsTypesDeclaration(transformedTokensTyping, customProperties)
     },
   })
 
@@ -134,7 +173,31 @@ export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath
       const selector = options.selector ? options.selector : ':root'
       const { outputReferences } = options
       const { formattedVariables } = StyleDictionary.formatHelpers
-      const css = `${selector} {\n${formattedVariables({ format: 'css', dictionary, outputReferences })}\n}\n`
+      let css = `${selector} {\n${formattedVariables({ format: 'css', dictionary, outputReferences })}\n}\n`
+      Object.entries(responsiveTokens).forEach(
+        ([key, value]) => {
+          const formattedResponsiveContent = formattedVariables({ format: 'css', dictionary: { allTokens: value } as any, outputReferences })
+          let responsiveSelector
+          if (key === 'dark' || key === 'light') {
+            if (colorSchemeMode === 'class') {
+              responsiveSelector = `:root.${key}`
+            }
+            else {
+              responsiveSelector = `@media (prefers-color-scheme: ${key})`
+            }
+          }
+          else {
+            responsiveSelector = dictionary.allTokens.find(token => token.name === `media.${key}`)
+          }
+
+          if (responsiveSelector.startsWith('@media')) {
+            css += `\n${responsiveSelector} { :root {\n${formattedResponsiveContent}\n}\n}\n`
+          }
+          else {
+            css += `\n${responsiveSelector} {\n${formattedResponsiveContent}\n}\n`
+          }
+        },
+      )
       outputs.css = css
       return css
     },
@@ -156,7 +219,7 @@ export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath
   styleDictionary.registerFormat({
     name: 'pinceau/typescript',
     formatter() {
-      const ts = tsFull(transformedTokens)
+      const ts = tsFull(transformedTokens, customProperties)
       outputs.ts = ts
       return ts
     },
@@ -166,7 +229,7 @@ export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath
   styleDictionary.registerFormat({
     name: 'pinceau/javascript',
     formatter() {
-      const js = jsFull(transformedTokens)
+      const js = jsFull(transformedTokens, customProperties)
       outputs.js = js
       return js
     },
@@ -176,7 +239,7 @@ export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath
   styleDictionary.registerFormat({
     name: 'pinceau/typescript-flat',
     formatter() {
-      const _tsFlat = tsFlat(transformedTokens)
+      const _tsFlat = tsFlat(transformedTokens, customProperties)
       outputs.flat_ts = _tsFlat
       return _tsFlat
     },
@@ -186,7 +249,7 @@ export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath
   styleDictionary.registerFormat({
     name: 'pinceau/javascript-flat',
     formatter() {
-      const _jsFlat = jsFlat(transformedTokens)
+      const _jsFlat = jsFlat(transformedTokens, customProperties)
       outputs.flat_js = _jsFlat
       return _jsFlat
     },
@@ -255,7 +318,6 @@ export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath
           },
           undo: () => {},
         })
-        styleDictionary.cleanAllPlatforms()
         styleDictionary.buildAllPlatforms()
       },
     )

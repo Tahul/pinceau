@@ -1,6 +1,21 @@
 import { defineTheme, palette } from '../../src'
 
 export default defineTheme({
+  utils: {
+    my: value => ({ marginTop: value, marginBottom: value }),
+
+    mx: value => ({ marginLeft: value, marginRight: value }),
+
+    px: value => ({ paddingLeft: value, paddingRight: value }),
+
+    py: value => ({ paddingTop: value, paddingBottom: value }),
+
+    truncate: {
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
+    },
+  },
   media: {
     sm: '(min-width: 640px)',
     md: '(min-width: 768px)',
@@ -13,6 +28,44 @@ export default defineTheme({
     code: '\'Fira Code\', monospace',
   },
   colors: {
+    primary: {
+      100: {
+        initial: '{colors.blue.100}',
+        dark: '{colors.blue.900}',
+      },
+      200: {
+        initial: '{colors.blue.200}',
+        dark: '{colors.blue.800}',
+      },
+      300: {
+        initial: '{colors.blue.300}',
+        dark: '{colors.blue.700}',
+      },
+      400: {
+        initial: '{colors.blue.400}',
+        dark: '{colors.blue.600}',
+      },
+      500: {
+        initial: '{colors.blue.500}',
+        dark: '{colors.blue.500}',
+      },
+      600: {
+        initial: '{colors.blue.600}',
+        dark: '{colors.blue.400}',
+      },
+      700: {
+        initial: '{colors.blue.700}',
+        dark: '{colors.blue.300}',
+      },
+      800: {
+        initial: '{colors.blue.800}',
+        dark: '{colors.blue.200}',
+      },
+      900: {
+        initial: '{colors.blue.900}',
+        dark: '{colors.blue.100}',
+      },
+    },
     blue: palette('#2B9EB3'),
     yellow: palette('#FCAB10'),
     red: palette('#F8333C'),

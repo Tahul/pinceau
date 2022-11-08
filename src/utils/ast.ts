@@ -28,16 +28,6 @@ export function propStringToAst(type: string) {
   return parsed.program.body[0].declarations[0].init
 }
 
-export function parseTemplate(code: string) {
-  return parseHtml(code)
-}
-
-/**
- * Re-exports from ultrahtml.
- */
-const walkHtml = _walkHtml
-const renderHtml = _renderHtml
-
 /**
  * Re-exports from recast.
  *
@@ -47,4 +37,4 @@ const visitAst = recast.visit
 const printAst = recast.print
 const astTypes = recast.types
 
-export { visitAst, printAst, astTypes, walkHtml, renderHtml }
+export { visitAst, printAst, astTypes }

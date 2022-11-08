@@ -1,12 +1,31 @@
 import { flattenTokens, objectPaths } from '../utils'
 
+const stringifyCustomProperties = (value: { [key: string]: any }) => {
+  const entries = Object.entries(value)
+  return entries.reduce(
+    (acc, [key, value], index) => {
+      if (typeof value === 'function') { acc += `"${key}": ${String(value)},\n` }
+      else { acc += `"${key}": ${JSON.stringify(value, null, 2)},\n` }
+
+      if ((index + 1) === entries.length) { acc += '}\n' }
+
+      return acc
+    },
+    '{\n',
+  )
+}
+
 /**
  * import type { PinceauTheme } from '#pinceau/types'
  */
-export const tsTypesDeclaration = (typesObject: any) => {
+export const tsTypesDeclaration = (typesObject: any, customProperties = {}) => {
   let result = 'import type { DesignToken } from \'pinceau\'\n\n'
 
   result += `export interface GeneratedPinceauTheme ${JSON.stringify(typesObject, null, 2)}\n\n`
+
+  result += `const generatedCustomProperties = ${stringifyCustomProperties(customProperties)}\n\n`
+
+  result += 'export type GeneratedCustomProperties = typeof generatedCustomProperties\n\n'
 
   const tokensPaths = objectPaths(typesObject)
 
@@ -22,12 +41,14 @@ export const tsTypesDeclaration = (typesObject: any) => {
 /**
  * import theme from '#pinceau/theme'
  */
-export const tsFull = (tokensObject: any) => {
-  let result = 'import type { GeneratedPinceauTheme } from \'./types\'\n\n'
+export const tsFull = (tokensObject: any, customProperties = {}) => {
+  let result = 'import type { GeneratedPinceauTheme, GeneratedCustomProperties } from \'./types\'\n\n'
 
   result += `export const theme: GeneratedPinceauTheme = ${JSON.stringify(tokensObject, null, 2)} as const\n\n`
 
-  result += 'export default { theme }'
+  result += `export const customProperties: GeneratedCustomProperties = ${stringifyCustomProperties(customProperties)}`
+
+  result += 'export default { theme, customProperties }'
 
   return result
 }
@@ -35,10 +56,12 @@ export const tsFull = (tokensObject: any) => {
 /**
  * import theme from '#pinceau/theme/flat'
  */
-export const tsFlat = (tokensObject: any) => {
+export const tsFlat = (tokensObject: any, customProperties = {}) => {
   let result = `export const theme = ${JSON.stringify(flattenTokens(tokensObject), null, 2)}\n\n`
 
-  result += 'export default { theme }'
+  result += `export const customProperties = ${stringifyCustomProperties(customProperties)}`
+
+  result += 'export default { theme, customProperties }'
 
   return result
 }
@@ -48,10 +71,12 @@ export const tsFlat = (tokensObject: any) => {
  *
  * In JS contexts.
  */
-export const jsFull = (tokensObject: any) => {
+export const jsFull = (tokensObject: any, customProperties = {}) => {
   let result = `export const theme = ${JSON.stringify(tokensObject, null, 2)}\n\n`
 
-  result += 'export default { theme }'
+  result += `export const customProperties = ${stringifyCustomProperties(customProperties)}`
+
+  result += 'export default { theme, customProperties }'
 
   return result
 }
@@ -61,10 +86,12 @@ export const jsFull = (tokensObject: any) => {
  *
  * In JS contexts.
  */
-export const jsFlat = (tokensObject: any) => {
+export const jsFlat = (tokensObject: any, customProperties = {}) => {
   let result = `export const theme = ${JSON.stringify(flattenTokens(tokensObject), null, 2)}\n\n`
 
-  result += 'export default { theme }'
+  result += `export const customProperties = ${stringifyCustomProperties(customProperties)}`
+
+  result += 'export default { theme, customProperties }'
 
   return result
 }

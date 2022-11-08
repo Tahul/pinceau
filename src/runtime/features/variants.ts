@@ -1,5 +1,6 @@
 import { nanoid } from 'nanoid'
 import type { ComputedRef, Ref } from 'vue'
+import { defu } from 'defu'
 import { computed, onScopeDispose, watch } from 'vue'
 import type { PinceauRuntimeIds } from '../../types'
 import type { usePinceauStylesheet } from '../stylesheet'
@@ -86,16 +87,17 @@ export function transformVariantsToDeclaration(
           if (!declaration[targetId]) { declaration[targetId] = {} }
 
           if (mqId === 'initial') {
-            if (!declaration[targetId]['@initial']) { declaration[targetId]['@initial'] = '' }
+            if (!declaration[targetId]['@initial']) { declaration[targetId]['@initial'] = {} }
             declaration[targetId]['@initial'] += variantValue.css
           }
 
           const mediaId = (mqId === 'dark' || mqId === 'light') ? `@${mqId}` : `@mq.${mqId}`
 
           if (!declaration[mediaId]) { declaration[mediaId] = {} }
-          if (!declaration[mediaId][targetId]) { declaration[mediaId][targetId] = '' }
 
-          declaration[mediaId][targetId] += variantValue.css
+          if (!declaration[mediaId][targetId]) { declaration[mediaId][targetId] = {} }
+
+          declaration[mediaId][targetId] = defu(declaration[mediaId][targetId], variantValue)
         }
       }
       else {
@@ -104,9 +106,9 @@ export function transformVariantsToDeclaration(
 
         if (!variantValue) { continue }
 
-        if (!declaration[targetId]) { declaration[targetId] = '' }
+        if (!declaration[targetId]) { declaration[targetId] = {} }
 
-        declaration[targetId] += variantValue.css
+        declaration[targetId] = defu(declaration[targetId], variantValue)
       }
     }
   }

@@ -6,10 +6,21 @@ import { DARK, INITIAL, LIGHT, calcRegex, keyRegex, mqPlainRegex, referencesRege
 /**
  * Resolve a css function property to a stringifiable declaration.
  */
-export function resolveCssProperty(property: any, value: any, style: any, selectors: any, $tokens: TokensFunction, colorSchemeMode: ColorSchemeModes) {
+export function resolveCssProperty(property: any, value: any, style: any, selectors: any, $tokens: TokensFunction, customProperties: any, colorSchemeMode: ColorSchemeModes) {
   // Resolve custom style directives
   const directive = resolveCustomDirectives(property, value, $tokens, colorSchemeMode)
   if (directive) { return directive }
+
+  // Resolve custom properties
+  if (customProperties[property]) {
+    // Custom property is a function, pass value and return result
+    if (typeof customProperties[property] === 'function') {
+      return customProperties[property](value)
+    }
+
+    // Custom property is an object, if value is true, return result
+    return !!value ? customProperties[property] : {}
+  }
 
   // Resolve final value
   value = castValues(property, value, $tokens)
@@ -102,7 +113,7 @@ export function resolveRgbaTokens(property: string, value: string, $tokens: Toke
         (...reference) => {
           const token = $tokens(reference[1], { key: 'original' }) as DesignToken
 
-          let tokenValue = token?.value || token
+          let tokenValue: any = token?.value || token
 
           if (!tokenValue) { return '0,0,0' }
 
@@ -133,7 +144,7 @@ export function resolveCalcTokens(property: string, value: string, $tokens: Toke
       newValue = newValue.replace(
         referencesRegex,
         (...reference) => {
-          const token = $tokens(reference[1], { key: 'original' }) as DesignToken
+          const token = $tokens(reference[1], { key: 'original' }) as any
 
           return token?.value || token
         },
