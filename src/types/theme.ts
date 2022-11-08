@@ -58,8 +58,13 @@ export interface DesignToken<
   [key: string]: any
 }
 
-export interface PinceauUtilsProperties {
-  [key: string]: CSS | ((value: any) => CSS)
+export type PinceauUtilsProperties = |
+{
+  [key in keyof CSS]: CSS | ((value: string | number) => CSS)
+}
+&
+{
+  [key: string]: CSS | ((value: string | number) => CSS)
 }
 
 export interface PinceauTokens {

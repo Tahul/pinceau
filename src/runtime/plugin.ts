@@ -14,22 +14,20 @@ export const plugin: Plugin = {
   install(
     app,
     {
-      theme,
+      theme = { theme: {}, customProperties: {} },
       tokensHelperConfig,
       multiApp = false,
       colorSchemeMode = 'media',
       dev = process.env.NODE_ENV !== 'production',
     },
   ) {
-    theme = Object.assign({}, theme || {})
-
     tokensHelperConfig = Object.assign({ flattened: true }, tokensHelperConfig)
 
     const multiAppId = multiApp ? nanoid(6) : undefined
 
     const $tokens = createTokensHelper(theme.theme, tokensHelperConfig)
 
-    const sheet = usePinceauStylesheet($tokens, colorSchemeMode, multiAppId)
+    const sheet = usePinceauStylesheet($tokens, theme.customProperties, colorSchemeMode, multiAppId)
 
     let cache = {}
 

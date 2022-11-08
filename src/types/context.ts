@@ -8,6 +8,7 @@ export type ConfigOrPaths = PinceauTheme | string | string[] | undefined
 export interface PinceauContext<UserOptions extends PinceauOptions = PinceauOptions> extends PinceauConfigContext<UserOptions>, PinceauVirtualContext {
   env: 'prod' | 'dev'
   tokens: PinceauTheme
+  customProperties: any
   $tokens: TokensFunction
   options: PinceauOptions
 

@@ -80,7 +80,7 @@
     "prepare": "npm -C playground run prepare"
   },
   "dependencies": {
-    "@unocss/reset": "^0.46.2",
+    "@unocss/reset": "^0.46.3",
     "@volar/vue-language-core": "^1.0.9",
     "chroma-js": "^2.4.2",
     "consola": "^2.15.3",
@@ -99,14 +99,14 @@
     "unplugin": "^0.10.2"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^0.29.2",
-    "@nuxt/kit": "3.0.0-rc.12",
-    "@nuxt/test-utils": "3.0.0-rc.12",
+    "@antfu/eslint-config": "^0.29.4",
+    "@nuxt/kit": "3.0.0-rc.13",
+    "@nuxt/test-utils": "3.0.0-rc.13",
     "@nuxtjs/color-mode": "^3.1.8",
     "@types/chroma-js": "^2.1.4",
-    "@types/node": "^18.11.8",
+    "@types/node": "^18.11.9",
     "@vue/test-utils": "^2.2.1",
-    "eslint": "^8.26.0",
+    "eslint": "^8.27.0",
     "esno": "^0.16.3",
     "fast-glob": "^3.2.12",
     "jsdom": "^20.0.2",
@@ -114,10 +114,10 @@
     "playwright": "^1.27.1",
     "release-it": "^15.5.0",
     "rimraf": "^3.0.2",
-    "rollup": "^3.2.4",
+    "rollup": "^3.2.5",
     "typescript": "^4.8.4",
-    "vite": "^3.2.2",
-    "vitest": "^0.24.4",
+    "vite": "^3.2.3",
+    "vitest": "^0.25.0",
     "vue": "^3.2.41",
     "webpack": "^5.74.0"
   },

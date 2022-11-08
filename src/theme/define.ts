@@ -14,7 +14,10 @@ export function walkConfig(
   else {
     for (const k in obj) {
       // Skip `utils`
-      if (k === 'utils') { continue }
+      if (k === 'utils') {
+        result[k] = obj[k]
+        continue
+      }
       // Cast string values into tokens
       if (obj[k] && typeof obj[k] === 'string') { result[k] = { value: obj[k] } }
       // Cast inline shadow tokens

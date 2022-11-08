@@ -1,6 +1,21 @@
 import { defineTheme, palette } from '../../src'
 
 export default defineTheme({
+  utils: {
+    my: value => ({ marginTop: value, marginBottom: value }),
+
+    mx: value => ({ marginLeft: value, marginRight: value }),
+
+    px: value => ({ paddingLeft: value, paddingRight: value }),
+
+    py: value => ({ paddingTop: value, paddingBottom: value }),
+
+    truncate: {
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
+    },
+  },
   media: {
     sm: '(min-width: 640px)',
     md: '(min-width: 768px)',

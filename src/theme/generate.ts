@@ -22,6 +22,10 @@ export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath
     return result
   }
 
+  // Custom properties
+  const customProperties = { ...(tokens?.utils as any || {}) }
+  if (tokens?.utils) { delete tokens?.utils }
+
   // Responsive tokens
   const mqKeys = ['dark', 'light', Object.keys(tokens?.media || [])]
   const responsiveTokens = {}
@@ -158,7 +162,7 @@ export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath
   styleDictionary.registerFormat({
     name: 'pinceau/types',
     formatter() {
-      return tsTypesDeclaration(transformedTokensTyping)
+      return tsTypesDeclaration(transformedTokensTyping, customProperties)
     },
   })
 
@@ -215,7 +219,7 @@ export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath
   styleDictionary.registerFormat({
     name: 'pinceau/typescript',
     formatter() {
-      const ts = tsFull(transformedTokens)
+      const ts = tsFull(transformedTokens, customProperties)
       outputs.ts = ts
       return ts
     },
@@ -225,7 +229,7 @@ export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath
   styleDictionary.registerFormat({
     name: 'pinceau/javascript',
     formatter() {
-      const js = jsFull(transformedTokens)
+      const js = jsFull(transformedTokens, customProperties)
       outputs.js = js
       return js
     },
@@ -235,7 +239,7 @@ export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath
   styleDictionary.registerFormat({
     name: 'pinceau/typescript-flat',
     formatter() {
-      const _tsFlat = tsFlat(transformedTokens)
+      const _tsFlat = tsFlat(transformedTokens, customProperties)
       outputs.flat_ts = _tsFlat
       return _tsFlat
     },
@@ -245,7 +249,7 @@ export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath
   styleDictionary.registerFormat({
     name: 'pinceau/javascript-flat',
     formatter() {
-      const _jsFlat = jsFlat(transformedTokens)
+      const _jsFlat = jsFlat(transformedTokens, customProperties)
       outputs.flat_js = _jsFlat
       return _jsFlat
     },

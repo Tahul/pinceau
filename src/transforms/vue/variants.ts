@@ -36,25 +36,6 @@ export function transformVariants(code = '', variants: any = {}, isTs: boolean):
   return code
 }
 
-export function compileVariants(
-  variantsObject: any,
-  $tokens: TokensFunction,
-  colorSchemeMode: ColorSchemeModes,
-) {
-  variantsObject = JSON.parse(JSON.stringify(variantsObject))
-  for (const [key, values] of Object.entries(variantsObject)) {
-    for (const [variantValueKey, variantValue] of Object.entries(values)) {
-      const cssString = stringify(variantValue, (property, value, style, selectors) => resolveCssProperty(property, value, style, selectors, $tokens, colorSchemeMode))
-      const variantHash = hash(variantValue)
-      variantsObject[key][variantValueKey] = {
-        hash: variantHash,
-        css: `$raw\\${cssString}`,
-      }
-    }
-  }
-  return variantsObject
-}
-
 /**
  * Push variants object to components props.
  *

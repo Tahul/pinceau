@@ -79,7 +79,9 @@ const getRandomPalette = () => {
 <style scoped lang="ts">
 css({
   button: {
-    padding: '5rem',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   section: {
     '& > div': {

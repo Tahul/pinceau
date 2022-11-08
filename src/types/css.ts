@@ -2,7 +2,7 @@ import type * as CSSType from 'csstype'
 import type { utils } from '../runtime/utils'
 import type * as Utils from './utils'
 import type { DefaultThemeMap, PinceauTheme, PinceauThemePaths } from './theme'
-import type { GeneratedPinceauTheme } from '#pinceau/types'
+import type { GeneratedCustomProperties, GeneratedPinceauTheme } from '#pinceau/types'
 
 export type ComputedStylesUtils = typeof utils
 
@@ -206,6 +206,10 @@ export type CSS<
       | {}
       | undefined
     )
+  }
+  &
+  {
+    [K in keyof GeneratedCustomProperties]?: Utils.WrapUnion<PinceauThemePaths, '{', '}'>
   }
   &
   // Other properties (nested selector)

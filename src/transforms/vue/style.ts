@@ -20,7 +20,7 @@ export const transformVueStyle = (id: string, query: VueQuery, ctx: PinceauConte
 
   let source = style?.content || ''
 
-  source = transformCssFunction(source, undefined, undefined, ctx.$tokens, ctx.options.colorSchemeMode)
+  source = transformCssFunction(source, undefined, undefined, ctx.$tokens, ctx.customProperties, ctx.options.colorSchemeMode)
   source = transformStyle(source, ctx.$tokens, ctx.options.colorSchemeMode)
 
   if (style?.content !== source) { return source }
@@ -56,7 +56,6 @@ export function transformScheme(code = '', scheme: 'light' | 'dark', _: ColorSch
  * Resolve `@mq.{mediaQuery}` declarations.
  */
 export function transformMediaQueries(code = '', $tokens: TokensFunction): string {
-  // @ts-expect-error - Might be undefined
   const mediaQueries = $tokens('media', {
     key: undefined,
     silent: true,
