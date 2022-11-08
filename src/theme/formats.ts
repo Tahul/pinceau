@@ -2,17 +2,16 @@ import { flattenTokens, objectPaths } from '../utils'
 
 const stringifyCustomProperties = (value: { [key: string]: any }) => {
   const entries = Object.entries(value)
-  return entries.reduce(
-    (acc, [key, value], index) => {
+  let result = entries.reduce(
+    (acc, [key, value]) => {
       if (typeof value === 'function') { acc += `"${key}": ${String(value)},\n` }
       else { acc += `"${key}": ${JSON.stringify(value, null, 2)},\n` }
-
-      if ((index + 1) === entries.length) { acc += '}\n' }
-
       return acc
     },
     '{\n',
   )
+  result += '\n}\n'
+  return result
 }
 
 /**

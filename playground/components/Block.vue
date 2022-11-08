@@ -19,6 +19,7 @@ defineProps({
 <style lang="ts" scoped>
 css({
   '.block': {
+    my: '{space.104}',
     backgroundColor: (props, utils) => utils.scale(
       'colors',
       props.palette,
