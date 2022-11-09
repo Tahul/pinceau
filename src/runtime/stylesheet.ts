@@ -124,14 +124,9 @@ export function usePinceauStylesheet(
 
     if (!cssText) { return }
 
-    const index = previousRule
-      ? Object.values(sheet.value.cssRules).indexOf(previousRule)
-      : sheet.value.cssRules.length
+    if (previousRule) { deleteRule(previousRule) }
 
-    const ruleId = sheet.value.insertRule(
-      cssText,
-      index,
-    )
+    const ruleId = sheet.value.insertRule(cssText)
 
     return sheet.value.cssRules[ruleId]
   }

@@ -109,6 +109,7 @@
     "eslint": "^8.27.0",
     "esno": "^0.16.3",
     "fast-glob": "^3.2.12",
+    "js-confetti": "^0.11.0",
     "jsdom": "^20.0.2",
     "nodemon": "^2.0.20",
     "playwright": "^1.27.1",

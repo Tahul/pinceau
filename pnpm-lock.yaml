@@ -20,6 +20,7 @@ importers:
       eslint: ^8.27.0
       esno: ^0.16.3
       fast-glob: ^3.2.12
+      js-confetti: ^0.11.0
       jsdom: ^20.0.2
       magic-string: ^0.26.7
       nanoid: ^4.0.0
@@ -71,6 +72,7 @@ importers:
       eslint: 8.27.0
       esno: 0.16.3
       fast-glob: 3.2.12
+      js-confetti: 0.11.0
       jsdom: 20.0.2
       nodemon: 2.0.20
       playwright: 1.27.1
@@ -5191,6 +5193,10 @@ packages:
   /jiti/1.16.0:
     resolution: {integrity: sha512-L3BJStEf5NAqNuzrpfbN71dp43mYIcBUlCRea/vdyv5dW/AYa1d4bpelko4SHdY3I6eN9Wzyasxirj1/vv5kmg==}
     hasBin: true
+
+  /js-confetti/0.11.0:
+    resolution: {integrity: sha512-Hc7I3VI4r4H0nq5q/oQK+JJwGoYRYVHK72fGk8E9Ay1dbh+aiZ9yl0yFp1K4oYeq7YFDQAndYChwqLPA3QWQuA==}
+    dev: true
 
   /js-sdsl/4.1.5:
     resolution: {integrity: sha512-08bOAKweV2NUC1wqTtf3qZlnpOX/R2DU9ikpjOHs0H+ibQv3zpncVQg6um4uYtRtrwIX8M4Nh3ytK4HGlYAq7Q==}

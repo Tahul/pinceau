@@ -19,7 +19,7 @@ export function resolveCssProperty(property: any, value: any, style: any, select
     }
 
     // Custom property is an object, if value is true, return result
-    return !!value ? customProperties[property] : {}
+    return value ? customProperties[property] : {}
   }
 
   // Resolve final value
@@ -30,16 +30,6 @@ export function resolveCssProperty(property: any, value: any, style: any, select
     [property]: value,
   }
 }
-
-/**
- * Resolve a `var(--token)` value from a token path.
- */
-export const resolveVariableFromPath = (path: string): string => `var(--${path.split('.').map((key: string) => kebabCase(key)).join('-')})`
-
-/**
- * Take a property and transform every tokens present in it to their value.
- */
-export const transformTokensToVariable = (property: string) => (property || '').replace(keyRegex, (_, tokenPath) => resolveVariableFromPath(tokenPath))
 
 /**
  * Cast value or values before pushing it to the style declaration
@@ -62,11 +52,17 @@ export function castValues(property: any, value: any, $tokens: TokensFunction) {
 export function castValue(property: any, value: any, $tokens: TokensFunction) {
   if (typeof value === 'number') { return value }
 
-  value = resolveRgbaTokens(property, value, $tokens)
+  if (value.match(/rgb/g)) {
+    value = resolveRgbaTokens(property, value, $tokens)
+  }
 
-  value = resolveCalcTokens(property, value, $tokens)
+  if (value.match(/calc/g)) {
+    value = resolveCalcTokens(property, value, $tokens)
+  }
 
-  value = resolveReferences(property, value, $tokens)
+  if (value.match(referencesRegex)) {
+    value = resolveReferences(property, value, $tokens)
+  }
 
   if (value === '{}') { return '' }
 

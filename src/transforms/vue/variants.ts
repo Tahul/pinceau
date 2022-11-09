@@ -1,9 +1,5 @@
 import type { ASTNode } from 'ast-types'
-import type { ColorSchemeModes, TokensFunction } from 'src/types'
-import { hash } from 'ohash'
-import { stringify } from '../../utils/stringify'
 import { astTypes, parseAst, printAst, propStringToAst, visitAst } from '../../utils/ast'
-import { resolveCssProperty } from '../../utils/css'
 
 export interface PropOptions {
   type?: any

@@ -87,8 +87,8 @@ export function transformVariantsToDeclaration(
           if (!declaration[targetId]) { declaration[targetId] = {} }
 
           if (mqId === 'initial') {
-            if (!declaration[targetId]['@initial']) { declaration[targetId]['@initial'] = {} }
-            declaration[targetId]['@initial'] += variantValue.css
+            if (!declaration[targetId]) { declaration[targetId] = {} }
+            declaration[targetId] = defu(declaration[targetId], variantValue)
           }
 
           const mediaId = (mqId === 'dark' || mqId === 'light') ? `@${mqId}` : `@mq.${mqId}`
