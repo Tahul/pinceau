@@ -68,6 +68,9 @@ const module: any = defineNuxtModule<PinceauOptions>({
       },
     )
 
+    // Set `cwd` from Nuxt rootDir
+    options.cwd = nuxt.options.rootDir
+
     // Automatically inject all components in layers into includes
     for (const layer of layerPaths) {
       options.includes?.push(...await glob(join(layer, '**/*.vue'), { followSymbolicLinks: options.followSymbolicLinks }))

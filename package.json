@@ -80,7 +80,7 @@
     "prepare": "npm -C playground run prepare"
   },
   "dependencies": {
-    "@unocss/reset": "^0.46.3",
+    "@unocss/reset": "^0.46.4",
     "@volar/vue-language-core": "^1.0.9",
     "chroma-js": "^2.4.2",
     "consola": "^2.15.3",
@@ -118,9 +118,9 @@
     "rollup": "^3.2.5",
     "typescript": "^4.8.4",
     "vite": "^3.2.3",
-    "vitest": "^0.25.0",
-    "vue": "^3.2.41",
-    "webpack": "^5.74.0"
+    "vitest": "^0.25.1",
+    "vue": "^3.2.44",
+    "webpack": "^5.75.0"
   },
   "pnpm": {
     "peerDependencyRules": {
