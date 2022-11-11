@@ -10,10 +10,11 @@ const module: any = defineNuxtModule<PinceauOptions>({
     name: 'pinceau/nuxt',
     configKey: 'pinceau',
   },
-  defaults: {
+  defaults: nuxt => ({
     ...defaultOptions,
     colorSchemeMode: 'class',
-  },
+    outputDir: join(nuxt.options.buildDir, 'pinceau/'),
+  }),
   async setup(options: PinceauOptions, nuxt) {
     const modulePath = createResolver(import.meta.url)
 
