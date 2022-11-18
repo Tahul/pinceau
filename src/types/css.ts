@@ -1,7 +1,8 @@
 import type * as CSSType from 'csstype'
 import type { utils } from '../runtime/utils'
 import type * as Utils from './utils'
-import type { DefaultThemeMap, PinceauTheme, PinceauThemePaths } from './theme'
+import type { PinceauTheme, PinceauThemePaths } from './theme'
+import type { DefaultThemeMap } from './map'
 // @ts-ignore
 import type { GeneratedCustomProperties, GeneratedPinceauTheme } from '#pinceau/types'
 

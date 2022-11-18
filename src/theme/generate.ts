@@ -13,7 +13,7 @@ export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath
 
   let result = {
     tokens: {} as PinceauTheme,
-    outputs: {} as { [key: string]: any },
+    outputs: {} as Record<string, any>,
     buildPath,
   }
 
@@ -337,7 +337,7 @@ export function walkTokens(
   obj: any,
   cb: (value: any, obj: any) => any,
 ) {
-  let result: { [key: string]: any } = {}
+  let result: Record<string, any> = {}
 
   if (obj.value) {
     result = cb(obj, result)

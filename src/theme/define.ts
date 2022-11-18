@@ -1,14 +1,12 @@
 import { isShadowToken } from '../utils'
-import type { ConfigTokens, PinceauTheme, RawTokenType, ResponsiveToken } from '../types'
-// @ts-ignore
-import type { GeneratedPinceauTheme } from '#pinceau/types'
+import type { DefineConfigType, PinceauTheme } from '../types'
 
 export function walkConfig(
   obj: any,
   cb: (value: any, obj: any) => any,
   mqKeys: string[],
 ) {
-  let result: { [key: string]: any } = {}
+  let result: Record<string, any> = {}
 
   if (obj.value) {
     result = cb(obj, result)
@@ -43,9 +41,6 @@ export function walkConfig(
 
   return result
 }
-
-interface PermissiveConfigType { [key: string]: RawTokenType | ResponsiveToken | PermissiveConfigType }
-type DefineConfigType = (GeneratedPinceauTheme extends undefined ? ConfigTokens : GeneratedPinceauTheme) & PermissiveConfigType
 
 export function defineTheme(config: DefineConfigType): PinceauTheme {
   const mqKeys = ['dark', 'light', ...Object.keys(config?.media || [])]

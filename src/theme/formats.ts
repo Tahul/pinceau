@@ -1,6 +1,6 @@
 import { flattenTokens, objectPaths } from '../utils'
 
-const stringifyCustomProperties = (value: { [key: string]: any }) => {
+const stringifyCustomProperties = (value: Record<string, any>) => {
   const entries = Object.entries(value)
   let result = entries.reduce(
     (acc, [key, value]) => {
@@ -18,11 +18,9 @@ const stringifyCustomProperties = (value: { [key: string]: any }) => {
  * import type { PinceauTheme } from '#pinceau/types'
  */
 export const tsTypesDeclaration = (tokensObject: any, customProperties = {}) => {
-  let result = 'import type { DesignToken } from \'pinceau\'\n\n'
+  let result = 'import type { DesignToken, DeepPermissiveTokens } from \'pinceau\'\n\n'
 
-  result += 'type DeepPartial<T> = T extends object ? { [P in keyof T]?: DeepPartial<T[P]>; } : T;\n\n'
-
-  result += `export type GeneratedPinceauTheme = DeepPartial<${JSON.stringify(tokensObject, null, 2)}>\n\n`
+  result += `export type GeneratedPinceauTheme = DeepPermissiveTokens<${JSON.stringify(tokensObject, null, 2)}>\n\n`
 
   result += `const generatedCustomProperties = ${stringifyCustomProperties(customProperties)}\n`
 
