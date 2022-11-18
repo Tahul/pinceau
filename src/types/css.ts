@@ -2,6 +2,7 @@ import type * as CSSType from 'csstype'
 import type { utils } from '../runtime/utils'
 import type * as Utils from './utils'
 import type { DefaultThemeMap, PinceauTheme, PinceauThemePaths } from './theme'
+// @ts-ignore
 import type { GeneratedCustomProperties, GeneratedPinceauTheme } from '#pinceau/types'
 
 export type ComputedStylesUtils = typeof utils

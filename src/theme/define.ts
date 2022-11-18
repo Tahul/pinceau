@@ -1,5 +1,6 @@
 import { isShadowToken } from '../utils'
 import type { ConfigTokens, PinceauTheme, RawTokenType, ResponsiveToken } from '../types'
+// @ts-ignore
 import type { GeneratedPinceauTheme } from '#pinceau/types'
 
 export function walkConfig(

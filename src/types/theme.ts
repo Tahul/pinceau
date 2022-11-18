@@ -1,4 +1,5 @@
 import type { CSS, MediaQueriesKeys } from './css'
+// @ts-ignore
 import type { GeneratedPinceauTheme, GeneratedTokensPaths } from '#pinceau/types'
 
 export type RawTokenType = string | number
