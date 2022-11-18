@@ -1,7 +1,6 @@
 import { join, resolve } from 'pathe'
 import glob from 'fast-glob'
 import { addPluginTemplate, createResolver, defineNuxtModule } from '@nuxt/kit'
-import { withoutLeadingSlash } from 'ufo'
 import type { PinceauOptions } from './types'
 import pinceau, { defaultOptions } from './unplugin'
 
