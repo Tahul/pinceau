@@ -28,13 +28,7 @@ const module: any = defineNuxtModule<PinceauOptions>({
       tsConfig.compilerOptions.paths = tsConfig.compilerOptions.paths || {}
 
       if (options?.outputDir) {
-        let relativeOutputDir = options?.outputDir
-        if (options?.outputDir.includes(nuxt.options.rootDir)) {
-          relativeOutputDir = options?.outputDir.replace(nuxt.options.rootDir, '')
-          relativeOutputDir = resolve('../', relativeOutputDir)
-          relativeOutputDir = withoutLeadingSlash(relativeOutputDir)
-        }
-
+        const relativeOutputDir = options?.outputDir || join(nuxt.options.buildDir, 'pinceau/')
         tsConfig.compilerOptions.paths['#pinceau/types'] = [`${resolve(relativeOutputDir, 'types.ts')}`]
         tsConfig.compilerOptions.paths['#pinceau/theme/flat'] = [`${resolve(relativeOutputDir, 'flat.ts')}`]
         tsConfig.compilerOptions.paths['#pinceau/theme'] = [`${resolve(relativeOutputDir, 'index.ts')}`]
