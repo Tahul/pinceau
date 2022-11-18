@@ -1,7 +1,7 @@
 import type { CSS } from './css'
 import type { DesignToken, RawTokenType, ResponsiveToken } from './tokens'
-// @ts-ignore
 import type { ConfigSuggestion } from './preset'
+// @ts-ignore
 import type { GeneratedPinceauTheme } from '#pinceau/types'
 
 export interface LoadConfigResult<T> {

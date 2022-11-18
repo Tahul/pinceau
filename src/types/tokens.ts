@@ -1,6 +1,6 @@
 import type { MediaQueriesKeys } from './css'
 
-export type RawTokenType = string | number
+export type RawTokenType = string | number | ''
 
 export type ResponsiveToken<T = RawTokenType> = {
   [key in MediaQueriesKeys]?: T
