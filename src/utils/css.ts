@@ -1,7 +1,6 @@
-import { kebabCase } from 'scule'
 import color from 'tinycolor2'
 import type { ColorSchemeModes, DesignToken, TokensFunction } from '../types'
-import { DARK, INITIAL, LIGHT, calcRegex, keyRegex, mqPlainRegex, referencesRegex, rgbaRegex } from './regexes'
+import { DARK, INITIAL, LIGHT, calcRegex, mqPlainRegex, referencesRegex, rgbaRegex } from './regexes'
 
 /**
  * Resolve a css function property to a stringifiable declaration.

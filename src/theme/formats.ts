@@ -17,19 +17,25 @@ const stringifyCustomProperties = (value: { [key: string]: any }) => {
 /**
  * import type { PinceauTheme } from '#pinceau/types'
  */
-export const tsTypesDeclaration = (typesObject: any, customProperties = {}) => {
+export const tsTypesDeclaration = (tokensObject: any, customProperties = {}) => {
   let result = 'import type { DesignToken } from \'pinceau\'\n\n'
 
-  result += `export interface GeneratedPinceauTheme ${JSON.stringify(typesObject, null, 2)}\n\n`
+  result += 'type DeepPartial<T> = T extends object ? { [P in keyof T]?: DeepPartial<T[P]>; } : T;\n\n'
 
-  result += `const generatedCustomProperties = ${stringifyCustomProperties(customProperties)}\n\n`
+  result += `export type GeneratedPinceauTheme = DeepPartial<${JSON.stringify(tokensObject, null, 2)}>\n\n`
+
+  result += `const generatedCustomProperties = ${stringifyCustomProperties(customProperties)}\n`
 
   result += 'export type GeneratedCustomProperties = typeof generatedCustomProperties\n\n'
 
-  const tokensPaths = objectPaths(typesObject)
+  const tokensPaths = objectPaths(tokensObject)
 
-  if (tokensPaths.length) { result += `export type GeneratedTokensPaths = \n${tokensPaths.map((path: string) => (`'${path}'`)).join(' | \n')}\n\n` }
-  else { result += 'export type GeneratedTokensPaths = \'no.tokens\'\n\n' }
+  if (tokensPaths.length) {
+    result += `export type GeneratedTokensPaths = ${tokensPaths.map((path: string) => (`'${path}'`)).join(' | \n')}\n\n`
+  }
+  else {
+    result += 'export type GeneratedTokensPaths = \'no.tokens\'\n\n'
+  }
 
   // Cast object keys as types for result
   result = result.replace(/"DesignToken"/g, 'DesignToken')

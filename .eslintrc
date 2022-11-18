@@ -4,7 +4,8 @@
     "curly": ["error", "multi-line", "consistent"],
     "quotes": ["error", "single"],
     "@typescript-eslint/ban-ts-comment": "off",
-    "antfu/generic-spacing": "off"
+    "antfu/generic-spacing": "off",
+    "max-statements-per-line": "off"
   },
   "ignorePatterns": "**/*.md,test/fixtures/**/*.vue"
 }

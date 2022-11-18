@@ -57,8 +57,8 @@ export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath
 
       transformedTokensTyping = walkTokens(
         dictionary.tokens,
-        () => {
-          return 'DesignToken'
+        (token) => {
+          return token.value
         },
       )
     },

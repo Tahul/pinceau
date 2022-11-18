@@ -1,7 +1,7 @@
 import type { CSS, MediaQueriesKeys } from './css'
 import type { GeneratedPinceauTheme, GeneratedTokensPaths } from '#pinceau/types'
 
-export type RawTokenType = string | number | ShadowTokenValue
+export type RawTokenType = string | number
 
 export type ResponsiveToken<T = RawTokenType> = {
   [key in MediaQueriesKeys]?: T

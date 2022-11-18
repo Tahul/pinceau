@@ -1,5 +1,6 @@
 import { isShadowToken } from '../utils'
-import type { ConfigTokens, PinceauTheme, PinceauTokens } from '../types'
+import type { ConfigTokens, PinceauTheme, RawTokenType, ResponsiveToken } from '../types'
+import type { GeneratedPinceauTheme } from '#pinceau/types'
 
 export function walkConfig(
   obj: any,
@@ -42,7 +43,10 @@ export function walkConfig(
   return result
 }
 
-export function defineTheme(config: ConfigTokens & PinceauTokens): PinceauTheme {
+interface PermissiveConfigType { [key: string]: RawTokenType | ResponsiveToken | PermissiveConfigType }
+type DefineConfigType = (GeneratedPinceauTheme extends undefined ? ConfigTokens : GeneratedPinceauTheme) & PermissiveConfigType
+
+export function defineTheme(config: DefineConfigType): PinceauTheme {
   const mqKeys = ['dark', 'light', ...Object.keys(config?.media || [])]
 
   // Cast `string` values into design tokens like object.
