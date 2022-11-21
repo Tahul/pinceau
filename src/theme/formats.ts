@@ -41,7 +41,7 @@ const enhanceStringifedTheme = (value) => {
             ),
           ])
         }
-        else {
+        else if (path.value.typeAnnotation.typeAnnotation.members) {
           path.value.typeAnnotation.typeAnnotation.members.push(
             astTypes.builders.tsIndexSignature(
               [astTypes.builders.identifier('key: string | number')],
@@ -57,8 +57,18 @@ const enhanceStringifedTheme = (value) => {
               ),
             ),
           )
+
+          path.value.typeAnnotation.typeAnnotation = astTypes.builders.tsUnionType([
+            path.value.typeAnnotation.typeAnnotation,
+            astTypes.builders.tsTypeReference(
+              astTypes.builders.identifier('PermissiveConfigType'),
+            ),
+          ])
         }
+
+        // Make every path optional by default
         path.value.optional = true
+
         return this.traverse(path)
       },
     },

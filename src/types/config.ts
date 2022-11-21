@@ -28,6 +28,6 @@ export interface ConfigTokens {
 
 export type ConfigToken = RawTokenType | DesignToken
 
-export interface PermissiveConfigType { [key: string]: ConfigToken | PermissiveConfigType }
+export interface PermissiveConfigType { [key: string | number | symbol]: ConfigToken | PermissiveConfigType }
 
 export type DefineConfigType = ConfigTokens & (GeneratedPinceauTheme extends undefined ? ConfigSuggestion : GeneratedPinceauTheme) & PermissiveConfigType
