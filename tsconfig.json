@@ -40,7 +40,7 @@
       "#pinceau/theme": ["./playground/node_modules/.vite/pinceau/index.ts"],
       "#pinceau/theme/flat": ["./playground/node_modules/.vite/pinceau/flat.ts"],
       "pinceau.css": ["./playground/node_modules/.vite/pinceau/index.css"],
-      "pinceau": ["./src/index.ts"],
+      "pinceau": ["./src/index.ts", "./src/types/index.ts"],
       "pinceau/runtime": ["./src/runtime.ts"],
       "pinceau/vite": ["./src/vite.ts"],
       "@src/utils/*": ["./src/utils/*"]

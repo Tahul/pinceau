@@ -27,8 +27,8 @@ importers:
       nodemon: ^2.0.20
       ohash: ^1.0.0
       playwright: ^1.28.0
-      postcss-custom-properties: ^13.0.0
-      postcss-dark-theme-class: ^0.7.3
+      postcss-custom-properties: ^12.1.10
+      postcss-dark-theme-class: 0.7.3
       postcss-nested: ^6.0.0
       recast: ^0.21.5
       release-it: ^15.5.0
@@ -53,7 +53,7 @@ importers:
       magic-string: 0.26.7
       nanoid: 4.0.0
       ohash: 1.0.0
-      postcss-custom-properties: 13.0.0
+      postcss-custom-properties: 12.1.10
       postcss-dark-theme-class: 0.7.3
       postcss-nested: 6.0.0
       recast: 0.21.5
@@ -6324,11 +6324,11 @@ packages:
       postcss-value-parser: 4.2.0
     dev: true
 
-  /postcss-custom-properties/13.0.0:
-    resolution: {integrity: sha512-y4lGIjKPdy1gDyGgwZLpMgqcum04JZZ9UWKxO6WjxSEQ1IzaAFxgbiqcF5M4RWHXFqe5Wa549xXz/4F7DU9TYg==}
-    engines: {node: ^14 || ^16 || >=18}
+  /postcss-custom-properties/12.1.10:
+    resolution: {integrity: sha512-U3BHdgrYhCrwTVcByFHs9EOBoqcKq4Lf3kXwbTi4hhq0qWhl/pDWq2THbv/ICX/Fl9KqeHBb8OVrTf2OaYF07A==}
+    engines: {node: ^12 || ^14 || >=16}
     peerDependencies:
-      postcss: ^8.4
+      postcss: ^8.2
     peerDependenciesMeta:
       postcss:
         optional: true

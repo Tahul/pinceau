@@ -83,39 +83,16 @@ const enhanceStringifedTheme = (value) => {
 const enhanceTokenPaths = (value = []) => {
   const tokensLiteralNodes = []
 
-  value.forEach(([keyPath, value]) => {
+  value.forEach(([keyPath]) => {
     tokensLiteralNodes.push(
-      astTypes.builders.tsPropertySignature(
-        astTypes.builders.stringLiteral(keyPath),
-        astTypes.builders.tsTypeAnnotation(
-          astTypes.builders.tsLiteralType(
-            astTypes.builders.stringLiteral(value),
-          ),
-        ),
-      ),
+      astTypes.builders.tsLiteralType(astTypes.builders.stringLiteral(keyPath)),
     )
   })
 
   const ast = astTypes.builders.tsTypeAliasDeclaration(
     astTypes.builders.identifier('GeneratedTokensPaths'),
-    astTypes.builders.tsTypeLiteral(tokensLiteralNodes),
+    astTypes.builders.tsUnionType(tokensLiteralNodes),
   )
-
-  /* Adds @type comment on top of every key
-  visitAst(
-    ast,
-    {
-      visitTSPropertySignature(path) {
-        path.insertBefore(
-          astTypes.builders.commentBlock(
-            `*\n* @type {'${path.value.typeAnnotation.typeAnnotation.literal.value}'}\n`,
-          ),
-        )
-        return this.traverse(path)
-      },
-    },
-  )
-  */
 
   return printAst(ast).code
 }
