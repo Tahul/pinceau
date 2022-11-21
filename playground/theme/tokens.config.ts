@@ -8,18 +8,61 @@ export default defineTheme({
     xl: '(min-width: 1280px)',
     xxl: '(min-width: 1536px)',
   },
+
   fonts: {
     primary: 'Inter, sans-serif',
-    code: '\'Fira Code\', monospace',
+    secondary: 'FredokaOne, serif',
   },
+
   colors: {
+    white: '#FFFFFF',
+    black: '#191919',
+    pink: palette('#EC528D'),
     blue: palette('#2B9EB3'),
     yellow: palette('#FCAB10'),
     red: palette('#F8333C'),
     gray: palette('#DBD5B5'),
     green: palette('#44AF69'),
-    pink: palette('pink'),
+    primary: {
+      100: {
+        initial: '{colors.blue.100}',
+        dark: '{colors.blue.900}',
+      },
+      200: {
+        initial: '{colors.blue.200}',
+        dark: '{colors.blue.800}',
+      },
+      300: {
+        initial: '{colors.blue.300}',
+        dark: '{colors.blue.700}',
+      },
+      400: {
+        initial: '{colors.blue.400}',
+        dark: '{colors.blue.600}',
+      },
+      500: {
+        initial: '{colors.blue.500}',
+        dark: '{colors.blue.500}',
+      },
+      600: {
+        initial: '{colors.blue.600}',
+        dark: '{colors.blue.400}',
+      },
+      700: {
+        initial: '{colors.blue.700}',
+        dark: '{colors.blue.300}',
+      },
+      800: {
+        initial: '{colors.blue.800}',
+        dark: '{colors.blue.200}',
+      },
+      900: {
+        initial: '{colors.blue.900}',
+        dark: '{colors.blue.100}',
+      },
+    },
   },
+
   shadows: {
     xs: {
       color: '{colors.gray.800}',
@@ -110,6 +153,7 @@ export default defineTheme({
       spread: '-12',
     },
   },
+
   fontWeights: {
     thin: 100,
     extralight: 200,
@@ -121,6 +165,7 @@ export default defineTheme({
     extrabold: 800,
     black: 900,
   },
+
   fontSizes: {
     'xs': '12px',
     'sm': '14px',
@@ -136,6 +181,7 @@ export default defineTheme({
     '8xl': '96px',
     '9xl': '128px',
   },
+
   letterSpacings: {
     tighter: '-.05em',
     tight: '-0025em',
@@ -144,6 +190,7 @@ export default defineTheme({
     wider: '.05em',
     widest: '0.1em',
   },
+
   leads: {
     none: 1,
     tight: 1.25,
@@ -152,6 +199,7 @@ export default defineTheme({
     relaxed: 1.625,
     loose: 2,
   },
+
   radii: {
     '2xs': '0.125rem',
     'xs': '0.25rem',
@@ -162,6 +210,7 @@ export default defineTheme({
     'xxl': '1.5rem',
     'full': '9999px',
   },
+
   size: {
     4: '4px',
     6: '6px',
@@ -179,6 +228,7 @@ export default defineTheme({
     104: '104px',
     200: '200px',
   },
+
   space: {
     0: '0',
     1: '1px',
@@ -202,12 +252,14 @@ export default defineTheme({
     140: '140px',
     200: '200px',
   },
+
   borderWidths: {
     noBorder: '0',
     sm: '1px',
     md: '2px',
     lg: '3px',
   },
+
   opacity: {
     noOpacity: '0',
     bright: '0.1',
@@ -217,6 +269,7 @@ export default defineTheme({
     high: '0.8',
     total: '1',
   },
+
   zIndices: {
     0: '0',
     1: '1px',
@@ -239,5 +292,17 @@ export default defineTheme({
     104: '104px',
     140: '140px',
     200: '200px',
+  },
+
+  utils: {
+    my: value => ({ marginTop: value, marginBottom: value }),
+    mx: value => ({ marginLeft: value, marginRight: value }),
+    px: value => ({ paddingLeft: value, paddingRight: value }),
+    py: value => ({ paddingTop: value, paddingBottom: value }),
+    truncate: {
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
+    },
   },
 })

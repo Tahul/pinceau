@@ -1,4 +1,5 @@
-import type { DtFunction, PinceauTheme } from './theme'
+import type { PinceauTheme } from './theme'
+import type { DtFunction } from './dt'
 import type { ConfigOrPaths } from './context'
 import type { ColorSchemeModes } from './css'
 
@@ -8,6 +9,10 @@ export * from './context'
 export * from './css'
 export * from './config'
 export * from './runtime'
+export * from './dt'
+export * from './tokens'
+export * from './map'
+export * from './preset'
 
 export interface PinceauOptions {
   /**
@@ -81,7 +86,8 @@ export interface ModuleHooks {
   'pinceau:options': (options?: PinceauOptions) => Promise<void> | void
 }
 
-export interface ModuleOptions extends PinceauOptions {}
+export interface ModuleOptions extends PinceauOptions {
+}
 
 declare global {
   const $dt: DtFunction

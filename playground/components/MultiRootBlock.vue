@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { PropType } from 'vue'
 
-const props = defineProps({
+defineProps({
   color: {
     type: String as PropType<TokenOrThemeKey<'color'>>,
     default: '{colors.primary.600}',

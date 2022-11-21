@@ -1,4 +1,3 @@
-import { defu } from 'defu'
 import { createUnplugin } from 'unplugin'
 import MagicString from 'magic-string'
 import { join } from 'pathe'
@@ -9,6 +8,7 @@ import { parseVueQuery } from './utils/query'
 import { logger } from './utils/logger'
 import type { PinceauOptions } from './types'
 import { parseVueComponent } from './utils/ast'
+import { merger } from './utils/merger'
 
 export const defaultOptions: PinceauOptions = {
   configFileName: 'pinceau.config',
@@ -31,7 +31,7 @@ export const defaultOptions: PinceauOptions = {
 
 export default createUnplugin<PinceauOptions>(
   (options) => {
-    options = defu(options, defaultOptions)
+    options = merger(options, defaultOptions)
 
     const ctx = createContext(options)
 
@@ -89,7 +89,7 @@ export default createUnplugin<PinceauOptions>(
         try {
           // Handle CSS files
           if (query.css && !query.vue) {
-            const { code: _code } = resolveStyleQuery(code, magicString, ctx.$tokens, options.colorSchemeMode)
+            const { code: _code } = resolveStyleQuery(code, magicString, ctx.$tokens, ctx.customProperties, options.colorSchemeMode)
             return missingMap(_code)
           }
 

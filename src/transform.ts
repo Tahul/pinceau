@@ -12,7 +12,7 @@ function exposedTransform(code: string, id: string) {
   const parsedComponent = parseVueComponent(code, { filename: id })
 
   // Transform <style> blocks
-  if (parsedComponent.descriptor.styles) { resolveStyle(id, parsedComponent, magicString, variants, computedStyles, () => '' as any, 'media') }
+  if (parsedComponent.descriptor.styles) { resolveStyle(id, parsedComponent, magicString, variants, computedStyles, () => '' as any, {}, 'media') }
 
   const hasRuntimeStyles = Object.keys(variants).length > 0 || Object.keys(computedStyles).length > 0
 

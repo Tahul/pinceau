@@ -1,15 +1,25 @@
-import { kebabCase } from 'scule'
 import color from 'tinycolor2'
 import type { ColorSchemeModes, DesignToken, TokensFunction } from '../types'
-import { DARK, INITIAL, LIGHT, calcRegex, keyRegex, mqPlainRegex, referencesRegex, rgbaRegex } from './regexes'
+import { DARK, INITIAL, LIGHT, calcRegex, mqPlainRegex, referencesRegex, rgbaRegex } from './regexes'
 
 /**
  * Resolve a css function property to a stringifiable declaration.
  */
-export function resolveCssProperty(property: any, value: any, style: any, selectors: any, $tokens: TokensFunction, colorSchemeMode: ColorSchemeModes) {
+export function resolveCssProperty(property: any, value: any, style: any, selectors: any, $tokens: TokensFunction, customProperties: any, colorSchemeMode: ColorSchemeModes) {
   // Resolve custom style directives
   const directive = resolveCustomDirectives(property, value, $tokens, colorSchemeMode)
   if (directive) { return directive }
+
+  // Resolve custom properties
+  if (customProperties[property]) {
+    // Custom property is a function, pass value and return result
+    if (typeof customProperties[property] === 'function') {
+      return customProperties[property](value)
+    }
+
+    // Custom property is an object, if value is true, return result
+    return value ? customProperties[property] : {}
+  }
 
   // Resolve final value
   value = castValues(property, value, $tokens)
@@ -19,16 +29,6 @@ export function resolveCssProperty(property: any, value: any, style: any, select
     [property]: value,
   }
 }
-
-/**
- * Resolve a `var(--token)` value from a token path.
- */
-export const resolveVariableFromPath = (path: string): string => `var(--${path.split('.').map((key: string) => kebabCase(key)).join('-')})`
-
-/**
- * Take a property and transform every tokens present in it to their value.
- */
-export const transformTokensToVariable = (property: string) => (property || '').replace(keyRegex, (_, tokenPath) => resolveVariableFromPath(tokenPath))
 
 /**
  * Cast value or values before pushing it to the style declaration
@@ -51,11 +51,17 @@ export function castValues(property: any, value: any, $tokens: TokensFunction) {
 export function castValue(property: any, value: any, $tokens: TokensFunction) {
   if (typeof value === 'number') { return value }
 
-  value = resolveRgbaTokens(property, value, $tokens)
+  if (value.match(/rgb/g)) {
+    value = resolveRgbaTokens(property, value, $tokens)
+  }
 
-  value = resolveCalcTokens(property, value, $tokens)
+  if (value.match(/calc/g)) {
+    value = resolveCalcTokens(property, value, $tokens)
+  }
 
-  value = resolveReferences(property, value, $tokens)
+  if (value.match(referencesRegex)) {
+    value = resolveReferences(property, value, $tokens)
+  }
 
   if (value === '{}') { return '' }
 
@@ -102,7 +108,7 @@ export function resolveRgbaTokens(property: string, value: string, $tokens: Toke
         (...reference) => {
           const token = $tokens(reference[1], { key: 'original' }) as DesignToken
 
-          let tokenValue = token?.value || token
+          let tokenValue: any = token?.value || token
 
           if (!tokenValue) { return '0,0,0' }
 
@@ -133,7 +139,7 @@ export function resolveCalcTokens(property: string, value: string, $tokens: Toke
       newValue = newValue.replace(
         referencesRegex,
         (...reference) => {
-          const token = $tokens(reference[1], { key: 'original' }) as DesignToken
+          const token = $tokens(reference[1], { key: 'original' }) as any
 
           return token?.value || token
         },

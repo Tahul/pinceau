@@ -5,12 +5,13 @@ import { stringify } from '../utils/stringify'
 
 export function usePinceauStylesheet(
   $tokens: TokensFunction,
+  customProperties: any,
   colorSchemeMode: ColorSchemeModes,
   appId?: string,
 ) {
   const sheet = ref<CSSStyleSheet>()
 
-  const declarationToCss = (decl: any) => stringify(decl, (property: any, value: any, style: any, selectors: any) => resolveCssProperty(property, value, style, selectors, $tokens, colorSchemeMode))
+  const declarationToCss = (decl: any) => stringify(decl, (property: any, value: any, style: any, selectors: any) => resolveCssProperty(property, value, style, selectors, $tokens, customProperties, colorSchemeMode))
 
   function resolveStylesheet() {
     // Sheet already resolved
@@ -123,14 +124,9 @@ export function usePinceauStylesheet(
 
     if (!cssText) { return }
 
-    const index = previousRule
-      ? Object.values(sheet.value.cssRules).indexOf(previousRule)
-      : sheet.value.cssRules.length
+    if (previousRule) { deleteRule(previousRule) }
 
-    const ruleId = sheet.value.insertRule(
-      cssText,
-      index,
-    )
+    const ruleId = sheet.value.insertRule(cssText)
 
     return sheet.value.cssRules[ruleId]
   }

@@ -13,6 +13,7 @@ export const createContext = <UserOptions extends PinceauOptions = PinceauOption
   const env: PinceauContext['env'] = 'prod'
   let tokens: PinceauTheme = {} as any as PinceauTheme
   let viteServer: ViteDevServer
+  let customProperties: any = {}
 
   // Prepares the output dir (TODO: remove it to only depend on in-memory storage)
   prepareOutputDir(options)
@@ -22,7 +23,12 @@ export const createContext = <UserOptions extends PinceauOptions = PinceauOption
   const configContext = usePinceauConfig<UserOptions>(
     options,
     async (resolvedConfig) => {
+      // Preserve custom properties in memory to avoid virtual storage call on compile
+      customProperties = resolvedConfig.config?.utils || {}
+
       const builtTheme = await generateTheme(resolvedConfig.config, options)
+
+      if (!builtTheme) { return }
 
       updateOutputs(builtTheme)
 
@@ -41,6 +47,11 @@ export const createContext = <UserOptions extends PinceauOptions = PinceauOption
     },
     get $tokens() {
       return createTokensHelper(tokens)
+    },
+
+    // customProperties
+    get customProperties() {
+      return customProperties
     },
 
     // Vite

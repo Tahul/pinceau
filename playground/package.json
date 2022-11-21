@@ -4,7 +4,8 @@
     "dev": "nodemon -w '../src/**/*.ts' -e .ts -x vite -c _vite.config.ts --port 3000",
     "build": "vite build -c _vite.config.ts",
     "dev:nuxt": "nuxi dev",
-    "build:nuxt": "nuxi build"
+    "build:nuxt": "nuxi build",
+    "prepare": "nuxi prepare"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "latest",

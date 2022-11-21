@@ -1,7 +1,7 @@
 import type { SFCParseResult } from 'vue/compiler-sfc'
 import type MagicString from 'magic-string'
-import { ELEMENT_NODE } from '../../utils/ultrahtml'
-import { astTypes, parseTemplate, parseVueComponent, printAst, propStringToAst, renderHtml, walkHtml } from '../../utils/ast'
+import type { ASTNode } from 'ast-types'
+import { astTypes, parseVueComponent, printAst, propStringToAst } from '../../utils/ast'
 import type { VueQuery } from '../../utils/query'
 import type { ColorSchemeModes, PinceauContext, TokensFunction } from '../../types'
 import { transformDtHelper } from '../dt'
@@ -12,7 +12,7 @@ import { resolvePropsKey } from './props'
 
 export async function transformVueSFC(code: string, id: string, magicString: MagicString, ctx: PinceauContext, query: VueQuery): Promise<{ code: string; early: boolean; magicString: MagicString }> {
   // Handle <style> tags scoped queries
-  if (query.type === 'style') { return resolveStyleQuery(code, magicString, ctx.$tokens, ctx.options.colorSchemeMode) }
+  if (query.type === 'style') { return resolveStyleQuery(code, magicString, ctx.$tokens, ctx.customProperties, ctx.options.colorSchemeMode) }
 
   // Resolve from parsing the <style lang="ts"> tag for current component
   const variants = {}
@@ -22,7 +22,7 @@ export async function transformVueSFC(code: string, id: string, magicString: Mag
   const parsedComponent = parseVueComponent(code, { filename: id })
 
   // Transform <style> blocks
-  if (parsedComponent.descriptor.styles) { resolveStyle(id, parsedComponent, magicString, variants, computedStyles, ctx.$tokens, ctx.options.colorSchemeMode) }
+  if (parsedComponent.descriptor.styles) { resolveStyle(id, parsedComponent, magicString, variants, computedStyles, ctx.$tokens, ctx.customProperties, ctx.options.colorSchemeMode) }
 
   const hasRuntimeStyles = Object.keys(variants).length > 0 || Object.keys(computedStyles).length > 0
 
@@ -40,8 +40,8 @@ export async function transformVueSFC(code: string, id: string, magicString: Mag
  *
  * These does not need to resolve variants or populate computed styles.
  */
-export function resolveStyleQuery(code: string, magicString: MagicString, $tokens: TokensFunction, colorSchemeMode: ColorSchemeModes) {
-  code = transformCssFunction(code, undefined, undefined, $tokens, colorSchemeMode)
+export function resolveStyleQuery(code: string, magicString: MagicString, $tokens: TokensFunction, customProperties: any, colorSchemeMode: ColorSchemeModes) {
+  code = transformCssFunction(code, undefined, undefined, $tokens, customProperties, colorSchemeMode)
   code = transformStyle(code, $tokens, colorSchemeMode)
   return { code, early: true, magicString }
 }
@@ -64,14 +64,14 @@ export async function resolveTemplate(_: string, parsedComponent: SFCParseResult
 /**
  * Transform all <style> blocks.
  */
-export function resolveStyle(_: string, parsedComponent: SFCParseResult, magicString: MagicString, variants: any, computedStyles: any, $tokens: TokensFunction, colorSchemeMode: ColorSchemeModes) {
+export function resolveStyle(_: string, parsedComponent: SFCParseResult, magicString: MagicString, variants: any, computedStyles: any, $tokens: TokensFunction, customProperties: any, colorSchemeMode: ColorSchemeModes) {
   const styles = parsedComponent.descriptor.styles
   styles.forEach(
     (styleBlock) => {
       const { loc, content } = styleBlock
       let newStyle = content
 
-      newStyle = transformCssFunction(newStyle, variants, computedStyles, $tokens, colorSchemeMode)
+      newStyle = transformCssFunction(newStyle, variants, computedStyles, $tokens, customProperties, colorSchemeMode)
       newStyle = transformStyle(newStyle, $tokens, colorSchemeMode)
 
       magicString.remove(loc.start.offset, loc.end.offset)
@@ -102,7 +102,7 @@ export function resolveScriptSetup(id: string, parsedComponent: SFCParseResult, 
 
   // Check for variant props
   if (hasVariants) {
-    newScriptSetup = transformVariants(newScriptSetup, variants, isTs, $tokens, colorSchemeMode)
+    newScriptSetup = transformVariants(newScriptSetup, variants, isTs)
   }
 
   // Check for computed styles
@@ -133,53 +133,56 @@ export function transformComputedStyles(newScriptSetup: string, computedStyles: 
   return newScriptSetup
 }
 
+/**
+ * Adds `$pinceau` to the root element class via transform
+ */
 export async function transformAddPinceauClass(code: string): Promise<string> {
-  try {
-    const templateAst = parseTemplate(code)
-    let classAdded
-    await walkHtml(
-      templateAst,
-      (node) => {
-        if (node.type === ELEMENT_NODE) {
-          if (!classAdded) {
-            const classAttributeValue = node.attributes?.[':class']
+  // $pinceau class already here
+  if (code.includes('$pinceau')) { return code }
 
-            // No class attribute found, push $pinceau
-            if (!classAttributeValue) {
-              node.attributes[':class'] = '$pinceau'
-            }
+  let firstTag: any = code.match(/<([a-zA-Z]+)([^>]+)*>/)
 
-            const classAttributeAst = propStringToAst(classAttributeValue)
-
-            const valueAst = astTypes.builders.arrayExpression(
-              [
-                classAttributeAst,
-                astTypes.builders.identifier('$pinceau'),
-              ],
-            )
-
-            node.attributes[':class'] = printAst(valueAst).code
-
-            classAdded = true
-          }
+  if (firstTag?.[0]) {
+    const _source = String(firstTag[0])
+    if (_source.includes(':class')) {
+      // Check for existing class, inject into it via AST if needed
+      const existingAttr: ASTNode = _source.match(/:class="([^"]+)"/) as any
+      if (existingAttr) {
+        let attrAst = propStringToAst(existingAttr[1])
+        const newAttrAst = astTypes.builders.identifier('$pinceau')
+        switch (attrAst.type) {
+          case 'ArrayExpression':
+            attrAst.elements.push(newAttrAst)
+            break
+          case 'StringLiteral':
+          case 'Literal':
+            attrAst = astTypes.builders.arrayExpression([
+              existingAttr as any,
+            ])
+            break
+          case 'ObjectExpression':
+            attrAst = astTypes.builders.arrayExpression([
+              existingAttr as any,
+              newAttrAst,
+            ])
+            break
         }
 
-        // Cleanup attributes
-        node.attributes = Object
-          .entries(node?.attributes || {})
-          .reduce(
-            (acc: Record<string, any>, [key, value]) => {
-              if (key !== '') {
-                acc[key] = value
-              }
-              return acc
-            }, {})
-      },
-    )
-    return await renderHtml(templateAst)
+        firstTag = _source.replace(existingAttr[1], printAst(attrAst).code)
+      }
+    }
+    else if (_source.includes('/>')) {
+      // Self closing tag
+      firstTag = _source.replace('/>', ' :class="[$pinceau]" />')
+    }
+    else {
+      // Regular tag
+      firstTag = _source.replace('>', ' :class="[$pinceau]">')
+    }
+
+    code = code.replace(_source, firstTag)
   }
-  catch (e) {
-  }
+
   return code
 }
 
@@ -203,9 +206,12 @@ export function transformAddRuntimeImports(code: string): string {
   // Resolve defineProps reference or add it
   const { propsKey, code: _code } = resolvePropsKey(code)
   code = _code
-  if (propsKey && propsKey !== '__$pProps') {
-    code += `\nconst __$pProps = ${propsKey}\n`
-  }
+
+  // Props w/o const
+  if (propsKey && propsKey === '__$pProps') { return code }
+
+  // Props w/ const or no props
+  code += `\nconst __$pProps = ${propsKey || '{}'}\n`
 
   return code
 }

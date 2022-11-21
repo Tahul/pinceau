@@ -9,7 +9,7 @@ import ThemeSelect from '../components/ThemeSelect.vue'
   >
     <header>
       <span>
-        🖌&nbsp;Pinceau
+        🖌&nbsp;Pinceau playground
       </span>
 
       <div>
@@ -22,7 +22,7 @@ import ThemeSelect from '../components/ThemeSelect.vue'
 
     <footer>
       <span>
-        🖌&nbsp;Pinceau
+        🖌&nbsp;
       </span>
 
       <div>
@@ -34,20 +34,22 @@ import ThemeSelect from '../components/ThemeSelect.vue'
 </template>
 
 <style lang="postcss">
+html, body {
+  font-family: $dt('fonts.secondary');
+
+  color: $dt('colors.black');
+  background-color: $dt('colors.white');
+
+  @dark {
+    color: $dt('colors.white');
+    background-color: $dt('colors.black');
+  }
+}
+
 html, body, #app, #__nuxt {
   display: flex;
   min-height: 100vh;
   width: 100vw;
-
-  font-family: $dt('fonts.primary');
-
-  color: black;
-  background-color: white;
-
-  @dark {
-    color: white;
-    background-color: black;
-  }
 }
 </style>
 

@@ -3,7 +3,6 @@ import type { ComputedRef, Ref } from 'vue'
 import { onScopeDispose, unref, watch } from 'vue'
 import type { PinceauRuntimeIds } from '../../types'
 import type { usePinceauStylesheet } from '../stylesheet'
-import { transformTokensToVariable } from './utils'
 
 export function usePinceauComputedStyles(
   ids: ComputedRef<PinceauRuntimeIds>,
@@ -25,6 +24,7 @@ export function usePinceauComputedStyles(
     },
     {
       immediate: !(rule),
+      deep: true,
     },
   )
 
@@ -65,8 +65,8 @@ export function transformComputedStylesToDeclaration(
 
           if (mqId === 'initial') {
             if (!declaration[targetId]) { declaration[targetId] = {} }
-            if (!declaration[targetId]['@initial']) { declaration[targetId]['@initial'] = {} }
-            declaration[targetId]['@initial'][`--${varName}`] = transformTokensToVariable(_value)
+            if (!declaration[targetId]) { declaration[targetId] = {} }
+            declaration[targetId][`--${varName}`] = _value
           }
 
           const mediaId = (mqId === 'dark' || mqId === 'light') ? `@${mqId}` : `@mq.${mqId}`
@@ -74,13 +74,13 @@ export function transformComputedStylesToDeclaration(
           if (!declaration[mediaId]) { declaration[mediaId] = {} }
           if (!declaration[mediaId][targetId]) { declaration[mediaId][targetId] = {} }
 
-          declaration[mediaId][targetId][`--${kebabCase(varName)}`] = transformTokensToVariable(_value)
+          declaration[mediaId][targetId][`--${kebabCase(varName)}`] = _value
         }
       }
       else {
         const _value = unref(value)
         if (_value) {
-          declaration[targetId][`--${kebabCase(varName)}`] = transformTokensToVariable(_value)
+          declaration[targetId][`--${kebabCase(varName)}`] = _value
         }
       }
     }

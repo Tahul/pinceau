@@ -50,6 +50,9 @@ jobs:
       - name: Install
         run: nci
 
+      - name: Prepare
+        run: nr prepare
+
       - name: Build
         run: nr build
 
