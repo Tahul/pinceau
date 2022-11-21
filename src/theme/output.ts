@@ -1,5 +1,5 @@
 import { existsSync, mkdirSync, rmSync, writeFileSync } from 'fs'
-import { join } from 'path'
+import { join } from 'pathe'
 import type { PinceauOptions } from '../types'
 import { jsFlat, jsFull, tsFlat, tsFull, tsTypesDeclaration } from './formats'
 

@@ -1,5 +1,5 @@
-import { resolve } from 'path'
 import { existsSync } from 'fs'
+import { resolve } from 'pathe'
 import jiti from 'jiti'
 import type { Update, ViteDevServer } from 'vite'
 import { logger } from '../utils/logger'
