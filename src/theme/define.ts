@@ -1,4 +1,4 @@
-import { isShadowToken } from '../utils'
+import { isShadowToken } from '../utils/shadows'
 import type { DefineConfigType, PinceauTheme } from '../types'
 
 export function walkConfig(

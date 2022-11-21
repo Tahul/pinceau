@@ -124,7 +124,7 @@ const enhanceTokenPaths = (value = []) => {
  * import type { PinceauTheme } from '#pinceau/types'
  */
 export const tsTypesDeclaration = (tokensObject: any, customProperties = {}) => {
-  let result = 'import { ConfigToken, PermissiveConfigType } from \'pinceau\'\n\n'
+  let result = 'import type { ConfigToken, PermissiveConfigType } from \'pinceau\'\n\n'
 
   let stringifiedTheme = JSON.stringify(tokensObject, null, 2)
 

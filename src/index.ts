@@ -1,3 +1,4 @@
 export * from './types'
 export { defineTheme } from './theme/define'
-export { get, palette } from './utils'
+export { palette } from './utils/palette'
+export { get } from './utils/data'

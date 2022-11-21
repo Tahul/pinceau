@@ -33,5 +33,7 @@ export default defineBuildConfig({
     '#pinceau',
     'nitropack',
     'nanoid',
+    'chroma-js',
+    'tinycolor2',
   ],
 })
