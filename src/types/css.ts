@@ -1,7 +1,7 @@
 import type * as CSSType from 'csstype'
 import type { utils } from '../runtime/utils'
 import type * as Utils from './utils'
-import type { PinceauTheme, PinceauThemePaths } from './theme'
+import type { PinceauTheme, PinceauTokensPaths } from './theme'
 import type { DefaultThemeMap } from './map'
 // @ts-ignore
 import type { GeneratedCustomProperties, GeneratedPinceauTheme } from '#pinceau/types'
@@ -137,7 +137,7 @@ export interface Variants<K> {
   [key: string]: BooleanVariant<K> | EnumVariant<K>
 }
 
-export type ThemeKey<K extends keyof DefaultThemeMap> = Utils.WrapUnion<Utils.FilterStartingWith<PinceauThemePaths, DefaultThemeMap[K]>, '{', '}'>
+export type ThemeKey<K extends keyof DefaultThemeMap> = Utils.WrapUnion<Utils.FilterStartingWith<PinceauTokensPaths, DefaultThemeMap[K]>, '{', '}'>
 
 export type MediaQueriesKeys = keyof GeneratedPinceauTheme['media'] | 'dark' | 'light' | 'initial'
 
@@ -211,7 +211,7 @@ export type CSS<
   }
   &
   {
-    [K in keyof GeneratedCustomProperties]?: Utils.WrapUnion<PinceauThemePaths, '{', '}'>
+    [K in keyof GeneratedCustomProperties]?: Utils.WrapUnion<PinceauTokensPaths, '{', '}'>
   }
   &
   // Other properties (nested selector)

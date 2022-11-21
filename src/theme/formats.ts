@@ -1,3 +1,4 @@
+import { astTypes, expressionToAst, printAst, visitAst } from '../utils/ast'
 import { flattenTokens, objectPaths } from '../utils'
 
 const stringifyCustomProperties = (value: Record<string, any>) => {
@@ -15,12 +16,111 @@ const stringifyCustomProperties = (value: Record<string, any>) => {
 }
 
 /**
+ * Enhance stringified theme object
+ */
+const enhanceStringifedTheme = (value) => {
+  const ast = expressionToAst(value, 'type GeneratedThemeType = ', 'ts')
+
+  visitAst(
+    ast,
+    {
+      visitTSPropertySignature(path) {
+        if (path.value.typeAnnotation.typeAnnotation.literal?.type === 'StringLiteral') {
+          path.insertBefore(
+            astTypes.builders.commentBlock(
+              `*\n * @default "${path.value.typeAnnotation.typeAnnotation.literal?.value}"\n`,
+            ),
+          )
+          path.value.typeAnnotation.typeAnnotation = astTypes.builders.tsUnionType([
+            astTypes.builders.tsLiteralType(astTypes.builders.stringLiteral(path.value.typeAnnotation.typeAnnotation.literal?.value)),
+            astTypes.builders.tsTypeReference(
+              astTypes.builders.identifier('ConfigToken'),
+            ),
+            astTypes.builders.tsTypeReference(
+              astTypes.builders.identifier('PermissiveConfigType'),
+            ),
+          ])
+        }
+        else {
+          path.value.typeAnnotation.typeAnnotation.members.push(
+            astTypes.builders.tsIndexSignature(
+              [astTypes.builders.identifier('key: string | number')],
+              astTypes.builders.tsTypeAnnotation(
+                astTypes.builders.tsUnionType([
+                  astTypes.builders.tsTypeReference(
+                    astTypes.builders.identifier('ConfigToken'),
+                  ),
+                  astTypes.builders.tsTypeReference(
+                    astTypes.builders.identifier('PermissiveConfigType'),
+                  ),
+                ]),
+              ),
+            ),
+          )
+        }
+        path.value.optional = true
+        return this.traverse(path)
+      },
+    },
+  )
+
+  return printAst(ast).code
+}
+
+/**
+ * Enhance tokens paths list
+ */
+const enhanceTokenPaths = (value = []) => {
+  const tokensLiteralNodes = []
+
+  value.forEach(([keyPath, value]) => {
+    tokensLiteralNodes.push(
+      astTypes.builders.tsPropertySignature(
+        astTypes.builders.stringLiteral(keyPath),
+        astTypes.builders.tsTypeAnnotation(
+          astTypes.builders.tsLiteralType(
+            astTypes.builders.stringLiteral(value),
+          ),
+        ),
+      ),
+    )
+  })
+
+  const ast = astTypes.builders.tsTypeAliasDeclaration(
+    astTypes.builders.identifier('GeneratedTokensPaths'),
+    astTypes.builders.tsTypeLiteral(tokensLiteralNodes),
+  )
+
+  /* Adds @type comment on top of every key
+  visitAst(
+    ast,
+    {
+      visitTSPropertySignature(path) {
+        path.insertBefore(
+          astTypes.builders.commentBlock(
+            `*\n* @type {'${path.value.typeAnnotation.typeAnnotation.literal.value}'}\n`,
+          ),
+        )
+        return this.traverse(path)
+      },
+    },
+  )
+  */
+
+  return printAst(ast).code
+}
+
+/**
  * import type { PinceauTheme } from '#pinceau/types'
  */
 export const tsTypesDeclaration = (tokensObject: any, customProperties = {}) => {
-  let result = 'import type { DesignToken, DeepPermissiveTokens } from \'pinceau\'\n\n'
+  let result = 'import { ConfigToken, PermissiveConfigType } from \'pinceau\'\n\n'
 
-  result += `export type GeneratedPinceauTheme = DeepPermissiveTokens<${JSON.stringify(tokensObject, null, 2)}>\n\n`
+  let stringifiedTheme = JSON.stringify(tokensObject, null, 2)
+
+  stringifiedTheme = enhanceStringifedTheme(stringifiedTheme)
+
+  result += `export type GeneratedPinceauTheme = ${stringifiedTheme}\n\n`
 
   result += `const generatedCustomProperties = ${stringifyCustomProperties(customProperties)}\n`
 
@@ -29,14 +129,11 @@ export const tsTypesDeclaration = (tokensObject: any, customProperties = {}) => 
   const tokensPaths = objectPaths(tokensObject)
 
   if (tokensPaths.length) {
-    result += `export type GeneratedTokensPaths = ${tokensPaths.map((path: string) => (`'${path}'`)).join(' | \n')}\n\n`
+    result += `export ${enhanceTokenPaths(tokensPaths)}`
   }
   else {
-    result += 'export type GeneratedTokensPaths = \'no.tokens\'\n\n'
+    result += 'export type GeneratedTokensPaths = {}\n\n'
   }
-
-  // Cast object keys as types for result
-  result = result.replace(/"DesignToken"/g, 'DesignToken')
 
   return result
 }

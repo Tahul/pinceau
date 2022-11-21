@@ -5,4 +5,4 @@ import type { GeneratedPinceauTheme, GeneratedTokensPaths } from '#pinceau/types
 
 export interface PinceauTheme extends GeneratedPinceauTheme, Omit<ConfigTokens, keyof GeneratedPinceauTheme>, PinceauTokens {}
 
-export type PinceauThemePaths = GeneratedTokensPaths
+export type PinceauTokensPaths = keyof GeneratedTokensPaths

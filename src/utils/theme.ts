@@ -16,8 +16,8 @@ export const objectPaths = (data: any) => {
         ? `${prev}.${key}`
         : key
 
-      if (typeof value?.value !== 'undefined' && !output.includes(newKey)) {
-        output.push(newKey)
+      if ((typeof value?.value !== 'undefined' || typeof value === 'string') && !output.includes(newKey)) {
+        output.push([newKey, value?.value || value])
         return
       }
 

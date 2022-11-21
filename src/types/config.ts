@@ -1,5 +1,5 @@
 import type { CSS } from './css'
-import type { DesignToken, RawTokenType, ResponsiveToken } from './tokens'
+import type { DesignToken, RawTokenType } from './tokens'
 import type { ConfigSuggestion } from './preset'
 // @ts-ignore
 import type { GeneratedPinceauTheme } from '#pinceau/types'
@@ -26,10 +26,8 @@ export interface ConfigTokens {
   utils?: PinceauUtilsProperties
 }
 
-export type ConfigToken = RawTokenType | DesignToken | ResponsiveToken
+export type ConfigToken = RawTokenType | DesignToken
 
 export interface PermissiveConfigType { [key: string]: ConfigToken | PermissiveConfigType }
 
 export type DefineConfigType = ConfigTokens & (GeneratedPinceauTheme extends undefined ? ConfigSuggestion : GeneratedPinceauTheme) & PermissiveConfigType
-
-export type DeepPermissiveTokens<T> = T extends object ? { [P in keyof T]?: DeepPermissiveTokens<T[P]>; } : T | ConfigToken | PermissiveConfigType

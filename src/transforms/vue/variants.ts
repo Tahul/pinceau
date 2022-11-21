@@ -1,5 +1,5 @@
 import type { ASTNode } from 'ast-types'
-import { astTypes, parseAst, printAst, propStringToAst, visitAst } from '../../utils/ast'
+import { astTypes, expressionToAst, parseAst, printAst, visitAst } from '../../utils/ast'
 
 export interface PropOptions {
   type?: any
@@ -40,7 +40,7 @@ export function transformVariants(code = '', variants: any = {}, isTs: boolean):
 export function pushVariantsProps(code: string, variantsProps: any) {
   const scriptAst = parseAst(code)
 
-  let propsAst = propStringToAst(JSON.stringify(variantsProps))
+  let propsAst = expressionToAst(JSON.stringify(variantsProps))
 
   propsAst = castVariantsPropsAst(propsAst)
 
@@ -108,11 +108,11 @@ export function castVariantsPropsAst(ast: ASTNode) {
       visitObjectProperty(path) {
         // Cast `type` string
         if (path.value?.key?.value === 'type') {
-          path.value.value = propStringToAst(path.value.value.value)
+          path.value.value = expressionToAst(path.value.value.value)
         }
         // Cast `validator` string
         if (path.value?.key?.value === 'validator') {
-          path.value.value = propStringToAst(path.value.value.value)
+          path.value.value = expressionToAst(path.value.value.value)
         }
         return this.traverse(path)
       },

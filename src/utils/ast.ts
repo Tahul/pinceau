@@ -22,9 +22,11 @@ export function parseVueComponent(source: string, options: Partial<SFCParseOptio
 /**
  * Cast a `props.type` string into an AST declaration.
  */
-export function propStringToAst(type: string) {
-  const parsed = recast.parse(`const toAst = ${type}`, { parser: { parse: tsParse } })
-  return parsed.program.body[0].declarations[0].init
+export function expressionToAst(type: string, leftSide = 'const toAst = ', kind: 'js' | 'ts' = 'js') {
+  const parsed = recast.parse(`${leftSide}${type}`, { parser: { parse: tsParse } })
+  return kind === 'js'
+    ? parsed.program.body[0].declarations[0].init
+    : parsed.program.body[0].typeAnnotation
 }
 
 /**

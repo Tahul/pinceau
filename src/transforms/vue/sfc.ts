@@ -1,7 +1,7 @@
 import type { SFCParseResult } from 'vue/compiler-sfc'
 import type MagicString from 'magic-string'
 import type { ASTNode } from 'ast-types'
-import { astTypes, parseVueComponent, printAst, propStringToAst } from '../../utils/ast'
+import { astTypes, expressionToAst, parseVueComponent, printAst } from '../../utils/ast'
 import type { VueQuery } from '../../utils/query'
 import type { ColorSchemeModes, PinceauContext, TokensFunction } from '../../types'
 import { transformDtHelper } from '../dt'
@@ -148,7 +148,7 @@ export async function transformAddPinceauClass(code: string): Promise<string> {
       // Check for existing class, inject into it via AST if needed
       const existingAttr: ASTNode = _source.match(/:class="([^"]+)"/) as any
       if (existingAttr) {
-        let attrAst = propStringToAst(existingAttr[1])
+        let attrAst = expressionToAst(existingAttr[1])
         const newAttrAst = astTypes.builders.identifier('$pinceau')
         switch (attrAst.type) {
           case 'ArrayExpression':
