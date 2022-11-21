@@ -10,7 +10,7 @@ import { transformStyle } from './style'
 import { transformVariants } from './variants'
 import { resolvePropsKey } from './props'
 
-export async function transformVueSFC(code: string, id: string, magicString: MagicString, ctx: PinceauContext, query: VueQuery): Promise<{ code: string; early: boolean; magicString: MagicString }> {
+export function transformVueSFC(code: string, id: string, magicString: MagicString, ctx: PinceauContext, query: VueQuery): { code: string; early: boolean; magicString: MagicString } {
   // Handle <style> tags scoped queries
   if (query.type === 'style') { return resolveStyleQuery(code, magicString, ctx.$tokens, ctx.customProperties, ctx.options.colorSchemeMode) }
 
@@ -27,7 +27,7 @@ export async function transformVueSFC(code: string, id: string, magicString: Mag
   const hasRuntimeStyles = Object.keys(variants).length > 0 || Object.keys(computedStyles).length > 0
 
   // Transform <template> blocks
-  if (parsedComponent.descriptor.template) { await resolveTemplate(id, parsedComponent, magicString, hasRuntimeStyles) }
+  if (parsedComponent.descriptor.template) { resolveTemplate(id, parsedComponent, magicString, hasRuntimeStyles) }
 
   // Transform <script setup> blocks
   if (parsedComponent.descriptor.scriptSetup) { resolveScriptSetup(id, parsedComponent, magicString, variants, computedStyles, ctx.$tokens, ctx.options.colorSchemeMode, parsedComponent.descriptor.scriptSetup.lang === 'ts') }
@@ -49,12 +49,12 @@ export function resolveStyleQuery(code: string, magicString: MagicString, $token
 /**
  * Transform <template> blocks.
  */
-export async function resolveTemplate(_: string, parsedComponent: SFCParseResult, magicString: MagicString, hasRuntimeStyles: boolean) {
+export function resolveTemplate(_: string, parsedComponent: SFCParseResult, magicString: MagicString, hasRuntimeStyles: boolean) {
   const templateContent = parsedComponent.descriptor.template
   let newTemplateContent = templateContent.content
   newTemplateContent = transformDtHelper(newTemplateContent, '\'')
   if (hasRuntimeStyles) {
-    newTemplateContent = await transformAddPinceauClass(newTemplateContent)
+    newTemplateContent = transformAddPinceauClass(newTemplateContent)
   }
   if (templateContent.loc.end?.offset && templateContent.loc.end?.offset > templateContent.loc.start.offset) {
     magicString.overwrite(templateContent.loc.start.offset, templateContent.loc.end.offset, newTemplateContent)
@@ -136,7 +136,7 @@ export function transformComputedStyles(newScriptSetup: string, computedStyles: 
 /**
  * Adds `$pinceau` to the root element class via transform
  */
-export async function transformAddPinceauClass(code: string): Promise<string> {
+export function transformAddPinceauClass(code: string): string {
   // $pinceau class already here
   if (code.includes('$pinceau')) { return code }
 
