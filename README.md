@@ -76,7 +76,7 @@ export interface PinceauOptions {
    */
   cwd?: string
   /**
-   * The path array of your configuration file.
+   * The path of your configuration file.
    */
   configOrPaths?: ConfigOrPaths
   /**
