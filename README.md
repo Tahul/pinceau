@@ -76,11 +76,11 @@ export interface PinceauOptions {
    */
   cwd?: string
   /**
-   * The path of your configuration file.
+   * The path array of your configuration file.
    */
   configOrPaths?: ConfigOrPaths
   /**
-   * The path of your configuration file.
+   * The name of the style configuration file
    *
    * @default 'pinceau.config'
    */
