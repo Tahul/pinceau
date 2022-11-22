@@ -19,7 +19,7 @@ export default defineConfig({
     Inspect(),
     Pinceau({
       configFileName: 'tokens.config',
-      configOrPaths: resolve(__dirname, 'theme'),
+      configOrPaths: [resolve(__dirname, 'theme')],
       debug: true,
       colorSchemeMode: 'class',
     }),
