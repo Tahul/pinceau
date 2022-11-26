@@ -31,6 +31,7 @@ export default defineBuildConfig({
     'jiti',
     'tinycolor2',
     '#pinceau',
+    '#pinceau/theme/flat',
     'nitropack',
     'nanoid',
     'chroma-js',
