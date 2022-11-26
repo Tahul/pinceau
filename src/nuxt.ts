@@ -17,6 +17,9 @@ const module: any = defineNuxtModule<PinceauOptions>({
   async setup(options: PinceauOptions, nuxt) {
     // Local module resolver
     const modulePath = createResolver(import.meta.url)
+    const resolveLocalModule = (path: string) => resolveModule(path, { paths: modulePath.resolve('./') })
+
+
 
     // Call options hook
     await nuxt.callHook('pinceau:options', options)
@@ -42,7 +45,7 @@ const module: any = defineNuxtModule<PinceauOptions>({
     // Setup Nitro plugin
     if (!nuxt.options.nitro) { nuxt.options.nitro = {} }
     if (!nuxt.options.nitro.plugins) { nuxt.options.nitro.plugins = [] }
-    nuxt.options.nitro.plugins.push(resolveModule('./nitro'))
+    nuxt.options.nitro.plugins.push(resolveLocalModule('./nitro'))
 
     // Support for `extends` feature
     // Will scan each layer for a config file
