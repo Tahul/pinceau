@@ -8,7 +8,7 @@ import { transformDtHelper } from '../dt'
 import { transformCssFunction } from '../css'
 import { transformStyle } from './style'
 import { transformVariants } from './variants'
-import { resolvePropsKey } from './props'
+import { resolvePropsKey } from './props-key'
 
 export function transformVueSFC(code: string, id: string, magicString: MagicString, ctx: PinceauContext, query: VueQuery): { code: string; early: boolean; magicString: MagicString } {
   // Handle <style> tags scoped queries
@@ -77,7 +77,7 @@ export function resolveStyle(_: string, parsedComponent: SFCParseResult, magicSt
       magicString.remove(loc.start.offset, loc.end.offset)
       magicString.appendRight(
         loc.end.offset,
-          `\n${newStyle}\n`,
+        `\n${newStyle}\n`,
       )
     },
   )

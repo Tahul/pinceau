@@ -10,7 +10,6 @@ import ClientOnly from './theme/ClientOnly.vue'
 import PlaygroundGrid from './components/PlaygroundGrid.vue'
 import NuxtLayout from './layouts/default.vue'
 import Index from './pages/index.vue'
-import theme from '#pinceau/theme/flat'
 
 import '@unocss/reset/tailwind.css'
 import 'pinceau.css'
@@ -31,7 +30,7 @@ const router = createRouter({
 
 // Plugins
 app.use(router)
-app.use(pinceau, { theme, colorSchemeMode: 'class' })
+app.use(pinceau, { colorSchemeMode: 'class' })
 
 // Components
 app.component('Block', Block)

@@ -53,9 +53,9 @@ export default createUnplugin<PinceauOptions>(
           ctx.env = 'dev'
           await ctx.ready
           process.setMaxListeners(0)
-          ctx.registerConfigWatchers(server)
         },
         handleHotUpdate(ctx) {
+          // Enforce <style lang="ts"> into <style lang="postcss">
           const defaultRead = ctx.read
           ctx.read = async function () {
             const code = await defaultRead()
@@ -65,23 +65,34 @@ export default createUnplugin<PinceauOptions>(
       },
 
       transformInclude(id) {
+        let toRet
+
         // Use Vue's query parser
         const query = parseVueQuery(id)
 
-        // Stop on excluded paths.
-        if (options.excludes && options.excludes.some(path => id.includes(path))) { return false }
+        // Stop on excluded paths
+        if (options.excludes && options.excludes.some(path => id.includes(path))) { toRet = false }
 
-        // // Run only on Nuxt loaded components
-        if (options.includes && options.includes.some(path => id.includes(path))) { return true }
+        // Run only on Nuxt loaded components
+        if (toRet !== false && options.includes && options.includes.some(path => id.includes(path))) { toRet = true }
 
-        if (query?.vue || query?.css) { return true }
+        // Allow Vue & CSS files
+        if (toRet !== false && (query?.vue || query?.css)) { toRet = true }
+
+        // Push included file into context
+        if (toRet) { ctx.addTransformed(id) }
+
+        return toRet
       },
 
       transform(code, id) {
+        // Enforce <style lang="ts"> into <style lang="postcss">
         code = replaceStyleTs(code, id)
 
+        // Parse query
         const query = parseVueQuery(id)
 
+        // Create magic string from query and code
         const magicString = new MagicString(code, { filename: query.filename })
         const result = (code = magicString.toString(), ms = magicString) => ({ code, map: ms.generateMap({ source: id, includeContent: true }) })
         const missingMap = (code: string) => ({ code, map: new MagicString(code, { filename: query.filename }).generateMap() })
@@ -125,15 +136,13 @@ export default createUnplugin<PinceauOptions>(
       load(id) {
         // Check if id refers to local output
         const output = ctx.getOutput(id)
-        if (output) {
-          return output
-        }
+        if (output) { return output }
 
+        // Parse query
         const query = parseVueQuery(id)
 
-        if (query.vue && query.type === 'style') {
-          return transformVueStyle(id, query, ctx)
-        }
+        // Transform Vue scoped query
+        if (query.vue && query.type === 'style') { return transformVueStyle(id, query, ctx) }
       },
     }
   })

@@ -12,6 +12,8 @@ export interface PinceauContext<UserOptions extends PinceauOptions = PinceauOpti
   customProperties: any
   $tokens: TokensFunction
   options: PinceauOptions
+  transformed: string[]
+  addTransformed: (id: string) => void
 
   // Vite
   viteServer: ViteDevServer
@@ -25,7 +27,7 @@ export interface PinceauConfigContext<UserOptions = PinceauOptions> {
   resolvedConfig: PinceauTheme
   ready: Promise<LoadConfigResult<PinceauTheme>>
   reloadConfig: (newOptions?: UserOptions) => Promise<LoadConfigResult<PinceauTheme>>
-  registerConfigWatchers: (server: ViteDevServer) => void
+  registerConfigWatchers: () => void
   getConfig: () => Promise<PinceauTheme>
 }
 

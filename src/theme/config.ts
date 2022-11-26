@@ -10,6 +10,8 @@ const extensions = ['.js', '.ts', '.mjs', '.cjs']
 
 export function usePinceauConfig<UserOptions extends PinceauOptions = PinceauOptions>(
   options: UserOptions,
+  getViteServer: () => ViteDevServer,
+  getTransformed: () => string[],
   dispatchConfigUpdate?: (result: LoadConfigResult<PinceauTheme>) => void,
 ): PinceauConfigContext<UserOptions> {
   let cwd = options?.cwd ?? process.cwd()
@@ -17,6 +19,13 @@ export function usePinceauConfig<UserOptions extends PinceauOptions = PinceauOpt
   let resolvedConfig: PinceauTheme = {} as any
 
   let ready = reloadConfig()
+
+  function registerConfigWatchers() {
+    if (!sources.length) { return }
+    const viteServer = getViteServer()
+    viteServer.watcher.add(sources)
+    viteServer.watcher.on('change', onConfigChange)
+  }
 
   async function reloadConfig(newOptions: UserOptions = options): Promise<LoadConfigResult<PinceauTheme>> {
     const result = await loadConfig(newOptions || options)
@@ -45,63 +54,55 @@ export function usePinceauConfig<UserOptions extends PinceauOptions = PinceauOpt
     return await ready
   }
 
-  function registerConfigWatchers(server: ViteDevServer) {
-    if (!sources.length) { return }
+  async function onConfigChange(p: string) {
+    if (!sources.includes(p)) { return }
 
-    server.watcher.add(sources)
+    const viteServer = getViteServer()
 
-    server.watcher.on('change', async (p) => {
-      if (!sources.includes(p)) { return }
+    await reloadConfig()
 
-      await reloadConfig()
+    const ids = [
+      '/__pinceau_css.css',
+      '/__pinceau_ts.ts',
+      '/__pinceau_js.js',
+      '/__pinceau_flat_ts.ts',
+      '/__pinceau_flat_js.js',
+    ]
 
-      const ids = [
-        '/__pinceau_css.css',
-        '/__pinceau_ts.ts',
-        '/__pinceau_js.js',
-        '/__pinceau_flat_ts.ts',
-        '/__pinceau_flat_js.js',
-      ]
+    // Use transformed files as well
+    getTransformed().forEach((transformed) => !ids.includes(transformed) && ids.push(transformed))
 
-      const updates: Update[] = []
+    const updates: Update[] = []
 
-      const pushUpdate = (url, css = false) => {
+    const pushUpdate = (url, css = false) => {
+      const update: Update = {
+        type: 'js-update',
+        path: url,
+        acceptedPath: url,
+        timestamp: +Date.now(),
+      }
+
+      updates.push(update)
+
+      if (css) {
         updates.push({
-          type: 'js-update',
-          path: url,
-          acceptedPath: url,
-          timestamp: +Date.now(),
+          ...update,
+          type: 'css-update',
         })
-
-        if (css) {
-          updates.push({
-            type: 'css-update',
-            path: url,
-            acceptedPath: url,
-            timestamp: +Date.now(),
-          })
-        }
       }
+    }
 
-      for (const id of ids) {
-        const _module = server.moduleGraph.getModuleById(id)
+    // Loop on ids
+    for (const id of ids) {
+      const _module = viteServer.moduleGraph.getModuleById(id)
+      if (!_module) { continue }
+      viteServer.moduleGraph.invalidateModule(_module)
+      pushUpdate(_module.url, id.endsWith('.css'))
+    }
 
-        if (!_module) { continue }
-
-        server.moduleGraph.invalidateModule(_module)
-
-        let css = false
-        if (id.endsWith('.css')) {
-          css = true
-        }
-
-        pushUpdate(_module.url, css)
-      }
-
-      server.ws.send({
-        type: 'update',
-        updates,
-      })
+    viteServer.ws.send({
+      type: 'update',
+      updates,
     })
   }
 

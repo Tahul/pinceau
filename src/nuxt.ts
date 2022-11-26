@@ -15,6 +15,7 @@ const module: any = defineNuxtModule<PinceauOptions>({
     outputDir: join(nuxt.options.buildDir, 'pinceau/'),
   }),
   async setup(options: PinceauOptions, nuxt) {
+    // Local module resolver
     const modulePath = createResolver(import.meta.url)
 
     // Call options hook
@@ -44,7 +45,7 @@ const module: any = defineNuxtModule<PinceauOptions>({
     nuxt.options.nitro.plugins.push(modulePath.resolve('./nitro'))
 
     // Support for `extends` feature
-    // This will scan each layer for a config file
+    // Will scan each layer for a config file
     const layerPaths = nuxt.options._layers.reduce(
       (acc: string[], layer: any) => {
         if (layer?.cwd) {
@@ -67,8 +68,16 @@ const module: any = defineNuxtModule<PinceauOptions>({
 
     // Automatically inject all components in layers into includes
     for (const layer of layerPaths) {
-      options.includes?.push(...await glob(join(layer, '**/*.vue'), { followSymbolicLinks: options.followSymbolicLinks }))
+      options.includes?.push(
+        ...await glob(
+          join(layer, '**/*.vue'),
+          { followSymbolicLinks: options.followSymbolicLinks },
+        ),
+      )
     }
+
+    // Push Pinceau stylesheet
+    nuxt.options.css = nuxt.options.css || []
 
     addPluginTemplate({
       filename: 'pinceau-imports.mjs',
@@ -77,9 +86,8 @@ const module: any = defineNuxtModule<PinceauOptions>({
           'import { useState } from \'#app\'',
           'import \'pinceau.css\'',
           'import { plugin as pinceau } from \'pinceau/runtime\'',
-          'import theme from \'#pinceau/theme/flat\'',
           `export default defineNuxtPlugin((nuxtApp) => {
-            nuxtApp.vueApp.use(pinceau, { theme, colorSchemeMode: 'class' })
+            nuxtApp.vueApp.use(pinceau, { colorSchemeMode: '${options.colorSchemeMode}' })
 
             // Handle first render of SSR styles
             nuxtApp.hook('app:rendered', (app) => {
@@ -89,9 +97,7 @@ const module: any = defineNuxtModule<PinceauOptions>({
           })`,
         ]
 
-        if (options?.preflight) {
-          lines.unshift('import \'@unocss/reset/tailwind.css\'')
-        }
+        if (options?.preflight) { lines.unshift('import \'@unocss/reset/tailwind.css\'') }
 
         return lines.join('\n')
       },

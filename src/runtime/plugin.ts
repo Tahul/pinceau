@@ -1,6 +1,7 @@
 import type { ComputedRef, Plugin, Ref } from 'vue'
 import { computed, getCurrentInstance, ref } from 'vue'
 import { nanoid } from 'nanoid'
+import { deepAssign, deepDelete } from '../utils/deep'
 import {
   createTokensHelper,
 } from './utils'
@@ -9,35 +10,48 @@ import { usePinceauRuntimeIds } from './ids'
 import { usePinceauComputedStyles } from './features/computedStyles'
 import { usePinceauVariants } from './features/variants'
 import { usePinceauCssProp } from './features/cssProp'
+import _theme from '#pinceau/theme/flat'
+
+const theme = _theme
 
 export const plugin: Plugin = {
   install(
     app,
     {
-      theme = { theme: {}, customProperties: {} },
       tokensHelperConfig,
       multiApp = false,
       colorSchemeMode = 'media',
       dev = process.env.NODE_ENV !== 'production',
     },
   ) {
+    let cache = {}
+
     tokensHelperConfig = Object.assign({ flattened: true }, tokensHelperConfig)
 
     const multiAppId = multiApp ? nanoid(6) : undefined
 
-    const $tokens = createTokensHelper(theme.theme, tokensHelperConfig)
+    const $tokens = createTokensHelper(
+      theme.theme,
+      tokensHelperConfig,
+    )
 
     const sheet = usePinceauStylesheet($tokens, theme.customProperties, colorSchemeMode, multiAppId)
 
-    let cache = {}
-
     // Cleanup cache on HMR
     if (import.meta.hot) {
+      const applyThemeUpdate = (newTheme: any) => {
+        deepAssign(theme, newTheme)
+        deepDelete(theme, newTheme)
+      }
       import.meta.hot.on(
         'vite:beforeUpdate',
         () => {
           cache = {}
         },
+      )
+      import.meta.hot.on(
+        'pinceau:themeUpdate',
+        theme => applyThemeUpdate(theme),
       )
     }
 
@@ -46,22 +60,16 @@ export const plugin: Plugin = {
       variants: Ref<any>,
       computedStyles: Ref<any>,
     ) => {
-      /**
-       * Current component instance
-       */
+      // Current component instance
       const instance = getCurrentInstance()
 
-      /**
-       * Current component classes
-       */
+      // Current component classes
       const classes = ref({
         v: '',
         c: '',
       })
 
-      /**
-       * Component ids and classes with persisted uid
-       */
+      // Component ids and classes with persisted uid
       const ids = usePinceauRuntimeIds(instance, classes, dev)
 
       // Computed styles setup
@@ -84,13 +92,9 @@ export const plugin: Plugin = {
       }
     }
 
-    /**
-     * Install global variables, expose `sheet.toString()` for SSR
-     */
+    // Install global variables, expose `sheet.toString()` for SSR
     app.config.globalProperties.$pinceauRuntime = setupPinceauRuntime
-    app.config.globalProperties.$pinceauSsr = {
-      get: () => sheet.toString(),
-    }
+    app.config.globalProperties.$pinceauSsr = { get: () => sheet.toString() }
     app.provide('pinceauRuntime', setupPinceauRuntime)
   },
 }
