@@ -1,6 +1,6 @@
 import { join, resolve } from 'pathe'
 import glob from 'fast-glob'
-import { addPluginTemplate, createResolver, defineNuxtModule } from '@nuxt/kit'
+import { resolveModule, addPluginTemplate, createResolver, defineNuxtModule } from '@nuxt/kit'
 import type { PinceauOptions } from './types'
 import pinceau, { defaultOptions } from './unplugin'
 
@@ -42,7 +42,7 @@ const module: any = defineNuxtModule<PinceauOptions>({
     // Setup Nitro plugin
     if (!nuxt.options.nitro) { nuxt.options.nitro = {} }
     if (!nuxt.options.nitro.plugins) { nuxt.options.nitro.plugins = [] }
-    nuxt.options.nitro.plugins.push(modulePath.resolve('./nitro'))
+    nuxt.options.nitro.plugins.push(resolveModule('./nitro'))
 
     // Support for `extends` feature
     // Will scan each layer for a config file
