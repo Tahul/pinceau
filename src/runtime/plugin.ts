@@ -10,6 +10,7 @@ import { usePinceauRuntimeIds } from './ids'
 import { usePinceauComputedStyles } from './features/computedStyles'
 import { usePinceauVariants } from './features/variants'
 import { usePinceauCssProp } from './features/cssProp'
+// @ts-ignore
 import _theme from '#pinceau/theme/flat'
 
 const theme = _theme
