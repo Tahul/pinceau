@@ -29,40 +29,43 @@ const module: any = defineNuxtModule<PinceauOptions>({
     // Call options hook
     await nuxt.callHook('pinceau:options', options)
 
-    // @ts-ignore - Nuxt Component Meta support
-    let cachedTokens
-    nuxt.hook('component-meta:transformers', (transformers) => {
-      transformers.push(
-        (component, code) => {
-          const flatPath = join(nuxt.options.buildDir, '/pinceau')
+    // nuxt-component-meta support
+    if (options.componentMetaSupport) {
+      let cachedTokens
+      // @ts-ignore
+      nuxt.hook('component-meta:transformers', (transformers) => {
+        transformers.push(
+          (component, code) => {
+            const flatPath = join(nuxt.options.buildDir, '/pinceau')
 
-          const resolvedTokens = []
+            const resolvedTokens = []
 
-          if (!cachedTokens && existsSync(join(flatPath, 'flat.ts'))) {
-            const _tokens = createJITI(flatPath)(join(flatPath, 'flat.ts')).default
-            cachedTokens = Object.keys(_tokens.theme)
-          }
+            if (!cachedTokens && existsSync(join(flatPath, 'flat.ts'))) {
+              const _tokens = createJITI(flatPath)(join(flatPath, 'flat.ts')).default
+              cachedTokens = Object.keys(_tokens.theme)
+            }
 
-          if (cachedTokens.length) {
-            const referencesRegex = /\{([a-zA-Z].+)\}/g
-            const matches: any = code.match(referencesRegex) || []
+            if (cachedTokens.length) {
+              const referencesRegex = /\{([a-zA-Z].+)\}/g
+              const matches: any = code.match(referencesRegex) || []
 
-            matches.forEach(
-              (match) => {
-                const _match = match.replace('{', '').replace('}', '')
-                if (cachedTokens.includes(_match)) { resolvedTokens.push(match) }
-              },
-            )
-          }
+              matches.forEach(
+                (match) => {
+                  const _match = match.replace('{', '').replace('}', '')
+                  if (cachedTokens.includes(_match)) { resolvedTokens.push(match) }
+                },
+              )
+            }
 
-          component.meta.tokens = resolvedTokens
+            component.meta.tokens = resolvedTokens
 
-          return { component, code }
-        },
-      )
+            return { component, code }
+          },
+        )
 
-      return transformers
-    })
+        return transformers
+      })
+    }
 
     // Automatically inject generated types to tsconfig
     nuxt.hook('prepare:types', (opts) => {

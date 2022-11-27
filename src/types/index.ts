@@ -80,6 +80,10 @@ export interface PinceauOptions {
    * Enables extra logging on transform failures.
    */
   debug?: boolean
+  /**
+   * Enables support for nuxt-component-meta.
+   */
+  componentMetaSupport?: boolean
 }
 
 export interface ModuleHooks {

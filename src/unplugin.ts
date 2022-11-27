@@ -27,11 +27,12 @@ export const defaultOptions: PinceauOptions = {
     '/__pinceau_ts.ts',
     '/__pinceau_js.js',
     '/__pinceau_flat_ts.ts',
-    '/__pinceau_flat_js.js'
+    '/__pinceau_flat_js.js',
   ],
   followSymbolicLinks: true,
   colorSchemeMode: 'media',
   debug: false,
+  componentMetaSupport: false,
 }
 
 export default createUnplugin<PinceauOptions>(
