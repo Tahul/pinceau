@@ -30,28 +30,27 @@ const module: any = defineNuxtModule<PinceauOptions>({
     await nuxt.callHook('pinceau:options', options)
 
     // @ts-ignore - Nuxt Component Meta support
+    let cachedTokens
     nuxt.hook('component-meta:transformers', (transformers) => {
       transformers.push(
         (component, code) => {
           const flatPath = join(nuxt.options.buildDir, '/pinceau')
 
-          let tokens = []
-
           const resolvedTokens = []
 
-          if (existsSync(join(flatPath, 'flat.ts'))) {
+          if (!cachedTokens && existsSync(join(flatPath, 'flat.ts'))) {
             const _tokens = createJITI(flatPath)(join(flatPath, 'flat.ts')).default
-            tokens = Object.keys(_tokens.theme)
+            cachedTokens = Object.keys(_tokens.theme)
           }
 
-          if (tokens.length) {
+          if (cachedTokens.length) {
             const referencesRegex = /\{([a-zA-Z].+)\}/g
             const matches: any = code.match(referencesRegex) || []
 
             matches.forEach(
               (match) => {
                 const _match = match.replace('{', '').replace('}', '')
-                if (tokens.includes(_match)) { resolvedTokens.push(match) }
+                if (cachedTokens.includes(_match)) { resolvedTokens.push(match) }
               },
             )
           }
