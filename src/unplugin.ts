@@ -23,6 +23,11 @@ export const defaultOptions: PinceauOptions = {
     'node_modules/@nuxt/ui-templates/',
     'node_modules/@vue/',
     'node_modules/pinceau/',
+    '/__pinceau_css.css',
+    '/__pinceau_ts.ts',
+    '/__pinceau_js.js',
+    '/__pinceau_flat_ts.ts',
+    '/__pinceau_flat_js.js'
   ],
   followSymbolicLinks: true,
   colorSchemeMode: 'media',

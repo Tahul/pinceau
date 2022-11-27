@@ -3,6 +3,7 @@ import glob from 'fast-glob'
 import { resolveModule, addPluginTemplate, createResolver, defineNuxtModule } from '@nuxt/kit'
 import type { PinceauOptions } from './types'
 import pinceau, { defaultOptions } from './unplugin'
+import { prepareOutputDir } from './theme/output'
 
 const module: any = defineNuxtModule<PinceauOptions>({
   meta: {
@@ -19,22 +20,27 @@ const module: any = defineNuxtModule<PinceauOptions>({
     const modulePath = createResolver(import.meta.url)
     const resolveLocalModule = (path: string) => resolveModule(path, { paths: modulePath.resolve('./') })
 
-
+    // Transpile pinceau
+    nuxt.options.build.transpile = nuxt.options.build.transpile || []
+    nuxt.options.build.transpile.push('pinceau', 'tinycolor2', 'chroma-js')
 
     // Call options hook
     await nuxt.callHook('pinceau:options', options)
 
     // Automatically inject generated types to tsconfig
     nuxt.hook('prepare:types', (opts) => {
+      // Prepares the output dir
+      prepareOutputDir(options)
+  
       const tsConfig: typeof opts.tsConfig & { vueCompilerOptions?: any } = opts.tsConfig
       tsConfig.compilerOptions = tsConfig.compilerOptions || {}
       tsConfig.compilerOptions.paths = tsConfig.compilerOptions.paths || {}
 
       if (options?.outputDir) {
         const relativeOutputDir = options?.outputDir || join(nuxt.options.buildDir, 'pinceau/')
-        tsConfig.compilerOptions.paths['#pinceau/types'] = [`${resolve(relativeOutputDir, 'types.ts')}`]
-        tsConfig.compilerOptions.paths['#pinceau/theme/flat'] = [`${resolve(relativeOutputDir, 'flat.ts')}`]
-        tsConfig.compilerOptions.paths['#pinceau/theme'] = [`${resolve(relativeOutputDir, 'index.ts')}`]
+        tsConfig.compilerOptions.paths['#pinceau/types'] = [`${resolveModule(resolve(relativeOutputDir, 'types.ts'))}`]
+        tsConfig.compilerOptions.paths['#pinceau/theme/flat'] = [`${resolveModule(resolve(relativeOutputDir, 'flat.ts'))}`]
+        tsConfig.compilerOptions.paths['#pinceau/theme'] = [`${resolveModule(resolve(relativeOutputDir, 'index.ts'))}`]
       }
 
       tsConfig.vueCompilerOptions = tsConfig.vueCompilerOptions || {}
