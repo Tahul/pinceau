@@ -1,6 +1,8 @@
+import { existsSync } from 'fs-extra'
 import { join, resolve } from 'pathe'
 import glob from 'fast-glob'
-import { resolveModule, addPluginTemplate, createResolver, defineNuxtModule } from '@nuxt/kit'
+import { addPluginTemplate, createResolver, defineNuxtModule, resolveModule } from '@nuxt/kit'
+import createJITI from 'jiti'
 import type { PinceauOptions } from './types'
 import pinceau, { defaultOptions } from './unplugin'
 import { prepareOutputDir } from './theme/output'
@@ -27,11 +29,47 @@ const module: any = defineNuxtModule<PinceauOptions>({
     // Call options hook
     await nuxt.callHook('pinceau:options', options)
 
+    // @ts-ignore - Nuxt Component Meta support
+    nuxt.hook('component-meta:transformers', (transformers) => {
+      transformers.push(
+        (component, code) => {
+          const flatPath = join(nuxt.options.buildDir, '/pinceau')
+
+          let tokens = []
+
+          const resolvedTokens = []
+
+          if (existsSync(join(flatPath, 'flat.ts'))) {
+            const _tokens = createJITI(flatPath)(join(flatPath, 'flat.ts')).default
+            tokens = Object.keys(_tokens.theme)
+          }
+
+          if (tokens.length) {
+            const referencesRegex = /\{([a-zA-Z].+)\}/g
+            const matches: any = code.match(referencesRegex) || []
+
+            matches.forEach(
+              (match) => {
+                const _match = match.replace('{', '').replace('}', '')
+                if (tokens.includes(_match)) { resolvedTokens.push(match) }
+              },
+            )
+          }
+
+          component.meta.tokens = resolvedTokens
+
+          return { component, code }
+        },
+      )
+
+      return transformers
+    })
+
     // Automatically inject generated types to tsconfig
     nuxt.hook('prepare:types', (opts) => {
       // Prepares the output dir
       prepareOutputDir(options)
-  
+
       const tsConfig: typeof opts.tsConfig & { vueCompilerOptions?: any } = opts.tsConfig
       tsConfig.compilerOptions = tsConfig.compilerOptions || {}
       tsConfig.compilerOptions.paths = tsConfig.compilerOptions.paths || {}
