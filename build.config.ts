@@ -35,6 +35,5 @@ export default defineBuildConfig({
     'nitropack',
     'nanoid',
     'chroma-js',
-    'tinycolor2',
   ],
 })

@@ -24,7 +24,7 @@ const module: any = defineNuxtModule<PinceauOptions>({
 
     // Transpile pinceau
     nuxt.options.build.transpile = nuxt.options.build.transpile || []
-    nuxt.options.build.transpile.push('pinceau', 'tinycolor2', 'chroma-js')
+    nuxt.options.build.transpile.push('pinceau', 'chroma-js')
 
     // Call options hook
     await nuxt.callHook('pinceau:options', options)
