@@ -1,4 +1,4 @@
-import color from 'tinycolor2'
+import chroma from 'chroma-js'
 import type { ColorSchemeModes, DesignToken, TokensFunction } from '../types'
 import { DARK, INITIAL, LIGHT, calcRegex, mqPlainRegex, referencesRegex, rgbaRegex } from './regexes'
 
@@ -112,9 +112,9 @@ export function resolveRgbaTokens(property: string, value: string, $tokens: Toke
 
           if (!tokenValue) { return '0,0,0' }
 
-          tokenValue = color(tokenValue).toRgb()
+          tokenValue = chroma(tokenValue).rgb()
 
-          return `${tokenValue.r},${tokenValue.g},${tokenValue.b}`
+          return `${tokenValue[0]},${tokenValue[1]},${tokenValue[2]}`
         },
       )
 

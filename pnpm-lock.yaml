@@ -36,7 +36,6 @@ importers:
       rollup: ^3.4.0
       scule: ^1.0.0
       style-dictionary-esm: ^1.0.15
-      tinycolor2: ^1.4.2
       typescript: ^4.9.3
       unbuild: ^1.0.1
       unplugin: ^1.0.0
@@ -60,7 +59,6 @@ importers:
       recast: 0.21.5
       scule: 1.0.0
       style-dictionary-esm: 1.0.15
-      tinycolor2: 1.4.2
       unbuild: 1.0.1
       unplugin: 1.0.0
     devDependencies:
