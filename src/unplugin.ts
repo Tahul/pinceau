@@ -118,14 +118,15 @@ export default createUnplugin<PinceauOptions>(
 
         try {
           // Handle CSS files
+          const loc = { query, source: code }
           if (query.css && !query.vue) {
-            const { code: _code } = resolveStyleQuery(code, magicString, query, ctx)
+            const { code: _code } = resolveStyleQuery(code, magicString, query, ctx, loc)
             return missingMap(_code)
           }
 
           // Handle <style> tags scoped queries
           if (query.type === 'style') {
-            const { code: _code } = resolveStyleQuery(code, magicString, query, ctx)
+            const { code: _code } = resolveStyleQuery(code, magicString, query, ctx, loc)
             return missingMap(_code)
           }
 

@@ -44,7 +44,7 @@ export const transformCssFunction = (
     delete declaration.variants
   }
 
-  return stringify(declaration, (property: any, value: any, _style: any, _selectors: any) => resolveCssProperty(property, value, _style, _selectors, ctx))
+  return stringify(declaration, (property: any, value: any, _style: any, _selectors: any) => resolveCssProperty(property, value, _style, _selectors, ctx, loc))
 }
 
 /**

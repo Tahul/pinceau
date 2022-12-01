@@ -36,10 +36,11 @@ css({
     height: '320px',
     position: 'relative',
     color: 'black',
+    boxShadow: '{shadow.md}',
     '& > p': {
       fontSize: '16px',
       textDecoration: 'underline',
-    },
+    }
   },
   variants: {
     shadow: {

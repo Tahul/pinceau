@@ -2,12 +2,40 @@ import chroma from 'chroma-js'
 import type { DesignToken, PinceauContext } from '../types'
 import { DARK, INITIAL, LIGHT, calcRegex, mqPlainRegex, referencesRegex, rgbaRegex } from './regexes'
 
+export const nativeQueries = [
+  // MDN
+  'charset',
+  'counter-style',
+  'document',
+  'font-face',
+  'font-feature-values',
+  'import',
+  'keyframes',
+  'layer',
+  'media',
+  'namespace',
+  'page',
+  'property',
+  'supports',
+
+  // Pinceau
+  'dark',
+  'light',
+]
+
 /**
  * Resolve a css function property to a stringifiable declaration.
  */
-export function resolveCssProperty(property: any, value: any, style: any, selectors: any, ctx: PinceauContext) {
+export function resolveCssProperty(
+  property: any,
+  value: any,
+  style: any,
+  selectors: any,
+  ctx: PinceauContext,
+  loc?: any,
+) {
   // Resolve custom style directives
-  const directive = resolveCustomDirectives(property, value, ctx)
+  const directive = resolveCustomDirectives(property, value, ctx, loc)
   if (directive) { return directive }
 
   // Resolve custom properties
@@ -22,7 +50,7 @@ export function resolveCssProperty(property: any, value: any, style: any, select
   }
 
   // Resolve final value
-  value = castValues(property, value, ctx)
+  value = castValues(property, value, ctx, loc)
 
   // Return proper declaration
   return {
@@ -33,13 +61,18 @@ export function resolveCssProperty(property: any, value: any, style: any, select
 /**
  * Cast value or values before pushing it to the style declaration
  */
-export function castValues(property: any, value: any, ctx: PinceauContext) {
+export function castValues(
+  property: any,
+  value: any,
+  ctx: PinceauContext,
+  loc?: any,
+) {
   if (Array.isArray(value) || typeof value === 'string' || typeof value === 'number') {
     if (Array.isArray(value)) {
-      value = value.map(v => castValue(property, v, ctx)).join(',')
+      value = value.map(v => castValue(property, v, ctx, loc)).join(',')
     }
     else {
-      value = castValue(property, value, ctx)
+      value = castValue(property, value, ctx, loc)
     }
   }
   return value
@@ -48,14 +81,19 @@ export function castValues(property: any, value: any, ctx: PinceauContext) {
 /**
  * Cast a value to a valid CSS unit.
  */
-export function castValue(property: any, value: any, ctx: PinceauContext) {
+export function castValue(
+  property: any,
+  value: any,
+  ctx: PinceauContext,
+  loc?: any,
+) {
   if (typeof value === 'number') { return value }
 
-  if (value.match(/rgb/g)) { value = resolveRgbaTokens(property, value, ctx) }
+  if (value.match(/rgb/g)) { value = resolveRgbaTokens(property, value, ctx, loc) }
 
-  if (value.match(/calc/g)) { value = resolveCalcTokens(property, value, ctx) }
+  if (value.match(/calc/g)) { value = resolveCalcTokens(property, value, ctx, loc) }
 
-  if (value.match(referencesRegex)) { value = resolveReferences(property, value, ctx) }
+  if (value.match(referencesRegex)) { value = resolveReferences(property, value, ctx, loc) }
 
   if (value === '{}') { return '' }
 
@@ -65,7 +103,12 @@ export function castValue(property: any, value: any, ctx: PinceauContext) {
 /**
  * Resolve token references
  */
-export function resolveReferences(_: string, value: string, ctx: PinceauContext) {
+export function resolveReferences(
+  _: string,
+  value: string,
+  ctx: PinceauContext,
+  loc?: any,
+) {
   if (!(typeof value === 'string')) { return value }
 
   value = value.replace(
@@ -73,7 +116,7 @@ export function resolveReferences(_: string, value: string, ctx: PinceauContext)
     (...parts) => {
       const [, tokenPath] = parts
 
-      const token = ctx.$tokens(tokenPath, { key: undefined }) as DesignToken
+      const token = ctx.$tokens(tokenPath, { key: undefined, loc }) as DesignToken
 
       const tokenValue = typeof token === 'string' ? token : token?.attributes?.variable || token?.value || token?.original?.value
 
@@ -89,7 +132,12 @@ export function resolveReferences(_: string, value: string, ctx: PinceauContext)
 /**
  * Resolve rgba() value
  */
-export function resolveRgbaTokens(_: string, value: string, ctx: PinceauContext) {
+export function resolveRgbaTokens(
+  _: string,
+  value: string,
+  ctx: PinceauContext,
+  loc?: any,
+) {
   if (!(typeof value === 'string')) { return value }
 
   value = value.replace(
@@ -100,7 +148,7 @@ export function resolveRgbaTokens(_: string, value: string, ctx: PinceauContext)
       newValue = newValue.replace(
         referencesRegex,
         (...reference) => {
-          const token = ctx.$tokens(reference[1], { key: 'original' }) as DesignToken
+          const token = ctx.$tokens(reference[1], { key: 'original', loc }) as DesignToken
 
           let tokenValue: any = token?.value || token
 
@@ -122,7 +170,12 @@ export function resolveRgbaTokens(_: string, value: string, ctx: PinceauContext)
 /**
  * Resolve calc() value
  */
-export function resolveCalcTokens(_: string, value: string, ctx: PinceauContext) {
+export function resolveCalcTokens(
+  _: string,
+  value: string,
+  ctx: PinceauContext,
+  loc?: any,
+) {
   if (!(typeof value === 'string')) { return value }
 
   value = value.replace(
@@ -133,7 +186,7 @@ export function resolveCalcTokens(_: string, value: string, ctx: PinceauContext)
       newValue = newValue.replace(
         referencesRegex,
         (...reference) => {
-          const token = ctx.$tokens(reference[1], { key: 'original' }) as any
+          const token = ctx.$tokens(reference[1], { key: 'original', loc }) as any
           return token?.value || token
         },
       )
@@ -152,6 +205,7 @@ export function resolveCustomDirectives(
   property: any,
   value: any,
   ctx: PinceauContext,
+  loc?: any,
 ) {
   if (property.startsWith('@')) {
     const mqMatches = property.match(mqPlainRegex)
@@ -166,12 +220,15 @@ export function resolveCustomDirectives(
       }
     }
 
+    // @dark
     if (property === DARK) { return resolveColorScheme('dark') }
 
+    // @light
     if (property === LIGHT) { return resolveColorScheme('light') }
 
+    // @initial
     if (property === INITIAL) {
-      let token = ctx.$tokens('media.initial' as any, { key: 'value' })
+      let token = ctx.$tokens('media.initial' as any, { key: 'value', loc })
       if (!token) {
         token = '(min-width: 0px)'
       }
@@ -181,9 +238,16 @@ export function resolveCustomDirectives(
     }
 
     if (mqMatches) {
-      const screen = mqMatches[0]?.replace?.('@', '')
+      const screen = mqMatches?.[0]?.replace?.('@', '')
 
-      const screenToken = ctx.$tokens(`media.${screen}` as any, { key: 'value' })
+      // Dismiss native `@` queries
+      if (nativeQueries.includes(screen)) {
+        return {
+          [property]: value,
+        }
+      }
+
+      const screenToken = ctx.$tokens(`media.${screen}` as any, { key: 'value', loc })
 
       return screenToken
         ? {

@@ -24,14 +24,18 @@ export const plugin: Plugin = {
   ) {
     let cache = {}
 
-    tokensHelperConfig = Object.assign({ flattened: true }, tokensHelperConfig)
-
-    const multiAppId = multiApp ? nanoid(6) : undefined
-
+    // Tokens helper
     const $tokens = createTokensHelper(
       theme.theme,
-      tokensHelperConfig,
+      Object.assign(
+        {
+          flattened: true,
+        },
+        tokensHelperConfig,
+      ),
     )
+
+    const multiAppId = multiApp ? nanoid(6) : undefined
 
     const sheet = usePinceauStylesheet($tokens, theme.customProperties, colorSchemeMode, multiAppId)
 

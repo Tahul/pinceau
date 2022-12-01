@@ -3,6 +3,7 @@ import { parseVueComponent } from '../../utils/ast'
 import type { PinceauContext, VueQuery } from '../../types'
 import { logger } from '../../utils'
 import { darkRegex, lightRegex, mqCssRegex } from '../../utils/regexes'
+import { nativeQueries } from '../../utils/css'
 import { transformDtHelper } from '../dt'
 import { transformCssFunction } from '../css'
 
@@ -19,7 +20,9 @@ export const transformVueStyle = (query: VueQuery, ctx: PinceauContext) => {
 
   let source = style?.content || ''
 
-  if (style.attrs.lang === 'ts') { source = transformCssFunction(query.id, source, undefined, undefined, ctx, style.loc) }
+  const loc = { query, ...style.loc }
+
+  if (style.attrs.lang === 'ts') { source = transformCssFunction(query.id, source, undefined, undefined, ctx, loc) }
 
   source = transformStyle(source, ctx)
 
@@ -59,27 +62,7 @@ export function transformScheme(code = '', scheme: 'light' | 'dark') {
  * Resolve `@{mediaQuery}` declarations.
  */
 export function transformMediaQueries(code = '', ctx: PinceauContext): string {
-  const mediaQueries = ctx.$tokens('media', { key: undefined, silent: true })
-
-  const nativeQueries = [
-    // MDN
-    'charset',
-    'counter-style',
-    'document',
-    'font-face',
-    'font-feature-values',
-    'import',
-    'keyframes',
-    'layer',
-    'media',
-    'namespace',
-    'page',
-    'property',
-    'supports',
-    // Pinceau
-    'dark',
-    'light',
-  ]
+  const mediaQueries = ctx.$tokens('media', { key: undefined })
 
   code = code.replace(
     mqCssRegex,

@@ -59,8 +59,8 @@ export function transformVueSFC(
  *
  * These does not need to resolve variants or populate computed styles.
  */
-export function resolveStyleQuery(code: string, magicString: MagicString, query: VueQuery, ctx: PinceauContext) {
-  if (query.lang === 'ts') { code = transformCssFunction(query.id, code, undefined, undefined, ctx) }
+export function resolveStyleQuery(code: string, magicString: MagicString, query: VueQuery, ctx: PinceauContext, loc?: any) {
+  if (query.lang === 'ts') { code = transformCssFunction(query.id, code, undefined, undefined, ctx, loc) }
   code = transformStyle(code, ctx)
   return { code, magicString }
 }

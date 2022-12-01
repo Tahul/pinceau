@@ -39,3 +39,22 @@ export const useDebugPerformance = (text: string, debug: PinceauOptions['debug']
     if (logOnStop) { log() }
   }
 }
+
+export function findLineColumn(content, index) {
+  const lines = content.split('\n')
+
+  let line
+  let column
+
+  lines.forEach((lineContent, lineIndex) => {
+    if (lineContent.includes(index)) {
+      line = lineIndex
+      column = lineContent.indexOf(index) + 1
+    }
+  })
+
+  return {
+    line,
+    column,
+  }
+}

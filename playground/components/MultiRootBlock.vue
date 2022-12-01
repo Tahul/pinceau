@@ -48,7 +48,7 @@ css({
     '& > p': {
       fontSize: '16px',
       textDecoration: 'underline',
-    }
+    },
   },
   variants: {
     shadow: {

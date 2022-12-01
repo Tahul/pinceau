@@ -8,14 +8,21 @@ export interface TokensFunctionOptions {
    */
   key?: string
   /**
-   * Toggle logging if requesting an unknown token.
+   * Called on missing tokens.
    * @default false
    */
-  silent?: boolean
+  onNotFound?: false | ((path: string, options: TokensFunctionOptions) => void)
   /**
    * Makes the function compatible with flattened version of tokens file.
+   * @default false
    */
   flattened?: boolean
+  /**
+   * The location of the resolved token.
+   * Can be useful for logging purposes.
+   * @default false
+   */
+  loc?: any
 }
 
 export type DtFunction = (

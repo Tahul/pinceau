@@ -15,7 +15,7 @@ export function isToken(token: any) { return typeof token === 'string' && keyReg
  * Handles a scale of tokens easily.
  */
 export function scale(
-  type: keyof PinceauTheme,
+  type: keyof PinceauTheme & (string & {}),
   prop: any,
   scales: ({ [key in PinceauMediaQueries]?: string }) | string,
   valueTransform?: (token) => string,

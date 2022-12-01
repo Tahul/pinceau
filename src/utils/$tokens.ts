@@ -9,14 +9,16 @@ export const createTokensHelper = (theme: any = {}, options: TokensFunctionOptio
   const defaultHelperOptions: TokensFunctionOptions = Object.assign(
     {
       key: 'attributes.variable',
-      silent: false,
+      onNotFound: false,
       flattened: false,
     },
     options,
   )
 
   const $tokens: TokensFunction = (path = undefined, options: TokensFunctionOptions) => {
-    const { key, flattened } = Object.assign(defaultHelperOptions, options)
+    const $tokensOptions = Object.assign(defaultHelperOptions, options)
+
+    const { flattened, key, onNotFound } = $tokensOptions
 
     if (!path) { return theme }
 
@@ -26,6 +28,8 @@ export const createTokensHelper = (theme: any = {}, options: TokensFunctionOptio
       const _value = get(token, key)
       if (_value) { return _value }
     }
+
+    if (!token && typeof onNotFound === 'function') { onNotFound(path, $tokensOptions) }
 
     return token
   }
