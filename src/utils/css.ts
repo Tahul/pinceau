@@ -212,7 +212,7 @@ export function resolveCustomDirectives(
 
     const resolveColorScheme = (scheme: string) => {
       scheme = ctx.options.colorSchemeMode === 'class'
-        ? `$.${scheme}`
+        ? `html.${scheme} &`
         : `@media (prefers-color-scheme: ${scheme})`
 
       return {
