@@ -24,7 +24,7 @@ export const transformVueStyle = (query: VueQuery, ctx: PinceauContext) => {
 
   if (style.attrs.lang === 'ts') { source = transformCssFunction(query.id, source, undefined, undefined, ctx, loc) }
 
-  source = transformStyle(source, ctx)
+  source = transformStyle(source, ctx, loc)
 
   if (style?.content !== source) { return source }
 }
@@ -32,9 +32,9 @@ export const transformVueStyle = (query: VueQuery, ctx: PinceauContext) => {
 /**
  * Helper grouping all resolvers applying to <style>
  */
-export function transformStyle(code = '', ctx: PinceauContext) {
+export function transformStyle(code = '', ctx: PinceauContext, loc?: any) {
   code = transformDtHelper(code)
-  code = transformMediaQueries(code, ctx)
+  code = transformMediaQueries(code, ctx, loc)
   code = transformScheme(code, 'dark')
   code = transformScheme(code, 'light')
   return code
@@ -61,8 +61,8 @@ export function transformScheme(code = '', scheme: 'light' | 'dark') {
 /**
  * Resolve `@{mediaQuery}` declarations.
  */
-export function transformMediaQueries(code = '', ctx: PinceauContext): string {
-  const mediaQueries = ctx.$tokens('media', { key: undefined })
+export function transformMediaQueries(code = '', ctx: PinceauContext, loc?: any): string {
+  const mediaQueries = ctx.$tokens('media', { key: undefined, loc })
 
   code = code.replace(
     mqCssRegex,
