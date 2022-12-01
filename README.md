@@ -88,7 +88,7 @@ export interface PinceauOptions {
   /**
    * A callback called each time your config gets resolved.
    */
-  configResolved?: (config: PinceauTheme) => void
+  configResolved?: (config: any) => void
   /**
    * The directry in which you store your design tokens.
    *
@@ -177,11 +177,11 @@ export default defineTheme({
     xl: '(min-width: 1280px)',
     xxl: '(min-width: 1536px)',
   },
-  colors: {
+  color: {
     primary: {
       50: {
-        initial: '{colors.orange.50}',
-        dark: '{colors.orange.900}'
+        initial: '{color.orange.50}',
+        dark: '{color.orange.900}'
       },
     },
     orange: {
@@ -209,21 +209,21 @@ export default defineTheme({
 
 ```css
 :root {
-  --colors-primary-50: #ffe9d9;
-  --colors-orange-50: #ffe9d9;
-  --colors-orange-100: #ffd3b3;
-  --colors-orange-200: #ffbd8d;
-  --colors-orange-300: #ffa666;
-  --colors-orange-400: #ff9040;
-  --colors-orange-500: #ff7a1a;
-  --colors-orange-600: #e15e00;
-  --colors-orange-700: #a94700;
-  --colors-orange-800: #702f00;
-  --colors-orange-900: #381800;
+  --color-primary-50: #ffe9d9;
+  --color-orange-50: #ffe9d9;
+  --color-orange-100: #ffd3b3;
+  --color-orange-200: #ffbd8d;
+  --color-orange-300: #ffa666;
+  --color-orange-400: #ff9040;
+  --color-orange-500: #ff7a1a;
+  --color-orange-600: #e15e00;
+  --color-orange-700: #a94700;
+  --color-orange-800: #702f00;
+  --color-orange-900: #381800;
 }
 
 html.dark :root {
-  --colors-primary-50: #381800;
+  --color-primary-50: #381800;
 }
 ```
 </details>
@@ -253,8 +253,8 @@ That enables the usage of another internal API, `css()`.
 <style lang="ts">
 css({
   div: {
-    color: '{colors.primary}',
-    backgroundColor: '{colors.orange.50}'
+    color: '{color.primary.900}',
+    backgroundColor: '{color.orange.50}'
   }
 })
 </style>
@@ -275,7 +275,7 @@ The `css()` function has mutliple features:
   ```vue
   <style lang="ts">
   css({
-    color: '{*}', < Will autocomplete from all 'colors' keys,
+    color: '{*}', < Will autocomplete from all 'color' keys,
     padding: '{*}', < Will autocomplete from 'space' keys
   })
   </style>
@@ -343,7 +343,7 @@ The `css()` function has mutliple features:
   <style lang="ts">
   css({
     '.phone': {
-      '--custom-property': '{colors.primary.500}'
+      '--custom-property': '{color.primary.500}'
     }
   })
   </style>
@@ -363,7 +363,7 @@ The `css()` function has mutliple features:
     color: {
       type: String,
       required: false,
-      default: $dt('colors.primary.500')
+      default: $dt('color.primary.500')
     }
   })
 
@@ -463,7 +463,7 @@ The `css()` function has mutliple features:
   css({
     '.block': {
       width: '100%'
-      '@mq.lg': {
+      '@lg': {
         width: '50%'
       },
     }
@@ -474,7 +474,7 @@ The `css()` function has mutliple features:
   .block {
     width: 100%;
 
-    @mq.lg {
+    @lg {
       width: 50%;
     }
   }
@@ -548,7 +548,7 @@ The `css()` function has mutliple features:
   <style lang="ts">
   css({
     '.block': {
-      backgroundColor: (props) => `{colors.${props.color}`,
+      backgroundColor: (props) => `{color.${props.color}`,
     }
   })
   </style>
@@ -584,7 +584,7 @@ The `css()` function has mutliple features:
   <style lang="ts">
   css({
     '.block': {
-      backgroundColor: 'rgba({colors.primary.500}, 0.8)',
+      backgroundColor: 'rgba({color.primary.500}, 0.8)',
     },
     variants: {
       transparent: {
@@ -601,11 +601,11 @@ The `css()` function has mutliple features:
         },
         smooth: {
           boxShadow: '{shadows.lg}',
-          border: '2px solid {colors.primary.500}'
+          border: '2px solid {color.primary.500}'
         },
         heavy: {
           boxShadow: '{shadows.xl}',
-          border: '4px solid {colors.primary.800}'
+          border: '4px solid {color.primary.800}'
         },
         options: {
           default: {
@@ -642,22 +642,22 @@ defineProps({
   color: {
     type: String,
     required: false,
-    default: $dt('colors.primary')
+    default: $dt('color.primary')
   }
 })
 
-const orangeVariable = $dt('colors.orange.500')
+const orangeVariable = $dt('color.orange.500')
 </script>
 
 <template>
   <div :style="{ backgroundColor: color }">
-    {{ $dt('colors.primary') }}
+    {{ $dt('color.primary') }}
   </div>
 </template>
 
 <style lang="postcss">
 div {
-  color: $dt('colors.orange.900')
+  color: $dt('color.orange.900')
 }
 </style>
 ```
@@ -690,8 +690,8 @@ flatten?: boolean
 ```
 
 ```ts
-const allColors = $dt('colors', { flatten: false, key: undefined })
-const orangeColor = $dt('colors.orange', { key: undefined })
+const allColors = $dt('color', { flatten: false, key: undefined })
+const orangeColor = $dt('color.orange', { key: undefined })
 ```
 
 This is considered as advanced usage and these options might be subject to changes.
@@ -708,9 +708,9 @@ That means the only valid value for `$dt()` is a plain string, not a reference t
 
 ```vue
 <script setup>
-const test = $dt('colors.primary.500') // ✅ Valid
+const test = $dt('color.primary.500') // ✅ Valid
 
-const ref = ref('colors.primary.500')
+const ref = ref('color.primary.500')
 const refTest = $dt(ref.value) // 🚨 Invalid
 </script>
 ```
@@ -733,7 +733,7 @@ There is plenty of features to come, including:
   ```ts
   // Theme config
   defineTheme({
-    colors: {
+    color: {
       primary: {
         light: {
           value: '#B6465F'
@@ -744,9 +744,9 @@ There is plenty of features to come, including:
       }
     },
     utils: {
-      surface: (value: ThemeKeys<'colors'>) => ({
-        backgroundColor: `{colors.${value}.dark}`,
-        borderColor: `{colors.${value}.light}`
+      surface: (value: ThemeKeys<'color'>) => ({
+        backgroundColor: `{color.${value}.dark}`,
+        borderColor: `{color.${value}.light}`
       })
     }
   })

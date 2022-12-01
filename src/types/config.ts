@@ -1,8 +1,7 @@
-import type { CSS } from './css'
+import type { CSSProperties } from './css'
 import type { DesignToken, RawTokenType } from './tokens'
 import type { ConfigSuggestion } from './preset'
-// @ts-ignore
-import type { GeneratedPinceauTheme } from '#pinceau/types'
+import type { PinceauTheme } from './theme'
 
 export interface LoadConfigResult<T> {
   config: T
@@ -19,10 +18,10 @@ export interface ResolvedConfigLayer<T> {
   config: T
 }
 
-export type PinceauUtilsProperties = Record<keyof CSS, CSS | ((value: string | number) => CSS)> & Record<string, CSS | ((value: string | number) => CSS)>
+export type PinceauUtilsProperties = Record<string, CSSProperties | ((value: any) => CSSProperties)>
 
 export interface ConfigTokens {
-  media?: Record<string, RawTokenType>
+  media?: Record<string, ConfigToken>
   utils?: PinceauUtilsProperties
 }
 
@@ -30,4 +29,4 @@ export type ConfigToken = RawTokenType | DesignToken
 
 export interface PermissiveConfigType { [key: string | number | symbol]: ConfigToken | PermissiveConfigType }
 
-export type DefineConfigType = ConfigTokens & (GeneratedPinceauTheme extends undefined ? ConfigSuggestion : GeneratedPinceauTheme) & PermissiveConfigType
+export type DefineConfigType = ConfigTokens & (PinceauTheme extends undefined ? ConfigSuggestion : PinceauTheme) & PermissiveConfigType

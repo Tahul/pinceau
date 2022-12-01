@@ -5,7 +5,7 @@ import type { VueLanguagePlugin } from '@volar/vue-language-core'
 import { castVariantsPropsAst, evalCssDeclaration, resolveCssCallees, resolveVariantsProps } from './transforms'
 import { expressionToAst, printAst } from './utils/ast'
 import { dtRegex } from './utils/regexes'
-import { fullCapabilities, resolveTemplateTags } from './utils/devtools'
+import { fullCapabilities } from './utils/devtools'
 
 const plugin: VueLanguagePlugin = _ => ({
   version: 1,
@@ -28,10 +28,10 @@ const plugin: VueLanguagePlugin = _ => ({
     if (embeddedFile.fileName.replace(fileName, '').match(/^\.(js|ts|jsx|tsx)$/)) {
       // Add imports on top of <script setup>
       const imports = [
-        '\nimport type { TokensFunction, CSS, PinceauTheme, PinceauTokensPaths, TokensFunctionOptions, TokenOrThemeKey, ComputedStyleProp, MediaQueriesKeys } from \'pinceau\'\n',
+        '\nimport type { CSSFunctionType, PinceauMediaQueries } from \'pinceau\'\n',
         '\ntype __VLS_InstanceOmittedKeys = \'onVnodeBeforeMount\' | \'onVnodeBeforeUnmount\' | \'onVnodeBeforeUpdate\' | \'onVnodeMounted\' | \'onVnodeUnmounted\' | \'onVnodeUpdated\' | \'key\' | \'ref\' | \'ref_for\' | \'ref_key\' | \'style\' | \'class\'\n',
         `\ntype __VLS_PropsType = (Omit<InstanceType<typeof import('${fileName}').default>['$props'], __VLS_InstanceOmittedKeys>)\n`,
-        '\nfunction css (declaration: CSS<PinceauTheme, __VLS_ComponentTemplateTags, __VLS_PropsType>) ( return { declaration } )\n',
+        '\nfunction css (declaration: CSSFunctionType<__VLS_PropsType>) { return { declaration } }\n',
       ]
       embeddedFile.content.push(...imports)
 
@@ -44,9 +44,11 @@ const plugin: VueLanguagePlugin = _ => ({
         variants = defu(variants, _variants.variants)
       }
 
+      /*
       if (sfc.template) {
         resolveTemplateTags(fileName, sfc, embeddedFile)
       }
+      */
 
       // Add context at bottom of <script setup>
       if (sfc.scriptSetup) {

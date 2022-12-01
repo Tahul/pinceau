@@ -5,13 +5,13 @@ const stringifyCustomProperties = (value: Record<string, any>) => {
   const entries = Object.entries(value)
   let result = entries.reduce(
     (acc, [key, value]) => {
-      if (typeof value === 'function') { acc += `"${key}": ${String(value)},\n` }
-      else { acc += `"${key}": ${JSON.stringify(value, null, 2)},\n` }
+      if (typeof value === 'function') { acc += `  "${key}": ${String(value)},\n` }
+      else { acc += `  "${key}": ${JSON.stringify(value, null, 4)},\n` }
       return acc
     },
     '{\n',
   )
-  result += '\n}\n'
+  result += '}\n'
   return result
 }
 
@@ -41,7 +41,10 @@ const enhanceStringifedTheme = (value) => {
             ),
           ])
         }
-        else if (path.value.typeAnnotation.typeAnnotation.members) {
+        else if (
+          path.value.typeAnnotation.typeAnnotation.members
+          && !['media', 'utils'].includes(path.value.key.value)
+        ) {
           path.value.typeAnnotation.typeAnnotation.members.push(
             astTypes.builders.tsIndexSignature(
               [astTypes.builders.identifier('key: string | number')],

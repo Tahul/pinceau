@@ -1,5 +1,5 @@
 import { keyRegex } from '../utils/regexes'
-import type { MediaQueriesKeys, PinceauTheme } from '../types'
+import type { PinceauMediaQueries, PinceauTheme } from '../types'
 
 // Local re-exports, avoiding whole bundle
 export { resolveCssProperty } from '../utils/css'
@@ -17,15 +17,15 @@ export function isToken(token: any) { return typeof token === 'string' && keyReg
 export function scale(
   type: keyof PinceauTheme,
   prop: any,
-  scales: ({ [key in MediaQueriesKeys]?: string }) | string,
+  scales: ({ [key in PinceauMediaQueries]?: string }) | string,
   valueTransform?: (token) => string,
-): ({ [key in MediaQueriesKeys]?: string }) | string {
+): ({ [key in PinceauMediaQueries]?: string }) | string {
   if (typeof prop === 'object') { return prop }
 
   if (typeof prop === 'string') {
-    const to_ret: ({ [key in MediaQueriesKeys]?: string }) | string = {}
+    const to_ret: ({ [key in PinceauMediaQueries]?: string }) | string = {}
 
-    // my-prop="{colors.primary.500}"
+    // my-prop="{color.primary.500}"
     if (isToken(prop)) {
       to_ret.initial = prop as any
       return to_ret as any

@@ -6,6 +6,7 @@ import createJITI from 'jiti'
 import type { PinceauOptions } from './types'
 import pinceau, { defaultOptions } from './unplugin'
 import { prepareOutputDir } from './theme/output'
+import { useDebugPerformance } from './utils/debug'
 
 const module: any = defineNuxtModule<PinceauOptions>({
   meta: {
@@ -18,6 +19,8 @@ const module: any = defineNuxtModule<PinceauOptions>({
     outputDir: join(nuxt.options.buildDir, 'pinceau/'),
   }),
   async setup(options: PinceauOptions, nuxt) {
+    const { stopPerfTimer } = useDebugPerformance('Setup Nuxt module', options.debug)
+
     // Local module resolver
     const modulePath = createResolver(import.meta.url)
     const resolveLocalModule = (path: string) => resolveModule(path, { paths: modulePath.resolve('./') })
@@ -52,7 +55,7 @@ const module: any = defineNuxtModule<PinceauOptions>({
               matches.forEach(
                 (match) => {
                   const _match = match.replace('{', '').replace('}', '')
-                  if (cachedTokens.includes(_match)) { resolvedTokens.push(match) }
+                  if (cachedTokens.includes(_match) && !resolvedTokens.includes(_match)) { resolvedTokens.push(match) }
                 },
               )
             }
@@ -134,9 +137,10 @@ const module: any = defineNuxtModule<PinceauOptions>({
         const lines = [
           'import { useState } from \'#app\'',
           'import \'pinceau.css\'',
+          'import theme from \'#pinceau/theme/flat\'',
           'import { plugin as pinceau } from \'pinceau/runtime\'',
           `export default defineNuxtPlugin((nuxtApp) => {
-            nuxtApp.vueApp.use(pinceau, { colorSchemeMode: '${options.colorSchemeMode}' })
+            nuxtApp.vueApp.use(pinceau, { colorSchemeMode: '${options.colorSchemeMode}', theme })
 
             // Handle first render of SSR styles
             nuxtApp.hook('app:rendered', (app) => {
@@ -163,6 +167,8 @@ const module: any = defineNuxtModule<PinceauOptions>({
       vite.config.plugins = vite.config.plugins || []
       vite.config.plugins.push(pinceau.vite(options))
     })
+
+    stopPerfTimer()
   },
 })
 

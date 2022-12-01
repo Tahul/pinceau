@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import type { ColorSchemeModes, PinceauUidTypes, TokensFunction } from '../types'
+import type { ColorSchemeModes, PinceauContext, PinceauUidTypes, TokensFunction } from '../types'
 import { resolveCssProperty } from '../utils/css'
 import { stringify } from '../utils/stringify'
 
@@ -11,7 +11,7 @@ export function usePinceauStylesheet(
 ) {
   const sheet = ref<CSSStyleSheet>()
 
-  const declarationToCss = (decl: any) => stringify(decl, (property: any, value: any, style: any, selectors: any) => resolveCssProperty(property, value, style, selectors, $tokens, customProperties, colorSchemeMode))
+  const declarationToCss = (decl: any) => stringify(decl, (property: any, value: any, style: any, selectors: any) => resolveCssProperty(property, value, style, selectors, { $tokens, customProperties, options: { colorSchemeMode } } as PinceauContext))
 
   function resolveStylesheet() {
     // Sheet already resolved

@@ -91,7 +91,7 @@ export function transformVariantsToDeclaration(
             declaration[targetId] = defu(declaration[targetId], variantValue)
           }
 
-          const mediaId = (mqId === 'dark' || mqId === 'light') ? `@${mqId}` : `@mq.${mqId}`
+          const mediaId = `@${mqId}`
 
           if (!declaration[mediaId]) { declaration[mediaId] = {} }
 

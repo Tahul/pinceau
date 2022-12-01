@@ -5,14 +5,14 @@ import type { PinceauOptions, PinceauTheme, PinceauTokens, ThemeGenerationOutput
 import { logger } from '../utils'
 import { jsFlat, jsFull, tsFlat, tsFull, tsTypesDeclaration } from './formats'
 
-export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath, colorSchemeMode, debug }: PinceauOptions, silent = true): Promise<ThemeGenerationOutput> {
+export async function generateTheme(tokens: any, { outputDir: buildPath, colorSchemeMode, debug }: PinceauOptions, silent = true): Promise<ThemeGenerationOutput> {
   let styleDictionary: Instance = StyleDictionary
 
   // Tokens outputs as in-memory objects
   const outputs: ThemeGenerationOutput['outputs'] = {}
 
   let result = {
-    tokens: {} as PinceauTheme,
+    tokens: {},
     outputs: {} as Record<string, any>,
     buildPath,
   }
@@ -23,7 +23,7 @@ export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath
   }
 
   // Custom properties
-  const customProperties = { ...(tokens?.utils as any || {}) }
+  const customProperties = { ...(tokens?.utils || {}) }
   if (tokens?.utils) { delete tokens?.utils }
 
   // Responsive tokens

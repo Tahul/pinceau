@@ -1,7 +1,8 @@
 import type { ASTNode } from 'ast-types'
 import { defu } from 'defu'
-import { resolveCssProperty, stringify } from '../utils'
-import type { ColorSchemeModes, TokensFunction } from '../types'
+import type { PinceauContext } from 'pinceau/types'
+import { parse } from 'acorn'
+import { logger, resolveCssProperty, stringify } from '../utils'
 import { parseAst, printAst, visitAst } from '../utils/ast'
 import { resolveComputedStyles } from './vue/computed'
 
@@ -9,42 +10,41 @@ import { resolveComputedStyles } from './vue/computed'
  * Stringify every call of css() into a valid Vue <style> declaration.
  */
 export const transformCssFunction = (
+  id: string,
   code = '',
   variants: any | undefined = {},
   computedStyles: any | undefined,
-  $tokens: TokensFunction,
-  customProperties: any,
-  // Enforce `media` for static CSS as this is processed by PostCSS plugin.
-  _: ColorSchemeModes,
+  ctx: PinceauContext,
+  loc?: any,
 ) => {
+  // Enhance error logging for `css()`
   try {
-    const declaration = resolveCssCallees(
-      code,
-      ast => evalCssDeclaration(ast, computedStyles),
-    )
-
-    // Handle variants and remove them from declaration
-    if (declaration && declaration?.variants) {
-      Object.assign(variants, defu(variants || {}, declaration?.variants || {}))
-      delete declaration.variants
-    }
-
-    const style = stringify(
-      declaration,
-      (property: any, value: any, _style: any, _selectors: any) => resolveCssProperty(property, value, _style, _selectors, $tokens, customProperties, 'media'),
-    )
-
-    if (style) { code = style }
-
-    if (!!declaration && !style) {
-      code = ''
-    }
+    parse(code, { ecmaVersion: 'latest' })
   }
   catch (e) {
-    return code
+    e.loc.line = (loc.start.line + e.loc.line) - 1
+
+    logger.error('Pinceau could not transform this file:')
+    // eslint-disable-next-line no-console
+    console.log(`🔗 ${id.split('?')[0]}:${e.loc.line}:${e.loc.column}\n`)
+    // eslint-disable-next-line no-console
+    console.log(`${e.message}\n`)
+
+    return ''
   }
 
-  return code
+  const declaration = resolveCssCallees(
+    code,
+    ast => evalCssDeclaration(ast, computedStyles),
+  )
+
+  // Handle variants and remove them from declaration
+  if (declaration && declaration?.variants) {
+    Object.assign(variants, defu(variants || {}, declaration?.variants || {}))
+    delete declaration.variants
+  }
+
+  return stringify(declaration, (property: any, value: any, _style: any, _selectors: any) => resolveCssProperty(property, value, _style, _selectors, ctx))
 }
 
 /**

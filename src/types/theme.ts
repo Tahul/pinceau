@@ -1,8 +1,12 @@
-import type { ConfigTokens } from './config'
-import type { PinceauTokens } from './tokens'
 // @ts-ignore
-import type { GeneratedPinceauTheme, GeneratedTokensPaths } from '#pinceau/types'
+import type { GeneratedCustomProperties, GeneratedPinceauTheme, GeneratedTokensPaths } from '#pinceau/types'
 
-export interface PinceauTheme extends GeneratedPinceauTheme, Omit<ConfigTokens, keyof GeneratedPinceauTheme>, PinceauTokens {}
+export type NativeMediaQueries = 'dark' | 'light' | 'initial'
+
+export type PinceauTheme = GeneratedPinceauTheme
 
 export type PinceauTokensPaths = GeneratedTokensPaths
+
+export type PinceauCustomProperties = GeneratedCustomProperties
+
+export type PinceauMediaQueries = keyof PinceauTheme['media'] extends undefined ? NativeMediaQueries : NativeMediaQueries | keyof PinceauTheme['media']

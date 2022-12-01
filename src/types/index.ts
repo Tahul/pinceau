@@ -1,4 +1,3 @@
-import type { PinceauTheme } from './theme'
 import type { DtFunction } from './dt'
 import type { ConfigOrPaths } from './context'
 import type { ColorSchemeModes } from './css'
@@ -13,6 +12,8 @@ export * from './dt'
 export * from './tokens'
 export * from './map'
 export * from './preset'
+export * from './variants'
+export * from './properties'
 
 export interface PinceauOptions {
   /**
@@ -34,7 +35,7 @@ export interface PinceauOptions {
   /**
    * A callback called each time your config gets resolved.
    */
-  configResolved?: (config: PinceauTheme) => void
+  configResolved?: (config: any) => void
   /**
    * The directry in which you store your design tokens.
    *
@@ -79,7 +80,7 @@ export interface PinceauOptions {
   /**
    * Enables extra logging on transform failures.
    */
-  debug?: boolean
+  debug?: boolean | 2
   /**
    * Enables support for nuxt-component-meta.
    */

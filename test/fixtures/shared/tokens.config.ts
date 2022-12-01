@@ -9,7 +9,7 @@ export default defineTheme({
     xxl: { value: '(min-width: 1536px)' },
   },
 
-  fonts: {
+  font: {
     primary: {
       value: 'Inter, sans-serif',
     },
@@ -18,7 +18,7 @@ export default defineTheme({
     },
   },
 
-  colors: {
+  color: {
     primary: palette('#51BBFE'),
 
     grape: palette('#cdb4db'),
@@ -32,10 +32,10 @@ export default defineTheme({
     velvet: palette('#502274'),
   },
 
-  shadows: {
+  shadow: {
     xs: {
       value: {
-        color: '{colors.gray.800}',
+        color: '{color.gray.800}',
         type: 'dropShadow',
         x: '0',
         y: '1',
@@ -46,7 +46,7 @@ export default defineTheme({
     sm: {
       value: [
         {
-          color: '{colors.gray.800}',
+          color: '{color.gray.800}',
           type: 'dropShadow',
           x: '0',
           y: '1',
@@ -54,7 +54,7 @@ export default defineTheme({
           spread: '-1',
         },
         {
-          color: '{colors.gray.800}',
+          color: '{color.gray.800}',
           type: 'dropShadow',
           x: '0',
           y: '1',
@@ -66,7 +66,7 @@ export default defineTheme({
     md: {
       value: [
         {
-          color: '{colors.gray.800}',
+          color: '{color.gray.800}',
           type: 'dropShadow',
           x: '0',
           y: '2',
@@ -74,7 +74,7 @@ export default defineTheme({
           spread: '-2',
         },
         {
-          color: '{colors.gray.800}',
+          color: '{color.gray.800}',
           type: 'dropShadow',
           x: '0',
           y: '4',
@@ -86,7 +86,7 @@ export default defineTheme({
     lg: {
       value: [
         {
-          color: '{colors.gray.800}',
+          color: '{color.gray.800}',
           type: 'dropShadow',
           x: '0',
           y: '4',
@@ -94,7 +94,7 @@ export default defineTheme({
           spread: '-4',
         },
         {
-          color: '{colors.gray.800}',
+          color: '{color.gray.800}',
           type: 'dropShadow',
           x: '0',
           y: '10',
@@ -106,7 +106,7 @@ export default defineTheme({
     xl: {
       value: [
         {
-          color: '{colors.gray.800}',
+          color: '{color.gray.800}',
           type: 'dropShadow',
           x: '0',
           y: '8',
@@ -114,7 +114,7 @@ export default defineTheme({
           spread: '-6',
         },
         {
-          color: '{colors.gray.800}',
+          color: '{color.gray.800}',
           type: 'dropShadow',
           x: '0',
           y: '20',
@@ -125,7 +125,7 @@ export default defineTheme({
     },
     xxl: {
       value: {
-        color: '{colors.gray.800}',
+        color: '{color.gray.800}',
         type: 'dropShadow',
         x: '0',
         y: '25',
@@ -165,7 +165,7 @@ export default defineTheme({
     },
   },
 
-  fontSizes: {
+  fontSize: {
     'xs': {
       value: '12px',
     },
@@ -228,7 +228,7 @@ export default defineTheme({
     },
   },
 
-  leads: {
+  lead: {
     none: {
       value: 1,
     },
@@ -323,6 +323,7 @@ export default defineTheme({
       value: '200px',
     },
   },
+
   space: {
     0: {
       value: '0',
@@ -388,7 +389,8 @@ export default defineTheme({
       value: '200px',
     },
   },
-  borderWidths: {
+
+  borderWidth: {
     noBorder: {
       value: '0',
     },
@@ -402,6 +404,7 @@ export default defineTheme({
       value: '3px',
     },
   },
+
   opacity: {
     noOpacity: {
       value: '0',
@@ -426,7 +429,7 @@ export default defineTheme({
     },
   },
 
-  zIndices: {
+  zIndice: {
     0: {
       value: '0',
     },

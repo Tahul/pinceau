@@ -3,8 +3,8 @@ import type { PropType } from 'vue'
 
 defineProps({
   color: {
-    type: String as PropType<TokenOrThemeKey<'color'>>,
-    default: '{colors.primary.600}',
+    type: String,
+    default: '{color.primary.600}',
   },
   ...variants,
 })
@@ -34,7 +34,7 @@ css({
   button: {
     backgroundColor: (props, utils) => utils.scale('color', props.color, '600'),
     '&:hover': {
-      border: (props) => `8px solid {colors.${props.color}}`,
+      border: (props) => `8px solid {color.${props.color}}`,
     },
     display: 'flex',
     alignItems: 'center',
@@ -43,7 +43,7 @@ css({
     borderRadius: '16px',
     width: '320px',
     height: '320px',
-    border: '16px solid {colors.grey}',
+    border: '16px solid {color.grey}',
     position: 'relative',
     '& > p': {
       fontSize: '16px',
@@ -54,17 +54,17 @@ css({
     shadow: {
       sm: {
         button: {
-          boxShadow: '{shadows.sm}',
+          boxShadow: '{shadow.sm}',
         }
       },
       lg: {
         button: {
-          boxShadow: '{shadows.lg}',
+          boxShadow: '{shadow.lg}',
         }
       },
       xl: {
         button: {
-          boxShadow: '{shadows.xl}',
+          boxShadow: '{shadow.xl}',
         }
       }
     },

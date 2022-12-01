@@ -35,14 +35,14 @@ import ThemeSelect from '../components/ThemeSelect.vue'
 
 <style lang="postcss">
 html, body {
-  font-family: $dt('fonts.secondary');
+  font-family: $dt('font.secondary');
 
-  color: $dt('colors.black');
-  background-color: $dt('colors.white');
+  color: $dt('color.black');
+  background-color: $dt('color.white');
 
   @dark {
-    color: $dt('colors.white');
-    background-color: $dt('colors.black');
+    color: $dt('color.white');
+    background-color: $dt('color.black');
   }
 }
 
@@ -66,8 +66,8 @@ html, body, #app, #__nuxt {
 
   header,
   footer {
-    background-color: $dt('colors.black');
-    color: $dt('colors.white');
+    background-color: $dt('color.black');
+    color: $dt('color.white');
     flex: 0;
     display: flex;
     align-items: center;

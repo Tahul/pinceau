@@ -1,10 +1,6 @@
-import type { MediaQueriesKeys } from './css'
+import type { PinceauMediaQueries } from './theme'
 
 export type RawTokenType = string | number | string[] | ''
-
-export type ResponsiveToken<T = RawTokenType> = {
-  [key in MediaQueriesKeys]?: T
-}
 
 export interface DesignToken<
   T = RawTokenType,
@@ -12,7 +8,7 @@ export interface DesignToken<
   /**
    * The raw value of the token.
    */
-  value?: T | ResponsiveToken<T>
+  value?: T | { [key in PinceauMediaQueries]?: T }
   /**
    * CSS Variable reference that gets generated out of the token path.
    */
@@ -58,5 +54,5 @@ export interface DesignToken<
 }
 
 export interface PinceauTokens {
-  [key: string]: PinceauTokens | DesignToken | RawTokenType | ResponsiveToken
+  [key: string]: PinceauTokens | DesignToken | RawTokenType
 }

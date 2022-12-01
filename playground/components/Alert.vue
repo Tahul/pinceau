@@ -26,7 +26,7 @@ css({
     },
     display: 'block',
     borderRadius: '{radii.lg}',
-    borderWidth: '{borderWidths.md}',
+    borderWidth: '{borderWidth.md}',
     span: {
       color: 'black'
     }
@@ -35,19 +35,19 @@ css({
     size: {
       sm: {
         padding: '{space.6}',
-        fontSize: '{fontSizes.sm}'
+        fontSize: '{fontSize.sm}'
       },
       md: {
         padding: '{space.8}',
-        fontSize: '{fontSizes.md}'
+        fontSize: '{fontSize.md}'
       },
       lg: {
         padding: '{space.12}',
-        fontSize: '{fontSizes.lg}'
+        fontSize: '{fontSize.lg}'
       },
       xl: {
         padding: '{space.16}',
-        fontSize: '{fontSizes.xl}'
+        fontSize: '{fontSize.xl}'
       },
       options: {
         default: 'xl'
@@ -55,30 +55,30 @@ css({
     },
     primary: {
       true: {
-        backgroundColor: 'rgba({colors.blue.500}, 0.5)',
-        color: '{colors.blue.200}',
-        borderColor: '{colors.blue.300}'
+        backgroundColor: 'rgba({color.blue.500}, 0.5)',
+        color: '{color.blue.200}',
+        borderColor: '{color.blue.300}'
       }
     },
     success: {
       true: {
-        backgroundColor: 'rgba({colors.green.500}, 0.5)',
-        color: '{colors.green.200}',
-        borderColor: '{colors.green.300}'
+        backgroundColor: 'rgba({color.green.500}, 0.5)',
+        color: '{color.green.200}',
+        borderColor: '{color.green.300}'
       }
     },
     warning: {
       true: {
-        backgroundColor: 'rgba({colors.yellow.500}, 0.5)',
-        color: '{colors.yellow.200}',
-        borderColor: '{colors.yellow.300}'
+        backgroundColor: 'rgba({color.yellow.500}, 0.5)',
+        color: '{color.yellow.200}',
+        borderColor: '{color.yellow.300}'
       }
     },
     danger: {
       true: {
-        backgroundColor: 'rgba({colors.red.500}, 0.5)',
-        color: '{colors.red.200}',
-        borderColor: '{colors.red.300}'
+        backgroundColor: 'rgba({color.red.500}, 0.5)',
+        color: '{color.red.200}',
+        borderColor: '{color.red.300}'
       }
     }
   }

@@ -19,6 +19,7 @@ export default defineConfig({
     Inspect(),
     Pinceau({
       configFileName: 'tokens.config',
+      outputDir: resolve(__dirname, './.nuxt/pinceau'),
       configOrPaths: [
         resolve(__dirname, 'theme'),
       ],

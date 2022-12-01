@@ -1,6 +1,6 @@
 import type { PropType } from 'vue'
 import { inject } from 'vue'
-import type { CSS, ComputedStyleProp, DefaultThemeMap, PinceauTheme } from '../types'
+import type { CSSProperties, ComputedStyleProp, NativeProperties } from '../types'
 
 /**
  * Entrypoint for Pinceau runtime features.
@@ -17,7 +17,7 @@ export function usePinceauRuntime(
  * A prop to be used on any component to enable `:css` prop.
  */
 export const cssProp = {
-  type: Object as PropType<CSS<PinceauTheme, {}, {}, false>>,
+  type: Object as PropType<CSSProperties>,
   required: false,
   default: undefined,
 }
@@ -25,13 +25,14 @@ export const cssProp = {
 /**
  * A prop to be used on any component to enable `:css` prop.
  */
-export function computedStyle<T extends keyof DefaultThemeMap>(
+export function computedStyle<T extends keyof NativeProperties>(
   attribute: T,
-  defaultValue: ComputedStyleProp<T>,
+  // @ts-ignore
+  defaultValue: ComputedStyleProp,
   required = false,
 ) {
   return {
-    type: [String, Object] as PropType<ComputedStyleProp<T>>,
+    type: [String, Object] as PropType<ComputedStyleProp>,
     required,
     default: defaultValue,
   }

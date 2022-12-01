@@ -1,4 +1,4 @@
-import { existsSync } from 'fs'
+import { existsSync } from 'fs-extra'
 import { resolve } from 'pathe'
 import jiti from 'jiti'
 import type { Update, ViteDevServer } from 'vite'
@@ -16,7 +16,7 @@ export function usePinceauConfig<UserOptions extends PinceauOptions = PinceauOpt
 ): PinceauConfigContext<UserOptions> {
   let cwd = options?.cwd ?? process.cwd()
   let sources: string[] = []
-  let resolvedConfig: PinceauTheme = {} as any
+  let resolvedConfig: any = {}
 
   let ready = reloadConfig()
 
@@ -70,7 +70,7 @@ export function usePinceauConfig<UserOptions extends PinceauOptions = PinceauOpt
     ]
 
     // Use transformed files as well
-    getTransformed().forEach((transformed) => !ids.includes(transformed) && ids.push(transformed))
+    getTransformed().forEach(transformed => !ids.includes(transformed) && ids.push(transformed))
 
     const updates: Update[] = []
 

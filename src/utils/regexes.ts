@@ -16,9 +16,9 @@ export const rgbaRegex = /rgb[a?]?\(([^\)]+)(,[^\)]+?)\)/mg
 
 export const calcRegex = /calc\((.*?)\)/mg
 
-export const mqPlainRegex = /@mq\.(.*)/
+export const mqPlainRegex = /@([^\s]+)/g
 
-export const mqCssRegex = /(@mq.(.*?)\s{)/g
+export const mqCssRegex = /@([^\s]+)\s{/g
 
 export const darkRegex = /(@dark\s{)/g
 
@@ -31,3 +31,5 @@ export const LIGHT = '@light'
 export const INITIAL = '@initial'
 
 export const dtRegex = /\$dt\('(.*?)'\)/g
+
+export const variantsRegex = /(...)?variants(,)?/mg

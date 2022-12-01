@@ -9,7 +9,7 @@ css({
   '#root': {
     height: '100vh',
     width: '100vw',
-    backgroundColor: '{colors.velvet.500}'
+    backgroundColor: '{color.velvet.500}'
   }
 })
 </style>

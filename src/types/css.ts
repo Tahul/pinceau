@@ -1,228 +1,65 @@
-import type * as CSSType from 'csstype'
 import type { utils } from '../runtime/utils'
 import type * as Utils from './utils'
-import type { PinceauTheme, PinceauTokensPaths } from './theme'
+import type { PinceauCustomProperties, PinceauMediaQueries } from './theme'
 import type { DefaultThemeMap } from './map'
-// @ts-ignore
-import type { GeneratedCustomProperties, GeneratedPinceauTheme } from '#pinceau/types'
+import type { Variants } from './variants'
+import type { NativeProperties, PropertyValue, PseudosProperties, UsableTokens } from './properties'
 
 export type ComputedStylesUtils = typeof utils
 
 export type ColorSchemeModes = 'media' | 'class'
 
-export type VuePseudos =
-| '&:deep('
-| '&:slotted('
-| '&:global('
+export type ComputedStyleProp = UsableTokens | (string & {}) | ({ [key in PinceauMediaQueries]: UsableTokens | (string & {}) })
 
-export type AdvancedPseudos =
-  | '&::cue('
-  | '&::cue-region('
-  | '&::part('
-  | '&::slotted('
-  | '&:dir('
-  | '&:has('
-  | '&:host('
-  | '&:host-context('
-  | '&:is('
-  | '&:lang('
-  | '&:not('
-  | '&:nth-child('
-  | '&:nth-last-child('
-  | '&:nth-last-of-type('
-  | '&:nth-of-type('
-  | '&:where('
+export type ComputedStyleDefinition<
+  SupportedProperties = '',
+  TemplateProps = {},
+  > = (props: TemplateProps, utils: ComputedStylesUtils) => PropertyValue<SupportedProperties> | ({ [key in PinceauMediaQueries]?: PropertyValue<SupportedProperties> })
 
-export type SimplePseudos =
-  | '&::after'
-  | '&::backdrop'
-  | '&::before'
-  | '&::cue'
-  | '&::cue-region'
-  | '&::first-letter'
-  | '&::first-line'
-  | '&::grammar-error'
-  | '&::marker'
-  | '&::placeholder'
-  | '&::selection'
-  | '&::spelling-error'
-  | '&::target-text'
-  | '&:active'
-  | '&:after'
-  | '&:any-link'
-  | '&:before'
-  | '&:blank'
-  | '&:checked'
-  | '&:current'
-  | '&:default'
-  | '&:defined'
-  | '&:disabled'
-  | '&:empty'
-  | '&:enabled'
-  | '&:first'
-  | '&:first-child'
-  | '&:first-letter'
-  | '&:first-line'
-  | '&:first-of-type'
-  | '&:focus'
-  | '&:focus-visible'
-  | '&:focus-within'
-  | '&:fullscreen'
-  | '&:future'
-  | '&:hover'
-  | '&:in-range'
-  | '&:indeterminate'
-  | '&:invalid'
-  | '&:last-child'
-  | '&:last-of-type'
-  | '&:left'
-  | '&:link'
-  | '&:local-link'
-  | '&:nth-col'
-  | '&:nth-last-col'
-  | '&:only-child'
-  | '&:only-of-type'
-  | '&:optional'
-  | '&:out-of-range'
-  | '&:past'
-  | '&:paused'
-  | '&:picture-in-picture'
-  | '&:placeholder-shown'
-  | '&:read-only'
-  | '&:read-write'
-  | '&:required'
-  | '&:right'
-  | '&:root'
-  | '&:scope'
-  | '&:target'
-  | '&:target-within'
-  | '&:user-invalid'
-  | '&:user-valid'
-  | '&:valid'
-  | '&:visited'
+type MappedProperty<
+  K = string,
+  TemplateProps = {},
+> = PropertyValue<K> | ComputedStyleDefinition<K, TemplateProps>
 
-export type Pseudos = AdvancedPseudos | SimplePseudos
+export type CSSProperties<
+  TemplateProps = {},
+> =
+    // Theme-based tokens
+    {
+      [K in keyof DefaultThemeMap]?: MappedProperty<K, TemplateProps>
+    }
+    &
+    // Native properties tokens
+    {
+      [K in keyof NativeProperties]?: MappedProperty<K, TemplateProps>
+    }
+    &
+    {
+      [K in keyof PseudosProperties]?: CSSProperties<TemplateProps> | {}
+    }
+    &
+    // Custom properties
+    {
+      [K in keyof PinceauCustomProperties]?: UsableTokens | ComputedStyleDefinition<UsableTokens, TemplateProps>
+    }
+    &
+    {
+      [K in string | number | symbol]: CSSProperties<TemplateProps> | UsableTokens | MappedProperty<K, TemplateProps> | ComputedStyleDefinition<UsableTokens, TemplateProps> | {}
+    }
 
-export interface NativeProperties extends
-  CSSType.StandardProperties,
-  CSSType.StandardShorthandProperties,
-  CSSType.StandardProperties,
-  CSSType.SvgProperties {}
-
-/**
- * Pseudos to be used in `css({ ':pseudo': { ...} })`
- */
-export type PseudosProperties = {
-  [key in Pseudos]?: NativeProperties
-}
-
-export type CssProperties = NativeProperties & PseudosProperties
-
-const schemes = {
-  '@dark': true,
-  '@light': true,
-} as const
-
-export interface VariantOptions<K> {
-  type?: string
-  required?: boolean
-  default?: K | ({ [key in MediaQueriesKeys]: K }) | ({ [key: string]: K })
-}
-
-export interface BooleanVariant<K> { true?: K; false?: K; options?: VariantOptions<boolean> }
-
-export type EnumVariant<K, T = { [key: string]: K }> = T & { options?: VariantOptions<keyof T> }
-
-export interface Variants<K> {
-  [key: string]: BooleanVariant<K> | EnumVariant<K>
-}
-
-export type ThemeKey<K extends keyof DefaultThemeMap> = Utils.WrapUnion<Utils.FilterStartingWith<PinceauTokensPaths, DefaultThemeMap[K]>, '{', '}'>
-
-export type MediaQueriesKeys = keyof GeneratedPinceauTheme['media'] | 'dark' | 'light' | 'initial'
-
-export type TokenOrThemeKey<T extends keyof NativeProperties> = (T extends keyof DefaultThemeMap ? (ThemeKey<T> | keyof PinceauTheme[DefaultThemeMap[T]]) : string)
-
-export type ComputedStyleProp<T extends keyof DefaultThemeMap> = TokenOrThemeKey<T> | ({ [key in MediaQueriesKeys]: TokenOrThemeKey<T> }) | ({ [key: string]: TokenOrThemeKey<T> })
-
-export type CSS<
-  Theme extends object = PinceauTheme,
-  TemplateTags extends object = {},
-  TemplateProps extends object = {},
-  Root extends boolean = true,
-  > =
-  // Support media queries
+export type CSSFunctionType<TemplateProps = {}> =
   {
-    [key in keyof Utils.PrefixObjectKeys<
-      // @ts-expect-error - Might not be defined by the user
-      Theme['media'],
-      '@mq.'
-    >]?: (
-      | CSS<Theme, TemplateTags, TemplateProps, false>
-    )
-  }
-  &
-  // Support color schemes
-  {
-    [key in keyof typeof schemes]?: (
-      | CSS<Theme, TemplateTags, TemplateProps, false>
-      | {}
-      | undefined
-    )
-  }
-  &
-  // Reserved `variants` key keys
-  (
-    Root extends true ?
-        {
-          variants?: Variants<CSS<Theme, TemplateTags, TemplateProps, false>>
-        } :
-        {}
-  )
-  &
-  // Template tags (coming from Volar)
-  {
-    [K in keyof TemplateTags]?: (
-      | CSS<Theme, TemplateTags, TemplateProps, false>
-      | {}
-      | undefined
-    )
-  }
-  &
-  // Theme-based tokens (supports {token.path} autocompletion)
-  {
-    [K in keyof DefaultThemeMap]?: (
-      | ThemeKey<K>
-      | CssProperties[K]
-      | ((props: TemplateProps, utils: ComputedStylesUtils) => ThemeKey<K> | CssProperties[K] | ({ [key in MediaQueriesKeys]?: ThemeKey<K> | CssProperties[K] }))
-      | {}
-      | undefined
-    )
-  }
-  &
-  // CSS Properties
-  {
-    [K in Exclude<keyof CssProperties, keyof DefaultThemeMap>]?: (
-      | CssProperties[K]
-      | ((props: TemplateProps, utils: ComputedStylesUtils) => CssProperties[K] | ({ [key in MediaQueriesKeys]?: CssProperties[K] }))
-      | {}
-      | undefined
-    )
+    variants?: Variants
   }
   &
   {
-    [K in keyof GeneratedCustomProperties]?: Utils.WrapUnion<PinceauTokensPaths, '{', '}'>
+    [K in keyof PinceauCustomProperties]?: UsableTokens
   }
   &
-  // Other properties (nested selector)
   {
-    [K: string]: (
-      | CSS<Theme, TemplateTags, TemplateProps, false>
-      | ((props: TemplateProps, utils: ComputedStylesUtils) => string | ({ [key in MediaQueriesKeys]?: string }))
-      | { [key: string]: CSS<Theme, TemplateTags, TemplateProps, false> }
-      | {}
-      | number
-      | string
-      | undefined
-    )
+    [K in Utils.WrapUnion<PinceauMediaQueries, '@', ''>]?: CSSProperties<TemplateProps>
+  }
+  &
+  {
+    [K in string | number | symbol]: CSSProperties<TemplateProps> | MappedProperty<K, TemplateProps> | {}
   }

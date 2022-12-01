@@ -50,7 +50,7 @@ css({
     left: 0,
     height: '100vh',
     width: '100vw',
-    zIndex: '-1',
-  },
+    zIndex: '-1'
+  }
 })
 </style>

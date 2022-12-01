@@ -61,3 +61,21 @@ export type WrapUnion<
 > = keyof {
   [K in WrapKey<TObject, TPrefix, TSuffix>]: any
 }
+
+export interface VueQuery {
+  id: string
+  filename: string
+  vue?: boolean
+  src?: boolean
+  global?: boolean
+  type?: 'script' | 'template' | 'style' | 'custom'
+  blockType?: string
+  index?: number
+  locale?: string
+  lang?: string
+  raw?: boolean
+  scoped?: string
+  transformed?: boolean
+  issuerPath?: string
+  css: boolean
+}

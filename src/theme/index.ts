@@ -1,4 +1,5 @@
 import type { ViteDevServer } from 'vite'
+import { useDebugPerformance } from '../utils/debug'
 import { flattenTokens } from '../utils'
 import type { PinceauContext, PinceauOptions } from '../types'
 import { createTokensHelper } from '../utils/$tokens'
@@ -35,11 +36,16 @@ export const createContext = <UserOptions extends PinceauOptions = PinceauOption
     getViteServer,
     getTransformed,
     async (resolvedConfig) => {
+      const { stopPerfTimer } = useDebugPerformance('Build theme', options.debug)
+
       // Preserve custom properties in memory to avoid virtual storage call on compile
       customProperties = resolvedConfig.config?.utils || {}
 
       const builtTheme = await generateTheme(resolvedConfig.config, options)
-      if (!builtTheme) { return }
+      if (!builtTheme) {
+        stopPerfTimer()
+        return
+      }
 
       updateOutputs(builtTheme)
 
@@ -56,6 +62,8 @@ export const createContext = <UserOptions extends PinceauOptions = PinceauOption
           },
         })
       }
+
+      stopPerfTimer()
     },
   )
 
