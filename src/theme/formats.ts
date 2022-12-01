@@ -122,7 +122,7 @@ export const tsTypesDeclaration = (tokensObject: any, customProperties = {}) => 
     result += `export ${enhanceTokenPaths(tokensPaths)}`
   }
   else {
-    result += 'export type GeneratedTokensPaths = {}\n\n'
+    result += 'export type GeneratedTokensPaths = \'\'\n\n'
   }
 
   return result

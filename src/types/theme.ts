@@ -9,4 +9,5 @@ export type PinceauTokensPaths = GeneratedTokensPaths
 
 export type PinceauCustomProperties = GeneratedCustomProperties
 
+// @ts-expect-error - Might be undefined
 export type PinceauMediaQueries = keyof PinceauTheme['media'] extends undefined ? NativeMediaQueries : NativeMediaQueries | keyof PinceauTheme['media']

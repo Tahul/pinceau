@@ -20,7 +20,7 @@ export const createTokensHelper = (theme: any = {}, options: TokensFunctionOptio
 
     if (!path) { return theme }
 
-    const token = flattened ? theme[path] : get(theme, path)
+    const token = flattened ? theme[path as string] : get(theme, path as string)
 
     if (key) {
       const _value = get(token, key)

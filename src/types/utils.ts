@@ -55,7 +55,7 @@ export type NestedKeyOf<TObject> =
 export type FilterStartingWith<Set, Needle extends string> = Set extends `${Needle}${infer _X}` ? Set : never
 
 export type WrapUnion<
-  TObject extends string,
+  TObject extends string | number | symbol,
   TPrefix extends string,
   TSuffix extends string,
 > = keyof {
