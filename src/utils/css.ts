@@ -1,27 +1,6 @@
 import chroma from 'chroma-js'
 import type { DesignToken, PinceauContext } from '../types'
-import { DARK, INITIAL, LIGHT, calcRegex, mqPlainRegex, referencesRegex, rgbaRegex } from './regexes'
-
-export const nativeQueries = [
-  // MDN
-  'charset',
-  'counter-style',
-  'document',
-  'font-face',
-  'font-feature-values',
-  'import',
-  'keyframes',
-  'layer',
-  'media',
-  'namespace',
-  'page',
-  'property',
-  'supports',
-
-  // Pinceau
-  'dark',
-  'light',
-]
+import { DARK, INITIAL, LIGHT, calcRegex, referencesRegex, rgbaRegex } from './regexes'
 
 /**
  * Resolve a css function property to a stringifiable declaration.
@@ -35,7 +14,7 @@ export function resolveCssProperty(
   loc?: any,
 ) {
   // Resolve custom style directives
-  const directive = resolveCustomDirectives(property, value, ctx, loc)
+  const directive = resolveCustomDirectives(property, value, selectors, ctx, loc)
   if (directive) { return directive }
 
   // Resolve custom properties
@@ -204,15 +183,15 @@ export function resolveCalcTokens(
 export function resolveCustomDirectives(
   property: any,
   value: any,
+  selectors: any,
   ctx: PinceauContext,
   loc?: any,
 ) {
   if (property.startsWith('@')) {
-    const mqMatches = property.match(mqPlainRegex)
-
     const resolveColorScheme = (scheme: string) => {
       scheme = ctx.options.colorSchemeMode === 'class'
-        ? `html.${scheme} &`
+        // Raw `html` selector could be conflicting
+        ? selectors?.[0] === 'html' ? `&.${scheme}` : `:root.${scheme} &`
         : `@media (prefers-color-scheme: ${scheme})`
 
       return {
@@ -229,25 +208,18 @@ export function resolveCustomDirectives(
     // @initial
     if (property === INITIAL) {
       let token = ctx.$tokens('media.initial' as any, { key: 'value', loc })
-      if (!token) {
-        token = '(min-width: 0px)'
-      }
+      if (!token) { token = '(min-width: 0px)' }
       return {
         [`@media ${token}`]: value,
       }
     }
 
-    if (mqMatches) {
-      const screen = mqMatches?.[0]?.replace?.('@', '')
+    // Custom @queries
+    const mediaQueries = ctx.$tokens(`media` as any, { key: undefined, loc })
+    if (mediaQueries) {
+      const screen = property.replace?.('@', '')
 
-      // Dismiss native `@` queries
-      if (nativeQueries.includes(screen)) {
-        return {
-          [property]: value,
-        }
-      }
-
-      const screenToken = ctx.$tokens(`media.${screen}` as any, { key: 'value', loc })
+      const screenToken = mediaQueries?.[screen]?.value
 
       return screenToken
         ? {

@@ -1,6 +1,7 @@
 import type { ViteDevServer } from 'vite'
 import { findLineColumn, useDebugPerformance } from '../utils/debug'
-import { flattenTokens, logger } from '../utils'
+import { flattenTokens } from '../utils'
+import { message } from '../utils/logger'
 import type { PinceauContext, PinceauOptions } from '../types'
 import { createTokensHelper } from '../utils/$tokens'
 import { generateTheme } from './generate'
@@ -36,6 +37,8 @@ export const createContext = <UserOptions extends PinceauOptions = PinceauOption
     getViteServer,
     getTransformed,
     async (resolvedConfig) => {
+      message('CONFIG_RESOLVED', [resolvedConfig])
+
       const { stopPerfTimer } = useDebugPerformance('Build theme', options.debug)
 
       // Preserve custom properties in memory to avoid virtual storage call on compile
@@ -89,21 +92,7 @@ export const createContext = <UserOptions extends PinceauOptions = PinceauOption
         tokens,
         {
           onNotFound(path, options) {
-            logger.warn(`Token not found: ${path}`)
-
-            if (options?.loc?.query) {
-              // Get LOC for missing token in `css({ ... })`
-              const { line: lineOffset, column: columnOffset } = findLineColumn(options.loc.source, `{${path}}`)
-              // Not LOC provided by parser, try guessing `css({ ... })` position in whole code
-              if (!options.loc?.start) { options.loc.start = findLineColumn(options.loc.source, 'css({') }
-
-              // Concat lines
-              const line = (options.loc?.start?.line || 0) + lineOffset
-              const column = (options.loc?.start?.column || 0) + columnOffset
-
-              // eslint-disable-next-line no-console
-              console.log(`🔗 ${options.loc.query.filename}${line && column ? `:${line}:${column}\n` : ''}`)
-            }
+            message('TOKEN_NOT_FOUND', [path, options])
           },
         },
       )

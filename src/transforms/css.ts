@@ -2,7 +2,8 @@ import type { ASTNode } from 'ast-types'
 import { defu } from 'defu'
 import type { PinceauContext } from 'pinceau/types'
 import { parse } from 'acorn'
-import { logger, resolveCssProperty, stringify } from '../utils'
+import { resolveCssProperty, stringify } from '../utils'
+import { logger, message } from '../utils/logger'
 import { parseAst, printAst, visitAst } from '../utils/ast'
 import { resolveComputedStyles } from './vue/computed'
 
@@ -23,13 +24,8 @@ export const transformCssFunction = (
   }
   catch (e) {
     e.loc.line = (loc.start.line + e.loc.line) - 1
-
-    logger.error('Pinceau could not transform this file:')
-    // eslint-disable-next-line no-console
-    console.log(`🔗 ${id.split('?')[0]}:${e.loc.line}:${e.loc.column}\n`)
-    // eslint-disable-next-line no-console
-    console.log(`${e.message}\n`)
-
+    const filePath = `${id.split('?')[0]}:${ e.loc.line }:${ e.loc.column }`
+    message('TRANSFORM_ERROR', [filePath, e])
     return ''
   }
 

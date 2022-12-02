@@ -1,9 +1,7 @@
 import fs from 'fs-extra'
 import { parseVueComponent } from '../../utils/ast'
 import type { PinceauContext, VueQuery } from '../../types'
-import { logger } from '../../utils'
 import { darkRegex, lightRegex, mqCssRegex } from '../../utils/regexes'
-import { nativeQueries } from '../../utils/css'
 import { transformDtHelper } from '../dt'
 import { transformCssFunction } from '../css'
 
@@ -67,15 +65,11 @@ export function transformMediaQueries(code = '', ctx: PinceauContext, loc?: any)
   code = code.replace(
     mqCssRegex,
     (declaration, query) => {
-      if (nativeQueries.includes(query)) { return declaration }
+      const mediaQuery = mediaQueries?.[query]
 
-      const mediaQuery = mediaQueries[query]
+      if (!mediaQuery) { return declaration }
 
-      if (mediaQuery) { return `@media ${mediaQuery.value} {` }
-
-      logger.warn(`This media query is not defined: ${mediaQuery}\n`)
-
-      return '@media (min-width: 0px) {'
+      return `@media ${mediaQuery.value} {`
     },
   )
 

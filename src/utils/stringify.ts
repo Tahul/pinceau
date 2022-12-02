@@ -125,17 +125,18 @@ export const stringify = (
           const usedName = Object(name)
 
           let nextSelectors
-          if (is$RuleLike) {
-            name = name.replace('$', '')
+          if (isAtRuleLike || is$RuleLike) {
             nextSelectors = selectors
-          }
-          if (isAtRuleLike) {
-            nextSelectors = selectors
-            cssText += parse(
-              data,
-              nextSelectors,
-              conditions.concat(usedName),
-            )
+            if (isAtRuleLike) {
+              cssText += parse(
+                data,
+                nextSelectors,
+                conditions.concat(usedName),
+              )
+            }
+            if (is$RuleLike) {
+              name = name.replace('$', '')
+            }
           }
           else {
             nextSelectors = selectors.length

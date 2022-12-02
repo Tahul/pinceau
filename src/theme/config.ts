@@ -2,8 +2,8 @@ import { existsSync } from 'fs-extra'
 import { resolve } from 'pathe'
 import jiti from 'jiti'
 import type { Update, ViteDevServer } from 'vite'
-import { logger } from '../utils/logger'
 import { merger } from '../utils/merger'
+import { message } from '../utils/logger'
 import type { ConfigLayer, LoadConfigResult, PinceauConfigContext, PinceauOptions, PinceauTheme, ResolvedConfigLayer } from '../types'
 
 const extensions = ['.js', '.ts', '.mjs', '.cjs']
@@ -222,7 +222,7 @@ export async function loadConfig<U extends PinceauTheme>(
       return loadConfigFile(filePath) as ResolvedConfigLayer<U>
     }
     catch (e) {
-      logger.error({ filePath, e })
+      message('CONFIG_RESOLVE_ERROR', [filePath, e])
       return empty(filePath)
     }
   }

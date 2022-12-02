@@ -1,7 +1,7 @@
 import { performance } from 'perf_hooks'
 import chalk from 'chalk'
 import type { PinceauOptions } from 'pinceau'
-import { logger } from './logger'
+import { debugMarker } from '../utils/logger'
 
 export const useDebugPerformance = (text: string, debug: PinceauOptions['debug'], logOnStop = true) => {
   const isDebug = debug === 2
@@ -11,7 +11,7 @@ export const useDebugPerformance = (text: string, debug: PinceauOptions['debug']
 
   return {
     stopPerfTimer: isDebug ? stop : () => {},
-    logPerfTimer: isDebug ? log : () => {},
+    logPerfTimer: isDebug ? debugMarker(text, timing()) : () => {},
   }
 
   function timing() {
@@ -29,14 +29,9 @@ export const useDebugPerformance = (text: string, debug: PinceauOptions['debug']
     return color(count)
   }
 
-  function log() {
-    const debugMarker = chalk.bgBlue.blue(' DEBUG ')
-    logger.info(`${debugMarker} ${text} [${timing()}ms]`)
-  }
-
   function stop() {
     performanceTimerStop = performance.now()
-    if (logOnStop) { log() }
+    if (logOnStop) { debugMarker(text, timing()) }
   }
 }
 

@@ -5,7 +5,7 @@ import { createContext } from './theme'
 import { registerAliases, registerPostCssPlugins } from './utils/plugin'
 import { replaceStyleTs, resolveStyleQuery, transformVueSFC, transformVueStyle } from './transforms'
 import { parseVueQuery } from './utils/query'
-import { logger } from './utils/logger'
+import { setDebugLevel, message } from './utils/logger'
 import type { PinceauOptions } from './types'
 import { merger } from './utils/merger'
 import { useDebugPerformance } from './utils/debug'
@@ -40,6 +40,8 @@ export default createUnplugin<PinceauOptions>(
     const { stopPerfTimer } = useDebugPerformance('Setup Unplugin', options.debug)
 
     options = merger(options, defaultOptions)
+
+    setDebugLevel(options.debug)
 
     const ctx = createContext(options)
 
@@ -135,8 +137,7 @@ export default createUnplugin<PinceauOptions>(
           code = _code
         }
         catch (e) {
-          logger.error(`Could not transform file ${query.filename || id}`)
-          if (options.debug) { logger.error(e) }
+          message('TRANSFORM_ERROR', [id, e])
           return missingMap(code)
         }
 

@@ -24,7 +24,7 @@ export function transformVueSFC(
   const parsedComponent = parseVueComponent(code, { filename: query.id })
 
   // Transform <style> blocks
-  if (parsedComponent.descriptor.styles) { resolveStyle(query.id, parsedComponent, magicString, variants, computedStyles, ctx) }
+  if (parsedComponent.descriptor.styles) { resolveStyle(query.id, parsedComponent, magicString, variants, computedStyles, ctx, query) }
 
   // Check if runtime styles are enabled on this component
   const hasRuntimeStyles = Object.keys(variants).length > 0 || Object.keys(computedStyles).length > 0
@@ -87,7 +87,7 @@ export function resolveTemplate(_: string, parsedComponent: SFCParseResult, magi
 /**
  * Transform all <style> blocks.
  */
-export function resolveStyle(id: string, parsedComponent: SFCParseResult, magicString: MagicString, variants: any, computedStyles: any, ctx: PinceauContext) {
+export function resolveStyle(id: string, parsedComponent: SFCParseResult, magicString: MagicString, variants: any, computedStyles: any, ctx: PinceauContext, query?: VueQuery) {
   const styles = parsedComponent.descriptor.styles
   styles.forEach(
     (styleBlock) => {
@@ -99,7 +99,7 @@ export function resolveStyle(id: string, parsedComponent: SFCParseResult, magicS
         || styleBlock.lang === 'ts'
         || styleBlock.attrs?.transformed
       ) {
-        code = transformCssFunction(id, code, variants, computedStyles, ctx, loc)
+        code = transformCssFunction(id, code, variants, computedStyles, ctx, { query, ...loc})
       }
 
       code = transformStyle(code, ctx)
