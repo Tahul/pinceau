@@ -1,0 +1,13 @@
+{
+  "private": true,
+  "scripts": {
+    "dev": "nuxi dev",
+    "build": "nuxi generate",
+    "prepare": "nuxi prepare"
+  },
+  "devDependencies": {
+    "nuxt": "^3.0.0",
+    "@nuxt-themes/docus": "latest",
+    "pinceau": "*"
+  }
+}
