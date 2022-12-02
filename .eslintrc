@@ -6,7 +6,8 @@
     "@typescript-eslint/ban-ts-comment": "off",
     "antfu/generic-spacing": "off",
     "max-statements-per-line": "off",
-    "@typescript-eslint/prefer-ts-expect-error": "off"
+    "@typescript-eslint/prefer-ts-expect-error": "off",
+    "no-console":"off"
   },
   "ignorePatterns": "**/*.md,test/fixtures/**/*.vue"
 }

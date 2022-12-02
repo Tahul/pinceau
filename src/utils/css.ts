@@ -215,7 +215,7 @@ export function resolveCustomDirectives(
     }
 
     // Custom @queries
-    const mediaQueries = ctx.$tokens(`media` as any, { key: undefined, loc })
+    const mediaQueries = ctx.$tokens('media' as any, { key: undefined, loc })
     if (mediaQueries) {
       const screen = property.replace?.('@', '')
 

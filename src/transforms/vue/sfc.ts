@@ -99,7 +99,7 @@ export function resolveStyle(id: string, parsedComponent: SFCParseResult, magicS
         || styleBlock.lang === 'ts'
         || styleBlock.attrs?.transformed
       ) {
-        code = transformCssFunction(id, code, variants, computedStyles, ctx, { query, ...loc})
+        code = transformCssFunction(id, code, variants, computedStyles, ctx, { query, ...loc })
       }
 
       code = transformStyle(code, ctx)

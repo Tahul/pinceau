@@ -6,8 +6,8 @@
     "prepare": "nuxi prepare"
   },
   "devDependencies": {
-    "nuxt": "^3.0.0",
     "@nuxt-themes/docus": "latest",
+    "nuxt": "^3.0.0",
     "pinceau": "*"
   }
 }

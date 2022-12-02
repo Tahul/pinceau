@@ -69,7 +69,8 @@
   ],
   "scripts": {
     "build": "unbuild",
-    "lint": "eslint .",
+    "lint": "eslint . --cache",
+    "lint:fix": "pnpm run lint --fix",
     "build:play": "npm -C playground run build",
     "build:play:nuxt": "npm -C playground run build:nuxt",
     "play": "npm -C playground run dev",

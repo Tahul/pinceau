@@ -1,9 +1,9 @@
 export default defineNuxtConfig({
   extends: '@nuxt-themes/docus',
   pinceau: {
-    followSymbolicLinks: false
+    followSymbolicLinks: false,
   },
   typescript: {
-    includeWorkspace: true
-  }
+    includeWorkspace: true,
+  },
 })

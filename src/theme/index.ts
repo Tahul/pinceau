@@ -1,5 +1,5 @@
 import type { ViteDevServer } from 'vite'
-import { findLineColumn, useDebugPerformance } from '../utils/debug'
+import { useDebugPerformance } from '../utils/debug'
 import { flattenTokens } from '../utils'
 import { message } from '../utils/logger'
 import type { PinceauContext, PinceauOptions } from '../types'
