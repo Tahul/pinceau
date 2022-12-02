@@ -4,10 +4,10 @@ export default defineAppConfig({
     description: 'The joyful CSS toolbox',
     socials: {
       github: 'Tahul/pinceau',
-      twitter: 'yaeeelglx'
+      twitter: 'yaeeelglx',
     },
     header: {
-      logo: true
-    }
-  }
+      logo: true,
+    },
+  },
 })

@@ -2,10 +2,10 @@ import type { Core as Instance } from 'style-dictionary-esm'
 import StyleDictionary from 'style-dictionary-esm'
 import { isShadowToken, transformShadow } from '../utils/shadows'
 import type { PinceauOptions, PinceauTheme, PinceauTokens, ThemeGenerationOutput } from '../types'
-import { jsFlat, jsFull, tsFlat, tsFull, tsTypesDeclaration } from './formats'
 import { message } from '../utils/logger'
+import { jsFlat, jsFull, tsFlat, tsFull, tsTypesDeclaration } from './formats'
 
-export async function generateTheme(tokens: any, { outputDir: buildPath, colorSchemeMode, debug }: PinceauOptions, silent = true): Promise<ThemeGenerationOutput> {
+export async function generateTheme(tokens: any, { outputDir: buildPath, colorSchemeMode }: PinceauOptions, silent = true): Promise<ThemeGenerationOutput> {
   let styleDictionary: Instance = StyleDictionary
 
   // Tokens outputs as in-memory objects
@@ -62,7 +62,7 @@ export async function generateTheme(tokens: any, { outputDir: buildPath, colorSc
         },
       )
     },
-    undo: () => {},
+    undo: () => { },
   })
 
   // Add `variable` key to attributes
@@ -316,7 +316,7 @@ export async function generateTheme(tokens: any, { outputDir: buildPath, colorSc
               buildPath,
             })
           },
-          undo: () => {},
+          undo: () => { },
         })
         styleDictionary.buildAllPlatforms()
       },
