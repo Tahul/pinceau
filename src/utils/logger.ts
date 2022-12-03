@@ -35,7 +35,6 @@ const messages = {
   },
   CONFIG_RESOLVED: (debugLevel, resolvedConfig) => {
     if (debugLevel) {
-      console.log('\n')
       logger.log('🎨 Pinceau loaded with following configuration sources:\n')
       resolvedConfig.sources.forEach(path => fileLink(path))
       logger.log('🚧 Disable this message by setting `debug: false` option.\n')

@@ -29,7 +29,7 @@ export const plugin: Plugin = {
       theme.theme,
       Object.assign(
         {
-          flattened: true,
+          key: 'variable',
         },
         tokensHelperConfig,
       ),

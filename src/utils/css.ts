@@ -207,27 +207,26 @@ export function resolveCustomDirectives(
 
     // @initial
     if (property === INITIAL) {
-      let token = ctx.$tokens('media.initial' as any, { key: 'value', loc })
+      let token = ctx.$tokens('media.initial' as any, { key: 'value', onNotFound: false, loc })
       if (!token) { token = '(min-width: 0px)' }
       return {
         [`@media ${token}`]: value,
       }
     }
 
-    // Custom @queries
     const mediaQueries = ctx.$tokens('media' as any, { key: undefined, loc })
+
     if (mediaQueries) {
-      const screen = property.replace?.('@', '')
+      const query = property.replace('@', '')
+      if (mediaQueries[query]) {
+        return {
+          [`@media ${mediaQueries[query].value}`]: value,
+        }
+      }
+    }
 
-      const screenToken = mediaQueries?.[screen]?.value
-
-      return screenToken
-        ? {
-            [`@media ${screenToken}`]: value,
-          }
-        : {
-            [property]: value,
-          }
+    return {
+      [property]: value,
     }
   }
 }

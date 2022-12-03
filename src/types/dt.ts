@@ -6,17 +6,12 @@ export interface TokensFunctionOptions {
    * The key that will be unwrapped from the design token object.
    * @default variable
    */
-  key?: string
+  key?: 'variable' | 'value' | string
   /**
    * Called on missing tokens.
    * @default false
    */
   onNotFound?: false | ((path: string, options: TokensFunctionOptions) => void)
-  /**
-   * Makes the function compatible with flattened version of tokens file.
-   * @default false
-   */
-  flattened?: boolean
   /**
    * The location of the resolved token.
    * Can be useful for logging purposes.
@@ -25,8 +20,12 @@ export interface TokensFunctionOptions {
   loc?: any
 }
 
+/**
+ * $dt function typing
+ */
 export type DtFunction = (
-  path: PinceauTokensPaths
+  path: PinceauTokensPaths,
+  options: TokensFunctionOptions
 ) => string
 
 export type TokensFunction = (
