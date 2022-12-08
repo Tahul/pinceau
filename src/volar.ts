@@ -60,24 +60,7 @@ const plugin: VueLanguagePlugin = _ => ({
 
         variantsPropsAst = castVariantsPropsAst(variantsPropsAst)
 
-        const lines = embeddedFile.content.reduce(
-          (acc, line, index) => {
-            if (line?.[0]?.includes('...variants')) {
-              acc.push([line, index])
-              return acc
-            }
-
-            return acc
-          },
-          [],
-        )
-
-        lines.forEach(
-          ([line, index]) => {
-            line?.[0]?.replace('...variants', `...${printAst(variantsPropsAst).code}`)
-            embeddedFile.content[index] = line
-          },
-        )
+        imports.push(`\nconst variants = ${printAst(variantsPropsAst).code}\n`)
       }
 
       embeddedFile.content.push(...imports)
