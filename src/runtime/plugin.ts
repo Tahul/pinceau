@@ -20,7 +20,7 @@ export const plugin: Plugin = {
       multiApp = false,
       colorSchemeMode = 'media',
       dev = process.env.NODE_ENV !== 'production',
-    },
+    } = {},
   ) {
     let cache = {}
 

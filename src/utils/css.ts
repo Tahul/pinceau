@@ -93,13 +93,13 @@ export function resolveReferences(
   value = value.replace(
     referencesRegex,
     (...parts) => {
-      const [, tokenPath] = parts
+      const [variableToken, tokenPath] = parts
 
       const token = ctx.$tokens(tokenPath, { key: undefined, loc }) as DesignToken
 
       const tokenValue = typeof token === 'string' ? token : token?.attributes?.variable || token?.value || token?.original?.value
 
-      if (!tokenValue) { return '' }
+      if (!tokenValue) { return transformTokensToVariable(variableToken) }
 
       return tokenValue
     },

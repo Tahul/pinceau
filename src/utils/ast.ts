@@ -3,7 +3,8 @@ import { parse as sfcParse } from 'vue/compiler-sfc'
 import * as recast from 'recast'
 import type { Options } from 'recast'
 import { defu } from 'defu'
-import { parse as tsParse } from 'recast/parsers/typescript'
+import { parse as tsParse } from 'recast/parsers/typescript.js'
+import { render as _renderHtml, walk as _walkHtml, parse as parseHtml } from './ultrahtml'
 
 /**
  * Parse AST with TypeScript parser.
