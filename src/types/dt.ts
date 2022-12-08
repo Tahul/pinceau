@@ -25,7 +25,7 @@ export interface TokensFunctionOptions {
  */
 export type DtFunction = (
   path: PinceauTokensPaths,
-  options: TokensFunctionOptions
+  options?: TokensFunctionOptions
 ) => string
 
 export type TokensFunction = (

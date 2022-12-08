@@ -18,25 +18,21 @@ css({
     variants: {
         padded: {
             sm: {
-                classes: 'test-bg-blue-400',
                 span: {
                     padding: '{space.4} {space.8}',
                 }
             },
             md: {
-                classes: 'test-bg-blue-400',
                 span: {
                     padding: '{space.8} {space.16}',
                 }
             },
             lg: {
-                classes: 'test-bg-blue-400',
                 span: {
                     padding: '{space.16} {space.32}',
                 }
             },
             xl: {
-                classes: 'test-bg-blue-400',
                 span: {
                     padding: '{space.32} {space.64}',
                 }
