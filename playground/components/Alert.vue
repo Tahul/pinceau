@@ -3,7 +3,7 @@ import type { PropType } from 'vue'
 
 defineProps({
   color: {
-    type: [String, Object] as PropType<ComputedStyleProp<'color'>>,
+    type: [String, Object] as PropType<any>,
   },
   ...variants,
 })

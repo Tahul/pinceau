@@ -26,15 +26,6 @@ const plugin: VueLanguagePlugin = _ => ({
 
     // Handle <vue> files
     if (embeddedFile.fileName.replace(fileName, '').match(/^\.(js|ts|jsx|tsx)$/)) {
-      // Add imports on top of <script setup>
-      const imports = [
-        '\nimport type { CSSFunctionType, PinceauMediaQueries } from \'pinceau\'\n',
-        '\ntype __VLS_InstanceOmittedKeys = \'onVnodeBeforeMount\' | \'onVnodeBeforeUnmount\' | \'onVnodeBeforeUpdate\' | \'onVnodeMounted\' | \'onVnodeUnmounted\' | \'onVnodeUpdated\' | \'key\' | \'ref\' | \'ref_for\' | \'ref_key\' | \'style\' | \'class\'\n',
-        `\ntype __VLS_PropsType = (Omit<InstanceType<typeof import('${fileName}').default>['$props'], __VLS_InstanceOmittedKeys>)\n`,
-        '\nfunction css (declaration: CSSFunctionType<__VLS_PropsType>) { return { declaration } }\n',
-      ]
-      embeddedFile.content.push(...imports)
-
       let variants = {}
 
       // Grab `css()` function and type it.
@@ -50,6 +41,15 @@ const plugin: VueLanguagePlugin = _ => ({
       }
       */
 
+      // Add imports on top of <script setup>
+      const imports = [
+        '\nimport type { CSSFunctionType, PinceauMediaQueries } from \'pinceau\'\n',
+        '\nimport type { ExtractPropTypes } from \'vue\'\n',
+        '\ntype __VLS_InstanceOmittedKeys = \'onVnodeBeforeMount\' | \'onVnodeBeforeUnmount\' | \'onVnodeBeforeUpdate\' | \'onVnodeMounted\' | \'onVnodeUnmounted\' | \'onVnodeUpdated\' | \'key\' | \'ref\' | \'ref_for\' | \'ref_key\' | \'style\' | \'class\'\n',
+        `\ntype __VLS_PropsType = (Omit<InstanceType<typeof import('${fileName}').default>['$props'], __VLS_InstanceOmittedKeys>)\n`,
+        '\nfunction css (declaration: CSSFunctionType<__VLS_PropsType>) { return { declaration } }\n',
+      ]
+
       // Add context at bottom of <script setup>
       if (sfc.scriptSetup) {
         const isTs = sfc.scriptSetup.lang === 'ts'
@@ -60,8 +60,27 @@ const plugin: VueLanguagePlugin = _ => ({
 
         variantsPropsAst = castVariantsPropsAst(variantsPropsAst)
 
-        embeddedFile.content.push(`\nconst variants = ${printAst(variantsPropsAst).code}\n`)
+        const lines = embeddedFile.content.reduce(
+          (acc, line, index) => {
+            if (line?.[0]?.includes('...variants')) {
+              acc.push([line, index])
+              return acc
+            }
+
+            return acc
+          },
+          [],
+        )
+
+        lines.forEach(
+          ([line, index]) => {
+            line?.[0]?.replace('...variants', `...${printAst(variantsPropsAst).code}`)
+            embeddedFile.content[index] = line
+          },
+        )
       }
+
+      embeddedFile.content.push(...imports)
     }
   },
 })
