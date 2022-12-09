@@ -190,8 +190,7 @@ export function resolveCustomDirectives(
   if (property.startsWith('@')) {
     const resolveColorScheme = (scheme: string) => {
       scheme = ctx.options.colorSchemeMode === 'class'
-        // Raw `html` selector could be conflicting
-        ? selectors?.[0] === 'html' ? `&.${scheme}` : `:root.${scheme} &`
+        ? `:root.${scheme} &`
         : `@media (prefers-color-scheme: ${scheme})`
 
       return {
