@@ -5,10 +5,6 @@ defineProps({
   color: computedStyle('color', 'pink'),
   ...variants,
 })
-
-const test = () => { }
-
-test()
 </script>
 
 <template>

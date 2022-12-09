@@ -35,7 +35,7 @@ import ThemeSelect from '../components/ThemeSelect.vue'
 
 <style lang="ts">
 css({
-  'html': {
+  'body': {
     backgroundColor: '{color.white}',
     footer: {
       color: 'blue !important',
