@@ -1,4 +1,4 @@
-import { existsSync } from 'fs-extra'
+import { existsSync } from 'fs'
 import { resolve } from 'pathe'
 import jiti from 'jiti'
 import type { Update, ViteDevServer } from 'vite'

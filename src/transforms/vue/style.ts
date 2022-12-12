@@ -1,4 +1,4 @@
-import fs from 'fs-extra'
+import fs from 'fs-extra/esm'
 import { parseVueComponent } from '../../utils/ast'
 import type { PinceauContext, VueQuery } from '../../types'
 import { darkRegex, lightRegex, mqCssRegex } from '../../utils/regexes'

@@ -80,7 +80,7 @@ export interface PinceauOptions {
    */
   configOrPaths?: ConfigOrPaths
   /**
-   * The path of your configuration file.
+   * The name of the style configuration file
    *
    * @default 'pinceau.config'
    */

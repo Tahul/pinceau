@@ -3,6 +3,7 @@ import { useDebugPerformance } from '../utils/debug'
 import { message } from '../utils/logger'
 import type { PinceauContext, PinceauOptions } from '../types'
 import { createTokensHelper } from '../utils/$tokens'
+import { flattenTokens } from '../utils'
 import { generateTheme } from './generate'
 import { usePinceauConfig } from './config'
 import { usePinceauVirtualStore } from './virtual'
@@ -45,6 +46,7 @@ export const createContext = <UserOptions extends PinceauOptions = PinceauOption
       customProperties = (resolvedConfig.config as any)?.utils || {}
 
       const builtTheme = await generateTheme(resolvedConfig.config, options)
+      console.log('builtTheme', builtTheme)
       if (!builtTheme) {
         stopPerfTimer()
         return
