@@ -1,4 +1,4 @@
-import fs from 'fs-extra/esm'
+import { readFileSync } from 'fs'
 import { parseVueComponent } from '../../utils/ast'
 import type { PinceauContext, VueQuery } from '../../types'
 import { darkRegex, lightRegex, mqCssRegex } from '../../utils/regexes'
@@ -8,7 +8,7 @@ import { transformCssFunction } from '../css'
 export const transformVueStyle = (query: VueQuery, ctx: PinceauContext) => {
   const { filename } = query
 
-  const file = fs.readFileSync(filename, 'utf8')
+  const file = readFileSync(filename, 'utf8')
 
   const { descriptor } = parseVueComponent(file, { filename })
 

@@ -45,7 +45,7 @@ export const createContext = <UserOptions extends PinceauOptions = PinceauOption
       customProperties = (resolvedConfig.config as any)?.utils || {}
 
       const builtTheme = await generateTheme(resolvedConfig.config, options)
-      console.log('builtTheme', builtTheme)
+
       if (!builtTheme) {
         stopPerfTimer()
         return

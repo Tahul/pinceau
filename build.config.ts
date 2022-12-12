@@ -18,7 +18,6 @@ export default defineBuildConfig({
     emitCJS: true,
   },
   externals: [
-    'fs-extra',
     'chalk',
     'ohash',
     'vite',
