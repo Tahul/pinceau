@@ -8,7 +8,6 @@ import { generateTheme } from './generate'
 import { usePinceauConfig } from './config'
 import { usePinceauVirtualStore } from './virtual'
 import { prepareOutputDir } from './output'
-import { flattenTokens } from '../utils/theme'
 
 /**
  * Creates the Pinceau context from the options.
