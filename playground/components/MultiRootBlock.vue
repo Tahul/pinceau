@@ -1,17 +1,15 @@
 <script setup lang="ts">
+import { computedStyle } from 'pinceau/runtime'
 import type { PropType } from 'vue'
 
 defineProps({
-  color: {
-    type: String,
-    default: '{color.primary.600}',
-  },
+  color: computedStyle('color', 'red', false),
   ...variants,
 })
 </script>
 
 <template>
-  <button :class="{ ...$props }">
+  <button :class="[{ ...$props }, $pinceau]">
     <template v-for="[key, value] in Object.entries($props)" :key="key">
       <span>
         <pre v-if="value">{{ key }}: {{ JSON.stringify(value, null, 2) }}</pre>
@@ -19,7 +17,7 @@ defineProps({
       </span>
     </template>
   </button>
-  <button :class="{ ...$props }">
+  <button :class="[{ ...$props  }, $pinceau]">
     <template v-for="[key, value] in Object.entries($props)" :key="key">
       <span>
         <pre v-if="value">{{ key }}: {{ JSON.stringify(value, null, 2) }}</pre>
@@ -43,7 +41,7 @@ css({
     borderRadius: '16px',
     width: '320px',
     height: '320px',
-    border: '16px solid {color.grey}',
+    border: '16px solid {color.grey.500}',
     position: 'relative',
     '& > p': {
       fontSize: '16px',

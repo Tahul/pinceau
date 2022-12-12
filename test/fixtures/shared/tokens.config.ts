@@ -25,7 +25,7 @@ export default defineTheme({
 
     lila: palette('#BB9BB0'),
 
-    gray: palette('#71717A'),
+    grey: palette('#71717A'),
 
     lavender: palette('#F1E3E4'),
 
@@ -35,7 +35,7 @@ export default defineTheme({
   shadow: {
     xs: {
       value: {
-        color: '{color.gray.800}',
+        color: '{color.grey.800}',
         type: 'dropShadow',
         x: '0',
         y: '1',
@@ -46,7 +46,7 @@ export default defineTheme({
     sm: {
       value: [
         {
-          color: '{color.gray.800}',
+          color: '{color.grey.800}',
           type: 'dropShadow',
           x: '0',
           y: '1',
@@ -54,7 +54,7 @@ export default defineTheme({
           spread: '-1',
         },
         {
-          color: '{color.gray.800}',
+          color: '{color.grey.800}',
           type: 'dropShadow',
           x: '0',
           y: '1',
@@ -66,7 +66,7 @@ export default defineTheme({
     md: {
       value: [
         {
-          color: '{color.gray.800}',
+          color: '{color.grey.800}',
           type: 'dropShadow',
           x: '0',
           y: '2',
@@ -74,7 +74,7 @@ export default defineTheme({
           spread: '-2',
         },
         {
-          color: '{color.gray.800}',
+          color: '{color.grey.800}',
           type: 'dropShadow',
           x: '0',
           y: '4',
@@ -86,7 +86,7 @@ export default defineTheme({
     lg: {
       value: [
         {
-          color: '{color.gray.800}',
+          color: '{color.grey.800}',
           type: 'dropShadow',
           x: '0',
           y: '4',
@@ -94,7 +94,7 @@ export default defineTheme({
           spread: '-4',
         },
         {
-          color: '{color.gray.800}',
+          color: '{color.grey.800}',
           type: 'dropShadow',
           x: '0',
           y: '10',
@@ -106,7 +106,7 @@ export default defineTheme({
     xl: {
       value: [
         {
-          color: '{color.gray.800}',
+          color: '{color.grey.800}',
           type: 'dropShadow',
           x: '0',
           y: '8',
@@ -114,7 +114,7 @@ export default defineTheme({
           spread: '-6',
         },
         {
-          color: '{color.gray.800}',
+          color: '{color.grey.800}',
           type: 'dropShadow',
           x: '0',
           y: '20',
@@ -125,7 +125,7 @@ export default defineTheme({
     },
     xxl: {
       value: {
-        color: '{color.gray.800}',
+        color: '{color.grey.800}',
         type: 'dropShadow',
         x: '0',
         y: '25',

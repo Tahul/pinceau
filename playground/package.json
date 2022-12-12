@@ -11,7 +11,7 @@
     "@vitejs/plugin-vue": "latest",
     "nuxt": "^3.0.0",
     "@nuxt/content": "^2.2.2",
-    "vite": "^3.2.4",
+    "vite": "^4.0.0",
     "vite-plugin-inspect": "^0.7.9",
     "vue": "^3.2.45"
   }

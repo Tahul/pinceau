@@ -10,26 +10,17 @@ defineProps({
 </script>
 
 <template>
-  <div>
+  <div class="alert">
     <slot />
   </div>
 </template>
 
 <style scoped lang="ts">
 css({
-  div: {
-    backgroundColor: (props) => {
-      return props.color
-    },
-    color: (props) => {
-      return props.color
-    },
+  '.alert': {
     display: 'block',
     borderRadius: '{radii.lg}',
     borderWidth: '{borderWidth.md}',
-    span: {
-      color: 'black'
-    }
   },
   variants: {
     size: {
@@ -58,6 +49,9 @@ css({
         backgroundColor: 'rgba({color.blue.500}, 0.5)',
         color: '{color.blue.200}',
         borderColor: '{color.blue.300}'
+      },
+      options: {
+        default: true
       }
     },
     success: {

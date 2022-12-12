@@ -34,9 +34,9 @@ export function usePinceauConfig<UserOptions extends PinceauOptions = PinceauOpt
     resolvedConfig = result.config
     sources = result.sources
 
-    if (dispatchConfigUpdate) { dispatchConfigUpdate(result) }
-
     if (options?.configResolved) { options.configResolved(result.config) }
+
+    if (dispatchConfigUpdate) { dispatchConfigUpdate(result) }
 
     return result
   }

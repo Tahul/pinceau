@@ -1,6 +1,6 @@
 import { parseAst, visitAst } from '../../utils/ast'
 
-export const resolvePropsKey = (code: string, add = true) => {
+export function transformAddPropsKey(code: string, add = true) {
   try {
     const ast = parseAst(code)
 

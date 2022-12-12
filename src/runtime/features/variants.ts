@@ -6,6 +6,7 @@ import type { PinceauRuntimeIds } from '../../types'
 import type { usePinceauStylesheet } from '../stylesheet'
 
 export const usePinceauVariants = (
+  r: Ref<number>,
   ids: ComputedRef<PinceauRuntimeIds>,
   variants: Ref<any>,
   props: ComputedRef<any>,
@@ -17,8 +18,8 @@ export const usePinceauVariants = (
   const variantsState = computed(() => variants && variants?.value ? resolveVariantsState(ids.value, props.value, variants.value) : {})
 
   watch(
-    variantsState,
-    ({ cacheId, variantsProps }) => {
+    [r, variantsState],
+    ([r, { cacheId, variantsProps }]) => {
       let variantClass: string
       if (cache[cacheId]) {
         // Resolve variant rule

@@ -62,6 +62,9 @@ export const plugin: Plugin = {
       variants: Ref<any>,
       computedStyles: Ref<any>,
     ) => {
+      // Local refresh prop
+      const r = ref(0)
+
       // Current component instance
       const instance = getCurrentInstance()
 
@@ -76,17 +79,24 @@ export const plugin: Plugin = {
 
       // Computed styles setup
       if (computedStyles && computedStyles?.value && Object.keys(computedStyles.value).length > 0) {
-        usePinceauComputedStyles(ids, computedStyles, sheet)
+        usePinceauComputedStyles(r, ids, computedStyles, sheet)
       }
 
       // Variants setup
       if (variants && variants?.value && Object.keys(variants.value).length > 0) {
-        usePinceauVariants(ids, variants, props, sheet, classes, cache)
+        usePinceauVariants(r, ids, variants, props, sheet, classes, cache)
       }
 
       // CSS Prop setup
       if (props.value.css && Object.keys(props.value.css).length > 0) {
-        usePinceauCssProp(ids, props, sheet)
+        usePinceauCssProp(r, ids, props, sheet)
+      }
+
+      if (import.meta.hot) {
+        import.meta.hot.on(
+          'vite:beforeUpdate',
+          () => (r.value = r.value++)
+        )
       }
 
       return {

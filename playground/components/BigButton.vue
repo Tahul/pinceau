@@ -10,6 +10,7 @@ defineProps({
 <template>
   <button class="big-button">
     <span>Hello Nuxt Nation 👋</span>
+    <slot />
   </button>
 </template>
 
@@ -72,6 +73,12 @@ css({
                 transform: 'translate(0, 4px)'
             }
         },
+        '&:deep(.alert)': {
+            backgroundColor: 'red',
+            '@dark': {
+                backgroundColor: 'green'
+            }
+        }
     }
 })
 </style>

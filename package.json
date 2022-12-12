@@ -69,6 +69,7 @@
   ],
   "scripts": {
     "build": "unbuild",
+    "dev": "npm -C playground run dev",
     "lint": "eslint . --cache",
     "lint:fix": "pnpm run lint --fix",
     "build:play": "npm -C playground run build",
@@ -88,7 +89,7 @@
   },
   "dependencies": {
     "@unocss/reset": "^0.47.5",
-    "@volar/vue-language-core": "^1.0.11",
+    "@volar/vue-language-core": "^1.0.12",
     "acorn": "^8.8.1",
     "chroma-js": "^2.4.2",
     "consola": "^2.15.3",
@@ -100,9 +101,10 @@
     "postcss-custom-properties": "12.1.11",
     "postcss-dark-theme-class": "0.7.3",
     "postcss-nested": "^6.0.0",
-    "recast": "^0.21.5",
+    "recast": "^0.22.0",
     "scule": "^1.0.0",
     "style-dictionary-esm": "^1.0.15",
+    "ultrahtml": "^1.0.4",
     "unbuild": "^1.0.2",
     "unplugin": "^1.0.0"
   },
@@ -112,33 +114,34 @@
     "@nuxt/test-utils": "^3.0.0",
     "@nuxtjs/color-mode": "^3.2.0",
     "@types/chroma-js": "^2.1.4",
-    "@types/node": "^18.11.11",
+    "@types/node": "^18.11.13",
     "@vue/test-utils": "^2.2.6",
     "eslint": "^8.29.0",
     "esno": "^0.16.3",
     "fast-glob": "^3.2.12",
     "js-confetti": "^0.11.0",
     "jsdom": "^20.0.3",
+    "nitropack": "^1.0.0",
     "nodemon": "^2.0.20",
+    "nuxi": "^3.0.0",
+    "nuxt": "^3.0.0",
     "playwright": "^1.28.1",
     "release-it": "^15.5.1",
     "rimraf": "^3.0.2",
-    "rollup": "^3.6.0",
+    "rollup": "^3.7.3",
     "typescript": "^4.9.4",
-    "vite": "^3.2.5",
-    "vitest": "^0.25.5",
+    "vite": "^4.0.0",
+    "vite-plugin-inspect": "^0.7.9",
+    "vitest": "^0.25.7",
     "vue": "^3.2.45",
-    "webpack": "^5.75.0",
-    "nuxt": "^3.0.0",
-    "nitropack": "^1.0.0",
-    "nuxi": "^3.0.0",
-    "vite-plugin-inspect": "^0.7.9"
+    "webpack": "^5.75.0"
   },
   "pnpm": {
     "peerDependencyRules": {
       "allowedVersions": {
         "axios": "0.25.0",
-        "vue": "^3.2.45"
+        "vue": "^3.2.45",
+        "vite": "^4.0.0"
       },
       "ignoreMissing": [
         "postcss",

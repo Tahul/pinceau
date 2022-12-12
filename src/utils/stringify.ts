@@ -57,7 +57,7 @@ export const stringify = (
   /** Set used to manage the opened and closed state of rules. */
   const used = new WeakSet()
 
-  const write = (cssText, selectors, conditions, name, data, isAtRuleLike, isRawLike) => {
+  const write = (cssText, selectors, conditions, name, data, isAtRuleLike) => {
     for (let i = 0; i < conditions.length; ++i) {
       if (!used.has(conditions[i])) {
         used.add(conditions[i])
@@ -70,19 +70,14 @@ export const stringify = (
       cssText += `${selectors}{`
     }
 
-    if (isRawLike) {
-      name = ''
-    }
-    else if (isAtRuleLike) {
+    if (isAtRuleLike) {
       name = `${name} `
     }
     else {
       name = `${kebabCase(name)}:`
     }
 
-    cssText += `${
-      name + String(data)
-    }${!isRawLike ? ';' : ''}`
+    cssText += `${name + String(data)};`
 
     return cssText
   }
@@ -90,16 +85,8 @@ export const stringify = (
   const parse = (style, selectors, conditions, prevName?, prevData?) => {
     let cssText = ''
 
-    // Handle $raw\\ CSS
-    if (typeof style === 'string' && style.startsWith('$raw\\')) {
-      const isAtRuleLike = (prevName || '').charCodeAt(0) === 64
-      cssText = write(cssText, selectors, conditions, prevName, style.replace(/\$raw\\/g, ''), isAtRuleLike, true)
-      return cssText
-    }
-
-    for (let name in style) {
+    for (const name in style) {
       const isAtRuleLike = name.charCodeAt(0) === 64
-      const is$RuleLike = name.charCodeAt(0) === 36
 
       for (const data of isAtRuleLike && Array.isArray(style[name]) ? style[name] : [style[name]]) {
         if (replacer && (name !== prevName || data !== prevData)) {
@@ -113,9 +100,8 @@ export const stringify = (
         }
 
         const isObjectLike = typeof data === 'object' && data && data.toString === toString
-        const isRawLike = typeof data === 'string' && data.startsWith('$raw\\')
 
-        if (isObjectLike || isRawLike) {
+        if (isObjectLike) {
           if (used.has(selectors)) {
             used.delete(selectors)
 
@@ -125,18 +111,13 @@ export const stringify = (
           const usedName = Object(name)
 
           let nextSelectors
-          if (isAtRuleLike || is$RuleLike) {
+          if (isAtRuleLike) {
             nextSelectors = selectors
-            if (isAtRuleLike) {
-              cssText += parse(
-                data,
-                nextSelectors,
-                conditions.concat(usedName),
-              )
-            }
-            if (is$RuleLike) {
-              name = name.replace('$', '')
-            }
+            cssText += parse(
+              data,
+              nextSelectors,
+              conditions.concat(usedName),
+            )
           }
           else {
             nextSelectors = selectors.length
@@ -160,7 +141,7 @@ export const stringify = (
           }
         }
         else {
-          cssText = write(cssText, selectors, conditions, name, data, isAtRuleLike, false)
+          cssText = write(cssText, selectors, conditions, name, data, isAtRuleLike)
         }
       }
     }

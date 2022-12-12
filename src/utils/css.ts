@@ -68,9 +68,9 @@ export function castValue(
 ) {
   if (typeof value === 'number') { return value }
 
-  if (value.match(/rgb/g)) { value = resolveRgbaTokens(property, value, ctx, loc) }
+  if (value.match(/rgb(a)?\(/g)) { value = resolveRgbaTokens(property, value, ctx, loc) }
 
-  if (value.match(/calc/g)) { value = resolveCalcTokens(property, value, ctx, loc) }
+  if (value.match(/calc\(/g)) { value = resolveCalcTokens(property, value, ctx, loc) }
 
   if (value.match(referencesRegex)) { value = resolveReferences(property, value, ctx, loc) }
 
@@ -207,9 +207,8 @@ export function resolveCustomDirectives(
     // @initial
     if (property === INITIAL) {
       let token = ctx.$tokens('media.initial' as any, { key: 'value', onNotFound: false, loc })
-      if (!token) { token = '(min-width: 0px)' }
       return {
-        [`@media ${token}`]: value,
+        [`@media${ token ? ` ${token}` : ''}`]: value,
       }
     }
 
