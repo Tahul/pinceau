@@ -1,4 +1,5 @@
 import * as path from 'pathe'
+import type { VueQuery } from '../types'
 
 /**
  * Vue SFC Query, forked from the below:
@@ -9,24 +10,6 @@ import * as path from 'pathe'
  *
  * - Copied from: https://github.com/intlify/bundle-tools/blob/37ae3acde9e65bf55f5e820b1653b5fddb7ff0cc/packages/unplugin-vue-i18n/src/query.ts#L1
  */
-
-export interface VueQuery {
-  id: string
-  filename: string
-  vue?: boolean
-  src?: boolean
-  global?: boolean
-  type?: 'script' | 'template' | 'style' | 'custom'
-  blockType?: string
-  index?: number
-  locale?: string
-  lang?: string
-  raw?: boolean
-  scoped?: string
-  transformed?: boolean
-  issuerPath?: string
-  css: boolean
-}
 
 export function parseVueQuery(id: string) {
   const [filename, rawQuery] = id.split('?', 2)
@@ -62,6 +45,9 @@ export function parseVueQuery(id: string) {
   }
   if (params.has('issuerPath')) {
     ret.issuerPath = params.get('issuerPath') as VueQuery['issuerPath']
+  }
+  if (params.has('transformed')) {
+    ret.transformed = true
   }
   const ext = path.extname(id)
   if (['.css', '.postcss', '.styl', '.stylus', '.sass', '.scss', '.less'].includes(ext)) {

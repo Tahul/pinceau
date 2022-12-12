@@ -9,6 +9,7 @@ export default defineNuxtConfig({
   },
   pinceau: {
     configFileName: 'tokens.config',
+    debug: false,
   },
   hooks: {
     'pinceau:options': (options) => {
@@ -25,5 +26,8 @@ export default defineNuxtConfig({
   },
   colorMode: {
     classSuffix: '',
+  },
+  typescript: {
+    includeWorkspace: true,
   },
 })

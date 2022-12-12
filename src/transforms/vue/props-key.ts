@@ -10,16 +10,16 @@ export const resolvePropsKey = (code: string, add = true) => {
     visitAst(
       ast,
       {
+        // Visit <script setup> variable declarations to find defineProps
         visitVariableDeclaration(path) {
           if (path.value?.declarations?.[0]?.init?.callee?.name === 'defineProps') {
             propsKey = path.value.declarations[0].id.name
             return false
           }
-
           return this.traverse(path)
         },
         visitCallExpression(path) {
-          if ((path.node.callee as any).name) {
+          if ((path.node.callee as any).name === 'defineProps') {
             hasDefineProps = true
             return false
           }
@@ -28,9 +28,10 @@ export const resolvePropsKey = (code: string, add = true) => {
       },
     )
 
+    // No props key set; use Regex to add `const __$pProps = `
     if (add && hasDefineProps && !propsKey) {
       code = code.replace(
-        /defineProps/g,
+        /defineProps/,
         () => {
           propsKey = '__$pProps'
           return 'const __$pProps = defineProps'

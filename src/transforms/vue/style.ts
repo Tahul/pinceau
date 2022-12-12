@@ -1,13 +1,11 @@
-import fs from 'fs'
+import fs from 'fs-extra/esm'
 import { parseVueComponent } from '../../utils/ast'
-import type { ColorSchemeModes, PinceauContext, TokensFunction } from '../../types'
-import { logger } from '../../utils'
-import type { VueQuery } from '../../utils/query'
+import type { PinceauContext, VueQuery } from '../../types'
 import { darkRegex, lightRegex, mqCssRegex } from '../../utils/regexes'
 import { transformDtHelper } from '../dt'
 import { transformCssFunction } from '../css'
 
-export const transformVueStyle = (id: string, query: VueQuery, ctx: PinceauContext) => {
+export const transformVueStyle = (query: VueQuery, ctx: PinceauContext) => {
   const { filename } = query
 
   const file = fs.readFileSync(filename, 'utf8')
@@ -20,8 +18,11 @@ export const transformVueStyle = (id: string, query: VueQuery, ctx: PinceauConte
 
   let source = style?.content || ''
 
-  source = transformCssFunction(source, undefined, undefined, ctx.$tokens, ctx.customProperties, ctx.options.colorSchemeMode)
-  source = transformStyle(source, ctx.$tokens, ctx.options.colorSchemeMode)
+  const loc = { query, ...style.loc }
+
+  if (style.attrs.lang === 'ts') { source = transformCssFunction(query.id, source, undefined, undefined, ctx, loc) }
+
+  source = transformStyle(source, ctx, loc)
 
   if (style?.content !== source) { return source }
 }
@@ -29,15 +30,18 @@ export const transformVueStyle = (id: string, query: VueQuery, ctx: PinceauConte
 /**
  * Helper grouping all resolvers applying to <style>
  */
-export function transformStyle(code = '', $tokens: TokensFunction, mode: ColorSchemeModes) {
+export function transformStyle(code = '', ctx: PinceauContext, loc?: any) {
   code = transformDtHelper(code)
-  code = transformMediaQueries(code, $tokens)
-  code = transformScheme(code, 'dark', mode)
-  code = transformScheme(code, 'light', mode)
+  code = transformMediaQueries(code, ctx, loc)
+  code = transformScheme(code, 'dark')
+  code = transformScheme(code, 'light')
   return code
 }
 
-export function transformScheme(code = '', scheme: 'light' | 'dark', _: ColorSchemeModes) {
+/**
+ * Transform media scheme into proper declaration
+ */
+export function transformScheme(code = '', scheme: 'light' | 'dark') {
   // Only supports `light` and `dark` schemes as they are native from browsers.
   const schemesRegex = {
     light: lightRegex,
@@ -53,24 +57,19 @@ export function transformScheme(code = '', scheme: 'light' | 'dark', _: ColorSch
 }
 
 /**
- * Resolve `@mq.{mediaQuery}` declarations.
+ * Resolve `@{mediaQuery}` declarations.
  */
-export function transformMediaQueries(code = '', $tokens: TokensFunction): string {
-  const mediaQueries = $tokens('media', {
-    key: undefined,
-    silent: true,
-  }) as any
+export function transformMediaQueries(code = '', ctx: PinceauContext, loc?: any): string {
+  const mediaQueries = ctx.$tokens('media', { key: undefined, loc })
 
   code = code.replace(
     mqCssRegex,
-    (_, _mediaQueryDeclaration, query) => {
-      const mediaQuery = mediaQueries[query]
+    (declaration, query) => {
+      const mediaQuery = mediaQueries?.[query]
 
-      if (mediaQuery) { return `@media ${mediaQuery.value} {` }
+      if (!mediaQuery) { return declaration }
 
-      logger.warn(`This media query is not defined: ${mediaQuery}\n`)
-
-      return '@media (min-width: 0px) {'
+      return `@media ${mediaQuery.value} {`
     },
   )
 

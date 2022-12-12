@@ -1,21 +1,42 @@
-# 🖌 pinceau
+---
+title: Pinceau, a joyful CSS toolbox.
+layout: page
+navigation: false
+---
 
-[![NPM version](https://img.shields.io/npm/v/pinceau?color=a1b858&label=)](https://www.npmjs.com/package/pinceau)
+::block-hero
+---
+cta:
+  - Open Playground
+  - https://stackblitz.com/github/Tahul/vitesse-pinceau?file=src%2FApp.vue
+snippet: pnpm add pinceau
+---
 
+#title
+Pinceau
+
+#description
 A _CSS-in-TS_ framework built to feel like a native Vue feature.
 
-[🎨 Start painting](https://stackblitz.com/github/Tahul/vitesse-pinceau?file=src%2FApp.vue) • [🚧 Documentation](#install)
+#extra
+  ::list
+  - Ships **0kb** of **JS** to the client by default
+  - **DX** that feels like a native Vue feature
+  - [Design Tokens](https://github.com/design-tokens/community-group) compatible configuration system
+  - Fully-typed styling API
+  - Integrated with [Volar](https://github.com/johnsoncodehk/volar)
+  - Plug & play with  [Nuxt 3](https://v3.nuxtjs.org), [Vitesse](https://github.com/antfu/vitesse), [@vitejs/plugin-vue](https://github.com/vitejs/vite/tree/main/packages/plugin-vue)
+  ::
+  
+  ::alert{type="warning"}
+  🚧 Pinceau is still in **active development**. Expect breaking changes until **1.0** release.
+  :br
+  📅 **1.0** should be released in **February 2023**.
+  :br
+  ::
+::
 
-- Ships **0kb** of **JS** to the client by default
-- **DX** that feels like a native Vue feature
-- [Design Tokens](https://github.com/design-tokens/community-group) compatible configuration system
-- Fully-typed styling API
-- Integrated with [Volar](https://github.com/johnsoncodehk/volar)
-- Plug & play with  [Nuxt 3](https://v3.nuxtjs.org), [Vitesse](https://github.com/antfu/vitesse), [@vitejs/plugin-vue](https://github.com/vitejs/vite/tree/main/packages/plugin-vue)
-
-#### 🚨 Warning
-
-> Pinceau is still under heavy development, if you are missing some parts of the documentation, please [open an issue](https://github.com/Tahul/pinceau) and describe your problem. I'll be happy to help.
+:ellipsis{right=25vw top=55vh width=75% blur=150px}
 
 ## ⚙️ Install
 
@@ -80,7 +101,7 @@ export interface PinceauOptions {
    */
   configOrPaths?: ConfigOrPaths
   /**
-   * The name of the style configuration file
+   * The path of your configuration file.
    *
    * @default 'pinceau.config'
    */
@@ -769,6 +790,8 @@ There is plenty of features to come, including:
 
 - And even more! 🚀
 
+:ellipsis{right=5vw top=90% width=75% blur=150px}
+
 ## 💖 Credits
 
 - [Sébastien Chopin](https://github.com/Atinux)
@@ -789,6 +812,5 @@ This package takes inspiration in a lot of other projects, such as [style-dictio
 
 [MIT](./LICENSE) License &copy; 2022-PRESENT [Yaël GUILLOUX](https://github.com/Tahul)
 
----
 
 > _“All you need to paint is a few tools, a little instruction, and a vision in your mind.”_ • Bob Ross

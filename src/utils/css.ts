@@ -1,28 +1,35 @@
-import color from 'tinycolor2'
-import type { ColorSchemeModes, DesignToken, TokensFunction } from '../types'
-import { DARK, INITIAL, LIGHT, calcRegex, mqPlainRegex, referencesRegex, rgbaRegex } from './regexes'
+import chroma from 'chroma-js'
+import type { DesignToken, PinceauContext } from '../types'
+import { DARK, INITIAL, LIGHT, calcRegex, referencesRegex, rgbaRegex } from './regexes'
 
 /**
  * Resolve a css function property to a stringifiable declaration.
  */
-export function resolveCssProperty(property: any, value: any, style: any, selectors: any, $tokens: TokensFunction, customProperties: any, colorSchemeMode: ColorSchemeModes) {
+export function resolveCssProperty(
+  property: any,
+  value: any,
+  style: any,
+  selectors: any,
+  ctx: PinceauContext,
+  loc?: any,
+) {
   // Resolve custom style directives
-  const directive = resolveCustomDirectives(property, value, $tokens, colorSchemeMode)
+  const directive = resolveCustomDirectives(property, value, selectors, ctx, loc)
   if (directive) { return directive }
 
   // Resolve custom properties
-  if (customProperties[property]) {
+  if (ctx.customProperties[property]) {
     // Custom property is a function, pass value and return result
-    if (typeof customProperties[property] === 'function') {
-      return customProperties[property](value)
+    if (typeof ctx.customProperties[property] === 'function') {
+      return ctx.customProperties[property](value)
     }
 
     // Custom property is an object, if value is true, return result
-    return value ? customProperties[property] : {}
+    return value ? ctx.customProperties[property] : {}
   }
 
   // Resolve final value
-  value = castValues(property, value, $tokens)
+  value = castValues(property, value, ctx, loc)
 
   // Return proper declaration
   return {
@@ -33,13 +40,18 @@ export function resolveCssProperty(property: any, value: any, style: any, select
 /**
  * Cast value or values before pushing it to the style declaration
  */
-export function castValues(property: any, value: any, $tokens: TokensFunction) {
+export function castValues(
+  property: any,
+  value: any,
+  ctx: PinceauContext,
+  loc?: any,
+) {
   if (Array.isArray(value) || typeof value === 'string' || typeof value === 'number') {
     if (Array.isArray(value)) {
-      value = value.map(v => castValue(property, v, $tokens)).join(',')
+      value = value.map(v => castValue(property, v, ctx, loc)).join(',')
     }
     else {
-      value = castValue(property, value, $tokens)
+      value = castValue(property, value, ctx, loc)
     }
   }
   return value
@@ -48,20 +60,19 @@ export function castValues(property: any, value: any, $tokens: TokensFunction) {
 /**
  * Cast a value to a valid CSS unit.
  */
-export function castValue(property: any, value: any, $tokens: TokensFunction) {
+export function castValue(
+  property: any,
+  value: any,
+  ctx: PinceauContext,
+  loc?: any,
+) {
   if (typeof value === 'number') { return value }
 
-  if (value.match(/rgb/g)) {
-    value = resolveRgbaTokens(property, value, $tokens)
-  }
+  if (value.match(/rgb/g)) { value = resolveRgbaTokens(property, value, ctx, loc) }
 
-  if (value.match(/calc/g)) {
-    value = resolveCalcTokens(property, value, $tokens)
-  }
+  if (value.match(/calc/g)) { value = resolveCalcTokens(property, value, ctx, loc) }
 
-  if (value.match(referencesRegex)) {
-    value = resolveReferences(property, value, $tokens)
-  }
+  if (value.match(referencesRegex)) { value = resolveReferences(property, value, ctx, loc) }
 
   if (value === '{}') { return '' }
 
@@ -71,7 +82,12 @@ export function castValue(property: any, value: any, $tokens: TokensFunction) {
 /**
  * Resolve token references
  */
-export function resolveReferences(property: string, value: string, $tokens: TokensFunction) {
+export function resolveReferences(
+  _: string,
+  value: string,
+  ctx: PinceauContext,
+  loc?: any,
+) {
   if (!(typeof value === 'string')) { return value }
 
   value = value.replace(
@@ -79,7 +95,7 @@ export function resolveReferences(property: string, value: string, $tokens: Toke
     (...parts) => {
       const [, tokenPath] = parts
 
-      const token = $tokens(tokenPath, { key: undefined }) as DesignToken
+      const token = ctx.$tokens(tokenPath, { key: undefined, loc }) as DesignToken
 
       const tokenValue = typeof token === 'string' ? token : token?.attributes?.variable || token?.value || token?.original?.value
 
@@ -95,7 +111,12 @@ export function resolveReferences(property: string, value: string, $tokens: Toke
 /**
  * Resolve rgba() value
  */
-export function resolveRgbaTokens(property: string, value: string, $tokens: TokensFunction) {
+export function resolveRgbaTokens(
+  _: string,
+  value: string,
+  ctx: PinceauContext,
+  loc?: any,
+) {
   if (!(typeof value === 'string')) { return value }
 
   value = value.replace(
@@ -106,15 +127,15 @@ export function resolveRgbaTokens(property: string, value: string, $tokens: Toke
       newValue = newValue.replace(
         referencesRegex,
         (...reference) => {
-          const token = $tokens(reference[1], { key: 'original' }) as DesignToken
+          const token = ctx.$tokens(reference[1], { key: 'original', loc }) as DesignToken
 
           let tokenValue: any = token?.value || token
 
           if (!tokenValue) { return '0,0,0' }
 
-          tokenValue = color(tokenValue).toRgb()
+          tokenValue = chroma(tokenValue).rgb()
 
-          return `${tokenValue.r},${tokenValue.g},${tokenValue.b}`
+          return `${tokenValue[0]},${tokenValue[1]},${tokenValue[2]}`
         },
       )
 
@@ -128,7 +149,12 @@ export function resolveRgbaTokens(property: string, value: string, $tokens: Toke
 /**
  * Resolve calc() value
  */
-export function resolveCalcTokens(property: string, value: string, $tokens: TokensFunction) {
+export function resolveCalcTokens(
+  _: string,
+  value: string,
+  ctx: PinceauContext,
+  loc?: any,
+) {
   if (!(typeof value === 'string')) { return value }
 
   value = value.replace(
@@ -139,8 +165,7 @@ export function resolveCalcTokens(property: string, value: string, $tokens: Toke
       newValue = newValue.replace(
         referencesRegex,
         (...reference) => {
-          const token = $tokens(reference[1], { key: 'original' }) as any
-
+          const token = ctx.$tokens(reference[1], { key: 'original', loc }) as any
           return token?.value || token
         },
       )
@@ -158,15 +183,14 @@ export function resolveCalcTokens(property: string, value: string, $tokens: Toke
 export function resolveCustomDirectives(
   property: any,
   value: any,
-  $tokens: TokensFunction,
-  colorSchemesMode: ColorSchemeModes,
+  selectors: any,
+  ctx: PinceauContext,
+  loc?: any,
 ) {
   if (property.startsWith('@')) {
-    const mqMatches = property.match(mqPlainRegex)
-
     const resolveColorScheme = (scheme: string) => {
-      scheme = colorSchemesMode === 'class'
-        ? `$.${scheme}`
+      scheme = ctx.options.colorSchemeMode === 'class'
+        ? `:root.${scheme} &`
         : `@media (prefers-color-scheme: ${scheme})`
 
       return {
@@ -174,31 +198,34 @@ export function resolveCustomDirectives(
       }
     }
 
-    if (property === DARK) {
-      return resolveColorScheme('dark')
-    }
+    // @dark
+    if (property === DARK) { return resolveColorScheme('dark') }
 
-    if (property === LIGHT) {
-      return resolveColorScheme('light')
-    }
+    // @light
+    if (property === LIGHT) { return resolveColorScheme('light') }
 
+    // @initial
     if (property === INITIAL) {
-      let token = $tokens('media.initial' as any, { key: 'value' })
-      if (!token) {
-        token = '(min-width: 0px)'
-      }
+      let token = ctx.$tokens('media.initial' as any, { key: 'value', onNotFound: false, loc })
+      if (!token) { token = '(min-width: 0px)' }
       return {
         [`@media ${token}`]: value,
       }
     }
 
-    if (mqMatches) {
-      const screen = mqMatches[1]
-      const screenToken = $tokens(`media.${screen}` as any, { key: 'value' })
+    const mediaQueries = ctx.$tokens('media' as any, { key: undefined, loc })
 
-      return {
-        [`@media ${screenToken}`]: value,
+    if (mediaQueries) {
+      const query = property.replace('@', '')
+      if (mediaQueries[query]) {
+        return {
+          [`@media ${mediaQueries[query].value}`]: value,
+        }
       }
+    }
+
+    return {
+      [property]: value,
     }
   }
 }

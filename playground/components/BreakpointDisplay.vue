@@ -22,40 +22,40 @@ const mediaQueries = Object.entries(theme).reduce(
 css({
   '.bp-sm': {
     display: 'block',
-    '@mq.md': {
+    '@md': {
       display: 'none'
     }
   },
   '.bp-md': {
     display: 'none',
-    '@mq.md': {
+    '@md': {
       display: 'block'
     },
-    '@mq.lg': {
+    '@lg': {
       display: 'none'
     }
   },
   '.bp-lg': {
     display: 'none',
-    '@mq.lg': {
+    '@lg': {
       display: 'block'
     },
-    '@mq.xl': {
+    '@xl': {
       display: 'none'
     }
   },
   '.bp-xl': {
     display: 'none',
-    '@mq.xl': {
+    '@xl': {
       display: 'block'
     },
-    '@mq.xxl': {
+    '@xxl': {
       display: 'none'
     }
   },
   '.bp-xxl': {
     display: 'none',
-    '@mq.xxl': {
+    '@xxl': {
       display: 'block'
     }
   }

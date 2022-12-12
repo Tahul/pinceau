@@ -20,12 +20,12 @@ defineProps({
 css({
   '.block': {
     backgroundColor: (props, utils) => utils.scale(
-      'colors',
+      'color',
       props.palette,
       { light: '600', dark: '200' }
     ),
     borderColor: (props, utils) => utils.scale(
-      'colors',
+      'color',
       props.palette,
       { light: '400', dark: '600' },
     ),
@@ -36,24 +36,26 @@ css({
     height: '320px',
     position: 'relative',
     color: 'black',
+    boxShadow: '{shadow.md}',
     '& > p': {
       fontSize: '16px',
       textDecoration: 'underline',
-    },
+    }
   },
   variants: {
     shadow: {
       light: {
-        boxShadow: '{shadows.sm}',
+        boxShadow: '{shadow.sm}',
       },
       medium: {
-        boxShadow: '{shadows.md}',
+        boxShadow: '{shadow.md}',
       },
       giant: {
-        boxShadow: '{shadows.xl}',
+        boxShadow: '{shadow.xl}',
       },
       options: {
-        default: 'medium',
+        required: true,
+        default: 'test'
       }
     },
     bordered: {
@@ -66,4 +68,3 @@ css({
   }
 })
 </style>
-

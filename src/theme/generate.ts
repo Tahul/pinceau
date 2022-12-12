@@ -2,17 +2,17 @@ import type { Core as Instance } from 'style-dictionary-esm'
 import StyleDictionary from 'style-dictionary-esm'
 import { isShadowToken, transformShadow } from '../utils/shadows'
 import type { PinceauOptions, PinceauTheme, PinceauTokens, ThemeGenerationOutput } from '../types'
-import { logger } from '../utils'
+import { message } from '../utils/logger'
 import { jsFlat, jsFull, tsFlat, tsFull, tsTypesDeclaration } from './formats'
 
-export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath, colorSchemeMode, debug }: PinceauOptions, silent = true): Promise<ThemeGenerationOutput> {
+export async function generateTheme(tokens: any, { outputDir: buildPath, colorSchemeMode }: PinceauOptions, silent = true): Promise<ThemeGenerationOutput> {
   let styleDictionary: Instance = StyleDictionary
 
   // Tokens outputs as in-memory objects
   const outputs: ThemeGenerationOutput['outputs'] = {}
 
   let result = {
-    tokens: {} as PinceauTheme,
+    tokens: {},
     outputs: {} as Record<string, any>,
     buildPath,
   }
@@ -23,7 +23,7 @@ export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath
   }
 
   // Custom properties
-  const customProperties = { ...(tokens?.utils as any || {}) }
+  const customProperties = { ...(tokens?.utils || {}) }
   if (tokens?.utils) { delete tokens?.utils }
 
   // Responsive tokens
@@ -62,7 +62,7 @@ export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath
         },
       )
     },
-    undo: () => {},
+    undo: () => { },
   })
 
   // Add `variable` key to attributes
@@ -316,15 +316,14 @@ export async function generateTheme(tokens: PinceauTheme, { outputDir: buildPath
               buildPath,
             })
           },
-          undo: () => {},
+          undo: () => { },
         })
         styleDictionary.buildAllPlatforms()
       },
     )
   }
   catch (e) {
-    logger.error('Pinceau could not build your design tokens configuration!')
-    if (debug) { logger.error(e) }
+    message('CONFIG_BUILD_ERROR', [e])
   }
 
   return result

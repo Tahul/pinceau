@@ -5,10 +5,10 @@ import { createContext } from './theme'
 import { registerAliases, registerPostCssPlugins } from './utils/plugin'
 import { replaceStyleTs, resolveStyleQuery, transformVueSFC, transformVueStyle } from './transforms'
 import { parseVueQuery } from './utils/query'
-import { logger } from './utils/logger'
+import { message, setDebugLevel } from './utils/logger'
 import type { PinceauOptions } from './types'
-import { parseVueComponent } from './utils/ast'
 import { merger } from './utils/merger'
+import { useDebugPerformance } from './utils/debug'
 
 export const defaultOptions: PinceauOptions = {
   configFileName: 'pinceau.config',
@@ -23,17 +23,29 @@ export const defaultOptions: PinceauOptions = {
     'node_modules/@nuxt/ui-templates/',
     'node_modules/@vue/',
     'node_modules/pinceau/',
+    '/__pinceau_css.css',
+    '/__pinceau_ts.ts',
+    '/__pinceau_js.js',
+    '/__pinceau_flat_ts.ts',
+    '/__pinceau_flat_js.js',
   ],
   followSymbolicLinks: true,
   colorSchemeMode: 'media',
   debug: false,
+  componentMetaSupport: false,
 }
 
 export default createUnplugin<PinceauOptions>(
   (options) => {
+    const { stopPerfTimer } = useDebugPerformance('Setup Unplugin', options.debug)
+
     options = merger(options, defaultOptions)
 
+    setDebugLevel(options.debug)
+
     const ctx = createContext(options)
+
+    stopPerfTimer()
 
     return {
       name: 'pinceau',
@@ -53,9 +65,9 @@ export default createUnplugin<PinceauOptions>(
           ctx.env = 'dev'
           await ctx.ready
           process.setMaxListeners(0)
-          ctx.registerConfigWatchers(server)
         },
         handleHotUpdate(ctx) {
+          // Enforce <style lang="ts"> into <style lang="postcss">
           const defaultRead = ctx.read
           ctx.read = async function () {
             const code = await defaultRead()
@@ -65,54 +77,68 @@ export default createUnplugin<PinceauOptions>(
       },
 
       transformInclude(id) {
+        let toRet
+
         // Use Vue's query parser
         const query = parseVueQuery(id)
 
-        // Stop on excluded paths.
-        if (options.excludes && options.excludes.some(path => id.includes(path))) { return false }
+        // Stop on excluded paths
+        if (options.excludes && options.excludes.some(path => id.includes(path))) { toRet = false }
 
-        // // Run only on Nuxt loaded components
-        if (options.includes && options.includes.some(path => id.includes(path))) { return true }
+        // Run only on Nuxt loaded components
+        if (toRet !== false && options.includes && options.includes.some(path => id.includes(path))) { toRet = true }
 
-        if (query?.vue || query?.css) { return true }
+        // Allow Vue & CSS files
+        if (toRet !== false && (query?.vue || query?.css)) { toRet = true }
+
+        // Push included file into context
+        if (toRet) { ctx.addTransformed(id) }
+
+        return toRet
       },
 
       transform(code, id) {
+        // Performance timings
+        const { stopPerfTimer } = useDebugPerformance(`Transforming ${id}`, options.debug)
+
+        // Enforce <style lang="ts"> into <style lang="postcss">
         code = replaceStyleTs(code, id)
 
+        // Parse query
         const query = parseVueQuery(id)
 
+        // Create magic string from query and code
         const magicString = new MagicString(code, { filename: query.filename })
-        const result = (code = magicString.toString(), ms = magicString) => ({ code, map: ms.generateMap({ source: id, includeContent: true }) })
-        const missingMap = (code: string) => ({ code, map: new MagicString(code, { filename: query.filename }).generateMap() })
+        const result = (code = magicString.toString(), ms = magicString) => {
+          stopPerfTimer()
+          return { code, map: ms.generateMap({ source: id, includeContent: true }) }
+        }
+        const missingMap = (code: string) => {
+          stopPerfTimer()
+          return { code, map: new MagicString(code, { filename: query.filename }).generateMap() }
+        }
 
         try {
           // Handle CSS files
+          const loc = { query, source: code }
           if (query.css && !query.vue) {
-            const { code: _code } = resolveStyleQuery(code, magicString, ctx.$tokens, ctx.customProperties, options.colorSchemeMode)
+            const { code: _code } = resolveStyleQuery(code, magicString, query, ctx, loc)
+            return missingMap(_code)
+          }
+
+          // Handle <style> tags scoped queries
+          if (query.type === 'style') {
+            const { code: _code } = resolveStyleQuery(code, magicString, query, ctx, loc)
             return missingMap(_code)
           }
 
           // Return early when the query is scoped (usually style tags)
-          const { code: _code, early } = transformVueSFC(code, id, magicString, ctx, query)
-          if (early) { return missingMap(_code) }
+          const { code: _code } = transformVueSFC(code, query, magicString, ctx)
+          code = _code
         }
         catch (e) {
-          logger.error(`Could not transform file ${query.filename || id}`)
-          if (options.debug) { logger.error(e) }
+          message('TRANSFORM_ERROR', [id, e])
           return missingMap(code)
-        }
-
-        // Parse the component code to check if it is a valid Vue SFC
-        if (query?.vue) {
-          try {
-            parseVueComponent(result().code)
-          }
-          catch (e) {
-            // Return code w/o transforms when parsing fails
-            if (options.debug) { logger.log({ code, e }) }
-            return missingMap(code)
-          }
         }
 
         return result()
@@ -123,16 +149,24 @@ export default createUnplugin<PinceauOptions>(
       },
 
       load(id) {
+        // Performance timings
+        const { stopPerfTimer } = useDebugPerformance(`Load ${id}`, options.debug)
+
         // Check if id refers to local output
         const output = ctx.getOutput(id)
         if (output) {
+          stopPerfTimer()
           return output
         }
 
+        // Parse query
         const query = parseVueQuery(id)
 
+        // Transform Vue scoped query
         if (query.vue && query.type === 'style') {
-          return transformVueStyle(id, query, ctx)
+          const vueStyle = transformVueStyle(query, ctx)
+          stopPerfTimer()
+          return vueStyle
         }
       },
     }

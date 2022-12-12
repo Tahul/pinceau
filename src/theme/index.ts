@@ -1,64 +1,118 @@
 import type { ViteDevServer } from 'vite'
-import type { PinceauContext, PinceauOptions, PinceauTheme } from '../types'
+import { useDebugPerformance } from '../utils/debug'
+import { message } from '../utils/logger'
+import type { PinceauContext, PinceauOptions } from '../types'
 import { createTokensHelper } from '../utils/$tokens'
+import { flattenTokens } from '../utils'
 import { generateTheme } from './generate'
 import { usePinceauConfig } from './config'
 import { usePinceauVirtualStore } from './virtual'
 import { prepareOutputDir } from './output'
+import { flattenTokens } from '../utils/theme'
 
 /**
  * Creates the Pinceau context from the options.
  */
 export const createContext = <UserOptions extends PinceauOptions = PinceauOptions>(options: UserOptions): PinceauContext<UserOptions> => {
   const env: PinceauContext['env'] = 'prod'
-  let tokens: PinceauTheme = {} as any as PinceauTheme
-  let viteServer: ViteDevServer
-  let customProperties: any = {}
 
-  // Prepares the output dir (TODO: remove it to only depend on in-memory storage)
+  // Context state
+  const transformed: string[] = []
+  const getTransformed = () => transformed
+  let viteServer: ViteDevServer
+  const getViteServer = () => viteServer
+  let tokens = {}
+  const getTokens = () => tokens
+  let customProperties: any = {}
+  const getCustomProperties = () => customProperties
+
+  // Prepares the output dir
   prepareOutputDir(options)
 
+  // Virtual storage
   const { outputs, getOutput, getOutputId, updateOutputs } = usePinceauVirtualStore()
 
+  // Configuration
   const configContext = usePinceauConfig<UserOptions>(
     options,
+    getViteServer,
+    getTransformed,
     async (resolvedConfig) => {
+      message('CONFIG_RESOLVED', [resolvedConfig])
+
+      const { stopPerfTimer } = useDebugPerformance('Build theme', options.debug)
+
       // Preserve custom properties in memory to avoid virtual storage call on compile
-      customProperties = resolvedConfig.config?.utils || {}
+      customProperties = (resolvedConfig.config as any)?.utils || {}
 
       const builtTheme = await generateTheme(resolvedConfig.config, options)
-
-      if (!builtTheme) { return }
+      console.log('builtTheme', builtTheme)
+      if (!builtTheme) {
+        stopPerfTimer()
+        return
+      }
 
       updateOutputs(builtTheme)
 
+      // Update local tokens
       tokens = builtTheme.tokens
+
+      if (viteServer) {
+        viteServer.ws.send({
+          type: 'custom',
+          event: 'pinceau:themeUpdate',
+          data: {
+            theme: flattenTokens(tokens),
+            customProperties: getCustomProperties(),
+          },
+        })
+      }
+
+      stopPerfTimer()
     },
   )
 
-  const context = {
+  return {
     // Local context
     env,
     options,
 
+    // Transformed files
+    get transformed() {
+      return getTransformed()
+    },
+    addTransformed(id: string) {
+      if (!transformed.includes(id)) { transformed.push(id) }
+    },
+
     // $tokens
     get tokens() {
-      return tokens
+      return getTokens()
     },
     get $tokens() {
-      return createTokensHelper(tokens)
+      return createTokensHelper(
+        tokens,
+        {
+          onNotFound(path, options) {
+            message('TOKEN_NOT_FOUND', [path, options])
+          },
+        },
+      )
     },
 
     // customProperties
     get customProperties() {
-      return customProperties
+      return getCustomProperties()
     },
 
     // Vite
     get viteServer() {
-      return viteServer
+      return getViteServer()
     },
-    setViteServer: (server: ViteDevServer) => (viteServer = server),
+    setViteServer: (server: ViteDevServer) => {
+      viteServer = server
+      configContext.registerConfigWatchers()
+    },
 
     // Config
     ...configContext,
@@ -69,6 +123,4 @@ export const createContext = <UserOptions extends PinceauOptions = PinceauOption
     updateOutputs,
     getOutputId,
   }
-
-  return context
 }

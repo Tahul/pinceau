@@ -1,4 +1,4 @@
-import type { PinceauTheme, PinceauTokensPaths } from './theme'
+import type { PinceauTokensPaths } from './theme'
 import type { DesignToken, PinceauTokens } from './tokens'
 
 export interface TokensFunctionOptions {
@@ -6,24 +6,30 @@ export interface TokensFunctionOptions {
    * The key that will be unwrapped from the design token object.
    * @default variable
    */
-  key?: string
+  key?: 'variable' | 'value' | string
   /**
-   * Toggle logging if requesting an unknown token.
+   * Called on missing tokens.
    * @default false
    */
-  silent?: boolean
+  onNotFound?: false | ((path: string, options: TokensFunctionOptions) => void)
   /**
-   * Makes the function compatible with flattened version of tokens file.
+   * The location of the resolved token.
+   * Can be useful for logging purposes.
+   * @default false
    */
-  flattened?: boolean
+  loc?: any
 }
 
+/**
+ * $dt function typing
+ */
 export type DtFunction = (
-  path: PinceauTokensPaths
+  path: PinceauTokensPaths,
+  options?: TokensFunctionOptions
 ) => string
 
 export type TokensFunction = (
-  path?: PinceauTokensPaths,
+  path?: PinceauTokensPaths | (string & {}),
   options?: TokensFunctionOptions,
-  theme?: PinceauTheme
+  theme?: any
 ) => PinceauTokens | DesignToken | number | string

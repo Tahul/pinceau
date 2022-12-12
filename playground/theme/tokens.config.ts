@@ -9,12 +9,12 @@ export default defineTheme({
     xxl: '(min-width: 1536px)',
   },
 
-  fonts: {
+  font: {
     primary: 'Inter, sans-serif',
     secondary: 'FredokaOne, serif',
   },
 
-  colors: {
+  color: {
     white: '#FFFFFF',
     black: '#191919',
     pink: palette('#EC528D'),
@@ -25,47 +25,47 @@ export default defineTheme({
     green: palette('#44AF69'),
     primary: {
       100: {
-        initial: '{colors.blue.100}',
-        dark: '{colors.blue.900}',
+        initial: '{color.blue.100}',
+        dark: '{color.blue.900}',
       },
       200: {
-        initial: '{colors.blue.200}',
-        dark: '{colors.blue.800}',
+        initial: '{color.blue.200}',
+        dark: '{color.blue.800}',
       },
       300: {
-        initial: '{colors.blue.300}',
-        dark: '{colors.blue.700}',
+        initial: '{color.blue.300}',
+        dark: '{color.blue.700}',
       },
       400: {
-        initial: '{colors.blue.400}',
-        dark: '{colors.blue.600}',
+        initial: '{color.blue.400}',
+        dark: '{color.blue.600}',
       },
       500: {
-        initial: '{colors.blue.500}',
-        dark: '{colors.blue.500}',
+        initial: '{color.blue.500}',
+        dark: '{color.blue.500}',
       },
       600: {
-        initial: '{colors.blue.600}',
-        dark: '{colors.blue.400}',
+        initial: '{color.blue.600}',
+        dark: '{color.blue.400}',
       },
       700: {
-        initial: '{colors.blue.700}',
-        dark: '{colors.blue.300}',
+        initial: '{color.blue.700}',
+        dark: '{color.blue.300}',
       },
       800: {
-        initial: '{colors.blue.800}',
-        dark: '{colors.blue.200}',
+        initial: '{color.blue.800}',
+        dark: '{color.blue.200}',
       },
       900: {
-        initial: '{colors.blue.900}',
-        dark: '{colors.blue.100}',
+        initial: '{color.blue.900}',
+        dark: '{color.blue.100}',
       },
     },
   },
 
-  shadows: {
+  shadow: {
     xs: {
-      color: '{colors.gray.800}',
+      color: '{color.gray.800}',
       type: 'dropShadow',
       x: '0',
       y: '1',
@@ -74,7 +74,7 @@ export default defineTheme({
     },
     sm: [
       {
-        color: '{colors.gray.800}',
+        color: '{color.gray.800}',
         type: 'dropShadow',
         x: '0',
         y: '1',
@@ -82,7 +82,7 @@ export default defineTheme({
         spread: '-1',
       },
       {
-        color: '{colors.gray.800}',
+        color: '{color.gray.800}',
         type: 'dropShadow',
         x: '0',
         y: '1',
@@ -92,7 +92,7 @@ export default defineTheme({
     ],
     md: [
       {
-        color: '{colors.gray.800}',
+        color: '{color.gray.800}',
         type: 'dropShadow',
         x: '0',
         y: '2',
@@ -100,7 +100,7 @@ export default defineTheme({
         spread: '-2',
       },
       {
-        color: '{colors.gray.800}',
+        color: '{color.gray.800}',
         type: 'dropShadow',
         x: '0',
         y: '4',
@@ -110,7 +110,7 @@ export default defineTheme({
     ],
     lg: [
       {
-        color: '{colors.gray.800}',
+        color: '{color.gray.800}',
         type: 'dropShadow',
         x: '0',
         y: '4',
@@ -118,7 +118,7 @@ export default defineTheme({
         spread: '-4',
       },
       {
-        color: '{colors.gray.800}',
+        color: '{color.gray.800}',
         type: 'dropShadow',
         x: '0',
         y: '10',
@@ -128,7 +128,7 @@ export default defineTheme({
     ],
     xl: [
       {
-        color: '{colors.gray.800}',
+        color: '{color.gray.800}',
         type: 'dropShadow',
         x: '0',
         y: '8',
@@ -136,7 +136,7 @@ export default defineTheme({
         spread: '-6',
       },
       {
-        color: '{colors.gray.800}',
+        color: '{color.gray.800}',
         type: 'dropShadow',
         x: '0',
         y: '20',
@@ -145,7 +145,7 @@ export default defineTheme({
       },
     ],
     xxl: {
-      color: '{colors.gray.800}',
+      color: '{color.gray.800}',
       type: 'dropShadow',
       x: '0',
       y: '25',
@@ -154,7 +154,7 @@ export default defineTheme({
     },
   },
 
-  fontWeights: {
+  fontWeight: {
     thin: 100,
     extralight: 200,
     light: 300,
@@ -166,7 +166,7 @@ export default defineTheme({
     black: 900,
   },
 
-  fontSizes: {
+  fontSize: {
     'xs': '12px',
     'sm': '14px',
     'base': '16px',
@@ -182,7 +182,7 @@ export default defineTheme({
     '9xl': '128px',
   },
 
-  letterSpacings: {
+  letterSpacing: {
     tighter: '-.05em',
     tight: '-0025em',
     normal: '0em',
@@ -191,7 +191,7 @@ export default defineTheme({
     widest: '0.1em',
   },
 
-  leads: {
+  lead: {
     none: 1,
     tight: 1.25,
     snug: 1.375,
@@ -253,7 +253,7 @@ export default defineTheme({
     200: '200px',
   },
 
-  borderWidths: {
+  borderWidth: {
     noBorder: '0',
     sm: '1px',
     md: '2px',
@@ -270,7 +270,7 @@ export default defineTheme({
     total: '1',
   },
 
-  zIndices: {
+  zIndex: {
     0: '0',
     1: '1px',
     2: '2px',

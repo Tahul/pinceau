@@ -69,7 +69,7 @@ export function transformComputedStylesToDeclaration(
             declaration[targetId][`--${varName}`] = _value
           }
 
-          const mediaId = (mqId === 'dark' || mqId === 'light') ? `@${mqId}` : `@mq.${mqId}`
+          const mediaId = `@${mqId}`
 
           if (!declaration[mediaId]) { declaration[mediaId] = {} }
           if (!declaration[mediaId][targetId]) { declaration[mediaId][targetId] = {} }

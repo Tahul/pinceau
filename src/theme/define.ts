@@ -1,5 +1,5 @@
 import { isShadowToken } from '../utils/shadows'
-import type { DefineConfigType, PinceauTheme } from '../types'
+import type { DefineConfigType } from '../types'
 
 export function walkConfig(
   obj: any,
@@ -42,7 +42,7 @@ export function walkConfig(
   return result
 }
 
-export function defineTheme(config: DefineConfigType): PinceauTheme {
+export function defineTheme(config: DefineConfigType) {
   const mqKeys = ['dark', 'light', ...Object.keys(config?.media || [])]
 
   // Cast `string` values into design tokens like object.
@@ -54,5 +54,5 @@ export function defineTheme(config: DefineConfigType): PinceauTheme {
     mqKeys,
   )
 
-  return config as PinceauTheme
+  return config
 }

@@ -55,9 +55,27 @@ export type NestedKeyOf<TObject> =
 export type FilterStartingWith<Set, Needle extends string> = Set extends `${Needle}${infer _X}` ? Set : never
 
 export type WrapUnion<
-  TObject extends string,
+  TObject extends string | number | symbol,
   TPrefix extends string,
   TSuffix extends string,
 > = keyof {
   [K in WrapKey<TObject, TPrefix, TSuffix>]: any
+}
+
+export interface VueQuery {
+  id: string
+  filename: string
+  vue?: boolean
+  src?: boolean
+  global?: boolean
+  type?: 'script' | 'template' | 'style' | 'custom'
+  blockType?: string
+  index?: number
+  locale?: string
+  lang?: string
+  raw?: boolean
+  scoped?: string
+  transformed?: boolean
+  issuerPath?: string
+  css: boolean
 }

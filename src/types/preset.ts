@@ -54,20 +54,20 @@ export interface FontWeightTokens extends PinceauTokens {
 }
 
 export interface ConfigSuggestion {
-  colors?: ScaleTokens | PinceauTokens
-  fonts?: PinceauTokens
-  fontWeights?: FontWeightTokens | PinceauTokens
-  fontSizes?: BreakpointsTokens | PinceauTokens
+  color?: ScaleTokens | PinceauTokens
+  font?: PinceauTokens
+  fontWeight?: FontWeightTokens | PinceauTokens
+  fontSize?: BreakpointsTokens | PinceauTokens
   size?: BreakpointsTokens | PinceauTokens
   space?: BreakpointsTokens | PinceauTokens
   radii?: BreakpointsTokens | PinceauTokens
-  borders?: BreakpointsTokens | PinceauTokens
-  borderWidths?: BreakpointsTokens | PinceauTokens
-  borderStyles?: BreakpointsTokens | PinceauTokens
-  shadows?: BreakpointsTokens | PinceauTokens
+  border?: BreakpointsTokens | PinceauTokens
+  borderWidth?: BreakpointsTokens | PinceauTokens
+  borderStyle?: BreakpointsTokens | PinceauTokens
+  shadow?: BreakpointsTokens | PinceauTokens
   opacity?: BreakpointsTokens | PinceauTokens
-  leads?: BreakpointsTokens | PinceauTokens
-  letterSpacings?: BreakpointsTokens | PinceauTokens
-  transitions?: PinceauTokens | PinceauTokens
-  zIndices?: PinceauTokens | PinceauTokens
+  lead?: BreakpointsTokens | PinceauTokens
+  letterSpacing?: BreakpointsTokens | PinceauTokens
+  transition?: PinceauTokens | PinceauTokens
+  zIndex?: PinceauTokens | PinceauTokens
 }

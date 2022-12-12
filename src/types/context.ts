@@ -8,10 +8,12 @@ export type ConfigOrPaths = PinceauTheme | string | string[] | undefined
 
 export interface PinceauContext<UserOptions extends PinceauOptions = PinceauOptions> extends PinceauConfigContext<UserOptions>, PinceauVirtualContext {
   env: 'prod' | 'dev'
-  tokens: PinceauTheme
+  tokens: any
   customProperties: any
   $tokens: TokensFunction
   options: PinceauOptions
+  transformed: string[]
+  addTransformed: (id: string) => void
 
   // Vite
   viteServer: ViteDevServer
@@ -22,16 +24,16 @@ export interface PinceauConfigContext<UserOptions = PinceauOptions> {
   cwd: string
   updateCwd: (newCwd: string) => Promise<LoadConfigResult<PinceauTheme>>
   sources: string[]
-  resolvedConfig: PinceauTheme
+  resolvedConfig: any
   ready: Promise<LoadConfigResult<PinceauTheme>>
   reloadConfig: (newOptions?: UserOptions) => Promise<LoadConfigResult<PinceauTheme>>
-  registerConfigWatchers: (server: ViteDevServer) => void
+  registerConfigWatchers: () => void
   getConfig: () => Promise<PinceauTheme>
 }
 
 export interface ThemeGenerationOutput {
   buildPath: string
-  tokens: PinceauTheme
+  tokens: any
   outputs: Record<string, any>
 }
 

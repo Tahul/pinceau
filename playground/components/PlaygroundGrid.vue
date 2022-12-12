@@ -13,11 +13,10 @@ css({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: '{zIndices.0}',
-
-    border: '4px solid {colors.gray.100}',
+    zIndex: '{zIndex.0}',
+    border: '4px solid {color.gray.100}',
     '@dark': {
-      border: '4px solid {colors.gray.900}',
+      border: '4px solid {color.gray.900}',
     }
   }
 })
