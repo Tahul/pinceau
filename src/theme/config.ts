@@ -67,19 +67,23 @@ export function usePinceauConfig<UserOptions extends PinceauOptions = PinceauOpt
     // Use transformed files as well
     getTransformed().forEach(transformed => !ids.includes(transformed) && ids.push(transformed))
 
+    // HMR on configuration currently broken with Nuxt 3
+    if (options.ssrEnv) {
+      viteServer.moduleGraph.invalidateAll()
+      viteServer.ws.send({
+        type: 'full-reload',
+      })
+      return
+    }
+
     // Loop on ids
     for (const id of ids) {
-      const _module = viteServer.moduleGraph.getModuleById(id.split('?')[0])
+      const _module = viteServer.moduleGraph.getModuleById(id)
 
       if (!_module) { continue }
 
       viteServer.reloadModule(_module)
     }
-
-    viteServer.moduleGraph.invalidateAll()
-    viteServer.ws.send({
-      type: 'full-reload',
-    })
   }
 
   return {

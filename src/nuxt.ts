@@ -168,6 +168,8 @@ const module: any = defineNuxtModule<PinceauOptions>({
       })
     }
 
+    options.ssrEnv = true
+
     // Webpack plugin
     nuxt.hook('webpack:config', (config: any) => {
       config.plugins = config.plugins || []

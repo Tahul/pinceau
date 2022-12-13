@@ -89,6 +89,10 @@ export interface PinceauOptions {
    * Completely enable or disable Pinceau runtime features.
    */
   runtime?: boolean
+  /**
+   * Is inside SSR environment (Nuxt?)
+   */
+  ssrEnv?: boolean
 }
 
 export interface ModuleHooks {
