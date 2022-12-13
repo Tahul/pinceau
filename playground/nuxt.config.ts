@@ -9,17 +9,7 @@ export default defineNuxtConfig({
   },
   pinceau: {
     configFileName: 'tokens.config',
-    debug: 2,
-  },
-  hooks: {
-    'pinceau:options': (options) => {
-      return options
-    },
-  },
-  vite: {
-    vue: {
-      reactivityTransform: true,
-    },
+    debug: false,
   },
   colorMode: {
     classSuffix: '',

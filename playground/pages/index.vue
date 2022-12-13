@@ -25,11 +25,7 @@ const confettis = () => {
   <section>
     <canvas ref="canvas" />
     <PlaygroundGrid>
-      <BigButton :padded="{ initial: 'sm', lg: 'lg', xl: 'xl' }" @click="confettis()">
-        <Alert>
-          Hello World
-        </Alert>
-        </BigButton>
+      <BigButton :padded="{ initial: 'sm', lg: 'lg', xl: 'xl' }" @click="confettis()"></BigButton>
     </PlaygroundGrid>
   </section>
 </template>

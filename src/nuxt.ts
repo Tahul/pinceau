@@ -1,7 +1,7 @@
 import { existsSync } from 'fs'
 import { join, resolve } from 'pathe'
 import glob from 'fast-glob'
-import { addPluginTemplate, createResolver, defineNuxtModule, resolveModule } from '@nuxt/kit'
+import { addPluginTemplate, createResolver, defineNuxtModule, resolveModule, updateTemplates } from '@nuxt/kit'
 import createJITI from 'jiti'
 import type { PinceauOptions } from './types'
 import pinceau, { defaultOptions } from './unplugin'
@@ -13,9 +13,10 @@ const module: any = defineNuxtModule<PinceauOptions>({
     name: 'pinceau/nuxt',
     configKey: 'pinceau',
   },
-  defaults: _ => ({
+  defaults: nuxt => ({
     ...defaultOptions,
     colorSchemeMode: 'class',
+    outputDir: join(nuxt.options.buildDir, 'pinceau/'),
   }),
   async setup(options: PinceauOptions, nuxt) {
     const { stopPerfTimer } = useDebugPerformance('Setup Nuxt module', options.debug)
@@ -157,6 +158,15 @@ const module: any = defineNuxtModule<PinceauOptions>({
         return lines.join('\n')
       },
     })
+
+    options.configResolved = async () => {
+      await updateTemplates({
+        filter(template) {
+          if (template.filename === 'pinceau-imports.mjs') { return true }
+          return false
+        },
+      })
+    }
 
     // Webpack plugin
     nuxt.hook('webpack:config', (config: any) => {

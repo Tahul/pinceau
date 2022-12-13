@@ -1,6 +1,5 @@
-import chroma from 'chroma-js'
 import type { DesignToken, PinceauContext } from '../types'
-import { DARK, INITIAL, LIGHT, calcRegex, referencesRegex, rgbaRegex } from './regexes'
+import { DARK, INITIAL, LIGHT, referencesRegex } from './regexes'
 
 /**
  * Resolve a css function property to a stringifiable declaration.
@@ -68,10 +67,6 @@ export function castValue(
 ) {
   if (typeof value === 'number') { return value }
 
-  if (value.match(/rgb(a)?\(/g)) { value = resolveRgbaTokens(property, value, ctx, loc) }
-
-  if (value.match(/calc\(/g)) { value = resolveCalcTokens(property, value, ctx, loc) }
-
   if (value.match(referencesRegex)) { value = resolveReferences(property, value, ctx, loc) }
 
   if (value === '{}') { return '' }
@@ -109,75 +104,6 @@ export function resolveReferences(
 }
 
 /**
- * Resolve rgba() value
- */
-export function resolveRgbaTokens(
-  _: string,
-  value: string,
-  ctx: PinceauContext,
-  loc?: any,
-) {
-  if (!(typeof value === 'string')) { return value }
-
-  value = value.replace(
-    rgbaRegex,
-    (...parts) => {
-      let newValue = parts[0]
-
-      newValue = newValue.replace(
-        referencesRegex,
-        (...reference) => {
-          const token = ctx.$tokens(reference[1], { key: 'original', loc }) as DesignToken
-
-          let tokenValue: any = token?.value || token
-
-          if (!tokenValue) { return '0,0,0' }
-
-          tokenValue = chroma(tokenValue).rgb()
-
-          return `${tokenValue[0]},${tokenValue[1]},${tokenValue[2]}`
-        },
-      )
-
-      return newValue
-    },
-  )
-
-  return value
-}
-
-/**
- * Resolve calc() value
- */
-export function resolveCalcTokens(
-  _: string,
-  value: string,
-  ctx: PinceauContext,
-  loc?: any,
-) {
-  if (!(typeof value === 'string')) { return value }
-
-  value = value.replace(
-    calcRegex,
-    (...parts) => {
-      let newValue = parts[0]
-
-      newValue = newValue.replace(
-        referencesRegex,
-        (...reference) => {
-          const token = ctx.$tokens(reference[1], { key: 'original', loc }) as any
-          return token?.value || token
-        },
-      )
-
-      return newValue
-    },
-  )
-
-  return value
-}
-
-/**
  * Resolve custom directives (@mq, @dark).
  */
 export function resolveCustomDirectives(
@@ -206,9 +132,9 @@ export function resolveCustomDirectives(
 
     // @initial
     if (property === INITIAL) {
-      let token = ctx.$tokens('media.initial' as any, { key: 'value', onNotFound: false, loc })
+      const token = ctx.$tokens('media.initial' as any, { key: 'value', onNotFound: false, loc })
       return {
-        [`@media${ token ? ` ${token}` : ''}`]: value,
+        [`@media${token ? ` ${token}` : ''}`]: value,
       }
     }
 

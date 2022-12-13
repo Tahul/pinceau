@@ -9,6 +9,7 @@ import { message, setDebugLevel } from './utils/logger'
 import type { PinceauOptions } from './types'
 import { merger } from './utils/merger'
 import { useDebugPerformance } from './utils/debug'
+import { outputFileNames } from './utils'
 
 export const defaultOptions: PinceauOptions = {
   configFileName: 'pinceau.config',
@@ -23,11 +24,7 @@ export const defaultOptions: PinceauOptions = {
     'node_modules/@nuxt/ui-templates/',
     'node_modules/@vue/',
     'node_modules/pinceau/',
-    '/__pinceau_css.css',
-    '/__pinceau_ts.ts',
-    '/__pinceau_js.js',
-    '/__pinceau_flat_ts.ts',
-    '/__pinceau_flat_js.js',
+    ...outputFileNames,
   ],
   followSymbolicLinks: true,
   colorSchemeMode: 'media',
@@ -65,7 +62,6 @@ export default createUnplugin<PinceauOptions>(
           ctx.setViteServer(server)
           ctx.env = 'dev'
           await ctx.ready
-          process.setMaxListeners(0)
         },
         handleHotUpdate(ctx) {
           // Enforce <style lang="ts"> into <style lang="postcss">

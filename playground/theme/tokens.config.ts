@@ -17,7 +17,7 @@ export default defineTheme({
   color: {
     white: '#FFFFFF',
     black: '#191919',
-    pink: palette('red'),
+    pink: palette('blue'),
     blue: palette('#2B9EB3'),
     yellow: palette('#FCAB10'),
     red: palette('#F8333C'),
