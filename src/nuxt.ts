@@ -133,13 +133,13 @@ const module: any = defineNuxtModule<PinceauOptions>({
       filename: 'pinceau-imports.mjs',
       getContents() {
         const lines = [
-          'import \'pinceau.css\'',
+          'import \'#build/pinceau/index.css\'',
         ]
 
         if (options.runtime) {
           lines.push(
             'import { useState } from \'#app\'',
-            'import theme from \'#pinceau/theme/flat\'',
+            'import theme from \'#build/pinceau/flat\'',
             'import { plugin as pinceau } from \'pinceau/runtime\'',
             `export default defineNuxtPlugin((nuxtApp) => {
               nuxtApp.vueApp.use(pinceau, { colorSchemeMode: '${options.colorSchemeMode}', theme })
@@ -167,8 +167,6 @@ const module: any = defineNuxtModule<PinceauOptions>({
         },
       })
     }
-
-    options.ssrEnv = true
 
     // Webpack plugin
     nuxt.hook('webpack:config', (config: any) => {
