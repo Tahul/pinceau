@@ -1,10 +1,11 @@
 import { existsSync } from 'fs'
 import { resolve } from 'pathe'
 import jiti from 'jiti'
-import type { Update, ViteDevServer } from 'vite'
+import type { ViteDevServer } from 'vite'
 import { merger } from '../utils/merger'
 import { message } from '../utils/logger'
 import type { ConfigLayer, LoadConfigResult, PinceauConfigContext, PinceauOptions, PinceauTheme, ResolvedConfigLayer } from '../types'
+import { outputFileNames } from '../utils/regexes'
 
 const extensions = ['.js', '.ts', '.mjs', '.cjs']
 
@@ -34,9 +35,9 @@ export function usePinceauConfig<UserOptions extends PinceauOptions = PinceauOpt
     resolvedConfig = result.config
     sources = result.sources
 
-    if (options?.configResolved) { options.configResolved(result.config) }
-
     if (dispatchConfigUpdate) { dispatchConfigUpdate(result) }
+
+    if (options?.configResolved) { options.configResolved(result.config) }
 
     return result
   }
@@ -61,48 +62,23 @@ export function usePinceauConfig<UserOptions extends PinceauOptions = PinceauOpt
 
     await reloadConfig()
 
-    const ids = [
-      '/__pinceau_css.css',
-      '/__pinceau_ts.ts',
-      '/__pinceau_js.js',
-      '/__pinceau_flat_ts.ts',
-      '/__pinceau_flat_js.js',
-    ]
+    const ids = [...outputFileNames.map(id => id.replace('virtual:pinceau:', ''))]
 
     // Use transformed files as well
     getTransformed().forEach(transformed => !ids.includes(transformed) && ids.push(transformed))
 
-    const updates: Update[] = []
-
-    const pushUpdate = (url, css = false) => {
-      const update: Update = {
-        type: 'js-update',
-        path: url,
-        acceptedPath: url,
-        timestamp: +Date.now(),
-      }
-
-      updates.push(update)
-
-      if (css) {
-        updates.push({
-          ...update,
-          type: 'css-update',
-        })
-      }
-    }
-
     // Loop on ids
     for (const id of ids) {
-      const _module = viteServer.moduleGraph.getModuleById(id)
+      const _module = viteServer.moduleGraph.getModuleById(id.split('?')[0])
+
       if (!_module) { continue }
-      viteServer.moduleGraph.invalidateModule(_module)
-      pushUpdate(_module.url, id.endsWith('.css'))
+
+      viteServer.reloadModule(_module)
     }
 
+    viteServer.moduleGraph.invalidateAll()
     viteServer.ws.send({
-      type: 'update',
-      updates,
+      type: 'full-reload',
     })
   }
 

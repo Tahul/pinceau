@@ -2,7 +2,7 @@ import { resolve } from 'path'
 
 export default defineNuxtConfig({
   extends: [resolve(__dirname, './theme')],
-  modules: ['../src/nuxt.ts', '@nuxtjs/color-mode', '@nuxt/content'],
+  modules: ['../src/nuxt.ts', '@nuxtjs/color-mode'/* , '@nuxt/content' */],
   alias: {
     'pinceau/runtime': resolve(__dirname, '../src/runtime.ts'),
     'pinceau': resolve(__dirname, '../src/index.ts'),
@@ -10,19 +10,6 @@ export default defineNuxtConfig({
   pinceau: {
     configFileName: 'tokens.config',
     debug: false,
-  },
-  hooks: {
-    'pinceau:options': (options) => {
-      return options
-    },
-  },
-  experimental: {
-    inlineSSRStyles: false,
-  },
-  vite: {
-    vue: {
-      reactivityTransform: true,
-    },
   },
   colorMode: {
     classSuffix: '',

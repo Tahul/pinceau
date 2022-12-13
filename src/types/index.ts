@@ -85,6 +85,10 @@ export interface PinceauOptions {
    * Enables support for nuxt-component-meta.
    */
   componentMetaSupport?: boolean
+  /**
+   * Completely enable or disable Pinceau runtime features.
+   */
+  runtime?: boolean
 }
 
 export interface ModuleHooks {
