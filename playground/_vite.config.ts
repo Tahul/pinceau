@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import Inspect from 'vite-plugin-inspect'
 import Vue from '@vitejs/plugin-vue'
-import { join, resolve } from 'pathe'
+import { resolve } from 'pathe'
 import Pinceau from '../src/vite'
 
 const from = 'src'
@@ -19,7 +19,6 @@ export default defineConfig({
     Inspect(),
     Pinceau({
       configFileName: 'tokens.config',
-      outputDir: join(__dirname, './.nuxt/pinceau/'),
       configOrPaths: [
         resolve(__dirname, 'theme'),
       ],

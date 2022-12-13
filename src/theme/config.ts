@@ -97,6 +97,7 @@ export function usePinceauConfig<UserOptions extends PinceauOptions = PinceauOpt
       const _module = viteServer.moduleGraph.getModuleById(id)
       if (!_module) { continue }
       viteServer.moduleGraph.invalidateModule(_module)
+      viteServer.reloadModule(_module)
       pushUpdate(_module.url, id.endsWith('.css'))
     }
 

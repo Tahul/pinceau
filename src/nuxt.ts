@@ -13,10 +13,9 @@ const module: any = defineNuxtModule<PinceauOptions>({
     name: 'pinceau/nuxt',
     configKey: 'pinceau',
   },
-  defaults: nuxt => ({
+  defaults: _ => ({
     ...defaultOptions,
     colorSchemeMode: 'class',
-    outputDir: join(nuxt.options.buildDir, 'pinceau/'),
   }),
   async setup(options: PinceauOptions, nuxt) {
     const { stopPerfTimer } = useDebugPerformance('Setup Nuxt module', options.debug)
@@ -39,7 +38,7 @@ const module: any = defineNuxtModule<PinceauOptions>({
       nuxt.hook('component-meta:transformers', (transformers) => {
         transformers.push(
           (component, code) => {
-            const flatPath = join(nuxt.options.buildDir, '/pinceau')
+            const flatPath = options.outputDir
 
             const resolvedTokens = []
 
@@ -80,12 +79,13 @@ const module: any = defineNuxtModule<PinceauOptions>({
       tsConfig.compilerOptions.paths = tsConfig.compilerOptions.paths || {}
 
       if (options?.outputDir) {
-        const relativeOutputDir = options?.outputDir || join(nuxt.options.buildDir, 'pinceau/')
+        const relativeOutputDir = options.outputDir
         tsConfig.compilerOptions.paths['#pinceau/types'] = [`${resolveModule(resolve(relativeOutputDir, 'types.ts'))}`]
         tsConfig.compilerOptions.paths['#pinceau/theme/flat'] = [`${resolveModule(resolve(relativeOutputDir, 'flat.ts'))}`]
         tsConfig.compilerOptions.paths['#pinceau/theme'] = [`${resolveModule(resolve(relativeOutputDir, 'index.ts'))}`]
       }
 
+      // Add Volar plugin
       tsConfig.vueCompilerOptions = tsConfig.vueCompilerOptions || {}
       tsConfig.vueCompilerOptions.plugins = tsConfig.vueCompilerOptions.plugins || []
       tsConfig.vueCompilerOptions.plugins.push('pinceau/volar')
@@ -128,27 +128,29 @@ const module: any = defineNuxtModule<PinceauOptions>({
       )
     }
 
-    // Push Pinceau stylesheet
-    nuxt.options.css = nuxt.options.css || []
-
     addPluginTemplate({
       filename: 'pinceau-imports.mjs',
       getContents() {
         const lines = [
-          'import { useState } from \'#app\'',
           'import \'pinceau.css\'',
-          'import theme from \'#pinceau/theme/flat\'',
-          'import { plugin as pinceau } from \'pinceau/runtime\'',
-          `export default defineNuxtPlugin((nuxtApp) => {
-            nuxtApp.vueApp.use(pinceau, { colorSchemeMode: '${options.colorSchemeMode}', theme })
-
-            // Handle first render of SSR styles
-            nuxtApp.hook('app:rendered', (app) => {
-              const content = app.ssrContext.nuxt.vueApp.config.globalProperties.$pinceauSsr.get()
-              app.ssrContext.event.pinceauContent = content
-            })
-          })`,
         ]
+
+        if (options.runtime) {
+          lines.push(
+            'import { useState } from \'#app\'',
+            'import theme from \'#pinceau/theme/flat\'',
+            'import { plugin as pinceau } from \'pinceau/runtime\'',
+            `export default defineNuxtPlugin((nuxtApp) => {
+              nuxtApp.vueApp.use(pinceau, { colorSchemeMode: '${options.colorSchemeMode}', theme })
+
+              // Handle first render of SSR styles
+              nuxtApp.hook('app:rendered', (app) => {
+                const content = app.ssrContext.nuxt.vueApp.config.globalProperties.$pinceauSsr.get()
+                app.ssrContext.event.pinceauContent = content
+              })
+            })`,
+          )
+        }
 
         if (options?.preflight) { lines.unshift('import \'@unocss/reset/tailwind.css\'') }
 

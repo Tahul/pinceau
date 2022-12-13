@@ -13,7 +13,7 @@ import { useDebugPerformance } from './utils/debug'
 export const defaultOptions: PinceauOptions = {
   configFileName: 'pinceau.config',
   configOrPaths: [process.cwd()],
-  configResolved: (_) => {},
+  configResolved: (_) => { },
   cwd: process.cwd(),
   outputDir: join(process.cwd(), 'node_modules/.vite/pinceau/'),
   preflight: true,
@@ -33,6 +33,7 @@ export const defaultOptions: PinceauOptions = {
   colorSchemeMode: 'media',
   debug: false,
   componentMetaSupport: false,
+  runtime: true,
 }
 
 export default createUnplugin<PinceauOptions>(
