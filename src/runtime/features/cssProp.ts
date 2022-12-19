@@ -1,10 +1,9 @@
-import type { ComputedRef, Ref } from 'vue'
+import type { ComputedRef } from 'vue'
 import { computed, onScopeDispose, watch } from 'vue'
 import type { PinceauRuntimeIds } from '../../types'
 import type { usePinceauStylesheet } from '../stylesheet'
 
 export function usePinceauCssProp(
-  r: Ref<number>,
   ids: ComputedRef<PinceauRuntimeIds>,
   props: ComputedRef<any>,
   sheet: ReturnType<typeof usePinceauStylesheet>,
@@ -13,8 +12,8 @@ export function usePinceauCssProp(
   const css = computed(() => props.value?.css)
 
   watch(
-    [r, css],
-    ([r, newCss]) => {
+    css,
+    (newCss) => {
       newCss = transformCssPropToDeclaration(ids.value, newCss)
       if (rule) { sheet.deleteRule(rule) }
       rule = sheet.pushDeclaration(

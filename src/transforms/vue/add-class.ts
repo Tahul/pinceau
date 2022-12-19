@@ -1,5 +1,5 @@
-import { astTypes, expressionToAst, printAst } from "../../utils/ast"
-import { ASTNode } from "ast-types"
+import type { ASTNode } from 'ast-types'
+import { astTypes, expressionToAst, printAst } from '../../utils/ast'
 
 /**
  * Adds `$pinceau` to the root element class via transform

@@ -46,7 +46,7 @@ css({
     },
     primary: {
       true: {
-        backgroundColor: 'rgba({color.blue.500}, 0.5)',
+        backgroundColor: '{color.blue.500}',
         color: '{color.blue.200}',
         borderColor: '{color.blue.300}'
       },
@@ -56,21 +56,21 @@ css({
     },
     success: {
       true: {
-        backgroundColor: 'rgba({color.green.500}, 0.5)',
+        backgroundColor: '{color.green.500}',
         color: '{color.green.200}',
         borderColor: '{color.green.300}'
       }
     },
     warning: {
       true: {
-        backgroundColor: 'rgba({color.yellow.500}, 0.5)',
+        backgroundColor: '{color.yellow.500}',
         color: '{color.yellow.200}',
         borderColor: '{color.yellow.300}'
       }
     },
     danger: {
       true: {
-        backgroundColor: 'rgba({color.red.500}, 0.5)',
+        backgroundColor: '{color.red.500}',
         color: '{color.red.200}',
         borderColor: '{color.red.300}'
       }

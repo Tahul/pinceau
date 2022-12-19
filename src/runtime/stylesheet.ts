@@ -57,6 +57,9 @@ export function usePinceauStylesheet(
   function hydrateStylesheet() {
     const hydratableRules = {}
 
+    /**
+     * Resolve the uid and type from a rule.
+     */
     const resolveUid = (rule: CSSMediaRule) => {
       const uidRule: any = rule.cssRules && rule.cssRules.length
         ? Object.entries((rule as any)?.cssRules).find(
@@ -78,6 +81,9 @@ export function usePinceauStylesheet(
       return { uid, type }
     }
 
+    /**
+     * Iterate through SSR stylesheet CSS rules
+     */
     for (const _rule of Object.entries(sheet.value.cssRules)) {
       const [, rule] = _rule as [string, CSSMediaRule]
 
@@ -93,6 +99,9 @@ export function usePinceauStylesheet(
     return hydratableRules
   }
 
+  /**
+   * Stringify the stylesheet; to be used from SSR context.
+   */
   function toString() {
     if (!sheet.value) { return '' }
     return Object.entries(sheet.value.cssRules).reduce(
@@ -104,6 +113,9 @@ export function usePinceauStylesheet(
     )
   }
 
+  /**
+   * Push a cacheable rule to runtime stylesheet.
+   */
   function pushDeclaration(
     uid: string,
     type: PinceauUidTypes,
@@ -131,17 +143,16 @@ export function usePinceauStylesheet(
     return sheet.value.cssRules[ruleId]
   }
 
+  /**
+   * Delete a rule from runtime stylesheet.
+   */
   function deleteRule(rule: CSSRule) {
     const ruleIndex = Object.values(sheet.value.cssRules).indexOf(rule)
 
     if (typeof ruleIndex === 'undefined' || isNaN(ruleIndex)) { return }
 
-    try {
-      sheet.value.deleteRule(ruleIndex)
-    }
-    catch (e) {
-      // Continue regardless of error
-    }
+    try { sheet.value.deleteRule(ruleIndex) }
+    catch (e) { /* Continue regardless of error */ }
   }
 
   const hydratableRules = resolveStylesheet()

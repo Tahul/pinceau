@@ -5,7 +5,6 @@ import type { PinceauRuntimeIds } from '../../types'
 import type { usePinceauStylesheet } from '../stylesheet'
 
 export function usePinceauComputedStyles(
-  r: Ref<number>,
   ids: ComputedRef<PinceauRuntimeIds>,
   computedStyles: Ref<any>,
   sheet: ReturnType<typeof usePinceauStylesheet>,
@@ -13,8 +12,8 @@ export function usePinceauComputedStyles(
   let rule: CSSRule = sheet.hydratableRules?.[ids.value.uid]?.p
 
   watch(
-    [r, computedStyles],
-    ([r, newComputedStyles]) => {
+    computedStyles,
+    (newComputedStyles) => {
       newComputedStyles = transformComputedStylesToDeclaration(ids.value, newComputedStyles)
       rule = sheet.pushDeclaration(
         ids.value.uid,

@@ -15,7 +15,7 @@ const logger = consola.withScope(' 🖌 ')
 export const fileLink = (id: string) => logger.log(`🔗 ${chalk.blue(id)}\n`)
 export const errorMessage = (message: string) => logger.log(`🚧 ${chalk.yellow(message)}\n`)
 const DEBUG_MARKER = chalk.bgBlue.blue(' DEBUG ')
-export const debugMarker = (text, timing) => logger.info(`${DEBUG_MARKER} ${text} ${isNaN(timing) ? `[${timing}ms]` : ``}`)
+export const debugMarker = (text, timing) => logger.info(`${DEBUG_MARKER} ${text} ${timing ? `[${timing}ms]` : ''}`)
 
 const messages = {
   TRANSFORM_ERROR: (debugLevel, id, error) => {
@@ -61,7 +61,7 @@ const messages = {
     logger.warn('You seem to be using a conflicting selector:')
     logger.log(`❓ ${selector}\n`)
     logger.log('If you want to combine `@dark` or `@light` with `html` selector, consider using `html.dark` or `html.light`.\n')
-  }
+  },
 } as const
 
 type Messages = typeof messages

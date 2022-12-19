@@ -6,7 +6,6 @@ import type { PinceauRuntimeIds } from '../../types'
 import type { usePinceauStylesheet } from '../stylesheet'
 
 export const usePinceauVariants = (
-  r: Ref<number>,
   ids: ComputedRef<PinceauRuntimeIds>,
   variants: Ref<any>,
   props: ComputedRef<any>,
@@ -18,8 +17,8 @@ export const usePinceauVariants = (
   const variantsState = computed(() => variants && variants?.value ? resolveVariantsState(ids.value, props.value, variants.value) : {})
 
   watch(
-    [r, variantsState],
-    ([r, { cacheId, variantsProps }]) => {
+    variantsState,
+    ({ cacheId, variantsProps }) => {
       let variantClass: string
       if (cache[cacheId]) {
         // Resolve variant rule
@@ -156,9 +155,7 @@ export function resolveVariantsState(ids: PinceauRuntimeIds, props: any, variant
  * Takes a props object and a variants and remove unnecessary props.
  */
 export function sanitizeProps(propsObject: any, variants: any): any {
-  if (!propsObject || !variants) {
-    return {}
-  }
+  if (!propsObject || !variants) { return {} }
 
   return Object.entries(propsObject)
     .reduce(

@@ -10,12 +10,16 @@ export const useDebugPerformance = (text: string, debug: PinceauOptions['debug']
   let performanceTimerStop
 
   return {
-    stopPerfTimer: isDebug ? stop : () => {},
-    logPerfTimer: isDebug ? debugMarker(text, timing()) : () => {},
+    stopPerfTimer: isDebug ? stop : () => { },
+    logPerfTimer: isDebug ? debugMarker(text, timing()) : () => { },
   }
 
   function timing() {
-    const count = Number(parseFloat(`${performanceTimerStop - performanceTimerStart}`).toFixed(2))
+    let count = Number(parseFloat(`${performanceTimerStop - performanceTimerStart}`).toFixed(2))
+
+    if (isNaN(count)) {
+      count = 0
+    }
 
     let color = chalk.greenBright
 
@@ -29,7 +33,8 @@ export const useDebugPerformance = (text: string, debug: PinceauOptions['debug']
     return color(count)
   }
 
-  function stop() {
+  function stop(silent = false) {
+    if (silent) { return }
     performanceTimerStop = performance.now()
     if (logOnStop) { debugMarker(text, timing()) }
   }

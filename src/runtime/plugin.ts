@@ -2,9 +2,7 @@ import type { ComputedRef, Plugin, Ref } from 'vue'
 import { computed, getCurrentInstance, ref } from 'vue'
 import { nanoid } from 'nanoid'
 import { deepAssign, deepDelete } from '../utils/deep'
-import {
-  createTokensHelper,
-} from './utils'
+import { createTokensHelper } from './utils'
 import { usePinceauStylesheet } from './stylesheet'
 import { usePinceauRuntimeIds } from './ids'
 import { usePinceauComputedStyles } from './features/computedStyles'
@@ -39,7 +37,7 @@ export const plugin: Plugin = {
 
     const sheet = usePinceauStylesheet($tokens, theme.customProperties, colorSchemeMode, multiAppId)
 
-    // Cleanup cache on HMR
+    // Handle dev HMR
     if (import.meta.hot) {
       const applyThemeUpdate = (newTheme: any) => {
         deepAssign(theme, newTheme)
@@ -48,6 +46,7 @@ export const plugin: Plugin = {
       import.meta.hot.on(
         'vite:beforeUpdate',
         () => {
+          // Cleanup cache on HMR
           cache = {}
         },
       )
@@ -57,14 +56,11 @@ export const plugin: Plugin = {
       )
     }
 
-    const setupPinceauRuntime = (
+    function setupPinceauRuntime(
       props: ComputedRef<any>,
       variants: Ref<any>,
       computedStyles: Ref<any>,
-    ) => {
-      // Local refresh prop
-      const r = ref(0)
-
+    ) {
       // Current component instance
       const instance = getCurrentInstance()
 
@@ -79,24 +75,17 @@ export const plugin: Plugin = {
 
       // Computed styles setup
       if (computedStyles && computedStyles?.value && Object.keys(computedStyles.value).length > 0) {
-        usePinceauComputedStyles(r, ids, computedStyles, sheet)
+        usePinceauComputedStyles(ids, computedStyles, sheet)
       }
 
       // Variants setup
       if (variants && variants?.value && Object.keys(variants.value).length > 0) {
-        usePinceauVariants(r, ids, variants, props, sheet, classes, cache)
+        usePinceauVariants(ids, variants, props, sheet, classes, cache)
       }
 
       // CSS Prop setup
       if (props.value.css && Object.keys(props.value.css).length > 0) {
-        usePinceauCssProp(r, ids, props, sheet)
-      }
-
-      if (import.meta.hot) {
-        import.meta.hot.on(
-          'vite:beforeUpdate',
-          () => (r.value = r.value++)
-        )
+        usePinceauCssProp(ids, props, sheet)
       }
 
       return {

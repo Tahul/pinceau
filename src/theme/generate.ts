@@ -3,6 +3,7 @@ import StyleDictionary from 'style-dictionary-esm'
 import { isShadowToken, transformShadow } from '../utils/shadows'
 import type { PinceauOptions, PinceauTheme, PinceauTokens, ThemeGenerationOutput } from '../types'
 import { message } from '../utils/logger'
+import { version } from '../../package.json'
 import { jsFlat, jsFull, tsFlat, tsFull, tsTypesDeclaration } from './formats'
 
 export async function generateTheme(tokens: any, { outputDir: buildPath, colorSchemeMode }: PinceauOptions, silent = true): Promise<ThemeGenerationOutput> {
@@ -20,6 +21,12 @@ export async function generateTheme(tokens: any, { outputDir: buildPath, colorSc
   // Skip generation if no tokens provided
   if (!tokens || typeof tokens !== 'object' || !Object.keys(tokens).length) {
     return result
+  }
+
+  tokens.pinceau = {
+    version: {
+      value: version,
+    },
   }
 
   // Custom properties

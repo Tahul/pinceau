@@ -45,7 +45,7 @@ css({
     },
     '.big-button': {
         display: 'inline-block',
-        borderRadius: '{radii.lg}',
+        borderRadius: '{radii.xl}',
         transition: 'box-shadow .1 ease-in-out',
         color: '{color.white}',
         boxShadow: (props) => `0 8px 0 {color.${props.color}.600}, 0 12px 16px rgba(0, 0, 0, .35)`,
@@ -71,12 +71,6 @@ css({
             boxShadow: (props) => `0 8px 0 {color.${props.color}.500}, 0 12px 10px rgba(0, 0, 0, .3)`,
             span: {
                 transform: 'translate(0, 4px)'
-            }
-        },
-        '&:deep(.alert)': {
-            backgroundColor: 'red',
-            '@dark': {
-                backgroundColor: 'green'
             }
         }
     }

@@ -484,42 +484,6 @@ The `css()` function has mutliple features:
   You can add as many screen you need, they will all get autocompleted.
   </details>
 
-
-- Supports `rgba()` conversions
-  <details>
-  <summary>💡 Example</summary>
-  <br>
-
-  ```vue
-  <style lang="ts">
-  css({
-    '.block': {
-      backgroundColor: 'rgba({any.color.token.path}, 0.8)'
-    }
-  })
-  </style>
-  ```
-
-  </details>
-
-
-- Supports `calc()` conversions
-  <details>
-  <summary>💡 Example</summary>
-  <br>
-
-  ```vue
-  <style lang="ts">
-  css({
-    '.block': {
-      backgroundColor: 'calc({space.32} - 4px)'
-    }
-  })
-  </style>
-  ```
-
-  </details>
-
 - Supports `computed styles` **`💡 new`**
 
   <details>
@@ -584,7 +548,7 @@ The `css()` function has mutliple features:
   <style lang="ts">
   css({
     '.block': {
-      backgroundColor: 'rgba({color.primary.500}, 0.8)',
+      backgroundColor: '{color.primary.500}',
     },
     variants: {
       transparent: {

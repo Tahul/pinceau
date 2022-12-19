@@ -17,7 +17,7 @@ defineProps({
       </span>
     </template>
   </button>
-  <button :class="[{ ...$props  }, $pinceau]">
+  <button :class="[{ ...$props }, $pinceau]">
     <template v-for="[key, value] in Object.entries($props)" :key="key">
       <span>
         <pre v-if="value">{{ key }}: {{ JSON.stringify(value, null, 2) }}</pre>
