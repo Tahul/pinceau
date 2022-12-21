@@ -62,7 +62,8 @@ export function usePinceauConfig<UserOptions extends PinceauOptions = PinceauOpt
 
     await reloadConfig()
 
-    const ids = [...outputFileNames.map(id => id.replace('virtual:pinceau:', ''))]
+    // Virtual imports ids
+    const ids = [...outputFileNames]
 
     // Use transformed files as well
     getTransformed().forEach(transformed => !ids.includes(transformed) && ids.push(transformed))
@@ -70,9 +71,7 @@ export function usePinceauConfig<UserOptions extends PinceauOptions = PinceauOpt
     // Loop on ids
     for (const id of ids) {
       const _module = viteServer.moduleGraph.getModuleById(id)
-
       if (!_module) { continue }
-
       viteServer.reloadModule(_module)
     }
   }

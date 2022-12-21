@@ -17,14 +17,14 @@ export function resolveCssProperty(
   if (directive) { return directive }
 
   // Resolve custom properties
-  if (ctx.customProperties[property]) {
+  if (ctx.utils[property]) {
     // Custom property is a function, pass value and return result
-    if (typeof ctx.customProperties[property] === 'function') {
-      return ctx.customProperties[property](value)
+    if (typeof ctx.utils[property] === 'function') {
+      return ctx.utils[property](value)
     }
 
     // Custom property is an object, if value is true, return result
-    return value ? ctx.customProperties[property] : {}
+    return value ? ctx.utils[property] : {}
   }
 
   // Resolve final value
@@ -87,16 +87,14 @@ export function resolveReferences(
 
   value = value.replace(
     referencesRegex,
-    (...parts) => {
-      const [, tokenPath] = parts
-
+    (_, tokenPath) => {
       const token = ctx.$tokens(tokenPath, { key: undefined, loc }) as DesignToken
 
-      const tokenValue = typeof token === 'string' ? token : token?.attributes?.variable || token?.value || token?.original?.value
+      const tokenValue = typeof token === 'string' ? token : token?.attributes?.variable || token?.variable || token?.value || token?.original?.value
 
       if (!tokenValue) { return '' }
 
-      return tokenValue
+      return tokenValue as string
     },
   )
 
@@ -115,10 +113,7 @@ export function resolveCustomDirectives(
 ) {
   if (property.startsWith('@')) {
     const resolveColorScheme = (scheme: string) => {
-      scheme = ctx.options.colorSchemeMode === 'class'
-        ? `:root.${scheme} &`
-        : `@media (prefers-color-scheme: ${scheme})`
-
+      scheme = ctx.options.colorSchemeMode === 'class' ? `:root.${scheme} &` : `@media (prefers-color-scheme: ${scheme})`
       return {
         [scheme]: value,
       }

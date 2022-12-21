@@ -1,12 +1,13 @@
 import { existsSync } from 'fs'
 import { join, resolve } from 'pathe'
 import glob from 'fast-glob'
-import { addPluginTemplate, createResolver, defineNuxtModule, resolveModule, updateTemplates } from '@nuxt/kit'
+import { addPlugin, addPluginTemplate, addPrerenderRoutes, createResolver, defineNuxtModule, resolveModule } from '@nuxt/kit'
 import createJITI from 'jiti'
 import type { PinceauOptions } from './types'
 import pinceau, { defaultOptions } from './unplugin'
 import { prepareOutputDir } from './theme/output'
 import { useDebugPerformance } from './utils/debug'
+import { walkTokens } from './utils'
 
 const module: any = defineNuxtModule<PinceauOptions>({
   meta: {
@@ -43,9 +44,13 @@ const module: any = defineNuxtModule<PinceauOptions>({
 
             const resolvedTokens = []
 
-            if (!cachedTokens && existsSync(join(flatPath, 'flat.ts'))) {
-              const _tokens = createJITI(flatPath)(join(flatPath, 'flat.ts')).default
-              cachedTokens = Object.keys(_tokens.theme)
+            // Grab built tokens and resolve all tokens paths
+            if (!cachedTokens && existsSync(join(flatPath, 'index.ts'))) {
+              const _tokens = createJITI(flatPath)(join(flatPath, 'index.ts')).default
+              walkTokens(
+                _tokens?.theme || _tokens,
+                (_, __, paths) => resolvedTokens.push(paths.join('.')),
+              )
             }
 
             if (cachedTokens.length) {
@@ -81,8 +86,7 @@ const module: any = defineNuxtModule<PinceauOptions>({
 
       if (options?.outputDir) {
         const relativeOutputDir = options.outputDir
-        tsConfig.compilerOptions.paths['#pinceau/types'] = [`${resolveModule(resolve(relativeOutputDir, 'types.ts'))}`]
-        tsConfig.compilerOptions.paths['#pinceau/theme/flat'] = [`${resolveModule(resolve(relativeOutputDir, 'flat.ts'))}`]
+        tsConfig.compilerOptions.paths['#pinceau/utils'] = [`${resolveModule(resolve(relativeOutputDir, 'utils.ts'))}`]
         tsConfig.compilerOptions.paths['#pinceau/theme'] = [`${resolveModule(resolve(relativeOutputDir, 'index.ts'))}`]
       }
 
@@ -96,6 +100,13 @@ const module: any = defineNuxtModule<PinceauOptions>({
     if (!nuxt.options.nitro) { nuxt.options.nitro = {} }
     if (!nuxt.options.nitro.plugins) { nuxt.options.nitro.plugins = [] }
     nuxt.options.nitro.plugins.push(resolveLocalModule('./nitro'))
+
+    // Setup Nitro studio plugin
+    if (options.studio) {
+      // Add server route to know Studio is enabled
+      addPlugin(resolveLocalModule('./runtime/schema.server'))
+      addPrerenderRoutes('/__tokens_config.json')
+    }
 
     // Support for `extends` feature
     // Will scan each layer for a config file
@@ -130,7 +141,7 @@ const module: any = defineNuxtModule<PinceauOptions>({
     }
 
     addPluginTemplate({
-      filename: 'pinceau-imports.mjs',
+      filename: 'pinceau-nuxt-plugin.mjs',
       getContents() {
         const lines = [
           'import \'#build/pinceau/index.css\'',
@@ -139,10 +150,21 @@ const module: any = defineNuxtModule<PinceauOptions>({
         if (options.runtime) {
           lines.push(
             'import { useState } from \'#app\'',
-            'import theme from \'#build/pinceau/flat\'',
             'import { plugin as pinceau } from \'pinceau/runtime\'',
-            `export default defineNuxtPlugin((nuxtApp) => {
-              nuxtApp.vueApp.use(pinceau, { colorSchemeMode: '${options.colorSchemeMode}', theme })
+            'import utils from \'#build/pinceau/utils\'',
+            '',
+            `export default defineNuxtPlugin(async (nuxtApp) => {
+              let theme = {}
+
+              // Get full theme server-side
+              // This theme will be resolved from the stylesheet on client-side
+              if (process.server) {
+                const builtTheme = await import('#build/pinceau')
+                theme = builtTheme?.theme || builtTheme
+              }
+
+              // Setup plugin
+              nuxtApp.vueApp.use(pinceau, { colorSchemeMode: '${options.colorSchemeMode}', theme, utils })
 
               // Handle first render of SSR styles
               nuxtApp.hook('app:rendered', (app) => {
@@ -158,15 +180,6 @@ const module: any = defineNuxtModule<PinceauOptions>({
         return lines.join('\n')
       },
     })
-
-    options.configResolved = async () => {
-      await updateTemplates({
-        filter(template) {
-          if (template.filename === 'pinceau-imports.mjs') { return true }
-          return false
-        },
-      })
-    }
 
     // Webpack plugin
     nuxt.hook('webpack:config', (config: any) => {

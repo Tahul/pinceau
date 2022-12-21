@@ -1,7 +1,15 @@
-import { astTypes, expressionToAst, printAst, visitAst } from '../utils/ast'
+import type { Dictionary, Options } from 'style-dictionary-esm'
+import StyleDictionary from 'style-dictionary-esm'
+import { generateTypes, resolveSchema as resolveUntypedSchema } from 'untyped'
+import type { ColorSchemeModes } from '../types'
+import { walkTokens } from '../utils/data'
+import { astTypes, printAst } from '../utils/ast'
 import { flattenTokens, objectPaths } from '../utils'
 
-const stringifyCustomProperties = (value: Record<string, any>) => {
+/**
+ * Stringify utils from object
+ */
+const stringifyUtils = (value: Record<string, any>) => {
   const entries = Object.entries(value)
   let result = entries.reduce(
     (acc, [key, value]) => {
@@ -11,73 +19,8 @@ const stringifyCustomProperties = (value: Record<string, any>) => {
     },
     '{\n',
   )
-  result += '}\n'
+  result += '}'
   return result
-}
-
-/**
- * Enhance stringified theme object
- */
-const enhanceStringifedTheme = (value) => {
-  const ast = expressionToAst(value, 'type GeneratedThemeType = ', 'ts')
-
-  visitAst(
-    ast,
-    {
-      visitTSPropertySignature(path) {
-        if (path.value.typeAnnotation.typeAnnotation.literal?.type === 'StringLiteral') {
-          path.insertBefore(
-            astTypes.builders.commentBlock(
-              `*\n * @default "${path.value.typeAnnotation.typeAnnotation.literal?.value}"\n`,
-            ),
-          )
-          path.value.typeAnnotation.typeAnnotation = astTypes.builders.tsUnionType([
-            astTypes.builders.tsLiteralType(astTypes.builders.stringLiteral(path.value.typeAnnotation.typeAnnotation.literal?.value)),
-            astTypes.builders.tsTypeReference(
-              astTypes.builders.identifier('ConfigToken'),
-            ),
-            astTypes.builders.tsTypeReference(
-              astTypes.builders.identifier('PermissiveConfigType'),
-            ),
-          ])
-        }
-        else if (
-          path.value.typeAnnotation.typeAnnotation.members
-          && !['media', 'utils'].includes(path.value.key.value)
-        ) {
-          path.value.typeAnnotation.typeAnnotation.members.push(
-            astTypes.builders.tsIndexSignature(
-              [astTypes.builders.identifier('key: string | number')],
-              astTypes.builders.tsTypeAnnotation(
-                astTypes.builders.tsUnionType([
-                  astTypes.builders.tsTypeReference(
-                    astTypes.builders.identifier('ConfigToken'),
-                  ),
-                  astTypes.builders.tsTypeReference(
-                    astTypes.builders.identifier('PermissiveConfigType'),
-                  ),
-                ]),
-              ),
-            ),
-          )
-
-          path.value.typeAnnotation.typeAnnotation = astTypes.builders.tsUnionType([
-            path.value.typeAnnotation.typeAnnotation,
-            astTypes.builders.tsTypeReference(
-              astTypes.builders.identifier('PermissiveConfigType'),
-            ),
-          ])
-        }
-
-        // Make every path optional by default
-        path.value.optional = true
-
-        return this.traverse(path)
-      },
-    },
-  )
-
-  return printAst(ast).code
 }
 
 /**
@@ -93,7 +36,7 @@ const enhanceTokenPaths = (value = []) => {
   })
 
   const ast = astTypes.builders.tsTypeAliasDeclaration(
-    astTypes.builders.identifier('GeneratedTokensPaths'),
+    astTypes.builders.identifier('GeneratedPinceauPaths'),
     astTypes.builders.tsUnionType(tokensLiteralNodes),
   )
 
@@ -101,87 +44,112 @@ const enhanceTokenPaths = (value = []) => {
 }
 
 /**
- * import type { PinceauTheme } from '#pinceau/types'
+ * import theme from '#pinceau/theme'
+ * import type { GeneratedPinceauTheme, GeneratedPinceauPaths } from '#pinceau/theme'
  */
-export const tsTypesDeclaration = (tokensObject: any, customProperties = {}) => {
-  let result = 'import type { ConfigToken, PermissiveConfigType } from \'pinceau\'\n\n'
+export function tsFull(tokensObject: any) {
+  // Import config wrapper type
+  let result = 'import type { PermissiveConfigType } from \'pinceau\'\n\n'
 
-  let stringifiedTheme = JSON.stringify(tokensObject, null, 2)
+  // Theme object
+  result += `export const theme = ${JSON.stringify(tokensObject, null, 2)} as const\n\n`
 
-  stringifiedTheme = enhanceStringifedTheme(stringifiedTheme)
+  // Theme type
+  result += 'export type GeneratedPinceauTheme = PermissiveConfigType<typeof theme>\n\n'
 
-  result += `export type GeneratedPinceauTheme = ${stringifiedTheme}\n\n`
-
-  result += `const generatedCustomProperties = ${stringifyCustomProperties(customProperties)}\n`
-
-  result += 'export type GeneratedCustomProperties = typeof generatedCustomProperties\n\n'
-
+  // Tokens paths type
   const tokensPaths = objectPaths(tokensObject)
+  if (tokensPaths.length) { result += `export ${enhanceTokenPaths(tokensPaths)}\n\n` }
+  else { result += 'export type GeneratedPinceauPaths = \'\'\n\n' }
 
-  if (tokensPaths.length) {
-    result += `export ${enhanceTokenPaths(tokensPaths)}`
-  }
-  else {
-    result += 'export type GeneratedTokensPaths = \'\'\n\n'
-  }
+  // Default export
+  result += 'export default theme'
 
   return result
 }
 
 /**
- * import theme from '#pinceau/theme'
+ * Nuxt Studio schema support
  */
-export const tsFull = (tokensObject: any, customProperties = {}) => {
-  let result = 'import type { GeneratedPinceauTheme, GeneratedCustomProperties } from \'./types\'\n\n'
+export async function schemaFull(tokensObject) {
+  const flattenedTokens = flattenTokens(tokensObject)
 
-  result += `export const theme: GeneratedPinceauTheme = ${JSON.stringify(tokensObject, null, 2)} as const\n\n`
+  const schema = await resolveUntypedSchema(flattenedTokens)
 
-  result += `export const customProperties: GeneratedCustomProperties = ${stringifyCustomProperties(customProperties)}`
+  let result = `export const schema = ${JSON.stringify(schema, null, 2)} as const\n\n`
 
-  result += 'export default { theme, customProperties }'
+  result += `${generateTypes(schema, { addExport: true, interfaceName: 'GeneratedPinceauThemeSchema', allowExtraKeys: true, addDefaults: true })}\n\n`
 
   return result
 }
 
 /**
- * import theme from '#pinceau/theme/flat'
+ * import utils from '#pinceau/utils'
  */
-export const tsFlat = (tokensObject: any, customProperties = {}) => {
-  let result = `export const theme = ${JSON.stringify(flattenTokens(tokensObject), null, 2)}\n\n`
+export const utilsFull = (utils = {}) => {
+  // Stringify utils properties
+  let result = `export const utils = ${stringifyUtils(utils)} as const\n\n`
 
-  result += `export const customProperties = ${stringifyCustomProperties(customProperties)}`
+  // Type of utils
+  result += 'export type GeneratedPinceauUtils = typeof utils\n\n'
 
-  result += 'export default { theme, customProperties }'
+  // Default export
+  result += 'export default utils'
 
   return result
 }
 
 /**
- * import theme from '#pinceau/theme'
- *
- * In JS contexts.
+ * import 'pinceau.css'
  */
-export const jsFull = (tokensObject: any, customProperties = {}) => {
-  let result = `export const theme = ${JSON.stringify(tokensObject, null, 2)}\n\n`
+export const cssFull = (dictionary: Dictionary, options: Options, responsiveTokens: any, colorSchemeMode: ColorSchemeModes) => {
+  // Resolve regular theme declaration
+  const selector = options.selector ? options.selector : ':root'
+  const { outputReferences } = options
+  const { formattedVariables } = StyleDictionary.formatHelpers
 
-  result += `export const customProperties = ${stringifyCustomProperties(customProperties)}`
+  // Create :root tokens list
+  const initialTokens = []
+  walkTokens(
+    dictionary.tokens,
+    (value) => {
+      initialTokens.push({
+        ...value,
+        value: value?.value?.initial || value?.value,
+      })
+      return value
+    },
+  )
+  let css = `${selector} {\n  --pinceau-mq: root;\n${formattedVariables({ format: 'css', dictionary: { allTokens: initialTokens } as any, outputReferences })}\n}\n`
 
-  result += 'export default { theme, customProperties }'
+  // Create all responsive tokens rules
+  Object.entries(responsiveTokens).forEach(
+    ([key, value]) => {
+      // Resolve tokens content
+      const formattedResponsiveContent = formattedVariables({ format: 'css', dictionary: { allTokens: value } as any, outputReferences })
 
-  return result
-}
+      // Resolve responsive selector
+      let responsiveSelector
+      if (key === 'dark' || key === 'light') {
+        // Handle dark/light modes
+        if (colorSchemeMode === 'class') { responsiveSelector = `:root.${key}` }
+        else { responsiveSelector = `@media (prefers-color-scheme: ${key})` }
+      }
+      else {
+        responsiveSelector = dictionary.allTokens.find(token => token.name === `media.${key}`)
+      }
 
-/**
- * import theme from '#pinceau/theme/flat'
- *
- * In JS contexts.
- */
-export const jsFlat = (tokensObject: any, customProperties = {}) => {
-  let result = `export const theme = ${JSON.stringify(flattenTokens(tokensObject), null, 2)}\n\n`
+      // Write responsive tokens
+      if (responsiveSelector.startsWith('@media')) {
+        // Wrap :root with media query
+        css += `\n${responsiveSelector} { :root {\n  --pinceau-mq: ${key};\n${formattedResponsiveContent}\n}\n}\n`
+      }
+      else {
+        // Use string selector
+        css += `\n${responsiveSelector} {\n  --pinceau-mq: ${key};\n${formattedResponsiveContent}\n}\n`
+      }
+    },
+  )
 
-  result += `export const customProperties = ${stringifyCustomProperties(customProperties)}`
-
-  result += 'export default { theme, customProperties }'
-
-  return result
+  return css
 }

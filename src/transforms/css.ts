@@ -94,4 +94,3 @@ export function evalCssDeclaration(cssAst: ASTNode, computedStyles: any = {}) {
     return {}
   }
 }
-

@@ -2,16 +2,16 @@
 import { computedStyle } from 'pinceau/runtime'
 
 defineProps({
-    color: computedStyle('color', 'pink'),
-    ...variants,
+  color: computedStyle('color', 'pink'),
+  ...variants,
 })
 </script>
 
 <template>
-    <button class="big-button">
-        <span>Hello Nuxt Nation 👋</span>
-        <slot />
-    </button>
+  <button class="big-button">
+    <span>Hello Nuxt Nation 👋</span>
+    <slot />
+  </button>
 </template>
 
 <style scoped lang="ts">

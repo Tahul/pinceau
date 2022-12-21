@@ -4,7 +4,7 @@ import { defu } from 'defu'
 import { nextTick } from 'vue'
 import { plugin as pinceau } from '../src/runtime'
 import * as Components from './fixtures/shared/components'
-import theme from '#pinceau/theme/flat'
+import theme from '#pinceau/theme'
 
 const mountWithPinceau: typeof mount = (
   component,

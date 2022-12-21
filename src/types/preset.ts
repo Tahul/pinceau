@@ -1,14 +1,5 @@
 import type { DesignToken, PinceauTokens } from './tokens'
 
-export interface ShadowTokenValue {
-  color?: string
-  type?: 'dropShadow' | 'innerShadow'
-  x?: string | number
-  y?: string | number
-  blur?: string | number
-  spread?: string | number
-}
-
 export interface ScaleTokens extends PinceauTokens {
   [key: string]: {
     default?: DesignToken

@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, rmSync, writeFileSync } from 'fs'
 import { join } from 'pathe'
 import type { PinceauOptions } from '../types'
-import { jsFlat, jsFull, tsFlat, tsFull, tsTypesDeclaration } from './formats'
+import { tsFull, utilsFull } from './formats'
 
 export function prepareOutputDir<UserOptions extends PinceauOptions = PinceauOptions>(
   {
@@ -18,12 +18,8 @@ export function prepareOutputDir<UserOptions extends PinceauOptions = PinceauOpt
 export async function stubOutputs(buildPath: string, force = false) {
   const files = {
     'index.css': () => '/* This file is empty because no tokens has been provided. */',
-    'index.json': () => '{}',
-    'index.js': jsFull,
     'index.ts': tsFull,
-    'flat.ts': tsFlat,
-    'flat.js': jsFlat,
-    'types.ts': tsTypesDeclaration,
+    'utils.ts': utilsFull,
   }
 
   for (const [file, stubbingFunction] of Object.entries(files)) {

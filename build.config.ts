@@ -1,4 +1,9 @@
+import { cp } from 'node:fs/promises'
+import { createResolver } from '@nuxt/kit'
 import { defineBuildConfig } from 'unbuild'
+
+// @ts-ignore
+const { resolve } = createResolver(import.meta.url)
 
 export default defineBuildConfig({
   entries: [
@@ -11,6 +16,11 @@ export default defineBuildConfig({
     'src/volar',
     'src/transform',
   ],
+  hooks: {
+    'build:done': async () => {
+      await cp(resolve('./src/runtime/schema.server.mjs'), resolve('./dist/runtime/schema.server.mjs'), { recursive: true })
+    },
+  },
   failOnWarn: false,
   clean: true,
   declaration: true,
@@ -35,10 +45,15 @@ export default defineBuildConfig({
     'pinceau/types',
     '#pinceau',
     '#pinceau/theme',
-    '#pinceau/types',
-    '#pinceau/theme/flat',
+    '#pinceau/utils',
+    'pinceau.css',
+    '#imports',
+    '#build/pinceau',
+    '#build/pinceau/index',
+    '#build/pinceau/utils',
     'nitropack',
     'nanoid',
     'chroma-js',
+    'untyped',
   ],
 })

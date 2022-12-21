@@ -22,8 +22,8 @@ export const createContext = <UserOptions extends PinceauOptions = PinceauOption
   const getViteServer = () => viteServer
   let tokens = {}
   const getTokens = () => tokens
-  let customProperties: any = {}
-  const getCustomProperties = () => customProperties
+  let utils: any = {}
+  const getUtils = () => utils
 
   // Prepares the output dir
   prepareOutputDir(options)
@@ -42,7 +42,7 @@ export const createContext = <UserOptions extends PinceauOptions = PinceauOption
       const { stopPerfTimer } = useDebugPerformance('Build theme', options.debug)
 
       // Preserve custom properties in memory to avoid virtual storage call on compile
-      customProperties = (resolvedConfig.config as any)?.utils || {}
+      utils = (resolvedConfig.config as any)?.utils || {}
 
       const builtTheme = await generateTheme(resolvedConfig.config, options)
 
@@ -62,7 +62,7 @@ export const createContext = <UserOptions extends PinceauOptions = PinceauOption
           event: 'pinceau:themeUpdate',
           data: {
             theme: flattenTokens(tokens),
-            customProperties: getCustomProperties(),
+            utils: getUtils(),
           },
         })
       }
@@ -99,9 +99,9 @@ export const createContext = <UserOptions extends PinceauOptions = PinceauOption
       )
     },
 
-    // customProperties
-    get customProperties() {
-      return getCustomProperties()
+    // utils
+    get utils() {
+      return getUtils()
     },
 
     // Vite

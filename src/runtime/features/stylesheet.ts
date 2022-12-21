@@ -1,18 +1,43 @@
 import { ref } from 'vue'
-import type { ColorSchemeModes, PinceauContext, PinceauUidTypes, TokensFunction } from '../types'
-import { resolveCssProperty } from '../utils/css'
-import { stringify } from '../utils/stringify'
+import { deepAssign, deepDelete } from '../../utils/deep'
+import type { ColorSchemeModes, PinceauContext, PinceauUidTypes, TokensFunction } from '../../types'
+import { resolveCssProperty } from '../../utils/css'
+import { stringify as _stringify } from '../../utils/stringify'
 
-export function usePinceauStylesheet(
+export function usePinceauRuntimeSheet(
   $tokens: TokensFunction,
-  customProperties: any,
+  utils: any = {},
   colorSchemeMode: ColorSchemeModes,
   appId?: string,
 ) {
+  // Local runtime stylesheet reference.
   const sheet = ref<CSSStyleSheet>()
 
-  const declarationToCss = (decl: any) => stringify(decl, (property: any, value: any, style: any, selectors: any) => resolveCssProperty(property, value, style, selectors, { $tokens, customProperties, options: { colorSchemeMode } } as PinceauContext))
+  // Local cache for each token CSSRule index.
+  const cache = {}
 
+  // Handle dev HMR
+  if (import.meta.hot) {
+    // Deep update theme from new definition
+    import.meta.hot.on(
+      'pinceau:themeUpdate',
+      (newTheme) => {
+        deepAssign(utils, newTheme.utils)
+        deepDelete(utils, newTheme.utils)
+      },
+    )
+  }
+
+  /**
+   * Stringify CSS declaration.
+   */
+  function stringify(decl: any) {
+    return _stringify(decl, (property: any, value: any, style: any, selectors: any) => resolveCssProperty(property, value, style, selectors, { $tokens, utils, options: { colorSchemeMode } } as PinceauContext))
+  }
+
+  /**
+   * Resolve runtime stylesheet.
+   */
   function resolveStylesheet() {
     // Sheet already resolved
     if (sheet.value) { return sheet.value }
@@ -40,21 +65,25 @@ export function usePinceauStylesheet(
       doc.head.appendChild(style)
     }
 
-    sheet.value = style?.sheet || {
-      cssRules: [],
-      insertRule(cssText: any, index = this.cssRules.length) {
-        (this.cssRules as any[]).splice(index, 1, { cssText })
-        return index
-      },
-      deleteRule(index: any) {
-        delete this.cssRules[index]
-      },
-    } as any as CSSStyleSheet
+    sheet.value
+      // Runtime local stylesheet
+      = style?.sheet
+      // Mock a CSSStyleSheet
+      || {
+        cssRules: [],
+        insertRule(cssText: any, index = this.cssRules.length) {
+          (this.cssRules as any[]).splice(index, 1, { cssText })
+          return index
+        },
+        deleteRule(index: any) {
+          delete this.cssRules[index]
+        },
+      } as any as CSSStyleSheet
 
-    return isHydratable ? hydrateStylesheet() : undefined
+    return isHydratable ? hydrateStylesheet(style) : undefined
   }
 
-  function hydrateStylesheet() {
+  function hydrateStylesheet(el?: HTMLStyleElement) {
     const hydratableRules = {}
 
     /**
@@ -96,6 +125,8 @@ export function usePinceauStylesheet(
       hydratableRules[uids.uid][uids.type] = rule
     }
 
+    if (el) { el.attributes.removeNamedItem('data-hydratable') }
+
     return hydratableRules
   }
 
@@ -124,7 +155,7 @@ export function usePinceauStylesheet(
   ): CSSRule {
     if (!Object.keys(declaration).length) { return }
 
-    const cssText = declarationToCss({
+    const cssText = stringify({
       '@media': {
         ...declaration,
         ':--p': {
@@ -158,7 +189,8 @@ export function usePinceauStylesheet(
   const hydratableRules = resolveStylesheet()
 
   return {
-    declarationToCss,
+    stringify,
+    cache,
     pushDeclaration,
     deleteRule,
     sheet,
@@ -166,3 +198,5 @@ export function usePinceauStylesheet(
     hydratableRules,
   }
 }
+
+export type PinceauRuntimeSheet = ReturnType<typeof usePinceauRuntimeSheet>

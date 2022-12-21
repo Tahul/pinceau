@@ -1,4 +1,4 @@
-import { walkTokens } from '../theme/generate'
+import { walkTokens } from '../utils/data'
 
 /**
  * Make a list of `get()` compatible paths for any object.
@@ -33,12 +33,13 @@ export const objectPaths = (data: any) => {
 /**
  * Flatten tokens object for runtime usage.
  */
-export const flattenTokens = (data: any) => {
+export const flattenTokens = (data: any, toValue = false) => {
   return walkTokens(data, (value) => {
-    return {
-      value: value?.value,
-      variable: value?.attributes?.variable,
-      original: value?.original?.value,
-    }
+    return toValue
+      ? value?.value
+      : {
+          value: value?.value,
+          variable: value?.attributes?.variable,
+        }
   })
 }

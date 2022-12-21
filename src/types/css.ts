@@ -1,6 +1,6 @@
 import type { utils } from '../runtime/utils'
 import type * as Utils from './utils'
-import type { PinceauCustomProperties, PinceauMediaQueries } from './theme'
+import type { PinceauMediaQueries, PinceauUtils } from './theme'
 import type { DefaultThemeMap } from './map'
 import type { Variants } from './variants'
 import type { NativeProperties, PropertyValue, PseudosProperties, UsableTokens } from './properties'
@@ -40,7 +40,7 @@ export type CSSProperties<
     &
     // Custom properties
     {
-      [K in keyof PinceauCustomProperties]?: UsableTokens | ComputedStyleDefinition<UsableTokens, TemplateProps>
+      [K in keyof PinceauUtils]?: UsableTokens | ComputedStyleDefinition<UsableTokens, TemplateProps>
     }
     &
     {
@@ -53,7 +53,7 @@ export type CSSFunctionType<TemplateProps = {}> =
   }
   &
   {
-    [K in keyof PinceauCustomProperties]?: UsableTokens
+    [K in keyof PinceauUtils]?: UsableTokens
   }
   &
   {

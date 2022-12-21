@@ -14,6 +14,13 @@ export function usePinceauRuntime(
 }
 
 /**
+ * Exposes the Pinceau theme sheet features.
+ */
+export function usePinceauTheme() {
+  return (inject('pinceauTheme') as any)
+}
+
+/**
  * A prop to be used on any component to enable `:css` prop.
  */
 export const cssProp = {

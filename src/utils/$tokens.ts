@@ -1,3 +1,4 @@
+import { unref } from 'vue'
 import type { TokensFunction, TokensFunctionOptions } from '../types'
 import { get } from './data'
 
@@ -19,9 +20,9 @@ export const createTokensHelper = (theme: any = {}, options: TokensFunctionOptio
 
     const { key, onNotFound } = $tokensOptions
 
-    if (!path) { return theme }
+    if (!path) { return unref(theme) }
 
-    const token = get(theme, path as string)
+    const token = get(unref(theme), path)
 
     if (!token && typeof onNotFound === 'function') {
       onNotFound(path, $tokensOptions)

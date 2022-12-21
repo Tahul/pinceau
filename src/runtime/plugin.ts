@@ -1,10 +1,10 @@
 import type { ComputedRef, Plugin, Ref } from 'vue'
 import { computed, getCurrentInstance, ref } from 'vue'
 import { nanoid } from 'nanoid'
-import { deepAssign, deepDelete } from '../utils/deep'
 import { createTokensHelper } from './utils'
-import { usePinceauStylesheet } from './stylesheet'
+import { usePinceauRuntimeSheet } from './features/stylesheet'
 import { usePinceauRuntimeIds } from './ids'
+import { usePinceauThemeSheet } from './features/theme'
 import { usePinceauComputedStyles } from './features/computedStyles'
 import { usePinceauVariants } from './features/variants'
 import { usePinceauCssProp } from './features/cssProp'
@@ -13,18 +13,20 @@ export const plugin: Plugin = {
   install(
     app,
     {
-      theme,
-      tokensHelperConfig,
+      theme = {},
+      utils = {},
+      tokensHelperConfig = {},
       multiApp = false,
       colorSchemeMode = 'media',
       dev = process.env.NODE_ENV !== 'production',
     },
   ) {
-    let cache = {}
+    // Resolve theme sheet
+    const themeSheet = usePinceauThemeSheet(theme)
 
     // Tokens helper
     const $tokens = createTokensHelper(
-      theme.theme,
+      themeSheet.theme,
       Object.assign(
         {
           key: 'variable',
@@ -33,30 +35,18 @@ export const plugin: Plugin = {
       ),
     )
 
+    // Sets a unique id for this plugin instance, as Pinceau can be used in multiple apps at the same time.
     const multiAppId = multiApp ? nanoid(6) : undefined
 
-    const sheet = usePinceauStylesheet($tokens, theme.customProperties, colorSchemeMode, multiAppId)
+    // Creates the runtime stylesheet.
+    const runtimeSheet = usePinceauRuntimeSheet($tokens, utils, colorSchemeMode, multiAppId)
 
-    // Handle dev HMR
-    if (import.meta.hot) {
-      const applyThemeUpdate = (newTheme: any) => {
-        deepAssign(theme, newTheme)
-        deepDelete(theme, newTheme)
-      }
-      import.meta.hot.on(
-        'vite:beforeUpdate',
-        () => {
-          // Cleanup cache on HMR
-          cache = {}
-        },
-      )
-      import.meta.hot.on(
-        'pinceau:themeUpdate',
-        theme => applyThemeUpdate(theme),
-      )
-    }
-
-    function setupPinceauRuntime(
+    /**
+     * Setup Pinceau runtime from a component.
+     *
+     * Will be automatically added to components that use one of the Pinceau runtime features.
+     */
+    function usePinceauRuntime(
       props: ComputedRef<any>,
       variants: Ref<any>,
       computedStyles: Ref<any>,
@@ -66,7 +56,9 @@ export const plugin: Plugin = {
 
       // Current component classes
       const classes = ref({
+        // Variants class
         v: '',
+        // Unique class
         c: '',
       })
 
@@ -74,28 +66,23 @@ export const plugin: Plugin = {
       const ids = usePinceauRuntimeIds(instance, classes, dev)
 
       // Computed styles setup
-      if (computedStyles && computedStyles?.value && Object.keys(computedStyles.value).length > 0) {
-        usePinceauComputedStyles(ids, computedStyles, sheet)
-      }
+      if (computedStyles && computedStyles?.value && Object.keys(computedStyles.value).length > 0) { usePinceauComputedStyles(ids, computedStyles, runtimeSheet) }
 
       // Variants setup
-      if (variants && variants?.value && Object.keys(variants.value).length > 0) {
-        usePinceauVariants(ids, variants, props, sheet, classes, cache)
-      }
+      if (variants && variants?.value && Object.keys(variants.value).length > 0) { usePinceauVariants(ids, variants, props, runtimeSheet, classes) }
 
       // CSS Prop setup
-      if (props.value.css && Object.keys(props.value.css).length > 0) {
-        usePinceauCssProp(ids, props, sheet)
-      }
+      if (props.value.css && Object.keys(props.value.css).length > 0) { usePinceauCssProp(ids, props, runtimeSheet) }
 
       return {
         $pinceau: computed(() => `${classes.value.v} ${classes.value.c}`),
       }
     }
 
-    // Install global variables, expose `sheet.toString()` for SSR
-    app.config.globalProperties.$pinceauRuntime = setupPinceauRuntime
-    app.config.globalProperties.$pinceauSsr = { get: () => sheet.toString() }
-    app.provide('pinceauRuntime', setupPinceauRuntime)
+    // Install global variables, expose `runtimeSheet.toString()` for SSR
+    app.config.globalProperties.$pinceauRuntime = usePinceauRuntime
+    app.config.globalProperties.$pinceauSsr = { get: () => runtimeSheet.toString() }
+    app.provide('pinceauRuntime', usePinceauRuntime)
+    app.provide('pinceauTheme', themeSheet)
   },
 }

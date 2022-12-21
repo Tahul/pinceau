@@ -3,15 +3,14 @@ import type { ComputedRef, Ref } from 'vue'
 import { defu } from 'defu'
 import { computed, onScopeDispose, watch } from 'vue'
 import type { PinceauRuntimeIds } from '../../types'
-import type { usePinceauStylesheet } from '../stylesheet'
+import type { PinceauRuntimeSheet } from './stylesheet'
 
 export const usePinceauVariants = (
   ids: ComputedRef<PinceauRuntimeIds>,
   variants: Ref<any>,
   props: ComputedRef<any>,
-  sheet: ReturnType<typeof usePinceauStylesheet>,
+  sheet: PinceauRuntimeSheet,
   classes: Ref<any>,
-  cache: any,
 ) => {
   let rule: CSSRule = sheet.hydratableRules?.[ids.value.uid]?.p
   const variantsState = computed(() => variants && variants?.value ? resolveVariantsState(ids.value, props.value, variants.value) : {})
@@ -20,9 +19,9 @@ export const usePinceauVariants = (
     variantsState,
     ({ cacheId, variantsProps }) => {
       let variantClass: string
-      if (cache[cacheId]) {
+      if (sheet.cache[cacheId]) {
         // Resolve variant rule
-        const cachedRule = cache[cacheId]
+        const cachedRule = sheet.cache[cacheId]
         rule = cachedRule.rule
         variantClass = cachedRule.variantClass
         cachedRule.count++
@@ -32,7 +31,7 @@ export const usePinceauVariants = (
         variantClass = `pv-${nanoid(6)}`
         const transformed = transformVariantsToDeclaration(variantClass, ids.value, variants.value, variantsProps)
         rule = sheet.pushDeclaration(ids.value.uid, 'v', transformed)
-        cache[cacheId] = { rule, variantClass, count: 1 }
+        sheet.cache[cacheId] = { rule, variantClass, count: 1 }
       }
 
       classes.value.v = variantClass
@@ -46,13 +45,13 @@ export const usePinceauVariants = (
   onScopeDispose(
     () => {
       const state = variantsState?.value
-      const cachedRule = cache?.[state.cacheId]
+      const cachedRule = sheet.cache?.[state.cacheId]
 
       if (cachedRule) {
         cachedRule.count--
         if (cachedRule.count <= 0) {
           sheet.deleteRule(cachedRule.rule)
-          delete cache[state.cacheId]
+          delete sheet.cache[state.cacheId]
         }
       }
     },

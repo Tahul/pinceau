@@ -1,13 +1,13 @@
-// @ts-ignore
-import type { GeneratedCustomProperties, GeneratedPinceauTheme, GeneratedTokensPaths } from '#pinceau/types'
+import type { GeneratedPinceauPaths, GeneratedPinceauTheme } from '#pinceau/theme'
+import type { GeneratedPinceauUtils } from '#pinceau/utils'
 
 export type NativeMediaQueries = 'dark' | 'light' | 'initial'
 
 export type PinceauTheme = GeneratedPinceauTheme
 
-export type PinceauTokensPaths = GeneratedTokensPaths
+export type PinceauTokensPaths = GeneratedPinceauPaths
 
-export type PinceauCustomProperties = GeneratedCustomProperties
+export type PinceauUtils = GeneratedPinceauUtils
 
 // @ts-ignore - Might be undefined
 export type PinceauMediaQueries = keyof PinceauTheme['media'] extends undefined ? NativeMediaQueries : NativeMediaQueries | keyof PinceauTheme['media']

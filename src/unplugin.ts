@@ -31,7 +31,7 @@ export const defaultOptions: PinceauOptions = {
   debug: false,
   componentMetaSupport: false,
   runtime: true,
-  ssrEnv: false,
+  studio: false,
 }
 
 export default createUnplugin<PinceauOptions>(

@@ -38,19 +38,21 @@ css({
     justifyContent: 'center'
   },
   section: {
+    overflow: 'hidden',
+    position: 'relative',
     '& > div': {
       display: 'flex',
       flexDirection: 'column',
       gap: '1rem',
-    },
+    }
   },
   canvas: {
-    position: 'fixed',
+    position: 'absolute',
     top: 0,
     left: 0,
     height: '100vh',
     width: '100vw',
-    zIndex: '-1'
+    zIndex: '-10'
   }
 })
 </style>

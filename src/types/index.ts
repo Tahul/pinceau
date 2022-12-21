@@ -90,9 +90,9 @@ export interface PinceauOptions {
    */
   runtime?: boolean
   /**
-   * Is inside SSR environment (Nuxt?)
+   * Support for @nuxthq/studio module.
    */
-  ssrEnv?: boolean
+  studio?: boolean
 }
 
 export interface ModuleHooks {

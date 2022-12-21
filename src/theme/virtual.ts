@@ -1,17 +1,13 @@
 import type { PinceauVirtualContext, ThemeGenerationOutput } from '../types'
-import { jsFlat, jsFull, tsFlat, tsFull } from './formats'
+import { tsFull, utilsFull } from './formats'
 
-export const VIRTUAL_ENTRY_REGEX = /^(virtual:pinceau:|#)?pinceau(\/theme|\/theme\/flat)?(\.)?(css|ts|js)?(\?.*)?$/
 export const RESOLVED_ID_RE = /^(virtual:pinceau:|#)?\/__pinceau(?:(_.*?))?\.(css|ts|js)(\?.*)?$/
 
 export function usePinceauVirtualStore(): PinceauVirtualContext {
   const outputs: ThemeGenerationOutput['outputs'] = {
-    _css: '/* This file is empty because no tokens has been provided. */',
-    _flat_ts: tsFlat({}),
-    _flat_js: jsFlat({}),
+    _css: '/* This file is empty because no tokens has been provided or the configuration is broken. */',
     _ts: tsFull({}),
-    _js: jsFull({}),
-    _json: '{}',
+    _utils: utilsFull({}),
   }
 
   function updateOutputs(generatedTheme: ThemeGenerationOutput) {
@@ -23,29 +19,18 @@ export function usePinceauVirtualStore(): PinceauVirtualContext {
   }
 
   function getOutput(id: string) {
-    const match = id.match(RESOLVED_ID_RE)
-    if (match) { return outputs[match[2]] }
+    if (id === '/__pinceau_css.css') { return outputs._css }
+    if (id === '/__pinceau_ts.ts') { return outputs._ts }
+    if (id === '/__pinceau_utils.ts') { return outputs._utils }
   }
 
   /**
    * Resolves the virtual module id from an import like `pinceau.css` or `pinceau.ts`
    */
   function getOutputId(id: string) {
-    const match = id.match(VIRTUAL_ENTRY_REGEX)
-
-    if (match) {
-      // #pinceau/theme | #pinceau/theme/flat
-      if (match[1] && match[2]) {
-        // /flat
-        if (match[2].includes('/flat')) { return '/__pinceau_flat_ts.ts' }
-
-        // /theme
-        return '/__pinceau_ts.ts'
-      }
-
-      // pinceau.css
-      if (match[4]) { return '/__pinceau_css.css' }
-    }
+    if (id.includes('pinceau.css')) { return '/__pinceau_css.css' }
+    if (id.includes('#pinceau/theme')) { return '/__pinceau_ts.ts' }
+    if (id.includes('#pinceau/utils')) { return '/__pinceau_utils.ts' }
   }
 
   return {

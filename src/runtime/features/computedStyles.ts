@@ -2,12 +2,12 @@ import { kebabCase } from 'scule'
 import type { ComputedRef, Ref } from 'vue'
 import { onScopeDispose, unref, watch } from 'vue'
 import type { PinceauRuntimeIds } from '../../types'
-import type { usePinceauStylesheet } from '../stylesheet'
+import type { PinceauRuntimeSheet } from './stylesheet'
 
 export function usePinceauComputedStyles(
   ids: ComputedRef<PinceauRuntimeIds>,
   computedStyles: Ref<any>,
-  sheet: ReturnType<typeof usePinceauStylesheet>,
+  sheet: PinceauRuntimeSheet,
 ) {
   let rule: CSSRule = sheet.hydratableRules?.[ids.value.uid]?.p
 
@@ -88,4 +88,3 @@ export function transformComputedStylesToDeclaration(
 
   return declaration
 }
-

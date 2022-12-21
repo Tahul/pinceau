@@ -205,7 +205,7 @@ export default defineTheme({
     'xs': '0.25rem',
     'sm': '0.375rem',
     'md': '0.5rem',
-    'lg': '0.75rem',
+    'lg': '1rem',
     'xl': '1rem',
     'xxl': '1.5rem',
     'full': '9999px',
@@ -299,6 +299,7 @@ export default defineTheme({
     mx: value => ({ marginLeft: value, marginRight: value }),
     px: value => ({ paddingLeft: value, paddingRight: value }),
     py: value => ({ paddingTop: value, paddingBottom: value }),
+    pt: value => ({ paddingTop: value }),
     truncate: {
       overflow: 'hidden',
       textOverflow: 'ellipsis',

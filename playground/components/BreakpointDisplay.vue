@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { theme } from '#pinceau/theme/flat'
+import { theme } from '#pinceau/theme'
 
 const mediaQueries = Object.entries(theme).reduce(
   (acc, [key, value]) => {

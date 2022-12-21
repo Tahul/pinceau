@@ -9,4 +9,9 @@ export function transformTokensToVariable(property: string): string { return (pr
 /**
  * Resolve a `var(--token)` value from a token path.
  */
-export function resolveVariableFromPath(path: string): string { return `var(--${path.split('.').map((key: string) => kebabCase(key)).join('-')})` }
+export function resolveVariableFromPath(path: string): string { return `var(--${pathToVarName(path)})` }
+
+/**
+ * Resolve a variable from a path.
+ */
+export function pathToVarName(path: string) { return path.split('.').map((key: string) => kebabCase(key)).join('-') }
