@@ -83,10 +83,10 @@
     "start": "esno src/index.ts",
     "test": "vitest --run",
     "test:watch": "vitest",
-    "test:build": "nr prepare && nr build:play && nr build:play:nuxt",
+    "test:build": "pnpm run prepare && pnpm run build:play && pnpm run build:play:nuxt",
     "test:nuxt": "(cd test/fixtures/nuxt && npx nuxi dev)",
     "test:vite": "(cd test/fixtures/vite && npx vite dev)",
-    "prepare": "npm -C playground run prepare && npm -C docs run prepare && npm run build"
+    "prepare": "pnpm run build && npm -C playground run prepare && npm -C docs run prepare"
   },
   "dependencies": {
     "@unocss/reset": "^0.48.0",
