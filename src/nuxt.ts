@@ -22,6 +22,9 @@ const module: any = defineNuxtModule<PinceauOptions>({
   async setup(options: PinceauOptions, nuxt) {
     const { stopPerfTimer } = useDebugPerformance('Setup Nuxt module', options.debug)
 
+    // Pinceau runtime config (to be used with Nuxt Studio integration)
+    nuxt.options.runtimeConfig.pinceau = { studio: options?.studio }
+
     // Local module resolver
     const modulePath = createResolver(import.meta.url)
     const resolveLocalModule = (path: string) => resolveModule(path, { paths: modulePath.resolve('./') })
