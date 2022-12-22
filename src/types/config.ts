@@ -27,7 +27,7 @@ export interface ConfigTokens {
 
 export type PermissiveConfigType<T extends {}> = {
   [K in keyof T]?: T[K] extends (DesignToken | RawTokenType)
-    ? (RawTokenType | ResponsiveToken<RawTokenType> | (T[K] extends DesignToken ? T[K]['value'] : never)) | T[K]
+    ? (RawTokenType | ResponsiveToken<RawTokenType> | (T[K] extends DesignToken ? T[K]['value'] : never)) | Partial<T[K]>
     : PermissiveConfigType<T[K]>
 }
 

@@ -39,82 +39,48 @@ export function usePinceauRuntimeSheet(
    * Resolve runtime stylesheet.
    */
   function resolveStylesheet() {
-    // Sheet already resolved
-    if (sheet.value) { return sheet.value }
-
     // Only update stylesheet on client-side
     // SSR Rendering occurs in `app:rendered` hook, or via `getStylesheetContent`
     const global = globalThis || window
 
-    let isHydratable = false
-
     let style: HTMLStyleElement
+    let hydratableSheet: HTMLStyleElement | null
+
+    // Runtime stylesheet injection
     if (global && global.document) {
       const doc = global.document
-      style = doc.querySelector(`style#pinceau${appId ? `-${appId}` : ''}`) as HTMLStyleElement | null
 
-      if (!style) {
-        const styleTag = doc.createElement('style')
-        styleTag.id = `pinceau${appId ? `-${appId}` : ''}`
-        styleTag.type = 'text/css'
-        style = styleTag as HTMLStyleElement
-      }
+      // Get hydratable stylesheet
+      hydratableSheet = doc.querySelector(`style#pinceau-hydratable${appId ? `-${appId}` : ''}`) as HTMLStyleElement | null
 
-      if (style.attributes.getNamedItem('data-hydratable')) { isHydratable = true }
+      // Create runtime stylesheet
+      const styleNode = doc.createElement('style')
+      styleNode.id = `pinceau${appId ? `-${appId}` : ''}`
+      styleNode.type = 'text/css'
 
-      doc.head.appendChild(style)
+      style = doc.head.appendChild(styleNode)
     }
 
     sheet.value
       // Runtime local stylesheet
       = style?.sheet
-      // Mock a CSSStyleSheet
-      || {
-        cssRules: [],
-        insertRule(cssText: any, index = this.cssRules.length) {
-          (this.cssRules as any[]).splice(index, 1, { cssText })
-          return index
-        },
-        deleteRule(index: any) {
-          delete this.cssRules[index]
-        },
-      } as any as CSSStyleSheet
+      // Mock a CSSStyleSheet for SSR
+      || getSSRStylesheet()
 
-    return isHydratable ? hydrateStylesheet(style) : undefined
+    return hydratableSheet
+      ? hydrateStylesheet(hydratableSheet)
+      : undefined
   }
 
+  /**
+   * Hydrate the runtime stylesheet from a #pinceau-hydratable stylesheet.
+   */
   function hydrateStylesheet(el?: HTMLStyleElement) {
     const hydratableRules = {}
 
-    /**
-     * Resolve the uid and type from a rule.
-     */
-    const resolveUid = (rule: CSSMediaRule) => {
-      const uidRule: any = rule.cssRules && rule.cssRules.length
-        ? Object.entries((rule as any)?.cssRules).find(
-          ([_, rule]: any) => {
-            if (rule.selectorText !== ':--p') { return false }
-
-            return true
-          },
-        )
-        : undefined
-
-      if (!uidRule) { return }
-
-      const uidRegex = /--puid:(.*)?-(c|v|p)?/m
-      const [, uid, type] = uidRule[1].cssText.match(uidRegex)
-
-      if (!uid) { return }
-
-      return { uid, type }
-    }
-
-    /**
-     * Iterate through SSR stylesheet CSS rules
-     */
-    for (const _rule of Object.entries(sheet.value.cssRules)) {
-      const [, rule] = _rule as [string, CSSMediaRule]
+    // Loop through SSR stylesheet CSS rules
+    for (const _rule of Object.entries(el?.sheet?.cssRules || sheet.value?.cssRules || {})) {
+      const [index, rule] = _rule as [string, CSSMediaRule]
 
       const uids = resolveUid(rule)
 
@@ -122,10 +88,13 @@ export function usePinceauRuntimeSheet(
 
       if (!hydratableRules[uids.uid]) { hydratableRules[uids.uid] = {} }
 
-      hydratableRules[uids.uid][uids.type] = rule
+      const newIndex = sheet.value.insertRule(rule.cssText, Number(index))
+
+      hydratableRules[uids.uid][uids.type] = sheet.value.cssRules.item(newIndex)
     }
 
-    if (el) { el.attributes.removeNamedItem('data-hydratable') }
+    // Cleanup hydratable sheet as all rules has been injected into runtime sheet
+    if (el) { el.remove() }
 
     return hydratableRules
   }
@@ -183,7 +152,7 @@ export function usePinceauRuntimeSheet(
     if (typeof ruleIndex === 'undefined' || isNaN(ruleIndex)) { return }
 
     try { sheet.value.deleteRule(ruleIndex) }
-    catch (e) { /* Continue regardless of error */ }
+    catch (e) { /* Continue regardless of errors */ }
   }
 
   const hydratableRules = resolveStylesheet()
@@ -197,6 +166,47 @@ export function usePinceauRuntimeSheet(
     toString,
     hydratableRules,
   }
+}
+
+/**
+ * Returns a SSR-compatible version of a CSSStylesheet.
+ * To be used server-side to create the stringifiable sheet.
+ */
+function getSSRStylesheet() {
+  return {
+    cssRules: [],
+    insertRule(cssText: any, index = this.cssRules.length) {
+      (this.cssRules as any[]).splice(index, 1, { cssText })
+      return index
+    },
+    deleteRule(index: any) {
+      delete this.cssRules[index]
+    },
+  } as any as CSSStyleSheet
+}
+
+/**
+ * Resolve the uid and type from a rule.
+ */
+function resolveUid(rule: CSSMediaRule) {
+  const uidRule: any = rule.cssRules && rule.cssRules.length
+    ? Object.entries((rule as any)?.cssRules).find(
+      ([_, rule]: any) => {
+        if (rule.selectorText !== ':--p') { return false }
+
+        return true
+      },
+    )
+    : undefined
+
+  if (!uidRule) { return }
+
+  const uidRegex = /--puid:(.*)?-(c|v|p)?/m
+  const [, uid, type] = uidRule[1].cssText.match(uidRegex)
+
+  if (!uid) { return }
+
+  return { uid, type }
 }
 
 export type PinceauRuntimeSheet = ReturnType<typeof usePinceauRuntimeSheet>

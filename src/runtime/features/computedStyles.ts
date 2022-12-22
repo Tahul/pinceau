@@ -9,7 +9,7 @@ export function usePinceauComputedStyles(
   computedStyles: Ref<any>,
   sheet: PinceauRuntimeSheet,
 ) {
-  let rule: CSSRule = sheet.hydratableRules?.[ids.value.uid]?.p
+  let rule: CSSRule = sheet.hydratableRules?.[ids.value.uid]?.c
 
   watch(
     computedStyles,

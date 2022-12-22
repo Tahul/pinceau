@@ -3,6 +3,6 @@ import type { NitroAppPlugin } from 'nitropack'
 export default <NitroAppPlugin> function (nitro) {
   nitro.hooks.hook('render:html', (htmlContext, { event }) => {
     const content = event?.pinceauContent || ''
-    htmlContext.head.push(`<style id="pinceau" data-hydratable>${content}</style>`)
+    htmlContext.head.push(`<style id="pinceau-hydratable">${content}</style>`)
   })
 }
