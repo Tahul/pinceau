@@ -51,8 +51,11 @@ export function tsFull(tokensObject: any) {
   // Import config wrapper type
   let result = 'import type { PermissiveConfigType } from \'pinceau\'\n\n'
 
+  // Flatten tokens in full format too
+  const flattenedTokens = flattenTokens(tokensObject)
+
   // Theme object
-  result += `export const theme = ${JSON.stringify(tokensObject, null, 2)} as const\n\n`
+  result += `export const theme = ${JSON.stringify(flattenedTokens, null, 2)} as const\n\n`
 
   // Theme type
   result += 'export type GeneratedPinceauTheme = PermissiveConfigType<typeof theme>\n\n'

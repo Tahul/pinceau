@@ -92,6 +92,7 @@ export function usePinceauThemeSheet(
           .filter(([_, rule]) => rule !== undefined && rule !== '')
           .forEach(
             ([_, varRule]: any) => {
+              if (varRule === '--pinceau-mq') { return }
               if (!cache[varRule]) { cache[varRule] = {} }
               setThemeValue(varRule, rule, currentTheme)
               cache[varRule][currentTheme] = rule.style

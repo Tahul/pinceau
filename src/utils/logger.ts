@@ -62,6 +62,11 @@ const messages = {
     logger.log(`❓ ${selector}\n`)
     logger.log('If you want to combine `@dark` or `@light` with `html` selector, consider using `html.dark` or `html.light`.\n')
   },
+  WRONG_TOKEN_NAMING: (debugLevel, token) => {
+    logger.error(`Invalid token name: ${chalk.red(token.path.join('-'))}`)
+    logger.log('Token paths can not contains the following characters: `.` or `-`\n')
+    logger.log('These paths keys also has to only contains characters supported in CSS stylesheets.\n')
+  },
 } as const
 
 type Messages = typeof messages

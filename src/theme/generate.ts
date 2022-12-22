@@ -66,6 +66,9 @@ export async function generateTheme(tokens: any, { outputDir: buildPath, colorSc
     type: 'name',
     matcher: () => true,
     transformer(token) {
+      if (token.path.join('').includes('-')) {
+        message('WRONG_TOKEN_NAMING', [token])
+      }
       return token.path.join('-')
     },
   })
