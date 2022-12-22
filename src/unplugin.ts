@@ -1,7 +1,7 @@
 import { createUnplugin } from 'unplugin'
 import MagicString from 'magic-string'
 import { join } from 'pathe'
-import { createContext } from './theme'
+import { createContext } from './theme/context'
 import { registerAliases, registerPostCssPlugins } from './utils/plugin'
 import { replaceStyleTs, resolveStyleQuery, transformVueSFC, transformVueStyle } from './transforms'
 import { parseVueQuery } from './utils/query'

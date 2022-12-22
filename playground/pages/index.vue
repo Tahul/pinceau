@@ -53,6 +53,6 @@ css({
     height: '100vh',
     width: '100vw',
     zIndex: '-10'
-  }
+  },
 })
 </style>

@@ -1,5 +1,6 @@
 import type { Core as Instance } from 'style-dictionary-esm'
 import StyleDictionary from 'style-dictionary-esm'
+import { flattenTokens } from '../utils/theme'
 import type { PinceauOptions, ThemeGenerationOutput } from '../types'
 import { message } from '../utils/logger'
 import { cssFull, schemaFull, tsFull, utilsFull } from './formats'
@@ -21,6 +22,15 @@ export async function generateTheme(tokens: any, { outputDir: buildPath, colorSc
       destination: 'utils.ts',
       format: 'pinceau/utils',
     },
+  ]
+
+  // Transforms used
+  const transforms = [
+    'size/px',
+    'color/hex',
+    'pinceau/name',
+    'pinceau/variable',
+    'pinceau/responsiveTokens',
   ]
 
   // Tokens outputs as in-memory objects
@@ -54,9 +64,7 @@ export async function generateTheme(tokens: any, { outputDir: buildPath, colorSc
     type: 'attribute',
     matcher: () => true,
     transformer(token) {
-      return {
-        variable: `var(--${token.name})`,
-      }
+      return { variable: `var(--${token.name})` }
     },
   })
 
@@ -66,9 +74,7 @@ export async function generateTheme(tokens: any, { outputDir: buildPath, colorSc
     type: 'name',
     matcher: () => true,
     transformer(token) {
-      if (token.path.join('').includes('-')) {
-        message('WRONG_TOKEN_NAMING', [token])
-      }
+      if (token.path.join('').includes('-')) { message('WRONG_TOKEN_NAMING', [token]) }
       return token.path.join('-')
     },
   })
@@ -114,13 +120,7 @@ export async function generateTheme(tokens: any, { outputDir: buildPath, colorSc
   // Transform group used accross all tokens formats
   styleDictionary.registerTransformGroup({
     name: 'pinceau',
-    transforms: [
-      'size/px',
-      'color/hex',
-      'pinceau/name',
-      'pinceau/variable',
-      'pinceau/responsiveTokens',
-    ],
+    transforms,
   })
 
   // index.css
@@ -198,7 +198,7 @@ export async function generateTheme(tokens: any, { outputDir: buildPath, colorSc
           name: 'done',
           do: ({ tokens }) => {
             resolve({
-              tokens,
+              tokens: flattenTokens(tokens),
               outputs,
               buildPath,
             })

@@ -223,5 +223,11 @@ export default defineTheme({
       textOverflow: 'ellipsis',
       whiteSpace: 'nowrap',
     },
+    stateColors: (value: string) => {
+      return {
+        color: `{color.${value}.500} !important`,
+        backgroundColor: `{color.${value}.200} !important`,
+      }
+    },
   },
 })

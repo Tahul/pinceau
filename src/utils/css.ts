@@ -20,9 +20,7 @@ export function resolveCssProperty(
   // Resolve custom properties
   if (ctx.utils[property]) {
     // Custom property is a function, pass value and return result
-    if (typeof ctx.utils[property] === 'function') {
-      return ctx.utils[property](value)
-    }
+    if (typeof ctx.utils[property] === 'function') { return ctx.utils[property](value) }
 
     // Custom property is an object, if value is true, return result
     return value ? ctx.utils[property] : {}

@@ -8,6 +8,7 @@ export function usePinceauVirtualStore(): PinceauVirtualContext {
     _css: '/* This file is empty because no tokens has been provided or the configuration is broken. */',
     _ts: tsFull({}),
     _utils: utilsFull({}),
+    _schema: 'export const schema = {}\n\export const GeneratedPinceauThemeSchema = typeof schema',
   }
 
   function updateOutputs(generatedTheme: ThemeGenerationOutput) {
@@ -22,6 +23,7 @@ export function usePinceauVirtualStore(): PinceauVirtualContext {
     if (id === '/__pinceau_css.css') { return outputs._css }
     if (id === '/__pinceau_ts.ts') { return outputs._ts }
     if (id === '/__pinceau_utils.ts') { return outputs._utils }
+    if (id === '/__pinceau_schema.ts') { return outputs._utils }
   }
 
   /**
@@ -31,6 +33,7 @@ export function usePinceauVirtualStore(): PinceauVirtualContext {
     if (id.includes('pinceau.css')) { return '/__pinceau_css.css' }
     if (id.includes('#pinceau/theme')) { return '/__pinceau_ts.ts' }
     if (id.includes('#pinceau/utils')) { return '/__pinceau_utils.ts' }
+    if (id.includes('#pinceau/schema')) { return '/__pinceau_schema.ts' }
   }
 
   return {

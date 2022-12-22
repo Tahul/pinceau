@@ -70,16 +70,26 @@ export function normalizeConfig(
   }
   else {
     for (const k in obj) {
-    // Skip `utils`
+      // Skip `utils`
       if (k === 'utils') {
         result[k] = obj[k]
         continue
       }
       // Cast string values into tokens
-      if (obj[k] && typeof obj[k] === 'string') { result[k] = { value: obj[k] } }
+      if (
+        obj[k]
+        // Inline string/number/boolean/bigint/symbol values
+        && (
+          typeof obj[k] === 'string'
+          || typeof obj[k] === 'number'
+          || typeof obj[k] === 'boolean'
+          || typeof obj[k] === 'symbol'
+          || typeof obj[k] === 'bigint'
+        )
+      ) { result[k] = { value: obj[k] } }
       // Walk on nested object
       else if (obj[k] && typeof obj[k] === 'object') {
-      // Handle responsive tokens
+        // Handle responsive tokens
         const keys = Object.keys(obj[k])
         if (
           keys.includes('initial')
