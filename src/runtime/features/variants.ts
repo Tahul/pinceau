@@ -13,7 +13,7 @@ export const usePinceauVariants = (
   classes: Ref<any>,
   loc: any,
 ) => {
-  let rule: CSSRule = sheet.hydratableRules?.[ids.value.uid]?.p
+  let rule: CSSRule = sheet.hydratableRules?.[ids.value.uid]?.v
   const variantsState = computed(() => variants && variants?.value ? resolveVariantsState(ids.value, props.value, variants.value) : {})
 
   watch(

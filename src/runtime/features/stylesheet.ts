@@ -4,6 +4,8 @@ import type { ColorSchemeModes, PinceauContext, PinceauUidTypes, TokensFunction 
 import { resolveCssProperty } from '../../utils/css'
 import { stringify as _stringify } from '../../utils/stringify'
 
+const HYDRATION_SELECTOR = '.phy[--]'
+
 export function usePinceauRuntimeSheet(
   $tokens: TokensFunction,
   utils: any = {},
@@ -128,11 +130,9 @@ export function usePinceauRuntimeSheet(
     const cssText = stringify(
       {
         '@media': {
-          ...declaration,
-          ':--p': {
           // Mark inserted declaration with unique id and type of runtime style
-            '--puid': `${uid}-${type}`,
-          },
+          [HYDRATION_SELECTOR]: { '--puid': `${uid}-${type}` },
+          ...declaration,
         },
       },
       loc,
@@ -194,13 +194,7 @@ function getSSRStylesheet() {
  */
 function resolveUid(rule: CSSMediaRule) {
   const uidRule: any = rule.cssRules && rule.cssRules.length
-    ? Object.entries((rule as any)?.cssRules).find(
-      ([_, rule]: any) => {
-        if (rule.selectorText !== ':--p') { return false }
-
-        return true
-      },
-    )
+    ? Object.entries((rule as any)?.cssRules).find(([_, rule]: any) => rule.selectorText === HYDRATION_SELECTOR)
     : undefined
 
   if (!uidRule) { return }
