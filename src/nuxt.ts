@@ -1,7 +1,7 @@
 import { existsSync } from 'fs'
 import { join, resolve } from 'pathe'
 import glob from 'fast-glob'
-import { addPlugin, addPluginTemplate, addPrerenderRoutes, createResolver, defineNuxtModule, resolveModule } from '@nuxt/kit'
+import { addPlugin, addPluginTemplate, addPrerenderRoutes, createResolver, defineNuxtModule, resolveAlias, resolveModule } from '@nuxt/kit'
 import createJITI from 'jiti'
 import type { PinceauOptions } from './types'
 import pinceau, { defaultOptions } from './unplugin'
@@ -101,13 +101,6 @@ const module: any = defineNuxtModule<PinceauOptions>({
     if (!nuxt.options.nitro.plugins) { nuxt.options.nitro.plugins = [] }
     nuxt.options.nitro.plugins.push(resolveLocalModule('./nitro'))
 
-    // Setup Nitro studio plugin
-    if (options.studio) {
-      // Add server route to know Studio is enabled
-      addPlugin(resolveLocalModule('./runtime/schema.server'))
-      addPrerenderRoutes('/__tokens_config.json')
-    }
-
     // Support for `extends` feature
     // Will scan each layer for a config file
     const layerPaths = nuxt.options._layers.reduce(
@@ -119,6 +112,21 @@ const module: any = defineNuxtModule<PinceauOptions>({
       },
       [],
     )
+
+    // Setup Nitro studio plugin
+    if (options.studio) {
+      // Add server route to know Studio is enabled
+      addPlugin(resolveLocalModule('./runtime/schema.server'))
+      addPrerenderRoutes('/__tokens_config.json')
+
+      // Support custom ~/.studio/tokens.config.json
+      nuxt.hook('app:resolve', () => {
+        const studioAppConfigPath = resolveAlias('~/.studio/tokens.config.json')
+        if (existsSync(studioAppConfigPath)) { layerPaths.unshift(studioAppConfigPath) }
+      })
+    }
+
+    // Push layer paths into configOrPaths options
     layerPaths.forEach(
       (path: string) => {
         if (!(options?.configOrPaths as string[]).includes(path)) {
