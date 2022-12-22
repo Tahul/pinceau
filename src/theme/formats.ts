@@ -81,7 +81,7 @@ export async function schemaFull(tokensObject) {
 
   let result = `export const schema = ${JSON.stringify(schema, null, 2)} as const\n\n`
 
-  result += `${generateTypes(schema, { addExport: true, interfaceName: 'GeneratedPinceauThemeSchema', allowExtraKeys: true, addDefaults: true })}\n\n`
+  result += 'export const GeneratedPinceauThemeSchema = typeof schema\n\n'
 
   return result
 }

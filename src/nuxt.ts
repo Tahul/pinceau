@@ -117,7 +117,8 @@ const module: any = defineNuxtModule<PinceauOptions>({
     if (options.studio) {
       // Add server route to know Studio is enabled
       addPlugin(resolveLocalModule('./runtime/schema.server'))
-      addPrerenderRoutes('/__tokens_config.json')
+      addPrerenderRoutes('/__pinceau_tokens_config.json')
+      addPrerenderRoutes('/__pinceau_tokens_schema.json')
 
       // Support custom ~/.studio/tokens.config.json
       nuxt.hook('app:resolve', () => {
