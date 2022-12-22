@@ -43,7 +43,7 @@ const messages = {
   },
   TOKEN_NOT_FOUND: (debugLevel, path, options) => {
     if (options?.loc?.query && !(options.loc.query?.type)) {
-      logger.warn(`Token not found: ${path}`)
+      logger.warn(`Token not found in static CSS: ${chalk.red(path)}`)
 
       // Get LOC for missing token in `css({ ... })`
       const { line: lineOffset, column: columnOffset } = findLineColumn(options.loc.source, `{${path}}`)

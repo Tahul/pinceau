@@ -40,7 +40,7 @@ export default createUnplugin<PinceauOptions>(
 
     options = merger(options, defaultOptions)
 
-    setDebugLevel(options.debug)
+    setDebugLevel(options?.dev ? options.debug : false)
 
     const ctx = createContext(options)
 

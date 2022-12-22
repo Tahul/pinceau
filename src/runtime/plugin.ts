@@ -1,6 +1,7 @@
 import type { ComputedRef, Plugin, Ref } from 'vue'
 import { computed, getCurrentInstance, ref } from 'vue'
 import { nanoid } from 'nanoid'
+import type { TokensFunctionOptions } from '../types'
 import { createTokensHelper } from './utils'
 import { usePinceauRuntimeSheet } from './features/stylesheet'
 import { usePinceauRuntimeIds } from './ids'
@@ -8,6 +9,7 @@ import { usePinceauThemeSheet } from './features/theme'
 import { usePinceauComputedStyles } from './features/computedStyles'
 import { usePinceauVariants } from './features/variants'
 import { usePinceauCssProp } from './features/cssProp'
+import { usePinceauRuntimeDebug } from './features/debug'
 
 export const plugin: Plugin = {
   install(
@@ -24,15 +26,20 @@ export const plugin: Plugin = {
     // Resolve theme sheet
     const themeSheet = usePinceauThemeSheet(theme)
 
+    tokensHelperConfig = Object.assign(
+      {
+        key: 'variable',
+      },
+      tokensHelperConfig || {},
+    ) as TokensFunctionOptions
+
+    // Runtime debug setup
+    if (dev && (import.meta.hot || process.server)) { usePinceauRuntimeDebug(tokensHelperConfig) }
+
     // Tokens helper
     const $tokens = createTokensHelper(
       themeSheet.theme,
-      Object.assign(
-        {
-          key: 'variable',
-        },
-        tokensHelperConfig,
-      ),
+      tokensHelperConfig,
     )
 
     // Sets a unique id for this plugin instance, as Pinceau can be used in multiple apps at the same time.
@@ -54,6 +61,15 @@ export const plugin: Plugin = {
       // Current component instance
       const instance = getCurrentInstance()
 
+      // Component LOC for debug in development
+      // Only LOC variable passing should stay in bundle
+      let loc: any
+      if (dev && (import.meta.hot || process.server)) {
+        // @ts-ignore
+        const { __file: file, __name: name } = instance.vnode.type
+        loc = { file, name }
+      }
+
       // Current component classes
       const classes = ref({
         // Variants class
@@ -66,13 +82,13 @@ export const plugin: Plugin = {
       const ids = usePinceauRuntimeIds(instance, classes, dev)
 
       // Computed styles setup
-      if (computedStyles && computedStyles?.value && Object.keys(computedStyles.value).length > 0) { usePinceauComputedStyles(ids, computedStyles, runtimeSheet) }
+      if (computedStyles && computedStyles?.value && Object.keys(computedStyles.value).length > 0) { usePinceauComputedStyles(ids, computedStyles, runtimeSheet, loc) }
 
       // Variants setup
-      if (variants && variants?.value && Object.keys(variants.value).length > 0) { usePinceauVariants(ids, variants, props, runtimeSheet, classes) }
+      if (variants && variants?.value && Object.keys(variants.value).length > 0) { usePinceauVariants(ids, variants, props, runtimeSheet, classes, loc) }
 
       // CSS Prop setup
-      if (props.value.css && Object.keys(props.value.css).length > 0) { usePinceauCssProp(ids, props, runtimeSheet) }
+      if (props.value.css && Object.keys(props.value.css).length > 0) { usePinceauCssProp(ids, props, runtimeSheet, loc) }
 
       return {
         $pinceau: computed(() => `${classes.value.v} ${classes.value.c}`),

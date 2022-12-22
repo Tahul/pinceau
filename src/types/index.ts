@@ -78,6 +78,10 @@ export interface PinceauOptions {
    */
   colorSchemeMode?: ColorSchemeModes
   /**
+   * Toggles the development mode of Pinceau.
+   */
+  dev?: boolean
+  /**
    * Enables extra logging on transform failures.
    */
   debug?: boolean | 2

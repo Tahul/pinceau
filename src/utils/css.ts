@@ -1,4 +1,5 @@
 import type { DesignToken, PinceauContext } from '../types'
+import { transformTokensToVariable } from './$tokens'
 import { DARK, INITIAL, LIGHT, referencesRegex } from './regexes'
 
 /**
@@ -92,7 +93,7 @@ export function resolveReferences(
 
       const tokenValue = typeof token === 'string' ? token : token?.attributes?.variable || token?.variable || token?.value || token?.original?.value
 
-      if (!tokenValue) { return '' }
+      if (!tokenValue) { return transformTokensToVariable(tokenPath) }
 
       return tokenValue as string
     },

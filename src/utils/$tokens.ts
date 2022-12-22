@@ -1,26 +1,24 @@
 import { unref } from 'vue'
 import type { TokensFunction, TokensFunctionOptions } from '../types'
 import { get } from './data'
+import { keyRegex } from './regexes'
 
 /**
  * Get a theme token by its path
  */
+export function createTokensHelper(theme: any = {}, options: TokensFunctionOptions = {}): TokensFunction {
+  const defaultHelperOptions: TokensFunctionOptions = {
+    key: 'attributes.variable',
+    onNotFound: false,
+    ...options,
+  }
 
-export const createTokensHelper = (theme: any = {}, options: TokensFunctionOptions = {}): TokensFunction => {
-  const defaultHelperOptions: TokensFunctionOptions = Object.assign(
-    {
-      key: 'attributes.variable',
-      onNotFound: false,
-    },
-    options,
-  )
+  function $tokens(path = undefined, options: TokensFunctionOptions) {
+    if (!path) { return unref(theme) }
 
-  const $tokens: TokensFunction = (path = undefined, options: TokensFunctionOptions) => {
-    const $tokensOptions = Object.assign(defaultHelperOptions, options)
+    const $tokensOptions = { ...defaultHelperOptions, ...options }
 
     const { key, onNotFound } = $tokensOptions
-
-    if (!path) { return unref(theme) }
 
     const token = get(unref(theme), path)
 
@@ -36,5 +34,22 @@ export const createTokensHelper = (theme: any = {}, options: TokensFunctionOptio
       : token
   }
 
-  return $tokens
+  return $tokens.bind(this)
+}
+
+/**
+  * Take a CSS property and transform every tokens present in it to their value.
+  */
+export function transformTokensToVariable(property: string): string { return (property || '').replace(keyRegex, (_, tokenPath) => resolveVariableFromPath(tokenPath)) }
+
+/**
+ * Resolve a `var(--token)` value from a token path.
+ */
+export function resolveVariableFromPath(path: string): string { return `var(--${pathToVarName(path)})` }
+
+/**
+ * Resolve a variable from a path.
+ */
+export function pathToVarName(path: string) {
+  return path.split('.').join('-')
 }

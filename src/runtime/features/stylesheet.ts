@@ -31,8 +31,8 @@ export function usePinceauRuntimeSheet(
   /**
    * Stringify CSS declaration.
    */
-  function stringify(decl: any) {
-    return _stringify(decl, (property: any, value: any, style: any, selectors: any) => resolveCssProperty(property, value, style, selectors, { $tokens, utils, options: { colorSchemeMode } } as PinceauContext))
+  function stringify(decl: any, loc?: any) {
+    return _stringify(decl, (property: any, value: any, style: any, selectors: any) => resolveCssProperty(property, value, style, selectors, { $tokens, utils, options: { colorSchemeMode } } as PinceauContext, loc))
   }
 
   /**
@@ -121,18 +121,22 @@ export function usePinceauRuntimeSheet(
     type: PinceauUidTypes,
     declaration: any,
     previousRule?: any,
+    loc?: any,
   ): CSSRule {
     if (!Object.keys(declaration).length) { return }
 
-    const cssText = stringify({
-      '@media': {
-        ...declaration,
-        ':--p': {
+    const cssText = stringify(
+      {
+        '@media': {
+          ...declaration,
+          ':--p': {
           // Mark inserted declaration with unique id and type of runtime style
-          '--puid': `${uid}-${type}`,
+            '--puid': `${uid}-${type}`,
+          },
         },
       },
-    })
+      loc,
+    )
 
     if (!cssText) { return }
 

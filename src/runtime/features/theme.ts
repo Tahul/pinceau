@@ -2,7 +2,7 @@ import { computed, ref } from 'vue'
 import type { PermissiveConfigType, PinceauTheme } from '../../types'
 import { get, normalizeConfig, set, walkTokens } from '../../utils/data'
 import { deepAssign, deepDelete } from '../../utils/deep'
-import { pathToVarName } from './utils'
+import { pathToVarName } from '../../utils/$tokens'
 
 /**
  * Find a sheet containing a particular CSS variable.
@@ -106,7 +106,7 @@ export function usePinceauThemeSheet(
    */
   function updateTheme(value: PermissiveConfigType<PinceauTheme>) {
     // Media queries keys extracted from current theme object and new one
-    const mqKeys = ['dark', 'light', ...Object.keys(value?.media || {}), ...Object.keys(theme.value?.media || {})]
+    const mqKeys = ['dark', 'light', ...Object.keys((value as any)?.media || {}), ...Object.keys(theme.value?.media || {})]
 
     // Turn partial configuration object into a valid design tokens configuration object
     const config = normalizeConfig(value || {}, mqKeys)

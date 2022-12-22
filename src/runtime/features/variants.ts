@@ -11,6 +11,7 @@ export const usePinceauVariants = (
   props: ComputedRef<any>,
   sheet: PinceauRuntimeSheet,
   classes: Ref<any>,
+  loc: any,
 ) => {
   let rule: CSSRule = sheet.hydratableRules?.[ids.value.uid]?.p
   const variantsState = computed(() => variants && variants?.value ? resolveVariantsState(ids.value, props.value, variants.value) : {})
@@ -30,7 +31,7 @@ export const usePinceauVariants = (
         // Push a new variant in stylesheet
         variantClass = `pv-${nanoid(6)}`
         const transformed = transformVariantsToDeclaration(variantClass, ids.value, variants.value, variantsProps)
-        rule = sheet.pushDeclaration(ids.value.uid, 'v', transformed)
+        rule = sheet.pushDeclaration(ids.value.uid, 'v', transformed, undefined, { ...loc, type: 'v' })
         sheet.cache[cacheId] = { rule, variantClass, count: 1 }
       }
 

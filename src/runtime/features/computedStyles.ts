@@ -8,6 +8,7 @@ export function usePinceauComputedStyles(
   ids: ComputedRef<PinceauRuntimeIds>,
   computedStyles: Ref<any>,
   sheet: PinceauRuntimeSheet,
+  loc: any,
 ) {
   let rule: CSSRule = sheet.hydratableRules?.[ids.value.uid]?.c
 
@@ -20,6 +21,7 @@ export function usePinceauComputedStyles(
         'c',
         newComputedStyles,
         rule,
+        { ...loc, type: 'c' },
       )
     },
     {
