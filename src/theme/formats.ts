@@ -77,7 +77,7 @@ export function tsFull(tokensObject: any) {
 export async function schemaFull(tokensObject) {
   const flattenedTokens = flattenTokens(tokensObject)
 
-  const schema = await resolveUntypedSchema(flattenedTokens)
+  const schema = await resolveUntypedSchema({ tokensConfig: flattenedTokens })
 
   let result = `export const schema = ${JSON.stringify(schema, null, 2)} as const\n\n`
 
