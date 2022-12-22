@@ -2,10 +2,13 @@ import { resolve } from 'path'
 
 export default defineNuxtConfig({
   extends: [resolve(__dirname, './theme')],
-  modules: ['../src/nuxt.ts', '@nuxtjs/color-mode'/* , '@nuxthq/studio', '@nuxt/content' */],
+  modules: ['../src/nuxt.ts', '@nuxtjs/color-mode', '@nuxt/content', '@nuxthq/studio'],
   alias: {
     'pinceau/runtime': resolve(__dirname, '../src/runtime.ts'),
     'pinceau': resolve(__dirname, '../src/index.ts'),
+  },
+  studio: {
+    enabled: true,
   },
   pinceau: {
     configFileName: 'tokens.config',

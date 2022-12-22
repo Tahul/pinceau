@@ -76,24 +76,25 @@ const module: any = defineNuxtModule<PinceauOptions>({
     }
 
     // Automatically inject generated types to tsconfig
-    nuxt.hook('prepare:types', (opts) => {
-      // Prepares the output dir
-      prepareOutputDir(options)
-
+    nuxt.hook('prepare:types', async (opts) => {
       const tsConfig: typeof opts.tsConfig & { vueCompilerOptions?: any } = opts.tsConfig
       tsConfig.compilerOptions = tsConfig.compilerOptions || {}
       tsConfig.compilerOptions.paths = tsConfig.compilerOptions.paths || {}
 
       if (options?.outputDir) {
         const relativeOutputDir = options.outputDir
-        tsConfig.compilerOptions.paths['#pinceau/utils'] = [`${resolveModule(resolve(relativeOutputDir, 'utils.ts'))}`]
-        tsConfig.compilerOptions.paths['#pinceau/theme'] = [`${resolveModule(resolve(relativeOutputDir, 'index.ts'))}`]
+        tsConfig.compilerOptions.paths['#pinceau/utils'] = [`${resolve(relativeOutputDir, 'utils.ts')}`]
+        tsConfig.compilerOptions.paths['#pinceau/theme'] = [`${resolve(relativeOutputDir, 'index.ts')}`]
+        if (options?.studio) { tsConfig.compilerOptions.paths['#pinceau/schema'] = [`${resolve(relativeOutputDir, 'schema.ts')}`] }
       }
 
       // Add Volar plugin
       tsConfig.vueCompilerOptions = tsConfig.vueCompilerOptions || {}
       tsConfig.vueCompilerOptions.plugins = tsConfig.vueCompilerOptions.plugins || []
       tsConfig.vueCompilerOptions.plugins.push('pinceau/volar')
+
+      // Prepares the output dir
+      await prepareOutputDir(options)
     })
 
     // Setup Nitro plugin

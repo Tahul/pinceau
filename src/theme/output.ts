@@ -1,16 +1,17 @@
-import { existsSync, mkdirSync, rmSync, writeFileSync } from 'fs'
+import { existsSync } from 'node:fs'
+import { mkdir, rm, writeFile } from 'node:fs/promises'
 import { join } from 'pathe'
 import type { PinceauOptions } from '../types'
 import { schemaFull, tsFull, utilsFull } from './formats'
 
-export function prepareOutputDir<UserOptions extends PinceauOptions = PinceauOptions>(
+export async function prepareOutputDir<UserOptions extends PinceauOptions = PinceauOptions>(
   {
     outputDir = join(process.cwd(), 'node_modules/.vite/pinceau'),
   }: UserOptions,
 ) {
-  if (!existsSync(outputDir)) { mkdirSync(outputDir, { recursive: true }) }
+  if (!existsSync(outputDir)) { await mkdir(outputDir, { recursive: true }) }
 
-  stubOutputs(outputDir, false)
+  await stubOutputs(outputDir, false)
 
   return outputDir
 }
@@ -26,8 +27,8 @@ export async function stubOutputs(buildPath: string, force = false) {
   for (const [file, stubbingFunction] of Object.entries(files)) {
     const path = join(buildPath, file)
 
-    if (force && existsSync(path)) { rmSync(path) }
+    if (force && existsSync(path)) { await rm(path) }
 
-    if (!existsSync(path)) { writeFileSync(path, stubbingFunction ? await stubbingFunction({} as any) : '') }
+    if (!existsSync(path)) { await writeFile(path, stubbingFunction ? await stubbingFunction({} as any) : '') }
   }
 }

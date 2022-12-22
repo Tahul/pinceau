@@ -1,6 +1,6 @@
 import type { Dictionary, Options } from 'style-dictionary-esm'
 import StyleDictionary from 'style-dictionary-esm'
-import { generateTypes, resolveSchema as resolveUntypedSchema } from 'untyped'
+import { resolveSchema as resolveUntypedSchema } from 'untyped'
 import type { ColorSchemeModes } from '../types'
 import { walkTokens } from '../utils/data'
 import { astTypes, printAst } from '../utils/ast'
