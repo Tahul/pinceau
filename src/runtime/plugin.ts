@@ -34,7 +34,7 @@ export const plugin: Plugin = {
     ) as TokensFunctionOptions
 
     // Runtime debug setup
-    if (dev && (import.meta.hot || process.server)) { usePinceauRuntimeDebug(tokensHelperConfig) }
+    if (dev && (import.meta.hot || (process as any).server)) { usePinceauRuntimeDebug(tokensHelperConfig) }
 
     // Tokens helper
     const $tokens = createTokensHelper(
@@ -64,7 +64,7 @@ export const plugin: Plugin = {
       // Component LOC for debug in development
       // Only LOC variable passing should stay in bundle
       let loc: any
-      if (dev && (import.meta.hot || process.server)) {
+      if (dev && (import.meta.hot || (process as any).server)) {
         // @ts-ignore
         const { __file: file, __name: name } = instance.vnode.type
         loc = { file, name }
