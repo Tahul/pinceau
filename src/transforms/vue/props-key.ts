@@ -26,7 +26,6 @@ export function transformAddPropsKey(code: string, add = true) {
           }
           if ((path.node.callee as any).name === 'withDefaults') {
             hasWithDefaults = true
-            return false
           }
           return this.traverse(path)
         },
