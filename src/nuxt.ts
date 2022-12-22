@@ -37,7 +37,7 @@ const module: any = defineNuxtModule<PinceauOptions>({
     if (options.componentMetaSupport) {
       let cachedTokens
       // @ts-ignore
-      nuxt.hook('component-meta:transformers', (transformers) => {
+      nuxt.hook('component-meta:transformers', (transformers: any[]) => {
         transformers.push(
           (component, code) => {
             const flatPath = options.outputDir
