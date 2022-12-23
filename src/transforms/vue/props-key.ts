@@ -6,6 +6,7 @@ export function transformAddPropsKey(code: string, add = true) {
 
     let propsKey
     let hasDefineProps
+    let hasWithDefaults
 
     visitAst(
       ast,
@@ -23,6 +24,9 @@ export function transformAddPropsKey(code: string, add = true) {
             hasDefineProps = true
             return false
           }
+          if ((path.node.callee as any).name === 'withDefaults') {
+            hasWithDefaults = true
+          }
           return this.traverse(path)
         },
       },
@@ -31,10 +35,10 @@ export function transformAddPropsKey(code: string, add = true) {
     // No props key set; use Regex to add `const __$pProps = `
     if (add && hasDefineProps && !propsKey) {
       code = code.replace(
-        /defineProps/,
+        /defineProps|withDefaults\(defineProps/,
         () => {
           propsKey = '__$pProps'
-          return 'const __$pProps = defineProps'
+          return `const __$pProps = ${ hasWithDefaults ? "withDefaults(defineProps" : "defineProps" }`
         },
       )
     }
