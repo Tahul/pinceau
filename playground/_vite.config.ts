@@ -16,7 +16,9 @@ export default defineConfig({
     },
   },
   plugins: [
-    Inspect(),
+    Inspect({
+      dev: true,
+    }),
     Pinceau({
       configFileName: 'tokens.config',
       configOrPaths: [

@@ -7,6 +7,7 @@ import Block from './components/Block.vue'
 import BigButton from './components/BigButton.vue'
 import Alert from './components/Alert.vue'
 import ClientOnly from './theme/ClientOnly.vue'
+import Container from './components/Container.vue'
 import PlaygroundGrid from './components/PlaygroundGrid.vue'
 import NuxtLayout from './layouts/default.vue'
 import Index from './pages/index.vue'
@@ -38,6 +39,7 @@ app.component('Block', Block)
 app.component('BigButton', BigButton)
 app.component('Alert', Alert)
 app.component('ClientOnly', ClientOnly)
+app.component('Container', Container)
 app.component('PlaygroundGrid', PlaygroundGrid)
 app.component('NuxtLayout', NuxtLayout)
 app.component('NuxtPage', RouterView)

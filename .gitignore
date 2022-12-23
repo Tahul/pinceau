@@ -83,3 +83,6 @@ dist
 # Nuxt
 .nuxt
 .output
+
+# vite-plugin-inspect
+.vite-inspect

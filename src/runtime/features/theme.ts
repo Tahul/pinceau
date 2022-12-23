@@ -30,8 +30,8 @@ export function usePinceauThemeSheet(
   // Resolved theme object from the stylesheet.
   const theme = ref<any>(initialTheme || {})
 
-  // Local cache for each token CSSRule index.
-  const cache = {}
+  // Local cache for each mq CSSRules.
+  const cache: { [key: string]: any } = {}
 
   // Resolve stylesheet on boot
   resolveStylesheet()
@@ -77,24 +77,31 @@ export function usePinceauThemeSheet(
     // Hydrate cache with resolved values from sheet
     Object
       .entries(cssRules || {})
-      .filter(([_, rule]: any) => {
-        if (rule?.selectorText === '.pinceau-theme[--]') { return false }
-        if (rule?.type !== 4 && !rule?.cssText?.includes('--pinceau-mq')) { return false }
-        return true
-      })
       .forEach(
         ([_, rule]: any) => {
+          // Filter
+          if (rule?.type !== 4 && !rule?.cssText?.includes('--pinceau-mq')) { return false }
+          if (rule?.selectorText === '.pinceau-theme[--]') { return false }
+
+          // Get current theme from parsed cssRules
           let currentTheme = 'root'
 
-          rule
-            .cssText
+          // Regex-based hydration
+          rule.cssText
             .match(/--([\w-]+)\s*:\s*(.+?);/gm)
-            .map((matchedRule) => {
-              const rule = matchedRule.replace(';', '').split(': ')
-              if (rule[0] === '--pinceau-mq') { currentTheme = rule[1] }
-              return rule
+            .map((match) => {
+              const [variable, value] = match.replace(';', '').split(/:\s(.*)/s)
+              if (variable === '--pinceau-mq') {
+                currentTheme = value
+                // Assign cache rule references
+                if (!cache[value]) {
+                  const ruleReference = (Object.entries(rule?.cssRules || {}).find(([_, cssRule]: any) => cssRule?.cssText.includes(`--pinceau-mq: ${value}`)))?.[1]
+                  if (ruleReference) { cache[value] = ruleReference as CSSStyleRule }
+                }
+              }
+              return [variable, value]
             })
-            .forEach(([key, value]: any) => setThemeValue(key, value, currentTheme))
+            .forEach(([variable, value]: any) => setThemeValue(variable, value, currentTheme))
         },
       )
   }
@@ -131,15 +138,10 @@ export function usePinceauThemeSheet(
    * Update a specific token from its variable and a value.
    */
   function updateVariable(variable, value) {
-    // Find cached rule reference corresponding to the CSS variable
-    const cachedValue = cache[`--${variable}`]
-    // No cached value found
-    // TODO: Create new value if not found?
-    if (!cachedValue) { return }
     // Handle `mq` object passed as value
-    if (typeof value === 'object') { Object.entries(value).forEach(([mq, mqValue]) => cachedValue?.[mq]?.setProperty(`--${pathToVarName(variable)}`, mqValue)) }
+    if (typeof value === 'object') { Object.entries(value).forEach(([mq, mqValue]) => cache?.[mq]?.style.setProperty(`--${pathToVarName(variable)}`, mqValue)) }
     // Handle flat value
-    else { cachedValue?.root?.setProperty(`--${pathToVarName(variable)}`, value) }
+    else { cache?.root?.style.setProperty(`--${pathToVarName(variable)}`, value) }
   }
 
   /**

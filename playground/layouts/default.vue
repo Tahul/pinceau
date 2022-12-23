@@ -8,9 +8,11 @@ import ThemeSelect from '../components/ThemeSelect.vue'
     class="layout"
   >
     <header>
-      <span>
-        🖌&nbsp;Pinceau playground
-      </span>
+      <RouterLink to="/">
+        <span>
+          🖌&nbsp;Pinceau playground
+        </span>
+      </RouterLink>
 
       <div>
         <ThemeSelect />
@@ -93,7 +95,6 @@ html, body, #app, #__nuxt {
     flex: 1;
     height: 100%;
     width: 100%;
-    padding: 2rem;
     z-index: 50;
   }
 }

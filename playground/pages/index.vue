@@ -2,6 +2,10 @@
 import JSConfetti from 'js-confetti'
 import { onMounted, ref } from 'vue'
 
+const colors = ['pink', 'primary', 'red', 'blue']
+
+const rand = (items: any) => items[Math.floor(Math.random() * items.length)]
+
 let confettiInstance: JSConfetti
 const canvas = ref()
 onMounted(
@@ -25,7 +29,7 @@ const confettis = () => {
   <section>
     <canvas ref="canvas" />
     <PlaygroundGrid>
-      <BigButton :padded="{ initial: 'sm', lg: 'lg', xl: 'xl' }" color="pink" @click="confettis()" />
+      <BigButton :padded="{ initial: 'sm', lg: 'lg', xl: 'xl' }" :color="rand(colors)" @click="confettis()" />
     </PlaygroundGrid>
   </section>
 </template>
@@ -40,11 +44,6 @@ css({
   section: {
     overflow: 'hidden',
     position: 'relative',
-    '& > div': {
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '1rem',
-    }
   },
   canvas: {
     position: 'absolute',
