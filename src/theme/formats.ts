@@ -111,6 +111,8 @@ export const cssFull = (dictionary: Dictionary, options: Options, responsiveToke
   const { outputReferences } = options
   const { formattedVariables } = StyleDictionary.formatHelpers
 
+  let css = '.pinceau-theme[--] {}\n\n'
+
   // Create :root tokens list
   const initialTokens = []
   walkTokens(
@@ -123,7 +125,7 @@ export const cssFull = (dictionary: Dictionary, options: Options, responsiveToke
       return value
     },
   )
-  let css = `${selector} {\n  --pinceau-mq: root;\n${formattedVariables({ format: 'css', dictionary: { allTokens: initialTokens } as any, outputReferences })}\n}\n`
+  css += `@media {\n ${selector} {\n  --pinceau-mq: root;\n${formattedVariables({ format: 'css', dictionary: { allTokens: initialTokens } as any, outputReferences })}\n}\n}\n`
 
   // Create all responsive tokens rules
   Object.entries(responsiveTokens).forEach(
@@ -149,7 +151,7 @@ export const cssFull = (dictionary: Dictionary, options: Options, responsiveToke
       }
       else {
         // Use string selector
-        css += `\n${responsiveSelector} {\n  --pinceau-mq: ${key};\n${formattedResponsiveContent}\n}\n`
+        css += `@media {\n ${responsiveSelector} {\n  --pinceau-mq: ${key};\n${formattedResponsiveContent}\n}\n}\n`
       }
     },
   )

@@ -7,26 +7,17 @@ import { pathToVarName } from '../../utils/$tokens'
 /**
  * Find a sheet containing a particular CSS variable.
  */
-function findParentSheet(document, variableName) {
+function findParentSheet(document, search) {
   // Get all of the stylesheets in the document
   const stylesheets = document.styleSheets
 
   // Iterate through the stylesheets
   for (let i = 0; i < stylesheets.length; i++) {
     const stylesheet = stylesheets[i]
-    // Check if the CSS variable is present in the stylesheet
-    if (stylesheet.cssRules) {
-      for (let j = 0; j < stylesheet.cssRules.length; j++) {
-        const rule = stylesheet.cssRules[j]
-        if (rule?.style && rule.style.getPropertyValue(variableName) !== '') {
-          // If the CSS variable is present, return the stylesheet
-          return stylesheet
-        }
-      }
-    }
+    if (stylesheet?.ownerNode?.innerHTML?.includes(search)) { return stylesheet }
   }
 
-  // If the CSS variable is not present in any stylesheets, return null
+  // If the CSS text is not present in any stylesheets, return null
   return null
 }
 
@@ -69,7 +60,7 @@ export function usePinceauThemeSheet(
 
     if (global && global.document) {
       // Find local sheet with `--pinceau-mq` variables
-      const sheetElement = findParentSheet(global.document, '--pinceau-mq')
+      const sheetElement = findParentSheet(global.document, '.pinceau-theme[--]')
 
       // Assign local sheet reference
       sheet.value = sheetElement
@@ -84,22 +75,28 @@ export function usePinceauThemeSheet(
    */
   function hydrateStylesheet(cssRules: any) {
     // Hydrate cache with resolved values from sheet
-    Object.entries(cssRules || {}).forEach(
-      ([_, rule]: any) => {
-        const currentTheme = rule?.style?.getPropertyValue('--pinceau-mq')?.substring(1)
-        Object
-          .entries(rule.style || {})
-          .filter(([_, rule]) => rule !== undefined && rule !== '')
-          .forEach(
-            ([_, varRule]: any) => {
-              if (varRule === '--pinceau-mq') { return }
-              if (!cache[varRule]) { cache[varRule] = {} }
-              setThemeValue(varRule, rule, currentTheme)
-              cache[varRule][currentTheme] = rule.style
-            },
-          )
-      },
-    )
+    Object
+      .entries(cssRules || {})
+      .filter(([_, rule]: any) => {
+        if (rule?.selectorText === '.pinceau-theme[--]') { return false }
+        if (rule?.type !== 4 && !rule?.cssText?.includes('--pinceau-mq')) { return false }
+        return true
+      })
+      .forEach(
+        ([_, rule]: any) => {
+          let currentTheme = 'root'
+
+          rule
+            .cssText
+            .match(/--([\w-]+)\s*:\s*(.+?);/gm)
+            .map((matchedRule) => {
+              const rule = matchedRule.replace(';', '').split(': ')
+              if (rule[0] === '--pinceau-mq') { currentTheme = rule[1] }
+              return rule
+            })
+            .forEach(([key, value]: any) => setThemeValue(key, value, currentTheme))
+        },
+      )
   }
 
   /**
@@ -122,10 +119,9 @@ export function usePinceauThemeSheet(
   /**
    * Set the theme value from a CSS var key and a CSSRule|string.
    */
-  function setThemeValue(key: string, rule: any, mediaQuery = 'root') {
+  function setThemeValue(key: string, value: any, mediaQuery = 'root') {
     const path = [...key.substring(2).split('-')]
     const variable = `var(${key})`
-    const value = rule?.style.getPropertyValue(key).substring(1) || rule
     const existingValue = mediaQuery !== 'root' ? get(theme.value, path) : undefined
     if (existingValue?.value) { set(theme.value, path, { variable, value: { initial: existingValue.value, [mediaQuery]: value } }) }
     else { set(theme.value, path, { value, variable }) }
