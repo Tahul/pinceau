@@ -165,16 +165,19 @@ const module: any = defineNuxtModule<PinceauOptions>({
             'import { useState } from \'#app\'',
             'import { plugin as pinceau } from \'pinceau/runtime\'',
             'import utils from \'#build/pinceau/utils\'',
+            'import theme from \'#build/pinceau/index\'',
             '',
             `export default defineNuxtPlugin(async (nuxtApp) => {
-              let theme = {}
+              // let theme = {}
 
               // Get full theme server-side
               // This theme will be resolved from the stylesheet on client-side
+              /* TODO: Fix hydration strategy for built theme with Nuxt
               if (process.server) {
                 const builtTheme = await import('#build/pinceau')
                 theme = builtTheme?.theme || builtTheme
               }
+              */
 
               // Setup plugin
               nuxtApp.vueApp.use(pinceau, { colorSchemeMode: '${options.colorSchemeMode}', theme, utils })
