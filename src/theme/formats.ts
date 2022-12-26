@@ -79,7 +79,7 @@ export async function schemaFull(tokensObject) {
 
   const schema = await resolveUntypedSchema({ tokensConfig: flattenedTokens })
 
-  let result = `export const schema = ${JSON.stringify({ properties: schema.properties, default: schema.default }, null, 2)} as const\n\n`
+  let result = `export const schema = ${JSON.stringify({ properties: (schema.properties as any).tokensConfig, default: (schema.default as any).tokensConfig }, null, 2)} as const\n\n`
 
   result += 'export const GeneratedPinceauThemeSchema = typeof schema\n\n'
 
