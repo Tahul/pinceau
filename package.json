@@ -1,6 +1,6 @@
 {
   "name": "pinceau",
-  "version": "0.9.11",
+  "version": "0.9.12",
   "packageManager": "pnpm@7.1.1",
   "description": "A CSS-in-JS framework built to feel like a native Vue feature.",
   "license": "MIT",
