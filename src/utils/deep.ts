@@ -9,6 +9,7 @@ export function deepDelete(obj: any, newObj: any) {
       deepDelete(obj[key], newObj[key])
     }
   }
+  return obj
 }
 
 export function deepAssign(obj: any, newObj: any) {
@@ -21,4 +22,5 @@ export function deepAssign(obj: any, newObj: any) {
       obj[key] = val
     }
   }
+  return obj
 }

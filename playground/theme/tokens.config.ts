@@ -225,8 +225,8 @@ export default defineTheme({
     },
     stateColors: (value: string) => {
       return {
-        color: `{color.${value}.500} !important`,
-        backgroundColor: `{color.${value}.200} !important`,
+        color: `{color.${value}.500}`,
+        backgroundColor: `{color.${value}.200}`,
       }
     },
   },

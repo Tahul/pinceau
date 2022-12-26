@@ -1,5 +1,4 @@
 import { ref } from 'vue'
-import { deepAssign, deepDelete } from '../../utils/deep'
 import type { ColorSchemeModes, PinceauContext, PinceauUidTypes, TokensFunction } from '../../types'
 import { resolveCssProperty } from '../../utils/css'
 import { stringify as _stringify } from '../../utils/stringify'
@@ -8,33 +7,24 @@ const HYDRATION_SELECTOR = '.phy[--]'
 
 export function usePinceauRuntimeSheet(
   $tokens: TokensFunction,
-  utils: any = {},
+  initialUtils: any = {},
   colorSchemeMode: ColorSchemeModes,
   appId?: string,
 ) {
-  // Local runtime stylesheet reference.
+  // Local runtime stylesheet reference
   const sheet = ref<CSSStyleSheet>()
 
-  // Local cache for each token CSSRule index.
-  const cache = {}
+  // Local utils reference
+  const utils = ref<{ [key: string]: any }>(initialUtils)
 
-  // Handle dev HMR
-  if (import.meta.hot) {
-    // Deep update theme from new definition
-    import.meta.hot.on(
-      'pinceau:themeUpdate',
-      (newTheme) => {
-        deepAssign(utils, newTheme.utils)
-        deepDelete(utils, newTheme.utils)
-      },
-    )
-  }
+  // Local cache for each token CSSRule index
+  const cache = {}
 
   /**
    * Stringify CSS declaration.
    */
   function stringify(decl: any, loc?: any) {
-    return _stringify(decl, (property: any, value: any, style: any, selectors: any) => resolveCssProperty(property, value, style, selectors, { $tokens, utils, options: { colorSchemeMode } } as PinceauContext, loc))
+    return _stringify(decl, (property: any, value: any, style: any, selectors: any) => resolveCssProperty(property, value, style, selectors, { $tokens, utils: utils.value, options: { colorSchemeMode } } as PinceauContext, loc))
   }
 
   /**
@@ -53,11 +43,11 @@ export function usePinceauRuntimeSheet(
       const doc = global.document
 
       // Get hydratable stylesheet
-      hydratableSheet = doc.querySelector(`style#pinceau-hydratable${appId ? `-${appId}` : ''}`) as HTMLStyleElement | null
+      hydratableSheet = doc.querySelector(`style#pinceau-runtime-hydratable${appId ? `-${appId}` : ''}`) as HTMLStyleElement | null
 
       // Create runtime stylesheet
       const styleNode = doc.createElement('style')
-      styleNode.id = `pinceau${appId ? `-${appId}` : ''}`
+      styleNode.id = `pinceau-runtime${appId ? `-${appId}` : ''}`
       styleNode.type = 'text/css'
 
       style = doc.head.appendChild(styleNode)

@@ -3,10 +3,6 @@
     <Container>
       <NuxtPage />
     </Container>
-
-    <RouterLink to="/content">
-      Test
-    </RouterLink>
   </NuxtLayout>
 </template>
 

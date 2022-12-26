@@ -86,7 +86,7 @@
     "test:build": "pnpm run prepare && pnpm run build:play && pnpm run build:play:nuxt",
     "test:nuxt": "(cd test/fixtures/nuxt && npx nuxi dev)",
     "test:vite": "(cd test/fixtures/vite && npx vite dev)",
-    "prepare": "pnpm run build && npm -C playground run prepare && npm -C docs run prepare"
+    "prepare": "npm -C playground run prepare && pnpm run build"
   },
   "dependencies": {
     "@unocss/reset": "^0.48.0",

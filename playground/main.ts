@@ -13,9 +13,8 @@ import NuxtLayout from './layouts/default.vue'
 import Index from './pages/index.vue'
 
 import '@unocss/reset/tailwind.css'
-import utils from '#pinceau/utils'
-import 'pinceau.css'
 import './main.css'
+import utils from '#pinceau/utils'
 
 const app = createApp(App)
 

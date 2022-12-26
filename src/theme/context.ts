@@ -61,8 +61,8 @@ export const createContext = <UserOptions extends PinceauOptions = PinceauOption
           type: 'custom',
           event: 'pinceau:themeUpdate',
           data: {
+            css: builtTheme.outputs.css,
             theme: flattenTokens(tokens),
-            utils: getUtils(),
           },
         })
       }

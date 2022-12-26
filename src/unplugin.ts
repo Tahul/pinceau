@@ -72,6 +72,13 @@ export default createUnplugin<PinceauOptions>(
             return replaceStyleTs(code, ctx.file) || code
           }
         },
+        transformIndexHtml: {
+          order: 'post',
+          handler(html) {
+            // Vite replace Pinceau theme injection by actual content of `pinceau.css`
+            return html.replace('<pinceau />', `<style id="pinceau-theme">${ctx.getOutput('/__pinceau_css.css')}</style>`)
+          },
+        },
       },
 
       transformInclude(id) {

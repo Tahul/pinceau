@@ -1,25 +1,8 @@
 import { computed, ref } from 'vue'
 import type { PermissiveConfigType, PinceauTheme } from '../../types'
 import { get, normalizeConfig, set, walkTokens } from '../../utils/data'
-import { deepAssign, deepDelete } from '../../utils/deep'
+import { deepAssign } from '../../utils/deep'
 import { pathToVarName } from '../../utils/$tokens'
-
-/**
- * Find a sheet containing a particular CSS variable.
- */
-function findParentSheet(document, search) {
-  // Get all of the stylesheets in the document
-  const stylesheets = document.styleSheets
-
-  // Iterate through the stylesheets
-  for (let i = 0; i < stylesheets.length; i++) {
-    const stylesheet = stylesheets[i]
-    if (stylesheet?.ownerNode?.innerHTML?.includes(search)) { return stylesheet }
-  }
-
-  // If the CSS text is not present in any stylesheets, return null
-  return null
-}
 
 export function usePinceauThemeSheet(
   initialTheme: any,
@@ -31,7 +14,7 @@ export function usePinceauThemeSheet(
   const theme = ref<any>(initialTheme || {})
 
   // Local cache for each mq CSSRules.
-  const cache: { [key: string]: any } = {}
+  let cache: { [key: string]: any } = {}
 
   // Resolve stylesheet on boot
   resolveStylesheet()
@@ -42,12 +25,17 @@ export function usePinceauThemeSheet(
     import.meta.hot.on(
       'pinceau:themeUpdate',
       (newTheme) => {
-        deepAssign(theme.value, newTheme.theme)
-        deepDelete(theme.value, newTheme.theme)
+        // Swap stylesheet
+        const styleNode = document.createElement('style')
+        styleNode.id = 'pinceau-theme'
+        styleNode.textContent = newTheme.css
+        sheet.value.ownerNode.replaceWith(styleNode)
+        sheet.value = styleNode.sheet
+
+        // Resolve stylesheet
+        hydrateStylesheet(sheet.value.cssRules)
       },
     )
-    // Update local stylesheet reference
-    import.meta.hot.on('vite:afterUpdate', ({ updates }) => (updates[0]?.path?.includes('/__pinceau_css.css') || updates[0]?.path?.includes('pinceau.css')) && resolveStylesheet())
   }
 
   /**
@@ -60,13 +48,13 @@ export function usePinceauThemeSheet(
 
     if (global && global.document) {
       // Find local sheet with `--pinceau-mq` variables
-      const sheetElement = findParentSheet(global.document, '.pinceau-theme[--]')
+      const sheetElement = document.querySelector('#pinceau-theme') as HTMLStyleElement
 
       // Assign local sheet reference
-      sheet.value = sheetElement
+      sheet.value = sheetElement?.sheet
 
       // Hydrate theme object with resolved sheet
-      hydrateStylesheet(sheetElement?.cssRules)
+      if (sheet.value) { hydrateStylesheet(sheet.value?.cssRules) }
     }
   }
 
@@ -74,6 +62,9 @@ export function usePinceauThemeSheet(
    * Hydrate theme object from a CSSRuleList object coming from the theme stylesheet.
    */
   function hydrateStylesheet(cssRules: any) {
+    // Reset cache on hydration
+    cache = {}
+
     // Hydrate cache with resolved values from sheet
     Object
       .entries(cssRules || {})
@@ -81,7 +72,6 @@ export function usePinceauThemeSheet(
         ([_, rule]: any) => {
           // Filter
           if (rule?.type !== 4 && !rule?.cssText?.includes('--pinceau-mq')) { return false }
-          if (rule?.selectorText === '.pinceau-theme[--]') { return false }
 
           // Get current theme from parsed cssRules
           let currentTheme = 'root'
