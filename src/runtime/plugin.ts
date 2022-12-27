@@ -97,7 +97,10 @@ export const plugin: Plugin = {
 
     // Install global variables, expose `runtimeSheet.toString()` for SSR
     app.config.globalProperties.$pinceauRuntime = usePinceauRuntime
+    app.config.globalProperties.$pinceauTheme = themeSheet
     app.config.globalProperties.$pinceauSsr = { get: () => runtimeSheet.toString() }
+
+    // Inject/provide for composables access
     app.provide('pinceauRuntime', usePinceauRuntime)
     app.provide('pinceauTheme', themeSheet)
   },

@@ -1,3 +1,4 @@
+import type { usePinceauThemeSheet } from '../runtime/features/theme'
 import type { DtFunction } from './dt'
 import type { ConfigOrPaths } from './context'
 import type { ColorSchemeModes } from './css'
@@ -116,6 +117,8 @@ declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
     $dt: DtFunction
     $pinceau: string
+    $pinceauTheme: ReturnType<typeof usePinceauThemeSheet>
+    $pinceauRuntime: any
   }
 }
 
