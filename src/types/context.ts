@@ -1,10 +1,10 @@
 import type { ViteDevServer } from 'vite'
 import type { PinceauTheme } from './theme'
 import type { TokensFunction } from './dt'
-import type { LoadConfigResult } from './config'
+import type { ConfigLayer, LoadConfigResult } from './config'
 import type { PinceauOptions } from './'
 
-export type ConfigOrPaths = PinceauTheme | string | string[] | undefined
+export type ConfigOrPaths = (PinceauTheme | string | ConfigLayer)[]
 
 export interface PinceauContext<UserOptions extends PinceauOptions = PinceauOptions> extends PinceauConfigContext<UserOptions>, PinceauVirtualContext {
   env: 'prod' | 'dev'

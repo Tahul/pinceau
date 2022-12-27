@@ -8,9 +8,10 @@ export interface LoadConfigResult<T> {
   sources: string[]
 }
 
-export type ConfigLayer = string | {
+export interface ConfigLayer {
   cwd?: string
   configFileName?: string
+  tokens?: any
 }
 
 export interface ResolvedConfigLayer<T> {

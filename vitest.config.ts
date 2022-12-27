@@ -28,7 +28,7 @@ export default defineConfig({
     }),
     Unplugin({
       configFileName: 'tokens.config',
-      configOrPaths: [
+      configLayers: [
         resolve(__dirname, './playground/theme'),
       ],
     }),

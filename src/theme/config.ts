@@ -1,4 +1,5 @@
 import { existsSync } from 'fs'
+import fsp from 'node:fs/promises'
 import { resolve } from 'pathe'
 import jiti from 'jiti'
 import type { ViteDevServer } from 'vite'
@@ -7,7 +8,7 @@ import { message } from '../utils/logger'
 import type { ConfigLayer, LoadConfigResult, PinceauConfigContext, PinceauOptions, PinceauTheme, ResolvedConfigLayer } from '../types'
 import { outputFileNames } from '../utils/regexes'
 
-const extensions = ['.js', '.ts', '.mjs', '.cjs']
+const extensions = ['.js', '.ts', '.mjs', '.cjs', '.json']
 
 export function usePinceauConfig<UserOptions extends PinceauOptions = PinceauOptions>(
   options: UserOptions,
@@ -95,42 +96,33 @@ export function usePinceauConfig<UserOptions extends PinceauOptions = PinceauOpt
 export async function loadConfig<U extends PinceauTheme>(
   {
     cwd = process.cwd(),
-    configOrPaths = [cwd],
+    configLayers = [cwd],
     configFileName = 'pinceau.config',
   }: PinceauOptions,
 ): Promise<LoadConfigResult<U>> {
-  let _sources: string[] = []
-  let inlineConfig = {} as U
-
-  if (Array.isArray(configOrPaths)) { _sources = configOrPaths }
-
-  if (typeof configOrPaths === 'string') { _sources = [configOrPaths] }
-
-  // Inline config; overwrites any other configuration
-  if (Object.prototype.toString.call(configOrPaths) === '[object Object]') {
-    inlineConfig = configOrPaths as U
-    return { config: inlineConfig, sources: [] }
-  }
-
   let sources: ConfigLayer[] = [
-    {
-      cwd,
-      configFileName,
-    },
-    ..._sources.reduce(
-      (acc: ConfigLayer[], layerOrPath: string | ConfigLayer) => {
-        if (typeof layerOrPath === 'object') {
+    ...configLayers.reduce(
+      (acc: ConfigLayer[], layerOrPath: PinceauTheme | string | ConfigLayer) => {
+        // Check if layer passed as-is
+        if (typeof layerOrPath === 'object' && ((layerOrPath as ConfigLayer)?.cwd || (layerOrPath as ConfigLayer)?.configFileName || (layerOrPath as ConfigLayer)?.tokens)) {
           acc.push(layerOrPath as ConfigLayer)
           return acc
         }
 
-        // process.cwd() already gets scanned by default
-        if (resolve(cwd, layerOrPath) === resolve(cwd)) { return acc }
+        // Check if tokens passed as straight object in the array
+        if (typeof layerOrPath === 'object') {
+          acc.push({ tokens: layerOrPath })
+          return acc
+        }
 
-        acc.push({
-          cwd: layerOrPath,
-          configFileName,
-        })
+        // Check if the config layer path passed as string in the array
+        if (typeof layerOrPath === 'string') {
+          acc.push({
+            cwd: layerOrPath,
+            configFileName,
+          })
+          return acc
+        }
 
         return acc
       },
@@ -139,29 +131,9 @@ export async function loadConfig<U extends PinceauTheme>(
   ].reverse()
 
   // Dedupe sources
-  sources = sources.reduce<ConfigLayer[]>(
-    (acc, source) => {
-      let searchable: string
-      if (typeof source === 'string') {
-        searchable = source
-      }
-      else {
-        searchable = source?.cwd || ''
-      }
+  sources = [...new Set(sources)]
 
-      if (!acc.find((s: any) => s.cwd === searchable)) {
-        acc.push({
-          cwd: searchable,
-          configFileName,
-        })
-      }
-
-      return acc
-    },
-    [],
-  )
-
-  function resolveConfig<U extends PinceauTheme>(layer: ConfigLayer): ResolvedConfigLayer<U> {
+  async function resolveConfig<U extends PinceauTheme>(layer: ConfigLayer): Promise<ResolvedConfigLayer<U>> {
     const empty = (path = undefined) => ({ path, config: {} as any })
 
     let path = ''
@@ -178,9 +150,11 @@ export async function loadConfig<U extends PinceauTheme>(
     }
 
     let filePath = ''
-    extensions.some((ext) => {
-      if (existsSync(path + ext)) {
-        filePath = path + ext
+    let ext
+    extensions.some((_ext) => {
+      if (existsSync(path + _ext)) {
+        filePath = path + _ext
+        ext = _ext
         return true
       }
       return false
@@ -189,7 +163,7 @@ export async function loadConfig<U extends PinceauTheme>(
     if (!filePath) { return empty() }
 
     try {
-      return loadConfigFile(filePath) as ResolvedConfigLayer<U>
+      return await loadConfigFile({ path: filePath, ext }) as ResolvedConfigLayer<U>
     }
     catch (e) {
       message('CONFIG_RESOLVE_ERROR', [filePath, e])
@@ -203,7 +177,7 @@ export async function loadConfig<U extends PinceauTheme>(
   }
 
   for (const layer of sources) {
-    const { path, config } = resolveConfig(layer)
+    const { path, config } = await resolveConfig(layer)
 
     if (path) {
       result.sources.push(path)
@@ -217,7 +191,15 @@ export async function loadConfig<U extends PinceauTheme>(
   return result
 }
 
-function loadConfigFile(path: string) {
+async function loadConfigFile({ path, ext }: { path: string; ext: string }) {
+  if (ext === '.json') {
+    const config = JSON.parse(await fsp.readFile(path, 'utf-8'))
+    return {
+      config,
+      path,
+    }
+  }
+
   return {
     config: jiti(path, {
       interopDefault: true,

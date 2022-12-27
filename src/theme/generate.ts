@@ -1,5 +1,8 @@
+import fsp from 'node:fs/promises'
+import fs from 'node:fs'
 import type { Core as Instance } from 'style-dictionary-esm'
 import StyleDictionary from 'style-dictionary-esm'
+import { join } from 'pathe'
 import { flattenTokens } from '../utils/theme'
 import type { PinceauOptions, ThemeGenerationOutput } from '../types'
 import { message } from '../utils/logger'
@@ -127,8 +130,9 @@ export async function generateTheme(tokens: any, { outputDir: buildPath, colorSc
   styleDictionary.registerFormat({
     name: 'pinceau/css',
     formatter({ dictionary, options }) {
-      outputs.css = cssFull(dictionary, options, responsiveTokens, colorSchemeMode)
-      return outputs.css
+      const result = cssFull(dictionary, options, responsiveTokens, colorSchemeMode)
+      outputs.css = result.replace(/\n|\s\s/gm, '')
+      return result
     },
   })
 
@@ -149,24 +153,6 @@ export async function generateTheme(tokens: any, { outputDir: buildPath, colorSc
       return outputs.ts
     },
   })
-
-  // schema.ts ; enabled only when Studio detected
-  if (studio) {
-    const schema = await schemaFull(tokens)
-
-    files.push({
-      destination: 'schema.ts',
-      format: 'pinceau/schema',
-    })
-
-    styleDictionary.registerFormat({
-      name: 'pinceau/schema',
-      formatter() {
-        outputs.schema = schema
-        return schema
-      },
-    })
-  }
 
   styleDictionary = styleDictionary.extend({
     tokens: tokens as any,
@@ -208,6 +194,19 @@ export async function generateTheme(tokens: any, { outputDir: buildPath, colorSc
         styleDictionary.buildAllPlatforms()
       },
     )
+
+    // schema.ts ; enabled only when Studio detected
+    if (studio) {
+      const schema = await schemaFull(result.tokens)
+
+      const schemaPath = join(buildPath, 'schema.ts')
+
+      if (fs.existsSync(schemaPath)) { await fsp.unlink(schemaPath) }
+
+      await fsp.writeFile(schemaPath, schema, 'utf-8')
+
+      result.outputs.schema = schema
+    }
   }
   catch (e) {
     message('CONFIG_BUILD_ERROR', [e])

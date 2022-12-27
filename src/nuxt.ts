@@ -3,7 +3,7 @@ import { join, resolve } from 'pathe'
 import glob from 'fast-glob'
 import { addPlugin, addPluginTemplate, addPrerenderRoutes, createResolver, defineNuxtModule, resolveAlias, resolveModule } from '@nuxt/kit'
 import createJITI from 'jiti'
-import type { PinceauOptions } from './types'
+import type { ConfigLayer, PinceauOptions } from './types'
 import pinceau, { defaultOptions } from './unplugin'
 import { prepareOutputDir } from './theme/output'
 import { useDebugPerformance } from './utils/debug'
@@ -108,15 +108,17 @@ const module: any = defineNuxtModule<PinceauOptions>({
 
     // Support for `extends` feature
     // Will scan each layer for a config file
-    const layerPaths = nuxt.options._layers.reduce(
-      (acc: string[], layer: any) => {
-        if (layer?.cwd) {
-          acc.push(layer?.cwd)
-        }
-        return acc
-      },
-      [],
-    )
+    options.configLayers = [
+      ...options?.configLayers,
+      ...nuxt.options._layers.reduce(
+        (acc: ConfigLayer[], layer: any) => {
+          if (typeof layer === 'string') { acc.push({ cwd: layer, configFileName: options.configFileName }) }
+          if (layer?.cwd) { acc.push({ cwd: layer?.cwd, configFileName: options.configFileName }) }
+          return acc
+        },
+        [],
+      ),
+    ]
 
     // Setup Nitro studio plugin
     if (options.studio) {
@@ -125,33 +127,27 @@ const module: any = defineNuxtModule<PinceauOptions>({
       addPrerenderRoutes('/__pinceau_tokens_config.json')
       addPrerenderRoutes('/__pinceau_tokens_schema.json')
 
-      // Support custom ~/.studio/tokens.config.json
-      nuxt.hook('app:resolve', () => {
-        const studioAppConfigPath = resolveAlias('~/.studio/tokens.config.json')
-        if (existsSync(studioAppConfigPath)) { layerPaths.unshift(studioAppConfigPath) }
-      })
+      const studioAppConfigPath = resolveAlias('~/.studio')
+      if (existsSync(studioAppConfigPath)) { options.configLayers.unshift({ cwd: studioAppConfigPath, configFileName: 'tokens.config' }) }
     }
-
-    // Push layer paths into configOrPaths options
-    layerPaths.forEach(
-      (path: string) => {
-        if (!(options?.configOrPaths as string[]).includes(path)) {
-          (options.configOrPaths as string[]).push(path)
-        }
-      },
-    )
 
     // Set `cwd` from Nuxt rootDir
     options.cwd = nuxt.options.rootDir
 
     // Automatically inject all components in layers into includes
-    for (const layer of layerPaths) {
-      options.includes?.push(
-        ...await glob(
-          join(layer, '**/*.vue'),
-          { followSymbolicLinks: options.followSymbolicLinks },
-        ),
-      )
+    for (const layer of options.configLayers) {
+      const layerPath = typeof layer === 'string'
+        ? layer
+        : (layer as any)?.cwd
+
+      if (layerPath) {
+        options.includes?.push(
+          ...await glob(
+            join(layerPath, '**/*.vue'),
+            { followSymbolicLinks: options.followSymbolicLinks },
+          ),
+        )
+      }
     }
 
     addPluginTemplate({

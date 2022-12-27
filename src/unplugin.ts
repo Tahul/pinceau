@@ -13,7 +13,7 @@ import { outputFileNames } from './utils'
 
 export const defaultOptions: PinceauOptions = {
   configFileName: 'pinceau.config',
-  configOrPaths: [process.cwd()],
+  configLayers: [],
   configResolved: (_) => { },
   cwd: process.cwd(),
   outputDir: join(process.cwd(), 'node_modules/.vite/pinceau/'),

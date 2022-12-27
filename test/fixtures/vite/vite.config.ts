@@ -8,7 +8,7 @@ export default defineConfig({
   plugins: [
     Unplugin({
       configFileName: 'tokens.config',
-      configOrPaths: [
+      configLayers: [
         resolve(__dirname, '../theme'),
       ],
       colorSchemeMode: 'media',

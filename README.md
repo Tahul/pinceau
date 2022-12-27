@@ -78,7 +78,7 @@ export interface PinceauOptions {
   /**
    * The path of your configuration file.
    */
-  configOrPaths?: ConfigOrPaths
+  configLayers?: ConfigOrPaths
   /**
    * The name of the style configuration file
    *

@@ -25,7 +25,7 @@ export interface PinceauOptions {
   /**
    * The path of your configuration file.
    */
-  configOrPaths?: ConfigOrPaths
+  configLayers?: ConfigOrPaths
   /**
    * The path of your configuration file.
    *

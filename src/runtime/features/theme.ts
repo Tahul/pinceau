@@ -107,7 +107,7 @@ export function usePinceauThemeSheet(
     const config = normalizeConfig(value || {}, mqKeys)
 
     // Deeply assign new keys from partial config object
-    deepAssign(theme.value, config)
+    theme.value = deepAssign(theme.value, config)
 
     // Walk tokens inside partial theme object and assign them to local stylesheet
     walkTokens(config, (value, _, paths) => updateVariable(pathToVarName(paths.join('.')), value.value))

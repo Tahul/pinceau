@@ -75,9 +75,7 @@ export function tsFull(tokensObject: any) {
  * Nuxt Studio schema support
  */
 export async function schemaFull(tokensObject) {
-  const flattenedTokens = flattenTokens(tokensObject)
-
-  const schema = await resolveUntypedSchema({ tokensConfig: flattenedTokens })
+  const schema = await resolveUntypedSchema({ tokensConfig: tokensObject })
 
   let result = `export const schema = ${JSON.stringify({ properties: (schema.properties as any).tokensConfig, default: (schema.default as any).tokensConfig }, null, 2)} as const\n\n`
 
@@ -154,5 +152,5 @@ export const cssFull = (dictionary: Dictionary, options: Options, responsiveToke
     },
   )
 
-  return css.replace(/\n|\s\s/gm, '')
+  return css
 }

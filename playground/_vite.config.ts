@@ -21,7 +21,7 @@ export default defineConfig({
     }),
     Pinceau({
       configFileName: 'tokens.config',
-      configOrPaths: [
+      configLayers: [
         resolve(__dirname, 'theme'),
       ],
       debug: true,
