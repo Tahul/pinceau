@@ -90,10 +90,10 @@ export function usePinceauThemeSheet(
                   const ruleReference = (Object.entries(rule?.cssRules || {}).find(([_, cssRule]: any) => cssRule?.cssText.includes(`--pinceau-mq: ${value}`)))?.[1]
                   if (ruleReference) { cache[value] = ruleReference as CSSStyleRule }
                 }
-                return
               }
-
-              setThemeValue(variable, value, currentTheme)
+              else {
+                setThemeValue(variable, value, currentTheme)
+              }
             })
         },
       )
