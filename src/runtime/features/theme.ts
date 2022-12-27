@@ -1,7 +1,6 @@
 import { computed, ref } from 'vue'
 import type { PermissiveConfigType, PinceauTheme } from '../../types'
 import { get, normalizeConfig, set, walkTokens } from '../../utils/data'
-import { deepAssign } from '../../utils/deep'
 import { pathToVarName } from '../../utils/$tokens'
 
 export function usePinceauThemeSheet(
@@ -109,11 +108,11 @@ export function usePinceauThemeSheet(
     // Turn partial configuration object into a valid design tokens configuration object
     const config = normalizeConfig(value || {}, mqKeys)
 
-    // Deeply assign new keys from partial config object
-    theme.value = deepAssign(theme.value, config)
-
     // Walk tokens inside partial theme object and assign them to local stylesheet
-    walkTokens(config, (value, _, paths) => updateVariable(pathToVarName(paths.join('.')), value.value))
+    walkTokens(config, (value, _, paths) => {
+      set(theme.value, paths, value)
+      updateVariable(pathToVarName(paths.join('.')), value.value)
+    })
   }
 
   /**
