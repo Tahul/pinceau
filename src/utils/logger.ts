@@ -67,6 +67,12 @@ const messages = {
     logger.log('Token paths can not contains the following characters: `.` or `-`\n')
     logger.log('These paths keys also has to only contains characters supported in CSS stylesheets.\n')
   },
+  SCHEMA_BUILD_ERROR: (debugLevel, _) => {
+    if (debugLevel) {
+      logger.warn('Pinceau could not build your schema.ts file!')
+      logger.log('Design tokens editor might be hidden from Nuxt Studio.')
+    }
+  },
 } as const
 
 type Messages = typeof messages

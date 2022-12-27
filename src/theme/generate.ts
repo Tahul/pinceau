@@ -197,15 +197,20 @@ export async function generateTheme(tokens: any, { outputDir: buildPath, colorSc
 
     // schema.ts ; enabled only when Studio detected
     if (studio) {
-      const schema = await schemaFull(result.tokens)
+      try {
+        const schema = await schemaFull(result.tokens)
 
-      const schemaPath = join(buildPath, 'schema.ts')
+        const schemaPath = join(buildPath, 'schema.ts')
 
-      if (fs.existsSync(schemaPath)) { await fsp.unlink(schemaPath) }
+        if (fs.existsSync(schemaPath)) { await fsp.unlink(schemaPath) }
 
-      await fsp.writeFile(schemaPath, schema, 'utf-8')
+        await fsp.writeFile(schemaPath, schema, 'utf-8')
 
-      result.outputs.schema = schema
+        result.outputs.schema = schema
+      }
+      catch (e) {
+        message('SCHEMA_BUILD_ERROR', [e])
+      }
     }
   }
   catch (e) {

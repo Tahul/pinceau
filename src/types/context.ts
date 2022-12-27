@@ -4,7 +4,7 @@ import type { TokensFunction } from './dt'
 import type { ConfigLayer, LoadConfigResult } from './config'
 import type { PinceauOptions } from './'
 
-export type ConfigOrPaths = (PinceauTheme | string | ConfigLayer)[]
+export type ConfigOrPaths = (string | PinceauTheme | ConfigLayer)[]
 
 export interface PinceauContext<UserOptions extends PinceauOptions = PinceauOptions> extends PinceauConfigContext<UserOptions>, PinceauVirtualContext {
   env: 'prod' | 'dev'
