@@ -79,8 +79,10 @@ export function usePinceauThemeSheet(
           // Regex-based hydration
           rule.cssText
             .match(/--([\w-]+)\s*:\s*(.+?);/gm)
-            .map((match) => {
+            .forEach((match) => {
               const [variable, value] = match.replace(';', '').split(/:\s(.*)/s)
+
+              // Support responsive tokens
               if (variable === '--pinceau-mq') {
                 currentTheme = value
                 // Assign cache rule references
@@ -88,10 +90,11 @@ export function usePinceauThemeSheet(
                   const ruleReference = (Object.entries(rule?.cssRules || {}).find(([_, cssRule]: any) => cssRule?.cssText.includes(`--pinceau-mq: ${value}`)))?.[1]
                   if (ruleReference) { cache[value] = ruleReference as CSSStyleRule }
                 }
+                return
               }
-              return [variable, value]
+
+              setThemeValue(variable, value, currentTheme)
             })
-            .forEach(([variable, value]: any) => setThemeValue(variable, value, currentTheme))
         },
       )
   }
