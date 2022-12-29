@@ -1,3 +1,4 @@
 [build]
+  base = "./"
   command = "pnpm run build:docs"
-  publish = "docs/.output/public"
+  publish = "./docs/.output/public"
