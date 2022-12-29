@@ -1,7 +1,11 @@
 {
   "name": "pinceau",
   "version": "0.10.0",
-  "packageManager": "pnpm@7.1.1",
+  "packageManager": "pnpm@7.20.0",
+  "workspaces": [
+    "docs",
+    "playground"
+  ],
   "description": "A CSS-in-JS framework built to feel like a native Vue feature.",
   "license": "MIT",
   "homepage": "https://github.com/Tahul/pinceau#readme",
@@ -86,7 +90,7 @@
     "test:build": "pnpm run prepare && pnpm run build:play && pnpm run build:play:nuxt",
     "test:nuxt": "(cd test/fixtures/nuxt && npx nuxi dev)",
     "test:vite": "(cd test/fixtures/vite && npx vite dev)",
-    "prepare": "npm -C playground run prepare && pnpm run build"
+    "prepare": "npm -C playground run prepare && npm -C docs run prepare && pnpm run build"
   },
   "dependencies": {
     "@unocss/reset": "^0.48.0",
@@ -127,9 +131,9 @@
     "nuxi": "^3.0.0",
     "nuxt": "^3.0.0",
     "playwright": "^1.29.1",
-    "release-it": "^15.5.1",
+    "release-it": "^15.6.0",
     "rimraf": "^3.0.2",
-    "rollup": "^3.8.1",
+    "rollup": "^3.9.0",
     "typescript": "^4.9.4",
     "vite": "^4.0.3",
     "vite-plugin-inspect": "^0.7.11",

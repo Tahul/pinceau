@@ -36,9 +36,9 @@ importers:
       postcss-dark-theme-class: 0.7.3
       postcss-nested: ^6.0.0
       recast: ^0.22.0
-      release-it: ^15.5.1
+      release-it: ^15.6.0
       rimraf: ^3.0.2
-      rollup: ^3.8.1
+      rollup: ^3.9.0
       scule: ^1.0.0
       style-dictionary-esm: ^1.0.15
       typescript: ^4.9.4
@@ -101,11 +101,9 @@ importers:
     specifiers:
       '@nuxt-themes/docus': latest
       nuxt: ^3.0.0
-      pinceau: '*'
     devDependencies:
       '@nuxt-themes/docus': 1.2.5_nuxt@3.0.0
       nuxt: 3.0.0
-      pinceau: link:..
 
   playground:
     specifiers:

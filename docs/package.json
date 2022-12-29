@@ -7,7 +7,6 @@
   },
   "devDependencies": {
     "@nuxt-themes/docus": "latest",
-    "nuxt": "^3.0.0",
-    "pinceau": "*"
+    "nuxt": "^3.0.0"
   }
 }
