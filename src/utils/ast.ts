@@ -8,7 +8,7 @@ import { parse as tsParse } from 'recast/parsers/typescript.js'
 /**
  * Parse AST with TypeScript parser.
  */
-export function parseAst(source: string, options?: Partial<Options>) {
+export function parseAst(source: string, options?: Partial<Options>): import('@babel/types').File {
   return recast.parse(source, defu({ parser: { parse: tsParse } }, options))
 }
 

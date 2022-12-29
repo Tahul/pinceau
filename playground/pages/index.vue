@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { usePinceauTheme } from 'pinceau/runtime'
 import JSConfetti from 'js-confetti'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
+
+const theme = usePinceauTheme()
 
 const colors = ['pink', 'primary', 'red', 'blue']
-
 const rand = (items: any) => items[Math.floor(Math.random() * items.length)]
 
 let confettiInstance: JSConfetti
@@ -23,13 +25,20 @@ const confettis = () => {
     confettiNumber: 10,
   })
 }
+
+onMounted(() => {
+  watch(theme.theme, theme => console.log({ theme }), { immediate: true })
+
+  // @ts-ignore
+  window.pinceauSheet = theme
+})
 </script>
 
 <template>
   <section>
     <canvas ref="canvas" />
     <PlaygroundGrid>
-      <BigButton :padded="{ initial: 'sm', lg: 'lg', xl: 'xl' }" color="red" @click="confettis()" />
+      <TestNuxt />
     </PlaygroundGrid>
   </section>
 </template>

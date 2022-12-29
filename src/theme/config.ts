@@ -134,7 +134,7 @@ export async function loadConfig<U extends PinceauTheme>(
   sources = [...new Set(sources)]
 
   async function resolveConfig<U extends PinceauTheme>(layer: ConfigLayer): Promise<ResolvedConfigLayer<U>> {
-    const empty = (path = undefined) => ({ path, config: {} as any })
+    const empty = (path = undefined) => ({ path, config: {} as any, schema: {} })
 
     let path = ''
 
@@ -179,13 +179,9 @@ export async function loadConfig<U extends PinceauTheme>(
   for (const layer of sources) {
     const { path, config } = await resolveConfig(layer)
 
-    if (path) {
-      result.sources.push(path)
-    }
+    if (path) { result.sources.push(path) }
 
-    if (config) {
-      result.config = merger(config, result.config) as U
-    }
+    if (config) { result.config = merger(config, result.config) as U }
   }
 
   return result
@@ -196,16 +192,20 @@ async function loadConfigFile({ path, ext }: { path: string; ext: string }) {
     const config = JSON.parse(await fsp.readFile(path, 'utf-8'))
     return {
       config,
+      schema: {},
       path,
     }
   }
 
+  const configImport = jiti(path, {
+    interopDefault: false,
+    requireCache: false,
+    esmResolve: true,
+  })(path)
+
   return {
-    config: jiti(path, {
-      interopDefault: true,
-      requireCache: false,
-      esmResolve: true,
-    })(path),
+    config: configImport?.default || configImport,
+    schema: configImport?.schema,
     path,
   }
 }

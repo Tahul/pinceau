@@ -62,6 +62,7 @@ export function walkTokens(
 export function normalizeConfig(
   obj: any,
   mqKeys: string[],
+  removeSchemaKeys = false,
 ) {
   let result: Record<string, any> = {}
 
@@ -70,6 +71,11 @@ export function normalizeConfig(
   }
   else {
     for (const k in obj) {
+      // Handle `$schema`
+      if (k === '$schema') {
+        if (!removeSchemaKeys) { result[k] = obj[k] }
+        continue
+      }
       // Skip `utils`
       if (k === 'utils') {
         result[k] = obj[k]
@@ -99,7 +105,7 @@ export function normalizeConfig(
           continue
         }
 
-        result[k] = normalizeConfig(obj[k], mqKeys)
+        result[k] = normalizeConfig(obj[k], mqKeys, removeSchemaKeys)
       }
     }
   }

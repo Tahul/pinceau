@@ -2,7 +2,7 @@ import type { PinceauMediaQueries } from './theme'
 
 export type RawTokenType = string | number | string[]
 
-export type ResponsiveToken<T> = { [key in PinceauMediaQueries]?: T }
+export type ResponsiveToken<T> = { [key in PinceauMediaQueries]?: T } & { [key: string]: T }
 
 export interface DesignToken<
   T = RawTokenType,

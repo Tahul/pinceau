@@ -1,3 +1,4 @@
+import type { Schema } from 'untyped'
 import type { CSSProperties } from './css'
 import type { DesignToken, RawTokenType, ResponsiveToken } from './tokens'
 import type { ConfigSuggestion } from './preset'
@@ -16,6 +17,7 @@ export interface ConfigLayer {
 
 export interface ResolvedConfigLayer<T> {
   path: string | undefined
+  schema: Schema
   config: T
 }
 
@@ -29,7 +31,7 @@ export interface ConfigTokens {
 export type PermissiveConfigType<T extends {}> = {
   [K in keyof T]?: T[K] extends (DesignToken | RawTokenType)
     ? (RawTokenType | ResponsiveToken<RawTokenType> | (T[K] extends DesignToken ? T[K]['value'] : never)) | Partial<T[K]>
-    : PermissiveConfigType<T[K]>
+    : PermissiveConfigType<T[K]> | { $schema: Schema }
 }
 
 export type DefineConfigType = ConfigTokens & PermissiveConfigType<(PinceauTheme extends undefined ? ConfigSuggestion : PinceauTheme)>

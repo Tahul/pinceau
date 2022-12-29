@@ -1,4 +1,4 @@
-import { resolve } from 'path'
+import { resolve } from 'pathe'
 
 export default defineNuxtConfig({
   extends: [resolve(__dirname, './theme')],

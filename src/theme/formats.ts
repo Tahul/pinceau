@@ -5,6 +5,7 @@ import type { ColorSchemeModes } from '../types'
 import { walkTokens } from '../utils/data'
 import { astTypes, printAst } from '../utils/ast'
 import { flattenTokens, objectPaths } from '../utils'
+import { responsiveMediaQueryRegex } from '../utils/regexes'
 
 /**
  * Stringify utils from object
@@ -121,7 +122,7 @@ export const cssFull = (dictionary: Dictionary, options: Options, responsiveToke
       return value
     },
   )
-  let css = `@media {\n ${selector} {\n  --pinceau-mq: root;\n${formattedVariables({ format: 'css', dictionary: { allTokens: initialTokens } as any, outputReferences })}\n}\n}\n`
+  let css = `@media {\n ${selector} {\n  --pinceau-mq: initial;\n${formattedVariables({ format: 'css', dictionary: { allTokens: initialTokens } as any, outputReferences })}\n}\n}\n`
 
   // Create all responsive tokens rules
   Object.entries(responsiveTokens).forEach(
@@ -137,17 +138,17 @@ export const cssFull = (dictionary: Dictionary, options: Options, responsiveToke
         else { responsiveSelector = `@media (prefers-color-scheme: ${key})` }
       }
       else {
-        responsiveSelector = dictionary.allTokens.find(token => token.name === `media.${key}`)
+        responsiveSelector = dictionary.allTokens.find(token => token.name === `media-${key}`)?.value
       }
 
       // Write responsive tokens
-      if (responsiveSelector.startsWith('@media')) {
-        // Wrap :root with media query
-        css += `\n${responsiveSelector} { :root {\n  --pinceau-mq: ${key};\n${formattedResponsiveContent}\n}\n}\n`
+      if (responsiveSelector.match(responsiveMediaQueryRegex)) {
+        // Use raw selector
+        css += `@media {\n ${responsiveSelector} {\n  --pinceau-mq: ${key};\n${formattedResponsiveContent}\n}\n}\n`
       }
       else {
-        // Use string selector
-        css += `@media {\n ${responsiveSelector} {\n  --pinceau-mq: ${key};\n${formattedResponsiveContent}\n}\n}\n`
+        // Wrap :root with media query
+        css += `\n@media ${responsiveSelector} { :root {\n  --pinceau-mq: ${key};\n${formattedResponsiveContent}\n}\n}\n`
       }
     },
   )

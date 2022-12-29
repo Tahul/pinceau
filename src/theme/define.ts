@@ -4,7 +4,7 @@ import { normalizeConfig } from '../utils/data'
 export function defineTheme(config: DefineConfigType) {
   const mqKeys = ['dark', 'light', ...Object.keys(config?.media || [])]
 
-  config = normalizeConfig(config, mqKeys)
+  config = normalizeConfig(config, mqKeys, false)
 
   return config
 }

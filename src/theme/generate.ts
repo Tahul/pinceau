@@ -6,6 +6,7 @@ import { join } from 'pathe'
 import { flattenTokens } from '../utils/theme'
 import type { PinceauOptions, ThemeGenerationOutput } from '../types'
 import { message } from '../utils/logger'
+import { normalizeConfig } from '../utils/data'
 import { cssFull, schemaFull, tsFull, utilsFull } from './formats'
 
 export async function generateTheme(tokens: any, { outputDir: buildPath, colorSchemeMode, studio }: PinceauOptions, silent = true): Promise<ThemeGenerationOutput> {
@@ -39,6 +40,7 @@ export async function generateTheme(tokens: any, { outputDir: buildPath, colorSc
   // Tokens outputs as in-memory objects
   const outputs: ThemeGenerationOutput['outputs'] = {}
 
+  // Generation result for virtual storage
   let result = {
     tokens: {},
     outputs: {} as Record<string, any>,
@@ -46,16 +48,14 @@ export async function generateTheme(tokens: any, { outputDir: buildPath, colorSc
   }
 
   // Skip generation if no tokens provided
-  if (!tokens || typeof tokens !== 'object' || !Object.keys(tokens).length) {
-    return result
-  }
+  if (!tokens || typeof tokens !== 'object' || !Object.keys(tokens).length) { return result }
 
-  // Custom properties
+  // Custom properties handling
   const utils = { ...(tokens?.utils || {}) }
   if (tokens?.utils) { delete tokens?.utils }
 
   // Responsive tokens
-  const mqKeys = ['dark', 'light', Object.keys(tokens?.media || [])]
+  const mqKeys = ['dark', 'light', ...Object.keys(tokens?.media || {})]
   const responsiveTokens = {}
 
   // Cleanup default fileHeader
@@ -155,7 +155,7 @@ export async function generateTheme(tokens: any, { outputDir: buildPath, colorSc
   })
 
   styleDictionary = styleDictionary.extend({
-    tokens: tokens as any,
+    tokens: normalizeConfig(tokens, mqKeys, true),
     platforms: {
       prepare: {
         silent,
@@ -198,7 +198,7 @@ export async function generateTheme(tokens: any, { outputDir: buildPath, colorSc
     // schema.ts ; enabled only when Studio detected
     if (studio) {
       try {
-        const schema = await schemaFull(result.tokens)
+        const schema = await schemaFull(tokens)
 
         const schemaPath = join(buildPath, 'schema.ts')
 

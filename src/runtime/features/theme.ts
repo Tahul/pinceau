@@ -2,6 +2,7 @@ import { computed, ref } from 'vue'
 import type { PermissiveConfigType, PinceauTheme } from '../../types'
 import { get, normalizeConfig, set, walkTokens } from '../../utils/data'
 import { pathToVarName } from '../../utils/$tokens'
+import { responsiveMediaQueryRegex } from '../../utils/regexes'
 
 export function usePinceauThemeSheet(
   initialTheme: any,
@@ -73,12 +74,12 @@ export function usePinceauThemeSheet(
           if (rule?.type !== 4 && !rule?.cssText?.includes('--pinceau-mq')) { return false }
 
           // Get current theme from parsed cssRules
-          let currentTheme = 'root'
+          let currentTheme = 'initial'
 
           // Regex-based hydration
           rule.cssText
             .match(/--([\w-]+)\s*:\s*(.+?);/gm)
-            .forEach((match) => {
+            ?.forEach((match) => {
               const [variable, value] = match.replace(';', '').split(/:\s(.*)/s)
 
               // Support responsive tokens
@@ -106,7 +107,7 @@ export function usePinceauThemeSheet(
     const mqKeys = ['dark', 'light', ...Object.keys((value as any)?.media || {}), ...Object.keys(theme.value?.media || {})]
 
     // Turn partial configuration object into a valid design tokens configuration object
-    const config = normalizeConfig(value || {}, mqKeys)
+    const config = normalizeConfig(value || {}, mqKeys, true)
 
     // Walk tokens inside partial theme object and assign them to local stylesheet
     walkTokens(config, (value, _, paths) => {
@@ -118,10 +119,10 @@ export function usePinceauThemeSheet(
   /**
    * Set the theme value from a CSS var key and a CSSRule|string.
    */
-  function setThemeValue(key: string, value: any, mediaQuery = 'root') {
+  function setThemeValue(key: string, value: any, mediaQuery = 'initial') {
     const path = [...key.substring(2).split('-')]
     const variable = `var(${key})`
-    const existingValue = mediaQuery !== 'root' ? get(theme.value, path) : undefined
+    const existingValue = mediaQuery !== 'initial' ? get(theme.value, path) : undefined
     if (existingValue?.value) { set(theme.value, path, { variable, value: { initial: existingValue.value, [mediaQuery]: value } }) }
     else { set(theme.value, path, { value, variable }) }
   }
@@ -129,11 +130,49 @@ export function usePinceauThemeSheet(
   /**
    * Update a specific token from its variable and a value.
    */
-  function updateVariable(variable, value) {
+  function updateVariable(variable, value, mq = 'initial') {
     // Handle `mq` object passed as value
-    if (typeof value === 'object') { Object.entries(value).forEach(([mq, mqValue]) => cache?.[mq]?.style.setProperty(`--${pathToVarName(variable)}`, mqValue)) }
+    if (typeof value === 'object') {
+      Object.entries(value).forEach(([mq, mqValue]) => updateVariable(variable, mqValue, mq))
+      return
+    }
+
+    // Create missing rules
+    if (!cache?.[mq]) { createMqRule(mq) }
+
     // Handle flat value
-    else { cache?.root?.style.setProperty(`--${pathToVarName(variable)}`, value) }
+    cache?.[mq]?.style.setProperty(`--${pathToVarName(variable)}`, value)
+  }
+
+  /**
+   * Creates a cached rule for media a specific media query.
+   */
+  function createMqRule(mq: string) {
+    // Skip already existing rules
+    if (cache?.[mq]) { return cache?.[mq] }
+
+    let mqValue: string
+    if (mq === 'dark' || mq === 'light') {
+      mqValue = `:root.${mq}`
+    }
+    else {
+      mqValue = theme.value?.media?.[mq]?.value
+    }
+
+    let css
+    if (mqValue.match(responsiveMediaQueryRegex)) {
+      // Use raw selector
+      css = `@media { ${mqValue} { --pinceau-mq: ${mq}; } }`
+    }
+    else {
+      // Wrap :root with media query
+      css = `@media ${mqValue} { :root { --pinceau-mq: ${mq}; } }`
+    }
+
+    // Assign the `:root` rule as cache
+    cache[mq] = (sheet.value.cssRules.item(sheet.value.insertRule(css, sheet.value.cssRules.length)) as CSSMediaRule).cssRules[0]
+
+    return cache[mq]
   }
 
   /**
@@ -161,5 +200,6 @@ export function usePinceauThemeSheet(
     setThemeValue,
     resolveStylesheet,
     theme,
+    cache,
   }
 }

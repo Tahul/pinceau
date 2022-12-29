@@ -25,6 +25,7 @@ export default defineConfig({
         resolve(__dirname, 'theme'),
       ],
       debug: true,
+      studio: true,
       colorSchemeMode: 'class',
     }),
     Vue(),

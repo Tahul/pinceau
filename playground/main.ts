@@ -7,6 +7,7 @@ import Block from './components/Block.vue'
 import BigButton from './components/BigButton.vue'
 import Alert from './components/Alert.vue'
 import ClientOnly from './theme/ClientOnly.vue'
+import TestNuxt from './theme/components/TestNuxt.vue'
 import Container from './components/Container.vue'
 import PlaygroundGrid from './components/PlaygroundGrid.vue'
 import NuxtLayout from './layouts/default.vue'
@@ -42,5 +43,6 @@ app.component('Container', Container)
 app.component('PlaygroundGrid', PlaygroundGrid)
 app.component('NuxtLayout', NuxtLayout)
 app.component('NuxtPage', RouterView)
+app.component('TestNuxt', TestNuxt)
 
 app.mount('#app')

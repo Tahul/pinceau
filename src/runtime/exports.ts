@@ -1,6 +1,7 @@
 import type { PropType } from 'vue'
 import { inject } from 'vue'
 import type { CSSProperties, ComputedStyleProp, NativeProperties } from '../types'
+import type { usePinceauThemeSheet } from './features/theme'
 
 /**
  * Entrypoint for Pinceau runtime features.
@@ -16,7 +17,7 @@ export function usePinceauRuntime(
 /**
  * Exposes the Pinceau theme sheet features.
  */
-export function usePinceauTheme() {
+export function usePinceauTheme(): ReturnType<typeof usePinceauThemeSheet> {
   return (inject('pinceauTheme') as any)
 }
 

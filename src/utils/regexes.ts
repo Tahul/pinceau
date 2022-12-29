@@ -30,6 +30,8 @@ export const dtRegex = /\$dt\('(.*?)'\)/g
 
 export const variantsRegex = /(...)?variants(,)?/mg
 
+export const responsiveMediaQueryRegex = /^(:|\.)/
+
 export const outputFileNames = [
   '/__pinceau_css.css',
   '/__pinceau_ts.ts',
