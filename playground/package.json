@@ -1,5 +1,6 @@
 {
   "private": true,
+  "packageManager": "pnpm@7.20.0",
   "scripts": {
     "dev": "nodemon -w '../src/**/*.ts' -e .ts -x vite -c _vite.config.ts --port 3000",
     "build": "vite build -c _vite.config.ts",
