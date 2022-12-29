@@ -1,4 +1,6 @@
+[build.environment]
+  NPM_FLAGS = "--version"
 [build]
   base = "./"
-  command = "pnpm run build:docs"
+  command = "npx pnpm i --store=node_modules/.pnpm-store --shamefully-hoist && npm run build"
   publish = "./docs/.output/public"
