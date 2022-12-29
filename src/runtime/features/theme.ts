@@ -200,6 +200,5 @@ export function usePinceauThemeSheet(
     setThemeValue,
     resolveStylesheet,
     theme,
-    cache,
   }
 }
