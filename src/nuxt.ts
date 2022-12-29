@@ -177,7 +177,10 @@ const module: any = defineNuxtModule<PinceauOptions>({
                 app.ssrContext.event.pinceauContent = app.ssrContext.event.pinceauContent || {}
 
                 // Grab latest theme
-                const themeCSS = fs.readFileSync(join(runtimeConfig.outputDir, 'index.css'), 'utf-8')
+                let themeCSS = ''
+                try {
+                  themeCSS = fs.readFileSync(join(runtimeConfig.outputDir, 'index.css'), 'utf-8')
+                } catch (e) {}
 
                 // Theme
                 app.ssrContext.event.pinceauContent.theme = themeCSS
