@@ -2,5 +2,5 @@
   NPM_FLAGS = "--version"
 [build]
   base = "./"
-  command = "npx pnpm i --store=node_modules/.pnpm-store --shamefully-hoist && npm run build"
+  command = "npx pnpm i --store=node_modules/.pnpm-store --shamefully-hoist && npm run build:docs"
   publish = "./docs/.output/public"
