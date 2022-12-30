@@ -1,17 +1,32 @@
 import { computed, ref } from 'vue'
-import type { PermissiveConfigType, PinceauTheme } from '../../types'
+import type { PermissiveConfigType, PinceauTheme, PinceauTokensPaths, TokensFunctionOptions } from '../../types'
 import { get, normalizeConfig, set, walkTokens } from '../../utils/data'
 import { pathToVarName } from '../../utils/$tokens'
 import { responsiveMediaQueryRegex } from '../../utils/regexes'
+import { resolveReferences } from '../../utils/css'
+import { createTokensHelper } from '../utils'
 
 export function usePinceauThemeSheet(
   initialTheme: any,
+  tokensHelperConfig = {},
 ) {
   // Local theme stylesheet reference.
   const sheet = ref<CSSStyleSheet>()
 
   // Resolved theme object from the stylesheet.
   const theme = ref<any>(initialTheme || {})
+
+  // Create $tokens helper
+  tokensHelperConfig = Object.assign(
+    {
+      key: 'variable',
+    },
+    tokensHelperConfig || {},
+  ) as TokensFunctionOptions
+  const $tokens = createTokensHelper(
+    theme,
+    tokensHelperConfig,
+  )
 
   // Local cache for each mq CSSRules.
   let cache: { [key: string]: any } = {}
@@ -90,10 +105,12 @@ export function usePinceauThemeSheet(
                   const ruleReference = (Object.entries(rule?.cssRules || {}).find(([_, cssRule]: any) => cssRule?.cssText.includes(`--pinceau-mq: ${value}`)))?.[1]
                   if (ruleReference) { cache[value] = ruleReference as CSSStyleRule }
                 }
+                return
               }
-              else {
-                setThemeValue(variable, value, currentTheme)
-              }
+
+              // Reformat variable
+              const path = [...variable.substring(2).split('-')]
+              set(theme.value, path, getSetValue(path, value, variable, currentTheme))
             })
         },
       )
@@ -104,44 +121,73 @@ export function usePinceauThemeSheet(
    */
   function updateTheme(value: PermissiveConfigType<PinceauTheme>) {
     // Media queries keys extracted from current theme object and new one
-    const mqKeys = ['dark', 'light', ...Object.keys((value as any)?.media || {}), ...Object.keys(theme.value?.media || {})]
+    const mqKeys = Array.from(new Set(['dark', 'light', ...Object.keys((value as any)?.media || {}), ...Object.keys(theme.value?.media || {})]))
 
     // Turn partial configuration object into a valid design tokens configuration object
     const config = normalizeConfig(value || {}, mqKeys, true)
 
     // Walk tokens inside partial theme object and assign them to local stylesheet
-    walkTokens(config, (value, _, paths) => {
-      set(theme.value, paths, value)
-      updateVariable(pathToVarName(paths.join('.')), value.value)
-    })
-  }
-
-  /**
-   * Set the theme value from a CSS var key and a CSSRule|string.
-   */
-  function setThemeValue(key: string, value: any, mediaQuery = 'initial') {
-    const path = [...key.substring(2).split('-')]
-    const variable = `var(${key})`
-    const existingValue = mediaQuery !== 'initial' ? get(theme.value, path) : undefined
-    if (existingValue?.value) { set(theme.value, path, { variable, value: { initial: existingValue.value, [mediaQuery]: value } }) }
-    else { set(theme.value, path, { value, variable }) }
+    walkTokens(config, (token, _, paths) => updateToken(paths, token.value))
   }
 
   /**
    * Update a specific token from its variable and a value.
    */
-  function updateVariable(variable, value, mq = 'initial') {
+  function updateToken(path: string | string[], value, mq = 'initial') {
     // Handle `mq` object passed as value
     if (typeof value === 'object') {
-      Object.entries(value).forEach(([mq, mqValue]) => updateVariable(variable, mqValue, mq))
+      Object.entries(value).forEach(([mq, mqValue]) => updateToken(path, mqValue, mq))
       return
     }
+
+    // Cast any type of path into a var name
+    const varName = pathToVarName(path)
 
     // Create missing rules
     if (!cache?.[mq]) { createMqRule(mq) }
 
-    // Handle flat value
-    cache?.[mq]?.style.setProperty(`--${pathToVarName(variable)}`, value)
+    // Resolve value if it contains references
+    const resolvedValue = resolveReferences(undefined, value, { $tokens } as any)
+
+    // Set value in theme object
+    set(
+      theme.value,
+      path,
+      getSetValue(path, resolvedValue, varName, mq),
+    )
+
+    // Set CSS variable value
+    cache?.[mq]?.style.setProperty(varName, resolvedValue)
+  }
+
+  /**
+   * Returns a writeable computed that will reactively update a token value accross all references when updated.
+   */
+  function reactiveToken(path: PinceauTokensPaths | ({} & string)) {
+    return computed(
+      {
+        get() {
+          return get(theme.value, `${path}.value`)
+        },
+        set(v: string | { [k: string]: string }) {
+          updateToken(path, v)
+        },
+      },
+    )
+  }
+
+  /**
+   * Return a token value from a path and a new value
+   */
+  function getSetValue(path: string | string[], value, variable, mq = 'initial') {
+    const varRef = `var(${variable})`
+    const setValue = { value, variable: varRef }
+    const existingValue = get(theme.value, path)
+    if (existingValue) {
+      if (typeof existingValue?.value === 'object') { setValue.value = { ...existingValue.value, [mq]: value } }
+      else { setValue.value = { initial: existingValue.value, [mq]: value } }
+    }
+    return setValue
   }
 
   /**
@@ -175,29 +221,11 @@ export function usePinceauThemeSheet(
     return cache[mq]
   }
 
-  /**
-   * Returns a writeable computed that will reactively update a token value accross all references when updated.
-   */
-  function reactiveToken(path: string) {
-    const varName = pathToVarName(path)
-    return computed(
-      {
-        get() {
-          return get(theme.value, `${path}.value`)
-        },
-        set(v: string | { [k: string]: string }) {
-          set(theme.value, `${path}.value`, v)
-          updateVariable(varName, v)
-        },
-      },
-    )
-  }
-
   return {
-    updateVariable,
+    $tokens,
+    updateToken,
     updateTheme,
     reactiveToken,
-    setThemeValue,
     resolveStylesheet,
     theme,
   }

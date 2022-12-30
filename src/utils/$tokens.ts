@@ -45,11 +45,13 @@ export function transformTokensToVariable(property: string): string { return (pr
 /**
  * Resolve a `var(--token)` value from a token path.
  */
-export function resolveVariableFromPath(path: string): string { return `var(--${pathToVarName(path)})` }
+export function resolveVariableFromPath(path: string): string { return `var(${pathToVarName(path)})` }
 
 /**
  * Resolve a variable from a path.
  */
-export function pathToVarName(path: string) {
-  return path.split('.').join('-')
+export function pathToVarName(path: string | string[]) {
+  if (Array.isArray(path)) { path = path.join('-') }
+  if (path.charAt(0) === '{' && path.charAt(path.length - 1) === '}') { path = path.substr(1, path.length - 2) }
+  return `--${path.split('.').join('-')}`
 }

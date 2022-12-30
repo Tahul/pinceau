@@ -1,15 +1,12 @@
 import type { ComputedRef, Plugin, Ref } from 'vue'
 import { computed, getCurrentInstance, ref } from 'vue'
 import { nanoid } from 'nanoid'
-import type { TokensFunctionOptions } from '../types'
-import { createTokensHelper } from './utils'
 import { usePinceauRuntimeSheet } from './features/stylesheet'
 import { usePinceauRuntimeIds } from './ids'
 import { usePinceauThemeSheet } from './features/theme'
 import { usePinceauComputedStyles } from './features/computedStyles'
 import { usePinceauVariants } from './features/variants'
 import { usePinceauCssProp } from './features/cssProp'
-import { usePinceauRuntimeDebug } from './features/debug'
 
 export const plugin: Plugin = {
   install(
@@ -26,27 +23,18 @@ export const plugin: Plugin = {
     // Resolve theme sheet
     const themeSheet = usePinceauThemeSheet(theme)
 
-    tokensHelperConfig = Object.assign(
-      {
-        key: 'variable',
-      },
-      tokensHelperConfig || {},
-    ) as TokensFunctionOptions
-
-    // Runtime debug setup
-    if (dev && (import.meta.hot || (process as any).server)) { usePinceauRuntimeDebug(tokensHelperConfig) }
-
-    // Tokens helper
-    const $tokens = createTokensHelper(
-      themeSheet.theme,
-      tokensHelperConfig,
-    )
+    // Runtime debug setup:
+    if (dev && (import.meta.hot || (process as any).server)) {
+      import('./features/debug').then(({ usePinceauRuntimeDebug }) => {
+        usePinceauRuntimeDebug(tokensHelperConfig)
+      })
+    }
 
     // Sets a unique id for this plugin instance, as Pinceau can be used in multiple apps at the same time.
     const multiAppId = multiApp ? nanoid(6) : undefined
 
     // Creates the runtime stylesheet.
-    const runtimeSheet = usePinceauRuntimeSheet($tokens, utils, colorSchemeMode, multiAppId)
+    const runtimeSheet = usePinceauRuntimeSheet(themeSheet.$tokens, utils, colorSchemeMode, multiAppId)
 
     /**
      * Setup Pinceau runtime from a component.
