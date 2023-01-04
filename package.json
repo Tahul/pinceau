@@ -58,6 +58,7 @@
   },
   "main": "dist/index.mjs",
   "module": "dist/index.mjs",
+  "type": "module",
   "types": "dist/index.d.ts",
   "typesVersions": {
     "*": {
