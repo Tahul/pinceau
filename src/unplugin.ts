@@ -36,10 +36,10 @@ export const defaultOptions: PinceauOptions = {
 
 export default createUnplugin<PinceauOptions>(
   (options) => {
-    const { stopPerfTimer } = useDebugPerformance('Setup Unplugin', options.debug)
-
     options = merger(options, defaultOptions)
 
+    // Setup debug context if in development
+    const { stopPerfTimer } = useDebugPerformance('Setup Unplugin', options?.debug)
     setDebugLevel(options?.dev ? options.debug : false)
 
     const ctx = createContext(options)

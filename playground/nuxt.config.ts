@@ -21,4 +21,7 @@ export default defineNuxtConfig({
   typescript: {
     includeWorkspace: true,
   },
+  componentMeta: {
+    debug: 2
+  }
 })

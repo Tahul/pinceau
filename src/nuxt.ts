@@ -38,24 +38,21 @@ const module: any = defineNuxtModule<PinceauOptions>({
 
     // nuxt-component-meta support
     if (options.componentMetaSupport) {
-      let cachedTokens
+      const cachedTokens = []
+      
       // @ts-ignore
       nuxt.hook('component-meta:transformers', (transformers: any[]) => {
         transformers.push(
           (component, code) => {
-            const flatPath = options.outputDir
-
             const resolvedTokens = []
 
             // Grab built tokens and resolve all tokens paths
-            if (!cachedTokens && existsSync(join(flatPath, 'index.ts'))) {
-              const _tokens = createJITI(flatPath)(join(flatPath, 'index.ts')).default
-              walkTokens(
-                _tokens?.theme || _tokens,
-                (_, __, paths) => resolvedTokens.push(paths.join('.')),
-              )
+            if (!cachedTokens && existsSync(join(options.outputDir, 'index.ts'))) {
+              const _tokens = createJITI(options.outputDir)(join(options.outputDir, 'index.ts')).default
+              walkTokens(_tokens?.theme || _tokens, (_, __, paths) => cachedTokens.push(paths.join('.')))
             }
 
+            // Parse tokens in component code
             if (cachedTokens.length) {
               const referencesRegex = /\{([a-zA-Z].+)\}/g
               const matches: any = code.match(referencesRegex) || []
