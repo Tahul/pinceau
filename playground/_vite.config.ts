@@ -22,7 +22,10 @@ export default defineConfig({
     Pinceau({
       configFileName: 'tokens.config',
       configLayers: [
-        resolve(__dirname, 'theme'),
+        {
+          cwd: resolve(__dirname, './theme'),
+          configFileName: 'tokens.config',
+        },
       ],
       debug: true,
       studio: true,

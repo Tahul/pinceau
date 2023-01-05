@@ -96,11 +96,15 @@ export function usePinceauConfig<UserOptions extends PinceauOptions = PinceauOpt
 export async function loadConfig<U extends PinceauTheme>(
   {
     cwd = process.cwd(),
-    configLayers = [cwd],
+    configLayers,
     configFileName = 'pinceau.config',
   }: PinceauOptions,
 ): Promise<LoadConfigResult<U>> {
   let sources: ConfigLayer[] = [
+    {
+      cwd,
+      configFileName,
+    },
     ...(configLayers as any).reduce(
       (acc: ConfigLayer[], layerOrPath: PinceauTheme | string | ConfigLayer) => {
         // Check if layer passed as-is

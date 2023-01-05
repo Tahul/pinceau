@@ -39,7 +39,7 @@ const module: any = defineNuxtModule<PinceauOptions>({
     // nuxt-component-meta support
     if (options.componentMetaSupport) {
       const cachedTokens = []
-      
+
       // @ts-ignore
       nuxt.hook('component-meta:transformers', (transformers: any[]) => {
         transformers.push(
@@ -177,7 +177,9 @@ const module: any = defineNuxtModule<PinceauOptions>({
                 let themeCSS = ''
                 try {
                   themeCSS = fs.readFileSync(join(runtimeConfig.outputDir, 'index.css'), 'utf-8')
-                } catch (e) {}
+                } catch (e) {
+                  // No theme found
+                }
 
                 // Theme
                 app.ssrContext.event.pinceauContent.theme = themeCSS

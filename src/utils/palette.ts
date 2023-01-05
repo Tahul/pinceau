@@ -33,7 +33,5 @@ export const palette = (
 
   return {
     ...scalePalette(color),
-    // @ts-expect-error - Mark tokens object as palette generated
-    palette: true,
   }
 }
