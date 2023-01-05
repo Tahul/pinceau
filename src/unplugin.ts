@@ -76,7 +76,14 @@ export default createUnplugin<PinceauOptions>(
           order: 'post',
           handler(html) {
             // Vite replace Pinceau theme injection by actual content of `pinceau.css`
-            return html.replace('<pinceau />', `<style id="pinceau-theme">${ctx.getOutput('/__pinceau_css.css')}</style>`)
+
+            // Support `<pinceau />`
+            html = html.replace('<pinceau />', `<style id="pinceau-theme">${ctx.getOutput('/__pinceau_css.css')}</style>`)
+
+            // Support `<style id="pinceau-theme"></style>` (Slidev / index.html merging frameworks)
+            html = html.replace('<style id="pinceau-theme"></style>', `<style id="pinceau-theme">${ctx.getOutput('/__pinceau_css.css')}</style>`)
+
+            return html
           },
         },
       },
