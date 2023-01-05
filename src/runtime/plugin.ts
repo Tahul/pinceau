@@ -1,6 +1,7 @@
 import type { ComputedRef, Plugin, Ref } from 'vue'
 import { computed, getCurrentInstance, ref } from 'vue'
 import { nanoid } from 'nanoid'
+import type { PinceauRuntimePluginOptions } from 'pinceau/types'
 import { usePinceauRuntimeSheet } from './features/stylesheet'
 import { usePinceauRuntimeIds } from './ids'
 import { usePinceauThemeSheet } from './features/theme'
@@ -8,18 +9,24 @@ import { usePinceauComputedStyles } from './features/computedStyles'
 import { usePinceauVariants } from './features/variants'
 import { usePinceauCssProp } from './features/cssProp'
 
+const defaultRuntimeOptions: PinceauRuntimePluginOptions = {
+  theme: {},
+  utils: {},
+  tokensHelperConfig: {},
+  multiApp: false,
+  colorSchemeMode: 'media',
+  dev: process.env.NODE_ENV !== 'production',
+}
+
 export const plugin: Plugin = {
   install(
     app,
-    {
-      theme = {},
-      utils = {},
-      tokensHelperConfig = {},
-      multiApp = false,
-      colorSchemeMode = 'media',
-      dev = process.env.NODE_ENV !== 'production',
-    },
+    options: PinceauRuntimePluginOptions,
   ) {
+    // Overrides defaults with given options
+    options = Object.assign(defaultRuntimeOptions, options)
+    const { theme, tokensHelperConfig, dev, multiApp, colorSchemeMode, utils } = options
+
     // Resolve theme sheet
     const themeSheet = usePinceauThemeSheet(theme)
 
