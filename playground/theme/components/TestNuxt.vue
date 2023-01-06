@@ -15,6 +15,11 @@ defineProps({
 </template>
 
 <style scoped lang="ts">
+const test = keyFrames({
+    from: { transform: 'scale(1)' },
+    to: { transform: 'scale(1.5)' }
+})
+
 css({
     variants: {
         padded: {
@@ -49,6 +54,7 @@ css({
         transition: 'box-shadow .1 ease-in-out',
         color: '{color.white}',
         boxShadow: (props) => `0 8px 0 {color.${props.color}.600}, 0 12px 16px rgba(0, 0, 0, .35)`,
+        animation: `${test} 1s linear infinite`,
         span: {
             fontFamily: '{font.secondary}',
             display: 'inline-block',
