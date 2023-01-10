@@ -1,6 +1,7 @@
 import { resolve } from 'pathe'
 
 export default defineNuxtConfig({
+  // ssr: false,
   extends: [resolve(__dirname, './theme')],
   modules: ['../src/nuxt.ts', '@nuxtjs/color-mode', '@nuxt/content', '@nuxthq/studio'],
   alias: {
@@ -22,6 +23,6 @@ export default defineNuxtConfig({
     includeWorkspace: true,
   },
   componentMeta: {
-    debug: 2
-  }
+    debug: 2,
+  },
 })

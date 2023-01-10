@@ -53,6 +53,7 @@ css({
   section: {
     overflow: 'hidden',
     position: 'relative',
+    padding: '{space.24}'
   },
   canvas: {
     position: 'absolute',

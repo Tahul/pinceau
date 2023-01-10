@@ -10,8 +10,6 @@ export const referencesRegex = new RegExp(
 
 export const keyRegex = /{(.*)}/g
 
-export const cssContentRegex = /css\(({.*?\})\)/mgs
-
 export const mqPlainRegex = /@([^\s]+)/g
 
 export const mqCssRegex = /@([^\s]+)\s{/g

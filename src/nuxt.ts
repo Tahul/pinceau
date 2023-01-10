@@ -97,11 +97,16 @@ const module: any = defineNuxtModule<PinceauOptions>({
     })
 
     // Setup Nitro plugin
-    if (!nuxt.options.nitro) { nuxt.options.nitro = {} }
-    const nitroConfig = nuxt.options.nitro
-
-    nitroConfig.plugins = nitroConfig.plugins || []
-    nitroConfig.plugins.push(resolveLocalModule('./nitro'))
+    if (nuxt.options.ssr) {
+      if (!nuxt.options.nitro) { nuxt.options.nitro = {} }
+      const nitroConfig = nuxt.options.nitro
+      nitroConfig.plugins = nitroConfig.plugins || []
+      nitroConfig.plugins.push(resolveLocalModule('./nitro'))
+    }
+    else {
+      nuxt.options.css = nuxt.options.css || []
+      nuxt.options.css.push(join(options.outputDir, 'index.css'))
+    }
 
     // Support for `extends` feature
     // Will scan each layer for a config file

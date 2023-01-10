@@ -54,6 +54,19 @@ export function usePinceauThemeSheet(
   }
 
   /**
+   * Fallback resolver for the local theme sheet.
+   *
+   * Will be used if the `#pinceau-theme` sheet cannot be found via its id.
+   */
+  function findThemeSheet(document: Document): HTMLStyleElement {
+    for (const sheet of document.styleSheets) {
+      if (sheet?.ownerNode?.textContent.includes('--pinceau-mq')) {
+        return sheet.ownerNode as HTMLStyleElement
+      }
+    }
+  }
+
+  /**
    * Resolve the theme stylesheet.
    */
   function resolveStylesheet() {
@@ -62,8 +75,11 @@ export function usePinceauThemeSheet(
     const global = globalThis || window
 
     if (global && global.document) {
-      // Find local sheet with `--pinceau-mq` variables
-      const sheetElement = document.querySelector('#pinceau-theme') as HTMLStyleElement
+      // Find local sheet with `#pinceau-theme` id
+      let sheetElement = document.querySelector('#pinceau-theme') as HTMLStyleElement
+
+      // Fallback resolve theme sheet by iterating on document sheets
+      if (!sheetElement) { sheetElement = findThemeSheet(document) }
 
       // Assign local sheet reference
       sheet.value = sheetElement?.sheet
