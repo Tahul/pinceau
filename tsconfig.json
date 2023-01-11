@@ -36,8 +36,8 @@
       "#build": ["./playground/.nuxt"],
       "#build/*": ["./playground/.nuxt/*"],
       "#components": ["./playground/.nuxt/components"],
-      "#pinceau/theme": ["./playground/.nuxt/pinceau/index.ts", "./playground/node_modules/.vite/pinceau/index.ts"],
-      "#pinceau/utils": ["./playground/.nuxt/pinceau/utils.ts", "./playground/node_modules/.vite/pinceau/utils.ts"],
+      "#pinceau/theme": ["./playground/node_modules/.vite/pinceau/index.ts"],
+      "#pinceau/utils": ["./playground/node_modules/.vite/pinceau/utils.ts"],
       "pinceau.css": ["./playground/.nuxt/pinceau/index.css", "./playground/node_modules/.vite/pinceau/pinceau/index.css"],
       "pinceau": ["./src/index.ts", "./src/types.ts"],
       "pinceau/runtime": ["./src/runtime.ts"],
@@ -48,6 +48,8 @@
   },
   "include": ["./playground/.nuxt/nuxt.d.ts", "./src/**/*", "./playground/**/*", "./test/**/*", "./src/types/vue-shim.d.ts", "./docs"],
   "vueCompilerOptions": {
-    "plugins": ["./dist/volar.cjs"]
+    "plugins": [
+      "./dist/volar.cjs"
+    ]
   }
 }

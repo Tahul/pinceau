@@ -74,12 +74,12 @@ export function resolveVariantsProps(variants, isTs: boolean) {
 
       const isBooleanVariant = Object.keys(variant).some(key => (key === 'true' || key === 'false'))
       if (isBooleanVariant) {
-        prop.type = isTs ? '[Boolean, Object] as PropType<boolean & ({ [key in PinceauMediaQueries]?: boolean })>' : '[Boolean, Object]'
+        prop.type = isTs ? ' [Boolean, Object] as PropType<boolean | { [key in PinceauMediaQueries]?: boolean }>' : ' [Boolean, Object]'
         prop.default = false
       }
       else {
         const possibleValues = `\'${Object.keys(variant).filter(key => key !== 'options').join('\' | \'')}\'`
-        prop.type = isTs ? `[String, Object] as PropType<${possibleValues} & ({ [key in PinceauMediaQueries]?: ${possibleValues} })>` : '[String, Object]'
+        prop.type = isTs ? ` [String, Object] as PropType<${possibleValues} | { [key in PinceauMediaQueries]?: ${possibleValues} }>` : ' [String, Object]'
         prop.default = undefined
       }
 

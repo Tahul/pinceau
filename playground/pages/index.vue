@@ -38,7 +38,7 @@ onMounted(() => {
   <section>
     <canvas ref="canvas" />
     <PlaygroundGrid>
-      <TestNuxt />
+      <BigButton :padded="{}" />
     </PlaygroundGrid>
   </section>
 </template>

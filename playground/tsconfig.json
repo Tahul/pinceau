@@ -1,3 +1,117 @@
 {
-  "extends": "./.nuxt/tsconfig.json"
+  "compilerOptions": {
+    "jsx": "preserve",
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "skipLibCheck": true,
+    "strict": true,
+    "allowJs": true,
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "types": [
+      "node"
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "~~": [
+        "."
+      ],
+      "~~/*": [
+        "./*"
+      ],
+      "@@": [
+        "."
+      ],
+      "@@/*": [
+        "./*"
+      ],
+      "~": [
+        "."
+      ],
+      "~/*": [
+        "./*"
+      ],
+      "@": [
+        "."
+      ],
+      "@/*": [
+        "./*"
+      ],
+      "assets": [
+        "assets"
+      ],
+      "public": [
+        "public"
+      ],
+      "public/*": [
+        "public/*"
+      ],
+      "pinceau/runtime": [
+        "../src/runtime"
+      ],
+      "pinceau": [
+        "../src/index"
+      ],
+      "#app": [
+        "./node_modules/.pnpm/nuxt@3.0.0/node_modules/nuxt/dist/app"
+      ],
+      "#app/*": [
+        "./node_modules/.pnpm/nuxt@3.0.0/node_modules/nuxt/dist/app/*"
+      ],
+      "vue-demi": [
+        "./node_modules/.pnpm/nuxt@3.0.0/node_modules/nuxt/dist/app/compat/vue-demi"
+      ],
+      "#color-mode-options": [
+        "./.nuxt/color-mode-options"
+      ],
+      "#nuxt-component-meta": [
+        "./.nuxt/component-meta.mjs"
+      ],
+      "#nuxt-component-meta/types": [
+        "./.nuxt/component-meta.d.ts"
+      ],
+      "#head": [
+        "./node_modules/.pnpm/nuxt@3.0.0/node_modules/nuxt/dist/head/runtime"
+      ],
+      "#head/*": [
+        "./node_modules/.pnpm/nuxt@3.0.0/node_modules/nuxt/dist/head/runtime/*"
+      ],
+      "#imports": [
+        "./.nuxt/imports"
+      ],
+      "#build": [
+        "./.nuxt"
+      ],
+      "#build/*": [
+        "./.nuxt/*"
+      ],
+      "#pinceau/utils": [
+        "/Users/yaelguilloux/Code/sandbox/pinceau/playground/.nuxt/pinceau/utils.ts"
+      ],
+      "#pinceau/theme": [
+        "/Users/yaelguilloux/Code/sandbox/pinceau/playground/.nuxt/pinceau/index.ts"
+      ],
+      "#pinceau/schema": [
+        "/Users/yaelguilloux/Code/sandbox/pinceau/playground/.nuxt/pinceau/schema.ts"
+      ],
+      "#components": [
+        "./.nuxt/components"
+      ]
+    }
+  },
+  "include": [
+    "./.nuxt/nuxt.d.ts",
+    "../**/*",
+    "../../**/*"
+  ],
+  "exclude": [
+    "./dist"
+  ],
+  "vueCompilerOptions": {
+    "plugins": [
+      "../dist/volar.cjs"
+    ]
+  }
 }

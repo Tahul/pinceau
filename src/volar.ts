@@ -35,14 +35,8 @@ const plugin: VueLanguagePlugin = _ => ({
         variants = defu(variants, _variants.variants)
       }
 
-      /*
-      if (sfc.template) {
-        resolveTemplateTags(fileName, sfc, embeddedFile)
-      }
-      */
-
-      // Add imports on top of <script setup>
-      const imports = [
+      // Add imports on top of file
+      const content = [
         '\nimport type { CSSFunctionType, PinceauMediaQueries } from \'pinceau\'\n',
         '\nimport type { ExtractPropTypes } from \'vue\'\n',
         '\ntype __VLS_InstanceOmittedKeys = \'onVnodeBeforeMount\' | \'onVnodeBeforeUnmount\' | \'onVnodeBeforeUpdate\' | \'onVnodeMounted\' | \'onVnodeUnmounted\' | \'onVnodeUpdated\' | \'key\' | \'ref\' | \'ref_for\' | \'ref_key\' | \'style\' | \'class\'\n',
@@ -50,20 +44,16 @@ const plugin: VueLanguagePlugin = _ => ({
         '\nfunction css (declaration: CSSFunctionType<__VLS_PropsType>) { return { declaration } }\n',
       ]
 
-      // Add context at bottom of <script setup>
+      // Resolve variants
       if (sfc.scriptSetup) {
         const isTs = sfc.scriptSetup.lang === 'ts'
-
         const variantProps = resolveVariantsProps(variants, isTs)
-
         let variantsPropsAst = expressionToAst(JSON.stringify(variantProps))
-
         variantsPropsAst = castVariantsPropsAst(variantsPropsAst)
-
-        imports.push(`\nconst variants = ${printAst(variantsPropsAst).code}\n`)
+        content.push(`\nconst variants = ${printAst(variantsPropsAst).code}\n`)
       }
 
-      embeddedFile.content.push(...imports)
+      embeddedFile.content.unshift(...content)
     }
   },
 })
@@ -89,7 +79,6 @@ function resolveStyleContent(embeddedFile, style, i, addDt) {
     }
   }
   catch (e) {
-    //
   }
 
   // Type `css()`
