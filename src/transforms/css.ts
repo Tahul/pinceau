@@ -74,7 +74,7 @@ export function resolveCssCallees(code: string, cb: (ast: ASTNode) => any): any 
       return this.traverse(path)
     },
     visitVariableDeclaration(path: any) {
-      if (path.value.declarations[0]?.init?.callee?.name === 'keyFrames') {
+      if (path.value.declarations[0]?.init?.callee?.name === 'keyframes') {
         const animateName = path.value.declarations[0]?.id?.name
         keyFramesDeclaration = defu(keyFramesDeclaration || {}, evalKeyFramesDeclaration(animateName, path.value.declarations[0]?.init?.arguments[0]))
       }
