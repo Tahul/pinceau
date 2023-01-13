@@ -15,7 +15,7 @@ defineProps({
 </template>
 
 <style scoped lang="ts">
-const test = keyFrames({
+const test = keyframes({
     from: { transform: 'scale(1)' },
     to: { transform: 'scale(1.5)' }
 })
