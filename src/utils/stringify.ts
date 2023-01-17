@@ -151,3 +151,16 @@ export const stringify = (
 
   return parse(value, [], [])
 }
+
+export const stringifyKeyFrames = (value) => {
+  let cssText = ''
+  Object.entries(value).forEach(([key, content]) => {
+    const animateRule: string[] = []
+    Object.entries(content).forEach(([key, value]) => {
+      animateRule.push(`${key} ${JSON.stringify(value).replace(/'|"/g, '')}`)
+    })
+    cssText = `@keyframes ${key} { ${animateRule.join(' ')} }`
+  })
+
+  return cssText || ''
+}

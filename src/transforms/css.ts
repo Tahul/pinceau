@@ -2,10 +2,11 @@ import type { ASTNode } from 'ast-types'
 import { defu } from 'defu'
 import type { PinceauContext } from 'pinceau/types'
 import { parse } from 'acorn'
-import { resolveCssProperty, stringify } from '../utils'
+import { resolveCssProperty, stringify, stringifyKeyFrames } from '../utils'
 import { message } from '../utils/logger'
 import { parseAst, printAst, visitAst } from '../utils/ast'
 import { resolveComputedStyles } from './vue/computed'
+import { hash } from 'ohash'
 
 /**
  * Stringify every call of css() into a valid Vue <style> declaration.
@@ -29,18 +30,20 @@ export const transformCssFunction = (
     return ''
   }
 
-  const declaration = resolveCssCallees(
+  const { keyFramesDeclaration, cssDeclaration } = resolveCssCallees(
     code,
     ast => evalCssDeclaration(ast, computedStyles),
   )
 
   // Handle variants and remove them from declaration
-  if (declaration && declaration?.variants) {
-    Object.assign(variants, defu(variants || {}, declaration?.variants || {}))
-    delete declaration.variants
+  if (cssDeclaration && cssDeclaration?.variants) {
+    Object.assign(variants, defu(variants || {}, cssDeclaration?.variants || {}))
+    delete cssDeclaration.variants
   }
 
-  return stringify(declaration, (property: any, value: any, _style: any, _selectors: any) => resolveCssProperty(property, value, _style, _selectors, ctx, loc))
+  const animationText = stringifyKeyFrames(keyFramesDeclaration)
+
+  return animationText + stringify(cssDeclaration, (property: any, value: any, _style: any, _selectors: any) => resolveCssProperty(property, value, _style, _selectors, ctx, loc))
 }
 
 /**
@@ -61,16 +64,25 @@ export function castVariants(property: any, value: any) {
  */
 export function resolveCssCallees(code: string, cb: (ast: ASTNode) => any): any {
   const ast = parseAst(code)
-  let result: any = false
+  let cssDeclaration: any = false
+  let keyFramesDeclaration: any = false
   visitAst(ast, {
     visitCallExpression(path: any) {
       if (path.value.callee.name === 'css') {
-        result = defu(result || {}, cb(path.value.arguments[0]))
+        cssDeclaration = defu(cssDeclaration || {}, cb(path.value.arguments[0]))
       }
       return this.traverse(path)
     },
+    visitVariableDeclaration(path: any) {
+      if (path.value.declarations[0]?.init?.callee?.name === 'keyframes') {
+        const animateName = path.value.declarations[0]?.id?.name
+        keyFramesDeclaration = defu(keyFramesDeclaration || {}, evalKeyFramesDeclaration(animateName, path.value.declarations[0]?.init?.arguments[0]))
+      }
+
+      return this.traverse(path)
+    }
   })
-  return result
+  return { cssDeclaration, keyFramesDeclaration }
 }
 
 /**
@@ -89,6 +101,30 @@ export function evalCssDeclaration(cssAst: ASTNode, computedStyles: any = {}) {
 
     // @ts-expect-error - Evaluated code
     return cssDeclaration
+  }
+  catch (e) {
+    return {}
+  }
+}
+
+
+export function evalKeyFramesDeclaration(name: string, keyFramesAst: ASTNode) {
+  try {
+    // eslint-disable-next-line no-eval
+    const _eval = eval
+    const keyFramesCode = printAst(keyFramesAst).code
+    const keyFrameName = hash(keyFramesCode)
+
+    // set animate name
+    _eval(`var ${name} = '${keyFrameName}'`)
+
+    // const transformed = transform({ source: recast.print(ast).code })
+    _eval(`var keyFramesDeclaration = {
+      '${keyFrameName}':${keyFramesCode},
+    }`)
+
+    // @ts-expect-error - Evaluated code
+    return keyFramesDeclaration
   }
   catch (e) {
     return {}
