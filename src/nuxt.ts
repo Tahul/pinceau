@@ -105,7 +105,7 @@ const module: any = defineNuxtModule<PinceauOptions>({
     }
     else {
       nuxt.options.css = nuxt.options.css || []
-      nuxt.options.css.push(join(options.outputDir, 'index.css'))
+      nuxt.options.css.push(join(options.outputDir, 'theme/index.css'))
     }
 
     // Support for `extends` feature
@@ -152,6 +152,17 @@ const module: any = defineNuxtModule<PinceauOptions>({
       }
     }
 
+    nuxt.hook('nitro:config', (nitroConfig) => {
+      nitroConfig.bundledStorage = nitroConfig.bundledStorage || []
+      nitroConfig.bundledStorage.push('pinceau')
+
+      nitroConfig.devStorage = nitroConfig.devStorage || {}
+      nitroConfig.devStorage.pinceau = {
+        driver: 'fs',
+        base: join(options.outputDir!, 'theme'),
+      }
+    })
+
     addPluginTemplate({
       filename: 'pinceau-nuxt-plugin.server.mjs',
       mode: 'server',
@@ -178,17 +189,6 @@ const module: any = defineNuxtModule<PinceauOptions>({
                 // Init
                 app.ssrContext.event.pinceauContent = app.ssrContext.event.pinceauContent || {}
 
-                // Grab latest theme
-                let themeCSS = ''
-                try {
-                  themeCSS = fs.readFileSync(join(runtimeConfig.outputDir, 'index.css'), 'utf-8')
-                } catch (e) {
-                  // No theme found
-                }
-
-                // Theme
-                app.ssrContext.event.pinceauContent.theme = themeCSS
-                
                 // Runtime styling
                 const content = app.ssrContext.nuxt.vueApp.config.globalProperties.$pinceauSsr.get()
                 app.ssrContext.event.pinceauContent.runtime = content

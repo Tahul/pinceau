@@ -10,7 +10,8 @@ export async function prepareOutputDir<UserOptions extends PinceauOptions = Pinc
     studio,
   }: UserOptions,
 ) {
-  if (!existsSync(outputDir)) { await mkdir(outputDir, { recursive: true }) }
+  const themeDir = join(outputDir, 'theme')
+  if (!existsSync(themeDir)) { await mkdir(themeDir, { recursive: true }) }
 
   await stubOutputs(outputDir, false, studio)
 
@@ -19,7 +20,7 @@ export async function prepareOutputDir<UserOptions extends PinceauOptions = Pinc
 
 export async function stubOutputs(buildPath: string, force = false, schema = false) {
   const files = {
-    'index.css': () => '/* This file is empty because no tokens has been provided or your configuration is broken. */',
+    'theme/index.css': () => '/* This file is empty because no tokens has been provided or your configuration is broken. */',
     'index.ts': tsFull,
     'utils.ts': utilsFull,
   }
