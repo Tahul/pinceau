@@ -38,7 +38,7 @@ export function transformAddPropsKey(code: string, add = true) {
         /defineProps|withDefaults\(defineProps/,
         () => {
           propsKey = '__$pProps'
-          return `const __$pProps = ${ hasWithDefaults ? "withDefaults(defineProps" : "defineProps" }`
+          return `const __$pProps = ${hasWithDefaults ? 'withDefaults(defineProps' : 'defineProps'}`
         },
       )
     }
