@@ -102,6 +102,9 @@ const module: any = defineNuxtModule<PinceauOptions>({
       const nitroConfig = nuxt.options.nitro
       nitroConfig.plugins = nitroConfig.plugins || []
       nitroConfig.plugins.push(resolveLocalModule('./nitro'))
+      nitroConfig.externals = nitroConfig.externals || {}
+      nitroConfig.externals.inline = nitroConfig.externals.inline || []
+      nitroConfig.externals.inline.push(resolveLocalModule('./nitro'))
     }
     else {
       nuxt.options.css = nuxt.options.css || []

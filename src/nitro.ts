@@ -1,6 +1,6 @@
 import type { NitroAppPlugin } from 'nitropack'
 // @ts-expect-error nitro virtual import
-import { useStorage } from '#imports'
+import { useStorage } from '#internal/nitro'
 
 export default <NitroAppPlugin> async function (nitro) {
   nitro.hooks.hook('render:html', async (htmlContext, { event }) => {
