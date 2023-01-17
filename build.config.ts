@@ -1,4 +1,4 @@
-import { cp } from 'node:fs/promises'
+import { copyFile, mkdir } from 'node:fs/promises'
 import { createResolver } from '@nuxt/kit'
 import { defineBuildConfig } from 'unbuild'
 
@@ -18,7 +18,8 @@ export default defineBuildConfig({
   ],
   hooks: {
     'build:done': async () => {
-      await cp(resolve('./src/runtime/schema.server.mjs'), resolve('./dist/runtime/schema.server.mjs'), { recursive: true })
+      await mkdir(resolve('./dist/runtime'), { recursive: true })
+      await copyFile(resolve('./src/runtime/schema.server.mjs'), resolve('./dist/runtime/schema.server.mjs'))
     },
   },
   failOnWarn: false,
