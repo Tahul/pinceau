@@ -1,5 +1,5 @@
 import type { DesignToken, PinceauContext } from '../types'
-import { pathToVarName, transformTokensToVariable } from './$tokens'
+import { pathToVarName } from './$tokens'
 import { DARK, INITIAL, LIGHT, referencesRegex } from './regexes'
 
 /**
