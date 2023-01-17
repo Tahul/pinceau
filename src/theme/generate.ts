@@ -15,7 +15,7 @@ export async function generateTheme(tokens: any, { outputDir: buildPath, colorSc
   // Files created by Pinceau
   const files = [
     {
-      destination: 'index.css',
+      destination: 'theme/index.css',
       format: 'pinceau/css',
     },
     {

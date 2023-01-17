@@ -49,6 +49,7 @@ export default defineBuildConfig({
     '#pinceau/utils',
     'pinceau.css',
     '#imports',
+    '#internal/nitro',
     '#build/pinceau',
     '#build/pinceau/index',
     '#build/pinceau/utils',
