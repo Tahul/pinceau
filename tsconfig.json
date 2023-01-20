@@ -38,7 +38,7 @@
       "#components": ["./playground/.nuxt/components"],
       "#pinceau/theme": ["./playground/.nuxt/pinceau/index.ts"],
       "#pinceau/utils": ["./playground/.nuxt/pinceau/utils.ts"],
-      "pinceau.css": ["./playground/.nuxt/pinceau/index.css", "./playground/node_modules/.vite/pinceau/pinceau/index.css"],
+      "pinceau.css": ["./playground/.nuxt/pinceau/theme/index.css", "./playground/node_modules/.vite/pinceau/theme/index.css"],
       "pinceau": ["./src/index.ts", "./src/types.ts"],
       "pinceau/runtime": ["./src/runtime.ts"],
       "pinceau/vite": ["./src/vite.ts"],

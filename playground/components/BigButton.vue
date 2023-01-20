@@ -14,6 +14,12 @@ defineProps({
   </button>
 </template>
 
+<style lang="postcss">
+.big-button {
+    color: red;
+}
+</style>
+
 <style scoped lang="ts">
 css({
     variants: {
