@@ -109,12 +109,14 @@ export type ThemeKey<K extends keyof DefaultThemeMap> = Utils.WrapUnion<Utils.Fi
 export type SupportedProperties = keyof NativeProperties | keyof DefaultThemeMap
 
 export type PropertyValue<T = string> =
-(
+  // Check if current property is a native CSS key
   T extends keyof NativeProperties ?
+    // Check if that key is handled in the ThemeMap
     T extends keyof DefaultThemeMap ?
+      // Theme key supported; return tokens + MDN data
       ThemeKey<T> | NativeProperties[T] :
-      NativeProperties[T] :
-    never
-)
+      // Only return MDN data
+      NativeProperties[T]
+    : never
 
 export type UsableTokens = Utils.WrapUnion<PinceauTokensPaths, '{', '}'>

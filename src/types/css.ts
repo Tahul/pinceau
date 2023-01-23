@@ -9,45 +9,39 @@ export type ComputedStylesUtils = typeof utils
 
 export type ColorSchemeModes = 'media' | 'class'
 
-export type ComputedStyleProp<T = UsableTokens> = T | (string & {}) | { [key in PinceauMediaQueries]: T | (string & {}) }
+export type ComputedStyleProp<T = UsableTokens> = T | { [key in PinceauMediaQueries]?: T }
 
-export type ComputedStyleDefinition<
-  SupportedProperties = '',
-  TemplateProps = {},
-  > = (props: TemplateProps, utils: ComputedStylesUtils) => PropertyValue<SupportedProperties> | ({ [key in PinceauMediaQueries]?: PropertyValue<SupportedProperties> })
+export type ComputedStyleDefinition<T = UsableTokens, ComponentProps = {}> = (props: ComponentProps, utils: ComputedStylesUtils) => PropertyValue<T> | { [key in PinceauMediaQueries]?: PropertyValue<T> }
 
-type MappedProperty<
-  K = string,
-  TemplateProps = {},
-> = PropertyValue<K> | ComputedStyleDefinition<K, TemplateProps>
+export type MappedProperty<K = string, ComponentProps = {}> = PropertyValue<K> | ComputedStyleDefinition<K, ComponentProps>
 
 export type CSSProperties<
-  TemplateProps = {},
+  ComponentProps = {},
 > =
     // Theme-based tokens
     {
-      [K in keyof DefaultThemeMap]?: MappedProperty<K, TemplateProps>
+      [K in keyof DefaultThemeMap]?: MappedProperty<K, ComponentProps>
     }
     &
     // Native properties tokens
     {
-      [K in keyof NativeProperties]?: MappedProperty<K, TemplateProps>
+      [K in keyof NativeProperties]?: MappedProperty<K, ComponentProps>
     }
     &
     {
-      [K in keyof PseudosProperties]?: CSSProperties<TemplateProps> | {}
+      [K in keyof PseudosProperties]?: CSSProperties<ComponentProps> | {}
     }
     &
     // Custom properties
     {
-      [K in keyof PinceauUtils]?: UsableTokens | ComputedStyleDefinition<UsableTokens, TemplateProps>
+      [K in keyof PinceauUtils]?: string | UsableTokens | ComputedStyleDefinition<UsableTokens, ComponentProps>
     }
     &
     {
-      [K in Utils.Primitive]: CSSProperties<TemplateProps> | UsableTokens | MappedProperty<K, TemplateProps> | ComputedStyleDefinition<UsableTokens, TemplateProps> | {}
+      [K in Utils.Primitive]?: CSSProperties<ComponentProps> | MappedProperty<K, ComponentProps> | {}
     }
 
-export type CSSFunctionType<TemplateProps = {}> =
+export type CSSFunctionType<ComponentProps = {}> =
   {
     variants?: Variants
   }
@@ -57,9 +51,9 @@ export type CSSFunctionType<TemplateProps = {}> =
   }
   &
   {
-    [K in Utils.WrapUnion<PinceauMediaQueries, '@', ''>]?: CSSProperties<TemplateProps>
+    [K in Utils.WrapUnion<PinceauMediaQueries, '@', ''>]?: CSSProperties<ComponentProps>
   }
   &
   {
-    [K in Utils.Primitive]: CSSProperties<TemplateProps> | MappedProperty<K, TemplateProps> | {}
+    [K in Utils.Primitive]: CSSProperties<ComponentProps> | MappedProperty<K, ComponentProps> | {}
   }

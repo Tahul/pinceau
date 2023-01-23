@@ -22,7 +22,7 @@ css({
             sm: {
                 span: {
                     padding: '{space.4} {space.8}',
-                }
+                },
             },
             md: {
                 span: {
@@ -50,7 +50,6 @@ css({
         transition: 'box-shadow .1 ease-in-out',
         color: '{color.white}',
         boxShadow: (props) => `0 8px 0 {color.${props.color}.600}, 0 12px 16px rgba(0, 0, 0, .35)`,
-        clip: (props) => props.color === '',
         span: {
             fontFamily: '{font.secondary}',
             display: 'inline-block',
@@ -59,7 +58,7 @@ css({
             lineHeight: '1',
             transition: 'background-color .2s ease-in-out, transform .1s ease-in-out, text-shadow .1s ease-in-out, box-shadow .1s ease-in-out',
             boxShadow: 'inset 0 -1px 1px rgba(255, 255, 255, .15)',
-            backgroundColor: (props) => `{color.${props.color}.500}`,
+            backgroundColor: (props) => `{color.${props.color}.600}`,
             backgroundImage: (props) => `linear-gradient(rgba({color.${props.color}.500}, .8), rgba({color.${props.color}.600}, .2))`,
             textShadow: (props) => `0 -1px 1px rgba({color.${props.color}.200}, .7)`,
         },
