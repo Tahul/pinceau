@@ -21,7 +21,11 @@ export interface ClassVariant {
   [key: string]: string | string[] | VariantOptions
 }
 
-export type Variant<T = { [key: string]: CSSProperties | VariantOptions<any> | string | string[] }> = (BooleanVariant | EnumVariant | ClassVariant) & { options?: VariantOptions<keyof T | string | number | boolean> }
+export type Variant<T = { [key: string]: CSSProperties | VariantOptions<any> | string | string[] }> =
+  (BooleanVariant | EnumVariant | ClassVariant) &
+  {
+    options?: VariantOptions<keyof T | string | number | boolean>
+  }
 
 export interface Variants {
   [key: string]: Variant

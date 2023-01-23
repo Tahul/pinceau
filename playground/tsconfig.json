@@ -103,7 +103,6 @@
   },
   "include": [
     "./.nuxt/nuxt.d.ts",
-    "../**/*",
     "../**/*"
   ],
   "exclude": [

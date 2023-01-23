@@ -31,7 +31,7 @@ export interface ConfigTokens {
 export type PermissiveConfigType<T extends {}> = {
   [K in keyof T]?: T[K] extends (DesignToken | RawTokenType)
     ? (RawTokenType | ResponsiveToken<RawTokenType> | (T[K] extends DesignToken ? T[K]['value'] : never)) | Partial<T[K]>
-    : PermissiveConfigType<T[K]> | { $schema: Schema }
+    : PermissiveConfigType<T[K]> & { $schema?: Schema }
 }
 
-export type DefineConfigType = ConfigTokens & PermissiveConfigType<(PinceauTheme extends undefined ? ConfigSuggestion : PinceauTheme)>
+export type DefineConfigType = ConfigTokens & PermissiveConfigType<PinceauTheme extends undefined ? ConfigSuggestion : PinceauTheme>

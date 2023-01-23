@@ -9,7 +9,7 @@ export type ComputedStylesUtils = typeof utils
 
 export type ColorSchemeModes = 'media' | 'class'
 
-export type ComputedStyleProp = UsableTokens | (string & {}) | ({ [key in PinceauMediaQueries]: UsableTokens | (string & {}) })
+export type ComputedStyleProp<T = UsableTokens> = T | (string & {}) | { [key in PinceauMediaQueries]: T | (string & {}) }
 
 export type ComputedStyleDefinition<
   SupportedProperties = '',

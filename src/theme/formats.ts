@@ -59,7 +59,7 @@ export function tsFull(tokensObject: any) {
   result += `export const theme = ${JSON.stringify(flattenedTokens, null, 2)} as const\n\n`
 
   // Theme type
-  result += 'export type GeneratedPinceauTheme = PermissiveConfigType<typeof theme>\n\n'
+  result += 'export type GeneratedPinceauTheme = typeof theme\n\n'
 
   // Tokens paths type
   const tokensPaths = objectPaths(tokensObject)
@@ -122,13 +122,13 @@ export const cssFull = (dictionary: Dictionary, options: Options, responsiveToke
       return value
     },
   )
-  let css = `@media {\n ${selector} {\n  --pinceau-mq: initial;\n${formattedVariables({ format: 'css', dictionary: { allTokens: initialTokens } as any, outputReferences })}\n}\n}\n`
+  let css = `@media {\n ${selector} {\n  --pinceau-mq: initial;\n${formattedVariables({ format: 'css', dictionary: { ...dictionary, allTokens: initialTokens as any }, outputReferences })}\n}\n}\n`
 
   // Create all responsive tokens rules
   Object.entries(responsiveTokens).forEach(
     ([key, value]) => {
       // Resolve tokens content
-      const formattedResponsiveContent = formattedVariables({ format: 'css', dictionary: { allTokens: value } as any, outputReferences })
+      const formattedResponsiveContent = formattedVariables({ format: 'css', dictionary: { ...dictionary, allTokens: value as any }, outputReferences })
 
       // Resolve responsive selector
       let responsiveSelector
