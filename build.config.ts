@@ -57,5 +57,8 @@ export default defineBuildConfig({
     'nanoid',
     'chroma-js',
     'untyped',
+    '@volar/language-core',
+    '@volar/source-map',
+    'muggle-string',
   ],
 })

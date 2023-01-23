@@ -1,10 +1,13 @@
 <script setup lang="ts">
+import type { PinceauTheme } from 'pinceau'
 import { computedStyle } from 'pinceau/runtime'
 
 defineProps({
-  color: computedStyle('color', 'pink'),
+  color: computedStyle<keyof PinceauTheme['color']>('red'),
   ...variants,
 })
+
+const test = ''
 </script>
 
 <template>
@@ -13,6 +16,12 @@ defineProps({
     <slot />
   </button>
 </template>
+
+<style lang="postcss">
+.big-button {
+    color: red;
+}
+</style>
 
 <style scoped lang="ts">
 css({
@@ -39,7 +48,7 @@ css({
                 }
             },
             options: {
-                default: 'md'
+                default: 'md',
             },
         },
     },
@@ -49,6 +58,7 @@ css({
         transition: 'box-shadow .1 ease-in-out',
         color: '{color.white}',
         boxShadow: (props) => `0 8px 0 {color.${props.color}.600}, 0 12px 16px rgba(0, 0, 0, .35)`,
+        clip: (props) => props.$props,
         span: {
             fontFamily: '{font.secondary}',
             display: 'inline-block',

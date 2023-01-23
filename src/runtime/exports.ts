@@ -1,6 +1,6 @@
 import type { PropType } from 'vue'
 import { inject } from 'vue'
-import type { CSSProperties, ComputedStyleProp, NativeProperties } from '../types'
+import type { CSSProperties, ComputedStyleProp } from '../types'
 import type { usePinceauThemeSheet } from './features/theme'
 
 /**
@@ -33,15 +33,13 @@ export const cssProp = {
 /**
  * A prop to be used on any component to enable `:css` prop.
  */
-export function computedStyle<T extends keyof NativeProperties>(
-  attribute: T,
-  // @ts-ignore
-  defaultValue: ComputedStyleProp,
+export function computedStyle<T extends string>(
+  defaultValue: ComputedStyleProp<T>,
   required = false,
 ) {
   return {
-    type: [String, Object] as PropType<ComputedStyleProp>,
-    required,
+    type: [String, Object] as PropType<ComputedStyleProp<T>>,
     default: defaultValue,
+    required,
   }
 }

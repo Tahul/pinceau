@@ -64,9 +64,7 @@ export function resolveCssCallees(code: string, cb: (ast: ASTNode) => any): any 
   let result: any = false
   visitAst(ast, {
     visitCallExpression(path: any) {
-      if (path.value.callee.name === 'css') {
-        result = defu(result || {}, cb(path.value.arguments[0]))
-      }
+      if (path.value.callee.name === 'css') { result = defu(result || {}, cb(path.value.arguments[0])) }
       return this.traverse(path)
     },
   })

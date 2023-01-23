@@ -1,110 +1,97 @@
+import type { Sfc, VueLanguagePlugin } from '@volar/vue-language-core'
+import { FileCapabilities, FileRangeCapabilities } from '@volar/language-core'
 import { defu } from 'defu'
-import { camelCase } from 'scule'
-import { hash } from 'ohash'
-import type { VueLanguagePlugin } from '@volar/vue-language-core'
 import { castVariantsPropsAst, evalCssDeclaration, resolveCssCallees, resolveVariantsProps } from './transforms'
 import { expressionToAst, printAst } from './utils/ast'
-import { dtRegex } from './utils/regexes'
-import { fullCapabilities } from './utils/devtools'
 
 const plugin: VueLanguagePlugin = _ => ({
   version: 1,
+  getEmbeddedFileNames(fileName, sfc) {
+    const fileNames: string[] = []
+    for (let i = 0; i < sfc.styles.length; i++) {
+      const style = sfc.styles[i]
+      if (style.lang === 'ts' && style?.content) {
+        fileNames.push(`${fileName}.cssInTs.${i}.ts`)
+      }
+    }
+    return fileNames
+  },
   resolveEmbeddedFile(fileName, sfc, embeddedFile) {
-    // $dt helper
-    const addDt = (match, dtKey, index, vueTag) => {
-      if (!embeddedFile.content) { return }
+    if (embeddedFile.fileName.includes('.cssInTs.')) {
+      // Add imports on top of file
+      const imports = [
+        '\nimport type { CSSFunctionType, PinceauMediaQueries } from \'pinceau\'\n',
+        '\nimport type { ExtractPropTypes } from \'vue\'\n',
+      ]
 
-      embeddedFile.content.push(`\nconst __VLS_$dt_${hash(`${camelCase(dtKey)}-${index}`)} = `)
+      const index = Number(embeddedFile.fileName.split('.').slice(-2)[0])
+      const style = sfc.styles[index]
+
+      if (!style?.content) { return }
+
+      embeddedFile.capabilities = FileCapabilities.full
+      embeddedFile.kind = 1
+      embeddedFile.parentFileName = fileName
+      if (sfc.scriptSetup) {
+        embeddedFile.content.push([
+          sfc.scriptSetup.content,
+          sfc.scriptSetup.name,
+          0,
+          FileRangeCapabilities.full,
+        ])
+      }
+      embeddedFile.content.push(...imports)
       embeddedFile.content.push([
-        match,
-        vueTag,
-        index,
-        fullCapabilities,
+        style?.content,
+        style?.name,
+        0,
+        FileRangeCapabilities.full,
       ])
-      embeddedFile.content.push('\n')
+
+      return
     }
 
     // Handle <vue> files
     if (embeddedFile.fileName.replace(fileName, '').match(/^\.(js|ts|jsx|tsx)$/)) {
-      let variants = {}
+      // Resolve variants from SFC definition
+      const variants = resolveVariantsContent(sfc)
 
-      // Grab `css()` function and type it.
-      for (let i = 0; i < sfc.styles.length; i++) {
-        const style = sfc.styles[i]
-        const _variants = resolveStyleContent(embeddedFile, style, i, addDt)
-        variants = defu(variants, _variants.variants)
-      }
-
-      // Add imports on top of file
-      const content = [
-        '\nimport type { CSSFunctionType, PinceauMediaQueries } from \'pinceau\'\n',
-        '\nimport type { ExtractPropTypes } from \'vue\'\n',
-        '\ntype __VLS_InstanceOmittedKeys = \'onVnodeBeforeMount\' | \'onVnodeBeforeUnmount\' | \'onVnodeBeforeUpdate\' | \'onVnodeMounted\' | \'onVnodeUnmounted\' | \'onVnodeUpdated\' | \'key\' | \'ref\' | \'ref_for\' | \'ref_key\' | \'style\' | \'class\'\n',
-        `\ntype __VLS_PropsType = (Omit<InstanceType<typeof import('${fileName}').default>['$props'], __VLS_InstanceOmittedKeys>)\n`,
-        '\nfunction css (declaration: CSSFunctionType<__VLS_PropsType>) { return { declaration } }\n',
-      ]
-
-      // Resolve variants
+      // Resolve variants props
       if (sfc.scriptSetup) {
         const isTs = sfc.scriptSetup.lang === 'ts'
         const variantProps = resolveVariantsProps(variants, isTs)
         let variantsPropsAst = expressionToAst(JSON.stringify(variantProps))
         variantsPropsAst = castVariantsPropsAst(variantsPropsAst)
-        content.push(`\nconst variants = ${printAst(variantsPropsAst).code}\n`)
+        embeddedFile.content.push(`\nconst variants = ${printAst(variantsPropsAst).code}\n`)
       }
-
-      embeddedFile.content.unshift(...content)
     }
   },
 })
 
-function resolveStyleContent(embeddedFile, style, i, addDt) {
+function resolveVariantsContent(sfc: Sfc) {
   let variants = {}
 
-  // Resolve variants
-  try {
-    if (style.lang === 'ts') {
-      const declaration = resolveCssCallees(
-        style.content,
-        (styleAst) => {
-          const cssContent = evalCssDeclaration(styleAst)
+  for (let i = 0; i < sfc.styles.length; i++) {
+    const style = sfc.styles[i]
 
-          if (cssContent.variants) { return cssContent.variants }
-
-          return {}
-        },
-      )
-
-      variants = defu(variants, declaration)
+    try {
+      // Check if <style> tag is `lang="ts"`
+      if (style.lang === 'ts') {
+        resolveCssCallees(
+          style.content,
+          (styleAst) => {
+            const cssContent = evalCssDeclaration(styleAst)
+            if (cssContent?.variants) { variants = defu(variants, cssContent?.variants) }
+          },
+        )
+      }
+    }
+    catch (e) {
+      // Do not catch errors at this stage
     }
   }
-  catch (e) {
-  }
 
-  // Type `css()`
-  if (style?.content) {
-    const cssMatches = style.content.match(/css\(([\s\S]*)\)/)
-    if (cssMatches) {
-      embeddedFile.content.push('\nconst __VLS_css = ')
-      embeddedFile.content.push([
-        cssMatches[0],
-        style.name,
-        cssMatches.index,
-        fullCapabilities,
-      ])
-    }
-
-    // Type `$dt()` from <style>
-    style.content.replace(
-      dtRegex,
-      (match, dtKey, index) => {
-        addDt(match, dtKey, index, style.name, i)
-        return match
-      },
-    )
-  }
-
-  return { variants }
+  return variants
 }
 
 export default plugin

@@ -74,6 +74,8 @@ export const createContext = <UserOptions extends PinceauOptions = PinceauOption
   return {
     // Local context
     env,
+    // This context is build-time only.
+    runtime: false,
     options,
 
     // Transformed files

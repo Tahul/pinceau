@@ -112,9 +112,23 @@ export function resolveCustomDirectives(
 ) {
   if (property.startsWith('@')) {
     const resolveColorScheme = (scheme: string) => {
-      scheme = ctx.options.colorSchemeMode === 'class' ? `:root.${scheme} &` : `@media (prefers-color-scheme: ${scheme})`
+      scheme = ctx.options.colorSchemeMode === 'class'
+        ? `:root.${scheme}`
+        : `@media (prefers-color-scheme: ${scheme})`
+
+      const isMedia = scheme.startsWith('@media')
+
+      // Runtime styling needs to be wrapped in `@media` as it does not get processed through PostCSS
+      if (ctx?.runtime) {
+        return {
+          '@media': {
+            [scheme]: value,
+          },
+        }
+      }
+
       return {
-        [scheme]: value,
+        [isMedia ? scheme : `${scheme} &`]: value,
       }
     }
 
@@ -132,8 +146,8 @@ export function resolveCustomDirectives(
       }
     }
 
+    // Handle all user supplied @directives
     const mediaQueries = ctx.$tokens('media' as any, { key: undefined, loc })
-
     if (mediaQueries) {
       const query = property.replace('@', '')
       if (mediaQueries[query]) {

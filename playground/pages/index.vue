@@ -38,7 +38,7 @@ onMounted(() => {
   <section>
     <canvas ref="canvas" />
     <PlaygroundGrid>
-      <BigButton />
+      <BigButton :padded="{ dark: 'lg', initial: 'xl' }" color="green" @click="confettis" />
     </PlaygroundGrid>
   </section>
 </template>

@@ -74,12 +74,12 @@ export function resolveVariantsProps(variants, isTs: boolean) {
 
       const isBooleanVariant = Object.keys(variant).some(key => (key === 'true' || key === 'false'))
       if (isBooleanVariant) {
-        prop.type = isTs ? ' [Boolean, Object] as PropType<boolean | { [key in PinceauMediaQueries]?: boolean }>' : ' [Boolean, Object]'
+        prop.type = isTs ? ' [Boolean, Object] as import(\'vue\').PropType<boolean | { [key in import(\'pinceau\').PinceauMediaQueries]?: boolean }>' : ' [Boolean, Object]'
         prop.default = false
       }
       else {
         const possibleValues = `\'${Object.keys(variant).filter(key => key !== 'options').join('\' | \'')}\'`
-        prop.type = isTs ? ` [String, Object] as PropType<${possibleValues} | { [key in PinceauMediaQueries]?: ${possibleValues} }>` : ' [String, Object]'
+        prop.type = isTs ? ` [String, Object] as import(\'vue\').PropType<${possibleValues} | { [key in import(\'pinceau\').PinceauMediaQueries]?: ${possibleValues} }>` : ' [String, Object]'
         prop.default = undefined
       }
 
@@ -88,7 +88,7 @@ export function resolveVariantsProps(variants, isTs: boolean) {
         if (options.default) { prop.default = options.default }
         if (options.required) { prop.required = options.required }
         if (options.type) { prop.type = options.type }
-        if (options.validator) { prop.validator = options.validator.toString() }
+        if (options.validator) { prop.validator = options.validator?.toString() }
       }
 
       props[key] = prop
@@ -105,13 +105,24 @@ export function castVariantsPropsAst(ast: ASTNode) {
     {
       visitObjectProperty(path) {
         // Cast `type` string
-        if (path.value?.key?.value === 'type') {
-          path.value.value = expressionToAst(path.value.value.value)
-        }
+        if (path.value?.key?.value === 'type') { path.value.value = expressionToAst(path.value.value.value) }
         // Cast `validator` string
-        if (path.value?.key?.value === 'validator') {
-          path.value.value = expressionToAst(path.value.value.value)
+        if (path.value?.key?.value === 'validator') { path.value.value = expressionToAst(path.value.value.value) }
+
+        if (
+          path.value?.key?.value === 'required'
+          || path.value?.key?.value === 'default'
+        ) {
+          let isJSONLike
+          try { isJSONLike = !!(JSON.parse(path.value.value.value).toString()) }
+          catch (e) { }
+          path.value.value = expressionToAst(
+            isJSONLike
+              ? `${path.value.value.value} as const`
+              : `\`${path.value.value.value}\` as const`,
+          )
         }
+
         return this.traverse(path)
       },
     },
