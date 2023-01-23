@@ -17,12 +17,47 @@ const plugin: VueLanguagePlugin = _ => ({
     return fileNames
   },
   resolveEmbeddedFile(fileName, sfc, embeddedFile) {
-    if (embeddedFile.fileName.includes('.cssInTs.')) {
-      // Add imports on top of file
-      const imports = [
-        '\nimport type { CSSFunctionType, PinceauMediaQueries } from \'pinceau\'\n',
-        '\nimport type { ExtractPropTypes } from \'vue\'\n',
+    const isCssInTsFile = embeddedFile.fileName.includes('.cssInTs.')
+
+    // Handle <vue> files
+    let variantsContent: any
+    if (isCssInTsFile || embeddedFile.fileName.replace(fileName, '').match(/^\.(js|ts|jsx|tsx)$/)) {
+      // Resolve variants from SFC definition
+      const variants = resolveVariantsContent(sfc)
+
+      // Resolve variants props
+      if (sfc.scriptSetup) {
+        const isTs = sfc.scriptSetup.lang === 'ts'
+        const variantProps = resolveVariantsProps(variants, isTs)
+        variantsContent = expressionToAst(JSON.stringify(variantProps))
+        variantsContent = castVariantsPropsAst(variantsContent)
+        variantsContent = `\nconst variants = ${printAst(variantsContent).code}\n`
+      }
+    }
+
+    if (isCssInTsFile) {
+      embeddedFile.content.unshift('\nimport type { PinceauMediaQueries, CSSFunctionType } from \'pinceau\'')
+
+      // Add variants above <script setup> content
+      if (variantsContent) { embeddedFile.content.push(variantsContent) }
+
+      // Add <script setup> context
+      if (sfc.scriptSetup) {
+        embeddedFile.content.push([
+          sfc.scriptSetup.content,
+          sfc.scriptSetup.name,
+          0,
+          FileRangeCapabilities.full,
+        ])
+      }
+
+      // Setup `css()` context
+      const context = [
+        '\ntype __VLS_InstanceOmittedKeys = \'onVnodeBeforeMount\' | \'onVnodeBeforeUnmount\' | \'onVnodeBeforeUpdate\' | \'onVnodeMounted\' | \'onVnodeUnmounted\' | \'onVnodeUpdated\' | \'key\' | \'ref\' | \'ref_for\' | \'ref_key\' | \'style\' | \'class\'\n',
+        `\ntype __VLS_PropsType = Omit<InstanceType<typeof import('${fileName}').default>['$props'], __VLS_InstanceOmittedKeys>\n`,
+        '\nfunction css (declaration: CSSFunctionType<__VLS_PropsType>) { return { declaration } }\n',
       ]
+      embeddedFile.content.push(...context)
 
       const index = Number(embeddedFile.fileName.split('.').slice(-2)[0])
       const style = sfc.styles[index]
@@ -32,38 +67,15 @@ const plugin: VueLanguagePlugin = _ => ({
       embeddedFile.capabilities = FileCapabilities.full
       embeddedFile.kind = 1
       embeddedFile.parentFileName = fileName
-      if (sfc.scriptSetup) {
-        embeddedFile.content.push([
-          sfc.scriptSetup.content,
-          sfc.scriptSetup.name,
-          0,
-          FileRangeCapabilities.full,
-        ])
-      }
-      embeddedFile.content.push(...imports)
       embeddedFile.content.push([
         style?.content,
         style?.name,
         0,
         FileRangeCapabilities.full,
       ])
-
-      return
     }
-
-    // Handle <vue> files
-    if (embeddedFile.fileName.replace(fileName, '').match(/^\.(js|ts|jsx|tsx)$/)) {
-      // Resolve variants from SFC definition
-      const variants = resolveVariantsContent(sfc)
-
-      // Resolve variants props
-      if (sfc.scriptSetup) {
-        const isTs = sfc.scriptSetup.lang === 'ts'
-        const variantProps = resolveVariantsProps(variants, isTs)
-        let variantsPropsAst = expressionToAst(JSON.stringify(variantProps))
-        variantsPropsAst = castVariantsPropsAst(variantsPropsAst)
-        embeddedFile.content.push(`\nconst variants = ${printAst(variantsPropsAst).code}\n`)
-      }
+    else if (variantsContent) {
+      embeddedFile.content.push(variantsContent)
     }
   },
 })

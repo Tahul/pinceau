@@ -6,8 +6,6 @@ defineProps({
   color: computedStyle<keyof PinceauTheme['color']>('red'),
   ...variants,
 })
-
-const test = ''
 </script>
 
 <template>
@@ -16,12 +14,6 @@ const test = ''
     <slot />
   </button>
 </template>
-
-<style lang="postcss">
-.big-button {
-    color: red;
-}
-</style>
 
 <style scoped lang="ts">
 css({
@@ -58,7 +50,7 @@ css({
         transition: 'box-shadow .1 ease-in-out',
         color: '{color.white}',
         boxShadow: (props) => `0 8px 0 {color.${props.color}.600}, 0 12px 16px rgba(0, 0, 0, .35)`,
-        clip: (props) => props.$props,
+        clip: (props) => props.color === '',
         span: {
             fontFamily: '{font.secondary}',
             display: 'inline-block',

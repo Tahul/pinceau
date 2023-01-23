@@ -44,7 +44,7 @@ export type CSSProperties<
     }
     &
     {
-      [K in string | number | symbol]: CSSProperties<TemplateProps> | UsableTokens | MappedProperty<K, TemplateProps> | ComputedStyleDefinition<UsableTokens, TemplateProps> | {}
+      [K in Utils.Primitive]: CSSProperties<TemplateProps> | UsableTokens | MappedProperty<K, TemplateProps> | ComputedStyleDefinition<UsableTokens, TemplateProps> | {}
     }
 
 export type CSSFunctionType<TemplateProps = {}> =
@@ -61,5 +61,5 @@ export type CSSFunctionType<TemplateProps = {}> =
   }
   &
   {
-    [K in string | number | symbol]: CSSProperties<TemplateProps> | MappedProperty<K, TemplateProps> | {}
+    [K in Utils.Primitive]: CSSProperties<TemplateProps> | MappedProperty<K, TemplateProps> | {}
   }

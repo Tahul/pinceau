@@ -1,3 +1,5 @@
+export type Primitive = string | number | symbol
+
 export type WrapKey<
   TKey,
   TPrefix extends string = '',
@@ -55,7 +57,7 @@ export type NestedKeyOf<TObject> =
 export type FilterStartingWith<Set, Needle extends string> = Set extends `${Needle}${infer _X}` ? Set : never
 
 export type WrapUnion<
-  TObject extends string | number | symbol,
+  TObject extends Primitive,
   TPrefix extends string,
   TSuffix extends string,
 > = keyof {
