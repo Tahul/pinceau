@@ -43,12 +43,7 @@ const plugin: VueLanguagePlugin = _ => ({
 
       // Add <script setup> context
       if (sfc.scriptSetup) {
-        embeddedFile.content.push([
-          sfc.scriptSetup.content,
-          sfc.scriptSetup.name,
-          0,
-          FileRangeCapabilities.full,
-        ])
+        embeddedFile.content.push(sfc.scriptSetup.content)
       }
 
       // Setup `css()` context
