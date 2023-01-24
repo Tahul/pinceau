@@ -105,50 +105,68 @@ export const utilsFull = (utils = {}) => {
  * import 'pinceau.css'
  */
 export const cssFull = (dictionary: Dictionary, options: Options, responsiveTokens: any, colorSchemeMode: ColorSchemeModes) => {
-  // Resolve regular theme declaration
-  const selector = options.selector ? options.selector : ':root'
-  const { outputReferences } = options
   const { formattedVariables } = StyleDictionary.formatHelpers
 
   // Create :root tokens list
-  const initialTokens = []
+  const tokens: any = {
+    initial: []
+  }
   walkTokens(
     dictionary.tokens,
-    (value) => {
-      initialTokens.push({
-        ...value,
-        value: value?.value?.initial || value?.value,
-      })
-      return value
+    (token) => {
+      // Handle responsive tokens
+      if (typeof token?.value === 'object' && token?.value?.initial) {
+        Object.entries(token.value).forEach(([media, value]) => {
+          if (!tokens[media]) { tokens[media] = [] }
+
+          tokens[media].push({
+            ...token,
+            attributes: {
+              ...(token?.attributes || {}),
+              media
+            },
+            value,
+          })
+        })
+
+        return token
+      }
+
+      // Handle regular tokens
+      tokens.initial.push(token)
+
+      return token
     },
   )
-  let css = `@media {\n ${selector} {\n  --pinceau-mq: initial;\n${formattedVariables({ format: 'css', dictionary: { allTokens: initialTokens } as any, outputReferences })}\n}\n}\n`
+
+  let css = ''
 
   // Create all responsive tokens rules
-  Object.entries(responsiveTokens).forEach(
+  Object.entries(tokens).forEach(
     ([key, value]) => {
       // Resolve tokens content
-      const formattedResponsiveContent = formattedVariables({ format: 'css', dictionary: { allTokens: value } as any, outputReferences })
+      const formattedContent = formattedVariables({ format: 'css', dictionary: { ...dictionary, allTokens: value } as any, outputReferences: true })
 
       // Resolve responsive selector
-      let responsiveSelector
+      let responsiveSelector = ''
       if (key === 'dark' || key === 'light') {
         // Handle dark/light modes
         if (colorSchemeMode === 'class') { responsiveSelector = `:root.${key}` }
         else { responsiveSelector = `@media (prefers-color-scheme: ${key})` }
       }
-      else {
-        responsiveSelector = dictionary.allTokens.find(token => token.name === `media-${key}`)?.value
+      else if (key !== 'initial') {
+        const queryToken = dictionary.allTokens.find(token => token.name === `media-${key}`)
+        if (queryToken) responsiveSelector = queryToken.value
       }
 
       // Write responsive tokens
       if (responsiveSelector.match(responsiveMediaQueryRegex)) {
         // Use raw selector
-        css += `@media {\n ${responsiveSelector} {\n  --pinceau-mq: ${key};\n${formattedResponsiveContent}\n}\n}\n`
+        css += `@media {\n${responsiveSelector || ''} {\n  --pinceau-mq: ${key};\n${formattedContent}\n}\n}\n`
       }
       else {
         // Wrap :root with media query
-        css += `\n@media ${responsiveSelector} { :root {\n  --pinceau-mq: ${key};\n${formattedResponsiveContent}\n}\n}\n`
+        css += `\n@media${responsiveSelector || ''} {\n:root {\n  --pinceau-mq: ${key};\n${formattedContent}\n}\n}\n`
       }
     },
   )

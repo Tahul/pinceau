@@ -16,7 +16,8 @@ export async function generateTheme(tokens: any, { outputDir: buildPath, colorSc
   const files = [
     {
       destination: 'theme/index.css',
-      format: 'pinceau/css',
+      // Has to be named `css` to be recognized as CSS output
+      format: 'css',
     },
     {
       destination: 'index.ts',
@@ -122,7 +123,7 @@ export async function generateTheme(tokens: any, { outputDir: buildPath, colorSc
 
   // index.css
   styleDictionary.registerFormat({
-    name: 'pinceau/css',
+    name: 'css',
     formatter({ dictionary, options }) {
       const result = cssFull(dictionary, options, responsiveTokens, colorSchemeMode)
       outputs.css = result.replace(/\n|\s\s/gm, '')
