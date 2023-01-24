@@ -66,7 +66,6 @@ const plugin: VueLanguagePlugin = _ => ({
 
       embeddedFile.capabilities = FileCapabilities.full
       embeddedFile.kind = 1
-      embeddedFile.parentFileName = fileName
       embeddedFile.content.push([
         style?.content,
         style?.name,
