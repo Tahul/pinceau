@@ -23,7 +23,6 @@ export default defineTheme({
     red: palette('#F8333C'),
     grey: palette('#DBD5B5'),
     green: palette('#44AF69'),
-    
     primary: {
       100: {
         initial: '{color.blue.100}',

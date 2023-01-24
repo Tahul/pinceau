@@ -1,3 +1,4 @@
+import type { Schema } from 'untyped'
 import type { PinceauMediaQueries } from './theme'
 
 export type RawTokenType = string | number | string[]
@@ -6,7 +7,11 @@ export type ResponsiveToken<T> = { [key in PinceauMediaQueries]?: T } & { [key: 
 
 export interface DesignToken<
   T = RawTokenType,
-> {
+  > {
+  /**
+   * The schema definition for the schema output format.
+   */
+  $schema?: Schema
   /**
    * The raw value of the token.
    */

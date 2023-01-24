@@ -24,7 +24,7 @@ export interface ResolvedConfigLayer<T> {
 export type PinceauUtilsProperties = Record<string, CSSProperties | ((value: any) => CSSProperties)>
 
 export interface ConfigTokens {
-  media?: Record<string, DesignToken | RawTokenType>
+  media?: Record<string, DesignToken | RawTokenType | Schema> & { $schema?: Schema }
   utils?: PinceauUtilsProperties
 }
 
