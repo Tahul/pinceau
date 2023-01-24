@@ -120,12 +120,6 @@ export async function generateTheme(tokens: any, { outputDir: buildPath, colorSc
     },
   })
 
-  // Transform group used accross all tokens formats
-  styleDictionary.registerTransformGroup({
-    name: 'pinceau',
-    transforms,
-  })
-
   // index.css
   styleDictionary.registerFormat({
     name: 'pinceau/css',
@@ -152,6 +146,12 @@ export async function generateTheme(tokens: any, { outputDir: buildPath, colorSc
       outputs.ts = tsFull(dictionary.tokens)
       return outputs.ts
     },
+  })
+
+  // Transform group used accross all tokens formats
+  styleDictionary.registerTransformGroup({
+    name: 'pinceau',
+    transforms,
   })
 
   styleDictionary = styleDictionary.extend({

@@ -1,0 +1,5 @@
+@layer base {
+  div {
+    background-color: $dt('color.green.200') !important;
+  }
+}

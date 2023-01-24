@@ -88,7 +88,5 @@ export function transformComputedStylesToDeclaration(
     }
   }
 
-  console.log(declaration)
-
   return declaration
 }

@@ -1,49 +1,70 @@
-import chalk from 'chalk'
-import consola from 'consola'
 import type { PinceauOptions } from 'pinceau/types'
 import { findLineColumn } from './debug'
 
 type DebugLevel = PinceauOptions['debug']
 
-let debugLevel: DebugLevel = false
+// Setup context
+const noopHelper = (value: string | number) => value?.toString() || value
+let context: { logger: any; debugLevel: DebugLevel; tag: any; info: any; warning: any; error: any; success: any } = {
+  // consola.withScope(' 🖌 ')
+  logger: console,
+  // false
+  debugLevel: false,
+  // chalk.bgBlue.blue
+  tag: noopHelper,
+  // chalk.blue
+  info: noopHelper,
+  // chalk.yellow
+  warning: noopHelper,
+  // chalk.red
+  error: noopHelper,
+  // chalk.green
+  success: noopHelper,
+}
+const updateDebugContext = (newContext: Partial<typeof context>) => {
+  context = {
+    ...context,
+    ...newContext,
+  }
+  console.log({ context })
+}
+const getDebugContext = () => context
+const c = getDebugContext
 
-const setDebugLevel = (newDebugLevel: DebugLevel) => (debugLevel = newDebugLevel)
-const getDebugLevel = () => debugLevel
+// Custom exposed helpers
+const fileLink = (id: string) => c().logger.log(`🔗 ${c().info(id)}\n`)
+const errorMessage = (message: string) => c().logger.log(`🚧 ${c().warning(message)}\n`)
+const DEBUG_MARKER = () => c().tag(' DEBUG ')
+const debugMarker = (text, timing) => c().logger.info(`${DEBUG_MARKER()} ${text} ${timing ? `[${timing}ms]` : ''}`)
 
-const logger = consola.withScope(' 🖌 ')
-
-export const fileLink = (id: string) => logger.log(`🔗 ${chalk.blue(id)}\n`)
-export const errorMessage = (message: string) => logger.log(`🚧 ${chalk.yellow(message)}\n`)
-const DEBUG_MARKER = chalk.bgBlue.blue(' DEBUG ')
-export const debugMarker = (text, timing) => logger.info(`${DEBUG_MARKER} ${text} ${timing ? `[${timing}ms]` : ''}`)
-
+// All available messages
 const messages = {
   TRANSFORM_ERROR: (debugLevel, id, error) => {
-    logger.error('Pinceau could not transform this file:')
+    c().logger.error('Pinceau could not transform this file:')
     fileLink(id)
     error?.message && errorMessage(error.message)
   },
   CONFIG_RESOLVE_ERROR: (debugLevel, path, error) => {
-    logger.error('Pinceau could not resolve this configuration file:')
+    c().logger.error('Pinceau could not resolve this configuration file:')
     const loc = error?.loc?.start?.line ? `${error.loc.start.line}:${error.loc.start.column}` : ''
     fileLink(`${path}${loc}`)
     error?.message && errorMessage(error.message)
   },
   CONFIG_BUILD_ERROR: (debugLevel, error) => {
-    logger.error('Pinceau could not build your design tokens configuration!\n')
-    logger.log(error)
+    c().logger.error('Pinceau could not build your design tokens configuration!\n')
+    c().logger.log(error)
   },
   CONFIG_RESOLVED: (debugLevel, resolvedConfig) => {
     if (debugLevel) {
-      logger.log('🎨 Pinceau loaded with following configuration sources:\n')
+      c().logger.log('🎨 Pinceau loaded with following configuration sources:\n')
       resolvedConfig.sources.forEach(path => fileLink(path))
-      logger.log('🚧 Disable this message by setting `debug: false` option.\n')
-      logger.log(`🚧 Current debug level: ${chalk.blue(Number(debugLevel))}\n`)
+      c().logger.log('🚧 Disable this message by setting `debug: false` option.\n')
+      c().logger.log(`🚧 Current debug level: ${c().info(Number(debugLevel))}\n`)
     }
   },
   TOKEN_NOT_FOUND: (debugLevel, path, options) => {
     if (options?.loc?.query && !(options.loc.query?.type)) {
-      logger.warn(`Token not found in static CSS: ${chalk.red(path)}`)
+      c().logger.warn(`Token not found in static CSS: ${c().error(path)}`)
 
       // Get LOC for missing token in `css({ ... })`
       const { line: lineOffset, column: columnOffset } = findLineColumn(options.loc.source, `{${path}}`)
@@ -54,23 +75,23 @@ const messages = {
       const line = (options.loc?.start?.line || 0) + lineOffset
       const column = (options.loc?.start?.column || 0) + columnOffset
 
-      logger.log(`🔗 ${options.loc.query.filename}${line && column ? `:${line}:${column}\n` : ''}`)
+      c().logger.log(`🔗 ${options.loc.query.filename}${line && column ? `:${line}:${column}\n` : ''}`)
     }
   },
   SELECTOR_CONFLICT: (debugLevel, selector) => {
-    logger.warn('You seem to be using a conflicting selector:')
-    logger.log(`❓ ${selector}\n`)
-    logger.log('If you want to combine `@dark` or `@light` with `html` selector, consider using `html.dark` or `html.light`.\n')
+    c().logger.warn('You seem to be using a conflicting selector:')
+    c().logger.log(`❓ ${selector}\n`)
+    c().logger.log('If you want to combine `@dark` or `@light` with `html` selector, consider using `html.dark` or `html.light`.\n')
   },
   WRONG_TOKEN_NAMING: (debugLevel, token) => {
-    logger.error(`Invalid token name: ${chalk.red(token.path.join('-'))}`)
-    logger.log('Token paths can not contains the following characters: `.` or `-`\n')
-    logger.log('These paths keys also has to only contains characters supported in CSS stylesheets.\n')
+    c().logger.error(`Invalid token name: ${c().error(token.path.join('-'))}`)
+    c().logger.log('Token paths can not contains the following characters: `.` or `-`\n')
+    c().logger.log('These paths keys also has to only contains characters supported in CSS stylesheets.\n')
   },
   SCHEMA_BUILD_ERROR: (debugLevel, _) => {
     if (debugLevel) {
-      logger.warn('Pinceau could not build your schema.ts file!')
-      logger.log('Design tokens editor might be hidden from Nuxt Studio.')
+      c().logger.warn('Pinceau could not build your schema.ts file!')
+      c().logger.log('Design tokens editor might be hidden from Nuxt Studio.')
     }
   },
 } as const
@@ -79,6 +100,9 @@ type Messages = typeof messages
 
 type DropFirst<T extends unknown[]> = T extends [any, ...infer U] ? U : never
 
-const message = <T extends keyof Messages>(id: T, options?: DropFirst<Parameters<Messages[T]>>) => messages[id].bind(undefined, getDebugLevel(), ...options)()
+const message = <T extends keyof Messages>(id: T, options?: DropFirst<Parameters<Messages[T]>>) => {
+  console.log({ id, options })
+  return messages[id].bind(undefined, c().debugLevel, ...options)()
+}
 
-export { message, logger, setDebugLevel, getDebugLevel }
+export { message, updateDebugContext, getDebugContext, debugMarker, fileLink, errorMessage }

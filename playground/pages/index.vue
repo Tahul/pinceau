@@ -45,11 +45,6 @@ onMounted(() => {
 
 <style scoped lang="ts">
 css({
-  button: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
   section: {
     overflow: 'hidden',
     position: 'relative',

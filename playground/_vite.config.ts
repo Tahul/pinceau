@@ -27,7 +27,7 @@ export default defineConfig({
           configFileName: 'tokens.config',
         },
       ],
-      debug: true,
+      debug: 2,
       studio: true,
       colorSchemeMode: 'class',
     }),

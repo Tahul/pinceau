@@ -11,10 +11,12 @@ export default defineNuxtConfig({
   studio: {
     enabled: true,
   },
+  css: [
+    '~/main.css',
+  ],
   pinceau: {
     configFileName: 'tokens.config',
     debug: false,
-    studio: true,
   },
   colorMode: {
     classSuffix: '',

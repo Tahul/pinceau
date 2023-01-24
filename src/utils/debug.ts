@@ -1,7 +1,6 @@
 import { performance } from 'perf_hooks'
-import chalk from 'chalk'
 import type { PinceauOptions } from 'pinceau'
-import { debugMarker } from '../utils/logger'
+import { debugMarker, getDebugContext } from '../utils/logger'
 
 export const useDebugPerformance = (text: string, debug: PinceauOptions['debug'], logOnStop = true) => {
   const isDebug = debug === 2
@@ -15,20 +14,18 @@ export const useDebugPerformance = (text: string, debug: PinceauOptions['debug']
   }
 
   function timing() {
+    const { error, success, warning } = getDebugContext()
+
     let count = Number(parseFloat(`${performanceTimerStop - performanceTimerStart}`).toFixed(2))
 
     if (isNaN(count)) {
       count = 0
     }
 
-    let color = chalk.greenBright
+    let color = success
 
-    if (count > 1) { color = chalk.green }
-    if (count > 3) { color = chalk.yellowBright }
-    if (count > 5) { color = chalk.yellow }
-    if (count > 8) { color = chalk.redBright }
-    if (count > 10) { color = chalk.red }
-    if (count > 20) { color = chalk.red.underline }
+    if (count > 5) { color = warning }
+    if (count > 10) { color = error }
 
     return color(count)
   }

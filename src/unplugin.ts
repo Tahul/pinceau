@@ -1,11 +1,13 @@
 import { createUnplugin } from 'unplugin'
 import MagicString from 'magic-string'
 import { join } from 'pathe'
+import consola from 'consola'
+import chalk from 'chalk'
 import { createContext } from './theme/context'
 import { registerAliases, registerPostCssPlugins } from './utils/plugin'
 import { replaceStyleTs, resolveStyleQuery, transformVueSFC, transformVueStyle } from './transforms'
 import { parseVueQuery } from './utils/query'
-import { message, setDebugLevel } from './utils/logger'
+import { message, updateDebugContext } from './utils/logger'
 import type { PinceauOptions } from './types'
 import { merger } from './utils/merger'
 import { useDebugPerformance } from './utils/debug'
@@ -40,7 +42,18 @@ export default createUnplugin<PinceauOptions>(
 
     // Setup debug context if in development
     const { stopPerfTimer } = useDebugPerformance('Setup Unplugin', options?.debug)
-    setDebugLevel(options?.dev ? options.debug : false)
+    updateDebugContext({
+      debugLevel: options?.dev ? options.debug : false,
+      logger: consola.withScope(' 🖌 '),
+      // chalk.bgBlue.blue
+      tag: value => chalk.bgBlue.blue(value),
+      // chalk.blue
+      info: value => chalk.blue(value),
+      // chalk.yellow
+      warning: value => chalk.yellow(value),
+      // chalk.red
+      error: value => chalk.red(value),
+    })
 
     const ctx = createContext(options)
 
