@@ -26,7 +26,6 @@ const updateDebugContext = (newContext: Partial<typeof context>) => {
     ...context,
     ...newContext,
   }
-  console.log({ context })
 }
 const getDebugContext = () => context
 const c = getDebugContext
@@ -100,9 +99,6 @@ type Messages = typeof messages
 
 type DropFirst<T extends unknown[]> = T extends [any, ...infer U] ? U : never
 
-const message = <T extends keyof Messages>(id: T, options?: DropFirst<Parameters<Messages[T]>>) => {
-  console.log({ id, options })
-  return messages[id].bind(undefined, c().debugLevel, ...options)()
-}
+const message = <T extends keyof Messages>(id: T, options?: DropFirst<Parameters<Messages[T]>>) => messages[id].bind(undefined, c().debugLevel, ...options)()
 
 export { message, updateDebugContext, getDebugContext, debugMarker, fileLink, errorMessage }
