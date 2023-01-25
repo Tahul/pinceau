@@ -109,7 +109,7 @@ export const cssFull = (dictionary: Dictionary, options: Options, responsiveToke
 
   // Create :root tokens list
   const tokens: any = {
-    initial: []
+    initial: [],
   }
   walkTokens(
     dictionary.tokens,
@@ -123,7 +123,7 @@ export const cssFull = (dictionary: Dictionary, options: Options, responsiveToke
             ...token,
             attributes: {
               ...(token?.attributes || {}),
-              media
+              media,
             },
             value,
           })
@@ -156,7 +156,7 @@ export const cssFull = (dictionary: Dictionary, options: Options, responsiveToke
       }
       else if (key !== 'initial') {
         const queryToken = dictionary.allTokens.find(token => token.name === `media-${key}`)
-        if (queryToken) responsiveSelector = queryToken.value
+        if (queryToken) { responsiveSelector = queryToken.value }
       }
 
       // Write responsive tokens
