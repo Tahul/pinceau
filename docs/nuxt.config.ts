@@ -17,7 +17,21 @@ export default defineNuxtConfig({
   typescript: {
     includeWorkspace: true,
   },
+  components: [
+    {
+      path: '~/components',
+      global: true,
+    },
+  ],
   css: [
     '~/main.postcss',
   ],
+  content: {
+    highlight: {
+      theme: {
+        default: 'github-light',
+        dark: 'github-dark',
+      },
+    },
+  },
 })
