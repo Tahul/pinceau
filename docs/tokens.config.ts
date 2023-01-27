@@ -1,9 +1,6 @@
 import { defineTheme, palette } from 'pinceau'
 
 export default defineTheme({
-  font: {
-    sans: '\'PaytoneOne\'',
-  },
   color: {
     white: '#FBEFDE',
     primary: {
@@ -40,6 +37,12 @@ export default defineTheme({
         initial: '{color.white}',
         dark: '{color.black}',
       },
+    },
+  },
+  typography: {
+    font: {
+      display: 'PaytoneOne',
+      body: '{font.sans}',
     },
   },
 })

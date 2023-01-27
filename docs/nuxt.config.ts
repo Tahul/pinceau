@@ -18,6 +18,6 @@ export default defineNuxtConfig({
     includeWorkspace: true,
   },
   css: [
-    '~/main.css',
+    '~/main.postcss',
   ],
 })

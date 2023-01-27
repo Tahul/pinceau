@@ -8,6 +8,7 @@ export default defineAppConfig({
     },
     header: {
       logo: true,
+      fixed: true,
     },
   },
 })
