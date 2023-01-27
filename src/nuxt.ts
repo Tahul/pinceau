@@ -148,8 +148,10 @@ const module: any = defineNuxtModule<PinceauOptions>({
       if (layerPath) {
         options.includes?.push(
           ...await glob(
-            join(layerPath, '**/*.{jsx,tsx,js,ts,vue,css}'),
-            { followSymbolicLinks: options.followSymbolicLinks },
+            join(layerPath, '**/*.{js,jsx,mjs,ts,tsx,jsx,tsx,js,ts,vue,css,sass,scss,postcss,less,styl,stylus}'),
+            {
+              followSymbolicLinks: options.followSymbolicLinks,
+            },
           ),
         )
       }

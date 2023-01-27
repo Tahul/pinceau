@@ -66,6 +66,7 @@ export type WrapUnion<
 
 export interface VueQuery {
   id: string
+  ext: string
   filename: string
   vue?: boolean
   src?: boolean

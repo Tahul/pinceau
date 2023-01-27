@@ -1,5 +1,6 @@
-@layer base {
-  div {
-    background-color: $dt('color.green.200') !important;
-  }
+@font-face {
+  font-family: 'FredokaOne';
+  font-style: normal;
+  font-weight: normal;
+  src: url('/FredokaOne-Regular.ttf') format('truetype');
 }

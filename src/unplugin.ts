@@ -12,6 +12,7 @@ import type { PinceauOptions } from './types'
 import { merger } from './utils/merger'
 import { useDebugPerformance } from './utils/debug'
 import { outputFileNames } from './utils'
+import { transformDtHelper } from './transforms/dt'
 
 export const defaultOptions: PinceauOptions = {
   configFileName: 'pinceau.config',
@@ -144,6 +145,9 @@ export default createUnplugin<PinceauOptions>(
         }
 
         try {
+          // Handle $dt in JS(X)/TS(X) files
+          if (['js', 'jsx', 'mjs', 'ts', 'tsx', 'jsx', 'tsx', 'js', 'ts'].includes(query.ext)) { return missingMap(transformDtHelper(code)) }
+
           // Handle CSS files
           const loc = { query, source: code }
           if (query.css && !query.vue) {

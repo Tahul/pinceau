@@ -8,11 +8,16 @@ export default defineNuxtConfig({
   alias: {
     'pinceau/runtime': resolve(__dirname, '../src/runtime.ts'),
     'pinceau': resolve(__dirname, '../src/index.ts'),
+    'pinceau/nuxt': resolve(__dirname, '../src/nuxt.ts'),
   },
   pinceau: {
     followSymbolicLinks: false,
+    configFileName: 'tokens.config',
   },
   typescript: {
     includeWorkspace: true,
   },
+  css: [
+    '~/main.css',
+  ],
 })

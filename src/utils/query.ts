@@ -18,41 +18,23 @@ export function parseVueQuery(id: string) {
     filename,
     id,
   } as VueQuery
-
   const langPart = Object.keys(Object.fromEntries(params)).find(key => /lang\./i.test(key))
   ret.vue = params.has('vue') || id.endsWith('.vue')
   ret.global = params.has('global')
   ret.src = params.has('src')
   ret.raw = params.has('raw')
-  if (params.has('type')) {
-    ret.type = params.get('type') as VueQuery['type']
-  }
-  if (params.has('blockType')) {
-    ret.blockType = params.get('blockType') as VueQuery['blockType']
-  }
-  if (params.has('index')) {
-    ret.index = Number(params.get('index'))
-  }
-  if (params.has('scoped')) {
-    ret.scoped = String(params.get('scoped'))
-  }
+  ret.ext = path.extname(id).slice(1)
+  if (params.has('type')) { ret.type = params.get('type') as VueQuery['type'] }
+  if (params.has('blockType')) { ret.blockType = params.get('blockType') as VueQuery['blockType'] }
+  if (params.has('index')) { ret.index = Number(params.get('index')) }
+  if (params.has('scoped')) { ret.scoped = String(params.get('scoped')) }
+  else if (params.has('lang')) { ret.lang = params.get('lang') as VueQuery['lang'] }
+  if (params.has('issuerPath')) { ret.issuerPath = params.get('issuerPath') as VueQuery['issuerPath'] }
+  if (params.has('transformed')) { ret.transformed = true }
+  if (['css', 'postcss', 'styl', 'stylus', 'sass', 'scss', 'less'].includes(ret.ext)) { ret.css = true }
   if (langPart) {
     const [, lang] = langPart.split('.')
     ret.lang = lang
   }
-  else if (params.has('lang')) {
-    ret.lang = params.get('lang') as VueQuery['lang']
-  }
-  if (params.has('issuerPath')) {
-    ret.issuerPath = params.get('issuerPath') as VueQuery['issuerPath']
-  }
-  if (params.has('transformed')) {
-    ret.transformed = true
-  }
-  const ext = path.extname(id)
-  if (['.css', '.postcss', '.styl', '.stylus', '.sass', '.scss', '.less'].includes(ext)) {
-    ret.css = true
-  }
-
   return ret
 }
