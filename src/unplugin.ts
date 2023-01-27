@@ -146,7 +146,9 @@ export default createUnplugin<PinceauOptions>(
 
         try {
           // Handle $dt in JS(X)/TS(X) files
-          if (['js', 'jsx', 'mjs', 'ts', 'tsx', 'jsx', 'tsx', 'js', 'ts'].includes(query.ext)) { return missingMap(transformDtHelper(code)) }
+          if (['js', 'jsx', 'mjs', 'ts', 'tsx', 'jsx', 'tsx', 'js', 'ts'].includes(query.ext)) {
+            return missingMap(transformDtHelper(code))
+          }
 
           // Handle CSS files
           const loc = { query, source: code }

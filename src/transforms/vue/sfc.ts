@@ -24,31 +24,21 @@ export function transformVueSFC(
   const parsedComponent = parseVueComponent(code, { filename: query.id })
 
   // Transform <style> blocks
-  if (parsedComponent.descriptor.styles) { resolveStyle(query.id, parsedComponent, magicString, variants, computedStyles, ctx, query) }
+  if (parsedComponent?.descriptor?.styles) {
+    resolveStyle(query.id, parsedComponent, magicString, variants, computedStyles, ctx, query)
+  }
 
   // Check if runtime styles are enabled on this component
   const hasRuntimeStyles = Object.keys(variants).length > 0 || Object.keys(computedStyles).length > 0
 
   // Transform <template> blocks
-  if (parsedComponent.descriptor.template) {
-    resolveTemplate(
-      query.id,
-      parsedComponent,
-      magicString,
-      hasRuntimeStyles,
-    )
+  if (parsedComponent?.descriptor?.template) {
+    resolveTemplate(query.id, parsedComponent, magicString, hasRuntimeStyles)
   }
 
   // Transform <script setup> blocks
-  if (parsedComponent.descriptor.scriptSetup) {
-    resolveScriptSetup(
-      query.id,
-      parsedComponent,
-      magicString,
-      variants,
-      computedStyles,
-      parsedComponent.descriptor.scriptSetup.lang === 'ts',
-    )
+  if (parsedComponent?.descriptor?.scriptSetup) {
+    resolveScriptSetup(query.id, parsedComponent, magicString, variants, computedStyles, parsedComponent.descriptor.scriptSetup.lang === 'ts')
   }
 
   return { code, magicString }
