@@ -183,7 +183,7 @@ function getSSRStylesheet() {
  * Resolve the uid and type from a rule.
  */
 function resolveUid(rule: CSSMediaRule) {
-  const uidRule: any = rule.cssRules && rule.cssRules.length
+  const uidRule: any = (rule.cssRules && rule.cssRules.length)
     ? Object.entries((rule as any)?.cssRules).find(([_, rule]: any) => rule.selectorText === HYDRATION_SELECTOR)
     : undefined
 

@@ -232,7 +232,7 @@ async function loadConfigFile({ path, ext, definitions }: { path: string; ext: s
   }
 
   return {
-    definitions: resolveDefinitions,
+    definitions: resolvedDefinitions,
     content,
     config: configImport,
   }

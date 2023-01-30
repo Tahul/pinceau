@@ -197,7 +197,7 @@ export function transformFinishRuntimeSetup(
   computedStyles,
 ) {
   newScriptSetup += [
-    `\n${hasVariants || hasComputedStyles ? 'const { $pinceau } = ' : ''}`,
+    `\n${(hasVariants || hasComputedStyles) ? 'const { $pinceau } = ' : ''}`,
     'usePinceauRuntime(',
     'computed(() => __$pProps),',
     `${hasVariants ? '__$pVariants' : 'undefined'},`,

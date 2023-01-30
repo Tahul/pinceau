@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import Node from './Node.vue'
 
 const foo = 0
 

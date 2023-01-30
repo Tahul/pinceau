@@ -29,7 +29,7 @@ export const getResolvedSelectors = (
             selector.includes('&')
               ? selector.replace(
                 /&/g,
-                /[ +>|~]/.test(parentSelector) && /&.*&/.test(selector)
+                (/[ +>|~]/.test(parentSelector) && /&.*&/.test(selector))
                   ? `:is(${parentSelector})`
                   : parentSelector,
               )
@@ -88,12 +88,12 @@ export const stringify = (
     for (const name in style) {
       const isAtRuleLike = name.charCodeAt(0) === 64
 
-      for (const data of isAtRuleLike && Array.isArray(style[name]) ? style[name] : [style[name]]) {
+      for (const data of (isAtRuleLike && Array.isArray(style[name])) ? style[name] : [style[name]]) {
         if (replacer && (name !== prevName || data !== prevData)) {
           const next = replacer(name, data, style, selectors)
 
           if (next !== null) {
-            cssText += typeof next === 'object' && next ? parse(next, selectors, conditions, name, data) : next == null ? '' : next
+            cssText += (typeof next === 'object' && next) ? parse(next, selectors, conditions, name, data) : next == null ? '' : next
 
             continue
           }

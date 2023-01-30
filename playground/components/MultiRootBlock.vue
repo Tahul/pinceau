@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computedStyle } from 'pinceau/runtime'
-import type { PropType } from 'vue'
 
 defineProps({
   color: computedStyle('color', 'red', false),

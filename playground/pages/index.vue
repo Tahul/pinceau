@@ -5,8 +5,8 @@ import { onMounted, ref, watch } from 'vue'
 
 const theme = usePinceauTheme()
 
-const colors = ['pink', 'primary', 'red', 'blue']
-const rand = (items: any) => items[Math.floor(Math.random() * items.length)]
+// const colors = ['pink', 'primary', 'red', 'blue']
+// const rand = (items: any) => items[Math.floor(Math.random() * items.length)]
 
 let confettiInstance: JSConfetti
 const canvas = ref()
