@@ -11,7 +11,7 @@ export default defineTheme({
 
   font: {
     primary: 'Inter, sans-serif',
-    secondary: 'FredokaOne, serif',
+    secondary: 'PaytoneOne, serif',
   },
 
   color: {

@@ -8,9 +8,9 @@
 
 <style lang="postcss">
 @font-face {
-    font-family: 'FredokaOne';
+    font-family: 'PaytoneOne';
     font-style: normal;
     font-weight: normal;
-    src: url('/FredokaOne-Regular.ttf') format('truetype');
+    src: url('/PaytoneOne-Regular.ttf') format('truetype');
 }
 </style>
