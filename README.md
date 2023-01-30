@@ -69,7 +69,7 @@ Example: [`playground/_vite.config.ts`](./playground/_vite.config.ts)
 </details>
 
 <details>
-<summary>Vite</summary><br>
+<summary>Create your theme</summary><br>
 
 ```ts
 // tokens.config.ts
