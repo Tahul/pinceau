@@ -15,7 +15,7 @@
 - Plug & play with [Nuxt 3](https://v3.nuxtjs.org) and [Vite](https://vitejs.org)
 - Used by [@nuxt-themes](https://github.com/nuxt-themes) ecosystem
 - Ready for [Nuxt Studio](https://nuxt.studio)
-- [Pinceau VSCode extension](https://marketplace.visualstudio.com/items?itemName=yaelguilloux.pinceau-vscode) for value hints
+- [Pinceau VSCode extension](https://marketplace.visualstudio.com/items?itemName=yaelguilloux.pinceau-vscode) for **DX Sugar**
 - Integrated with [Volar](https://github.com/volarjs/volar.js)
 
 #### 🚨 Warning
