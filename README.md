@@ -1,4 +1,4 @@
-![Pinceau Cover](docs/public/cover)
+![Pinceau Cover](./docs/public/cover)
 
 ---
 
