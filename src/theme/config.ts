@@ -100,7 +100,7 @@ export async function loadConfig<U extends PinceauTheme>(
   {
     cwd = process.cwd(),
     configLayers,
-    configFileName = 'pinceau.config',
+    configFileName = 'tokens.config',
     definitions = true,
   }: PinceauOptions,
 ): Promise<LoadConfigResult<U>> {

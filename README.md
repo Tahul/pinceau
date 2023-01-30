@@ -44,7 +44,7 @@ export default defineNuxtConfig({
 })
 ```
 
-Example: [`playground/`](./playground/)
+Example: [`playground/`](./playground/nuxt.config.ts)
 
 > This module only works with [Nuxt 3](https://v3.nuxtjs.org).
 
@@ -64,9 +64,64 @@ export default defineConfig({
 })
 ```
 
-Example: [`playground/`](./playground/)
+Example: [`playground/_vite.config.ts`](./playground/_vite.config.ts)
 
 </details>
+
+<details>
+<summary>Vite</summary><br>
+
+```ts
+// tokens.config.ts
+import { defineTheme } from 'pinceau'
+
+export default defineTheme({
+  // Media queries
+  media: {
+    mobile: '(min-width: 320px)',
+    tablet: '(min-width: 768px)',
+    desktop: '(min-width: 1280px)'
+  },
+
+
+  // Some Design Tokens
+  color: {
+    red: {
+      1: '#FCDFDA',
+      2: '#F48E7C',
+      3: '#ED4D31',
+      4: '#A0240E',
+      5: '#390D05',
+    },
+    green: {
+      1: '#CDF4E5',
+      2: '#9AE9CB',
+      3: '#36D397',
+      4: '#1B7D58',
+      5: '#072117',
+    }
+  },
+  space: {
+    1: '0.25rem',
+    2: '0.5rem',
+    3: '0.75rem',
+    4: '1rem'
+  }
+
+  // Property utils
+  utils: {
+    px: (value: PropertyValue<'padding'>) => ({ paddingLeft: value, paddingRight: value }),
+    py: (value: PropertyValue<'padding'>) => ({ paddingTop: value, paddingBottom: value })
+  }
+})
+```
+
+Example: [`playground/theme/tokens.config.ts`](./playground/theme/tokens.config.ts)
+
+</details>
+
+
+
 
 Learn more about Pinceau on the [documentation](https://pinceau.dev/get-started/what-is-pinceau).
 

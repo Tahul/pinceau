@@ -30,7 +30,7 @@ export interface PinceauOptions {
   /**
    * The path of your configuration file.
    *
-   * @default 'pinceau.config'
+   * @default 'tokens.config'
    */
   configFileName?: string
   /**

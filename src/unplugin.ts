@@ -15,7 +15,7 @@ import { outputFileNames } from './utils'
 import { transformDtHelper } from './transforms/dt'
 
 export const defaultOptions: PinceauOptions = {
-  configFileName: 'pinceau.config',
+  configFileName: 'tokens.config',
   configLayers: [],
   configResolved: (_) => { },
   cwd: process.cwd(),
