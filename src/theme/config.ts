@@ -3,10 +3,14 @@ import fsp from 'node:fs/promises'
 import { resolve } from 'pathe'
 import jiti from 'jiti'
 import type { ViteDevServer } from 'vite'
+import { defaultExport } from 'paneer'
+import type { namedTypes } from 'ast-types'
+import type { NodePath } from 'ast-types/lib/node-path'
 import { merger } from '../utils/merger'
 import { message } from '../utils/logger'
 import type { ConfigLayer, LoadConfigResult, PinceauConfigContext, PinceauOptions, PinceauTheme, ResolvedConfigLayer } from '../types'
 import { outputFileNames } from '../utils/regexes'
+import { parseAst, printAst, visitAst } from '../utils/ast'
 
 const extensions = ['.js', '.ts', '.mjs', '.cjs', '.json']
 
@@ -19,7 +23,6 @@ export function usePinceauConfig<UserOptions extends PinceauOptions = PinceauOpt
   let cwd = options?.cwd ?? process.cwd()
   let sources: string[] = []
   let resolvedConfig: any = {}
-
   let ready = reloadConfig()
 
   function registerConfigWatchers() {
@@ -98,6 +101,7 @@ export async function loadConfig<U extends PinceauTheme>(
     cwd = process.cwd(),
     configLayers,
     configFileName = 'pinceau.config',
+    definitions = true,
   }: PinceauOptions,
 ): Promise<LoadConfigResult<U>> {
   let sources: ConfigLayer[] = [
@@ -138,7 +142,7 @@ export async function loadConfig<U extends PinceauTheme>(
   sources = [...new Set(sources)]
 
   async function resolveConfig<U extends PinceauTheme>(layer: ConfigLayer): Promise<ResolvedConfigLayer<U>> {
-    const empty = (path = undefined) => ({ path, config: {} as any, schema: {} })
+    const empty = (path = undefined) => ({ path, config: {} as any, schema: {}, definitions: {} })
 
     let path = ''
 
@@ -167,7 +171,7 @@ export async function loadConfig<U extends PinceauTheme>(
     if (!filePath) { return empty() }
 
     try {
-      return await loadConfigFile({ path: filePath, ext }) as ResolvedConfigLayer<U>
+      return await loadConfigFile({ path: filePath, ext, definitions }) as ResolvedConfigLayer<U>
     }
     catch (e) {
       message('CONFIG_RESOLVE_ERROR', [filePath, e])
@@ -177,39 +181,125 @@ export async function loadConfig<U extends PinceauTheme>(
 
   const result: LoadConfigResult<U> = {
     config: {} as any,
+    definitions: {} as any,
     sources: [] as string[],
   }
 
   for (const layer of sources) {
-    const { path, config } = await resolveConfig(layer)
+    const { path, config, definitions } = await resolveConfig(layer)
 
     if (path) { result.sources.push(path) }
 
     if (config) { result.config = merger(config, result.config) as U }
+
+    if (definitions) { result.definitions = Object.assign(result?.definitions || {}, definitions) }
   }
 
   return result
 }
 
-async function loadConfigFile({ path, ext }: { path: string; ext: string }) {
+async function loadConfigFile({ path, ext, definitions }: { path: string; ext: string; definitions: boolean }) {
+  const content = await fsp.readFile(path, 'utf-8')
+
   if (ext === '.json') {
-    const config = JSON.parse(await fsp.readFile(path, 'utf-8'))
+    const config = JSON.parse(content)
     return {
       config,
-      schema: {},
       path,
     }
   }
 
   const configImport = jiti(path, {
-    interopDefault: false,
+    interopDefault: true,
     requireCache: false,
     esmResolve: true,
   })(path)
 
-  return {
-    config: configImport?.default || configImport,
-    schema: configImport?.schema,
-    path,
+  let mediaQueriesKeys = ['dark', 'light', 'initial']
+  if (configImport.media && configImport.media.length) {
+    mediaQueriesKeys = [...mediaQueriesKeys, ...Object.keys(configImport.media)]
   }
+
+  // Try to resolve tokens definitions
+  let resolvedDefinitions = {}
+  if (definitions) {
+    try {
+      resolvedDefinitions = resolveDefinitions(content, mediaQueriesKeys, path)
+    }
+    catch (e) {
+      return
+    }
+  }
+
+  return {
+    definitions: resolveDefinitions,
+    content,
+    config: configImport,
+  }
+}
+
+function isResponsiveToken(node: any, mqKeys: string[]) {
+  const properties = node?.value?.properties || []
+  const propertiesKeys = properties.map(node => node?.key?.value?.toString() || node?.key?.name?.toString())
+  if (propertiesKeys.includes('initial') && propertiesKeys.some(propKey => mqKeys.includes(propKey))) { return true }
+}
+
+function getTokenNode(node: NodePath<namedTypes.ObjectProperty>, mqKeys: string[]) {
+  if (isResponsiveToken(node, mqKeys)) { return node }
+  if (['FunctionDeclaration', 'ObjectExpression'].includes(node?.value?.value?.type)) { return }
+  return node
+}
+
+function resolveDefinitions(content: string, mediaQueriesKeys: string[], filePath: string) {
+  const definitions = {}
+
+  visitAst(
+    defaultExport(parseAst(content) as any),
+    {
+      visitObjectProperty(path) {
+        if (isResponsiveToken(path?.parent, mediaQueriesKeys)) { path = path?.parent }
+
+        const tokenNode = getTokenNode(path, mediaQueriesKeys)
+
+        if (tokenNode) {
+          const key = resolvePropertyKeyPath(tokenNode)
+
+          if (!key) { return false }
+
+          if ((key.startsWith('utils.') || key.startsWith('media.')) && key.split('.').length > 2) { return false }
+
+          definitions[key] = {
+            uri: filePath,
+            range: {
+              start: path.value.loc.start,
+              end: path.value.loc.end,
+            },
+          }
+
+          if (key.startsWith('utils.')) {
+            definitions[key].content = printAst(tokenNode as any).code
+          }
+
+          return false
+        }
+
+        return this.traverse(path)
+      },
+    },
+  )
+
+  return definitions
+}
+
+function resolvePropertyKeyPath(node: NodePath<namedTypes.ObjectProperty>) {
+  let currentPath = node
+  const currentKeyPath = []
+
+  while (currentPath.parent) {
+    const path = currentPath?.value?.key?.value?.toString() || currentPath?.value?.key?.name?.toString()
+    if (path) { currentKeyPath.push(path) }
+    currentPath = currentPath?.parent || undefined
+  }
+
+  return currentKeyPath.filter(Boolean).reverse().join('.')
 }

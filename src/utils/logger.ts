@@ -74,7 +74,7 @@ const messages = {
       const line = (options.loc?.start?.line || 0) + lineOffset
       const column = (options.loc?.start?.column || 0) + columnOffset
 
-      c().logger.log(`🔗 ${options.loc.query.filename}${line && column ? `:${line}:${column}\n` : ''}`)
+      c().logger.log(`🔗 ${options.loc.query.filename}${(line && column) ? `:${line}:${column}\n` : ''}`)
     }
   },
   SELECTOR_CONFLICT: (debugLevel, selector) => {

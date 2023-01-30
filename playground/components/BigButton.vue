@@ -47,6 +47,7 @@ css({
     '.big-button': {
         display: 'inline-block',
         borderRadius: '{radii.xl}',
+        test: '{color.primary.100}',
         transition: 'box-shadow .1 ease-in-out',
         color: '{color.white}',
         boxShadow: (props) => `0 8px 0 {color.${props.color}.600}, 0 12px 16px rgba(0, 0, 0, .35)`,

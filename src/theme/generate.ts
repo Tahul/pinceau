@@ -7,9 +7,14 @@ import { flattenTokens } from '../utils/theme'
 import type { PinceauOptions, ThemeGenerationOutput } from '../types'
 import { message } from '../utils/logger'
 import { normalizeConfig } from '../utils/data'
-import { cssFull, schemaFull, tsFull, utilsFull } from './formats'
+import { cssFull, definitionsFull, schemaFull, tsFull, utilsFull } from './formats'
 
-export async function generateTheme(tokens: any, { outputDir: buildPath, colorSchemeMode, studio }: PinceauOptions, silent = true): Promise<ThemeGenerationOutput> {
+export async function generateTheme(
+  tokens: any,
+  definitions: any,
+  { outputDir: buildPath, colorSchemeMode, studio, definitions: definitionsSupport }: PinceauOptions,
+  silent = true,
+): Promise<ThemeGenerationOutput> {
   let styleDictionary: Instance = StyleDictionary
 
   // Files created by Pinceau
@@ -28,6 +33,14 @@ export async function generateTheme(tokens: any, { outputDir: buildPath, colorSc
       format: 'pinceau/utils',
     },
   ]
+
+  // Support definitions.ts
+  if (definitionsSupport) {
+    files.push({
+      destination: 'definitions.ts',
+      format: 'pinceau/definitions',
+    })
+  }
 
   // Transforms used
   const transforms = [
@@ -126,7 +139,7 @@ export async function generateTheme(tokens: any, { outputDir: buildPath, colorSc
     name: 'css',
     formatter({ dictionary, options }) {
       const result = cssFull(dictionary, options, responsiveTokens, colorSchemeMode)
-      outputs.css = result.replace(/\n|\s\s/gm, '')
+      outputs.css = result
       return result
     },
   })
@@ -137,6 +150,15 @@ export async function generateTheme(tokens: any, { outputDir: buildPath, colorSc
     formatter() {
       outputs.utils = utilsFull(utils)
       return outputs.utils
+    },
+  })
+
+  // definitions.ts
+  styleDictionary.registerFormat({
+    name: 'pinceau/definitions',
+    formatter() {
+      outputs.definitions = definitionsFull(definitions)
+      return outputs.definitions
     },
   })
 

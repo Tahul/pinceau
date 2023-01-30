@@ -40,6 +40,7 @@ export const flattenTokens = (data: any, toValue = false) => {
       : {
           value: value?.value,
           variable: value?.attributes?.variable,
+          original: value?.original?.value,
         }
   })
 }

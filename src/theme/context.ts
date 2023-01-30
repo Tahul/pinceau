@@ -44,7 +44,7 @@ export const createContext = <UserOptions extends PinceauOptions = PinceauOption
       // Preserve custom properties in memory to avoid virtual storage call on compile
       utils = (resolvedConfig.config as any)?.utils || {}
 
-      const builtTheme = await generateTheme(resolvedConfig.config, options)
+      const builtTheme = await generateTheme(resolvedConfig.config, resolvedConfig.definitions, options)
 
       if (!builtTheme) {
         stopPerfTimer()

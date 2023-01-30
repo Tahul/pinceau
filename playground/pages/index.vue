@@ -47,15 +47,14 @@ onMounted(() => {
 css({
   section: {
     overflow: 'hidden',
-    position: 'relative',
-    padding: '{space.24}'
+    padding: '{space.10} {space.8}'
   },
   canvas: {
     position: 'absolute',
     top: 0,
     left: 0,
     height: '100vh',
-    width: '100vw',
+    width: "100vw ",
     zIndex: '-10'
   },
 })

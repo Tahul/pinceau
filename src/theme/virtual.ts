@@ -9,6 +9,7 @@ export function usePinceauVirtualStore(): PinceauVirtualContext {
     _ts: tsFull({}),
     _utils: utilsFull({}),
     _schema: 'export const schema = {}\n\export const GeneratedPinceauThemeSchema = typeof schema',
+    _definitions: 'export const definitions = {} as const',
   }
 
   function updateOutputs(generatedTheme: ThemeGenerationOutput) {

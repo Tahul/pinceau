@@ -89,7 +89,7 @@ export function resolveReferences(
     (_, tokenPath) => {
       const token = ctx.$tokens(tokenPath, { key: undefined, loc }) as DesignToken
 
-      const tokenValue = typeof token === 'string' ? token : token?.variable || token?.value
+      const tokenValue = typeof token === 'string' ? token : (token?.variable || token?.value)
 
       if (!tokenValue) { return `var(${pathToVarName(tokenPath)})` }
 

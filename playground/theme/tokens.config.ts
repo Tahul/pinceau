@@ -213,11 +213,11 @@ export default defineTheme({
   },
 
   utils: {
-    my: value => ({ marginTop: value, marginBottom: value }),
-    mx: value => ({ marginLeft: value, marginRight: value }),
-    px: value => ({ paddingLeft: value, paddingRight: value }),
-    py: value => ({ paddingTop: value, paddingBottom: value }),
-    pt: value => ({ paddingTop: value }),
+    my: (value: string) => ({ marginTop: value, marginBottom: value }),
+    mx: (value: string) => ({ marginLeft: value, marginRight: value }),
+    px: (value: string) => ({ paddingLeft: value, paddingRight: value }),
+    py: (value: string) => ({ paddingTop: value, paddingBottom: value }),
+    pt: (value: string) => ({ paddingTop: value }),
     truncate: {
       overflow: 'hidden',
       textOverflow: 'ellipsis',

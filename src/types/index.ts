@@ -98,6 +98,10 @@ export interface PinceauOptions {
    * Support for @nuxthq/studio module.
    */
   studio?: boolean
+  /**
+   * Support for definitions.ts ; improving experience for Pinceau IntelliSense.
+   */
+  definitions?: boolean
 }
 
 export interface ModuleHooks {

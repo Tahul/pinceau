@@ -35,6 +35,7 @@ export const defaultOptions: PinceauOptions = {
   componentMetaSupport: false,
   runtime: true,
   studio: false,
+  definitions: true,
 }
 
 export default createUnplugin<PinceauOptions>(

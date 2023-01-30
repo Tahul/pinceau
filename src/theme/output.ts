@@ -21,6 +21,7 @@ export async function prepareOutputDir<UserOptions extends PinceauOptions = Pinc
 export async function stubOutputs(buildPath: string, force = false, schema = false) {
   const files = {
     'theme/index.css': () => '/* This file is empty because no tokens has been provided or your configuration is broken. */',
+    'definitions.ts': () => 'export const definitions = {} as const',
     'index.ts': tsFull,
     'utils.ts': utilsFull,
   }

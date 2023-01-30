@@ -50,7 +50,7 @@ const enhanceTokenPaths = (value = []) => {
  */
 export function tsFull(tokensObject: any) {
   // Import config wrapper type
-  let result = 'import type { PermissiveConfigType } from \'pinceau\'\n\n'
+  let result = ''
 
   // Flatten tokens in full format too
   const flattenedTokens = flattenTokens(tokensObject)
@@ -145,7 +145,7 @@ export const cssFull = (dictionary: Dictionary, options: Options, responsiveToke
   Object.entries(tokens).forEach(
     ([key, value]) => {
       // Resolve tokens content
-      const formattedContent = formattedVariables({ format: 'css', dictionary: { ...dictionary, allTokens: value } as any, outputReferences: true })
+      const formattedContent = formattedVariables({ format: 'css', dictionary: { ...dictionary, allTokens: value } as any, outputReferences: true, formatting: { lineSeparator: '', indentation: '', prefix: '' } as any })
 
       // Resolve responsive selector
       let responsiveSelector = ''
@@ -162,14 +162,18 @@ export const cssFull = (dictionary: Dictionary, options: Options, responsiveToke
       // Write responsive tokens
       if (responsiveSelector.match(responsiveMediaQueryRegex)) {
         // Use raw selector
-        css += `@media {\n${responsiveSelector || ''} {\n  --pinceau-mq: ${key};\n${formattedContent}\n}\n}\n`
+        css += `@media { ${responsiveSelector || ''} { --pinceau-mq: ${key}; ${formattedContent}}} `
       }
       else {
         // Wrap :root with media query
-        css += `\n@media${responsiveSelector || ''} {\n:root {\n  --pinceau-mq: ${key};\n${formattedContent}\n}\n}\n`
+        css += `@media ${responsiveSelector || ''} { :root { --pinceau-mq: ${key}; ${formattedContent}}}`
       }
     },
   )
 
-  return css
+  return css.replace(/(\n|\s\s)/g, '')
+}
+
+export const definitionsFull = (definitions: any) => {
+  return `export const definitions = ${JSON.stringify(definitions, null, 2)} as const`
 }

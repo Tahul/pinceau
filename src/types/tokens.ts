@@ -1,13 +1,13 @@
 import type { Schema } from 'untyped'
 import type { PinceauMediaQueries } from './theme'
 
-export type RawTokenType = string | number | string[]
+export type RawTokenType = string | number
 
-export type ResponsiveToken<T> = { [key in PinceauMediaQueries]?: T } & { [key: string]: T }
+export type ResponsiveToken<T = RawTokenType> = { [key in PinceauMediaQueries]?: T }
 
-export interface DesignToken<
-  T = RawTokenType,
-  > {
+export type TokenKey<T = RawTokenType> = DesignToken<T> | ResponsiveToken<T> | T
+
+export interface DesignToken<T = RawTokenType> {
   /**
    * The schema definition for the schema output format.
    */
@@ -39,7 +39,11 @@ export interface DesignToken<
   /**
    * The original values (not transformed)
    */
-  original?: Omit<DesignToken, 'original'>
+  original?: string | Omit<DesignToken, 'original'>
+  /**
+   * The file path to the source of this token
+   */
+  source?: string
   /**
    * Token extraneous attributes.
    */
@@ -59,5 +63,5 @@ export interface DesignToken<
 }
 
 export interface PinceauTokens {
-  [key: string]: PinceauTokens | DesignToken | RawTokenType
+  [key: string]: PinceauTokens | TokenKey
 }
