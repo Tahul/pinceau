@@ -38,6 +38,10 @@ const debugMarker = (text, timing) => c().logger.info(`${DEBUG_MARKER()} ${text}
 
 // All available messages
 const messages = {
+  /**
+   * Errors
+   */
+
   TRANSFORM_ERROR: (debugLevel, id, error) => {
     c().logger.error('Pinceau could not transform this file:')
     fileLink(id)
@@ -53,20 +57,36 @@ const messages = {
     c().logger.error('Pinceau could not build your design tokens configuration!\n')
     c().logger.log(error)
   },
+  SELECTOR_CONFLICT: (debugLevel, selector) => {
+    c().logger.warn('Pinceau detected a conflicting selector:')
+    c().logger.log(`❓ ${selector}\n`)
+    c().logger.log('If you want to combine `@dark` or `@light` with `html` selector, consider using `html.dark` or `html.light`.\n')
+  },
+  WRONG_TOKEN_NAMING: (debugLevel, token) => {
+    c().logger.error(`Pinceau detected an invalid token name: ${c().error(token.path.join('-'))}`)
+    c().logger.log('Token paths can not contains the following characters: `.` or `-`\n')
+    c().logger.log('These paths keys also has to only contains characters supported in CSS stylesheets.\n')
+  },
+
+  /**
+   * Warnings (debugLevel >= 1)
+   */
+
   CONFIG_RESOLVED: (debugLevel, resolvedConfig) => {
     if (debugLevel) {
-      c().logger.log('🎨 Pinceau loaded with following configuration sources:\n')
+      c().logger.log('✅ Pinceau loaded with following configuration sources:\n')
       resolvedConfig.sources.forEach(path => fileLink(path))
       c().logger.log('🚧 Disable this message by setting `debug: false` option.\n')
       c().logger.log(`🚧 Current debug level: ${c().info(Number(debugLevel))}\n`)
     }
   },
   TOKEN_NOT_FOUND: (debugLevel, path, options) => {
-    if (options?.loc?.query && !(options.loc.query?.type)) {
+    if (debugLevel && options?.loc?.query && !(options.loc.query?.type)) {
       c().logger.warn(`Token not found in static CSS: ${c().error(path)}`)
 
       // Get LOC for missing token in `css({ ... })`
       const { line: lineOffset, column: columnOffset } = findLineColumn(options.loc.source, `{${path}}`)
+
       // Not LOC provided by parser, try guessing `css({ ... })` position in whole code
       if (!options.loc?.start) { options.loc.start = findLineColumn(options.loc.source, 'css({') }
 
@@ -77,20 +97,16 @@ const messages = {
       c().logger.log(`🔗 ${options.loc.query.filename}${(line && column) ? `:${line}:${column}\n` : ''}`)
     }
   },
-  SELECTOR_CONFLICT: (debugLevel, selector) => {
-    c().logger.warn('You seem to be using a conflicting selector:')
-    c().logger.log(`❓ ${selector}\n`)
-    c().logger.log('If you want to combine `@dark` or `@light` with `html` selector, consider using `html.dark` or `html.light`.\n')
-  },
-  WRONG_TOKEN_NAMING: (debugLevel, token) => {
-    c().logger.error(`Invalid token name: ${c().error(token.path.join('-'))}`)
-    c().logger.log('Token paths can not contains the following characters: `.` or `-`\n')
-    c().logger.log('These paths keys also has to only contains characters supported in CSS stylesheets.\n')
-  },
   SCHEMA_BUILD_ERROR: (debugLevel, _) => {
     if (debugLevel) {
       c().logger.warn('Pinceau could not build your schema.ts file!')
       c().logger.log('Design tokens editor might be hidden from Nuxt Studio.')
+    }
+  },
+  RUNTIME_FEATURES_CONFLICT: (debugLevel, id) => {
+    if (debugLevel) {
+      c().logger.error('This component uses runtime features even though `runtime` is set to false in options:')
+      fileLink(id)
     }
   },
 } as const

@@ -24,7 +24,7 @@ export const LIGHT = '@light'
 
 export const INITIAL = '@initial'
 
-export const dtRegex = /\$dt\('(.*?)'\)/g
+export const dtRegex = /\$dt\(['|`|"]([a-zA-Z0-9.]+)['|`|"](?:,\s*(['|`|"]([a-zA-Z0-9.]+)['|`|"]))?\)?/g
 
 export const variantsRegex = /(...)?variants(,)?/mg
 

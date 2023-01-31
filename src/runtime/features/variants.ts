@@ -30,7 +30,7 @@ export const usePinceauVariants = (
       else {
         // Push a new variant in stylesheet
         variantClass = `pv-${nanoid(6)}`
-        const transformed = transformVariantsToDeclaration(variantClass, ids.value, variants.value, variantsProps)
+        const transformed = variantsToDeclaration(variantClass, ids.value, variants.value, variantsProps)
         rule = sheet.pushDeclaration(ids.value.uid, 'v', transformed, undefined, { ...loc, type: 'v' })
         sheet.cache[cacheId] = { rule, variantClass, count: 1 }
       }
@@ -62,7 +62,7 @@ export const usePinceauVariants = (
 /**
  * Transforms compiled variants object and props to a stringifiable object.
  */
-export function transformVariantsToDeclaration(
+export function variantsToDeclaration(
   variantClass: string,
   ids: PinceauRuntimeIds,
   variants: any,

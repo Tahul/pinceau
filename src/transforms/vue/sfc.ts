@@ -5,6 +5,7 @@ import type { PinceauContext, VueQuery } from '../../types'
 import { variantsRegex } from '../../utils'
 import { transformDtHelper } from '../dt'
 import { transformCssFunction } from '../css'
+import { message } from '../../utils/logger'
 import { transformStyle } from './style'
 import { transformVariants } from './variants'
 import { transformAddPropsKey } from './props-key'
@@ -33,12 +34,12 @@ export function transformVueSFC(
 
   // Transform <template> blocks
   if (parsedComponent?.descriptor?.template) {
-    resolveTemplate(query.id, parsedComponent, magicString, hasRuntimeStyles)
+    resolveTemplate(query.id, parsedComponent, magicString, ctx, hasRuntimeStyles)
   }
 
   // Transform <script setup> blocks
   if (parsedComponent?.descriptor?.scriptSetup) {
-    resolveScriptSetup(query.id, parsedComponent, magicString, variants, computedStyles, parsedComponent.descriptor.scriptSetup.lang === 'ts')
+    resolveScriptSetup(query.id, parsedComponent, magicString, variants, computedStyles, ctx, parsedComponent.descriptor.scriptSetup.lang === 'ts')
   }
 
   return { code, magicString }
@@ -50,27 +51,36 @@ export function transformVueSFC(
  * These does not need to resolve variants or populate computed styles.
  */
 export function resolveStyleQuery(code: string, magicString: MagicString, query: VueQuery, ctx: PinceauContext, loc?: any) {
-  if (query.lang === 'ts') { code = transformCssFunction(query.id, code, undefined, undefined, ctx, loc) }
+  // Handle `lang="ts"` even though that should not happen here.
+  if (query.lang === 'ts') {
+    code = transformCssFunction(query.id, code, {}, {}, ctx, loc)
+  }
+
+  // Transform <style> block
   code = transformStyle(code, ctx)
+
   return { code, magicString }
 }
 
 /**
  * Transform <template> blocks.
  */
-export function resolveTemplate(_: string, parsedComponent: SFCParseResult, magicString: MagicString, hasRuntimeStyles: boolean) {
+export function resolveTemplate(_: string, parsedComponent: SFCParseResult, magicString: MagicString, ctx: PinceauContext, hasRuntimeStyles: boolean) {
   // Transform `$dt()` from template
   const templateContent = parsedComponent.descriptor.template
   let newTemplateContent = templateContent.content
-  newTemplateContent = transformDtHelper(newTemplateContent, '\'')
+  newTemplateContent = transformDtHelper(newTemplateContent, ctx, '\'')
 
   // Add class if runtime styles are enabled
-  if (hasRuntimeStyles) {
-    newTemplateContent = transformAddPinceauClass(newTemplateContent)
-  }
+  if (ctx.runtime && hasRuntimeStyles) { newTemplateContent = transformAddPinceauClass(newTemplateContent) }
 
+  // Overwrite <template>
   if (templateContent.loc.end?.offset && templateContent.loc.end?.offset > templateContent.loc.start.offset) {
-    magicString.overwrite(templateContent.loc.start.offset, templateContent.loc.end.offset, newTemplateContent)
+    magicString.overwrite(
+      templateContent.loc.start.offset,
+      templateContent.loc.end.offset,
+      newTemplateContent,
+    )
   }
 }
 
@@ -109,6 +119,7 @@ export function resolveScriptSetup(
   magicString: MagicString,
   variants: any,
   computedStyles: any,
+  ctx: PinceauContext,
   isTs: boolean,
 ) {
   const scriptSetup = parsedComponent.descriptor.scriptSetup
@@ -117,28 +128,28 @@ export function resolveScriptSetup(
   let code = scriptSetup.content
 
   // Transform `$dt()` usage
-  code = transformDtHelper(code, '`')
+  code = transformDtHelper(code, ctx, '`')
 
   // Cleanup `...variants` in any case
   code = code.replace(variantsRegex, () => '')
 
-  // Inject runtime imports
-  if (hasVariants || hasComputedStyles) {
-    code = transformAddRuntimeImports(code)
-  }
+  if (ctx.runtime) {
+    // Inject runtime imports
+    if (hasVariants || hasComputedStyles) { code = transformAddRuntimeImports(code) }
 
-  // Check for variant props
-  if (hasVariants) {
-    code = transformVariants(code, variants, isTs)
-  }
+    // Check for variant props
+    if (hasVariants) { code = transformVariants(code, variants, isTs) }
 
-  // Check for computed styles
-  if (hasComputedStyles) {
-    code = transformComputedStyles(code, computedStyles)
-  }
+    // Check for computed styles
+    if (hasComputedStyles) { code = transformComputedStyles(code, computedStyles) }
 
-  if (hasVariants || hasComputedStyles) {
-    code = transformFinishRuntimeSetup(code, hasComputedStyles, hasVariants, computedStyles)
+    // Push last runtime context
+    if (hasVariants || hasComputedStyles) { code = transformFinishRuntimeSetup(code, hasComputedStyles, hasVariants, computedStyles) }
+  }
+  else {
+    if (hasVariants || hasComputedStyles) {
+      message('RUNTIME_FEATURES_CONFLICT', [id])
+    }
   }
 
   // Overwrite <script setup> block with new content

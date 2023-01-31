@@ -1,47 +1,47 @@
-import type { DesignToken, PinceauTokens } from './tokens'
+import type { PinceauTokens, TokenKey } from './tokens'
 
 export interface ScaleTokens extends PinceauTokens {
-  [key: string]: {
-    default?: DesignToken
-    50?: DesignToken
-    100?: DesignToken
-    200?: DesignToken
-    300?: DesignToken
-    400?: DesignToken
-    500?: DesignToken
-    600?: DesignToken
-    700?: DesignToken
-    800?: DesignToken
-    900?: DesignToken
-  } | DesignToken | string
+  [key: string]: TokenKey | {
+    default?: TokenKey
+    50?: TokenKey
+    100?: TokenKey
+    200?: TokenKey
+    300?: TokenKey
+    400?: TokenKey
+    500?: TokenKey
+    600?: TokenKey
+    700?: TokenKey
+    800?: TokenKey
+    900?: TokenKey
+  }
 }
 
 export interface BreakpointsTokens extends PinceauTokens {
-  '2xs'?: DesignToken
-  xs?: DesignToken
-  sm?: DesignToken
-  md?: DesignToken
-  lg?: DesignToken
-  xl?: DesignToken
-  '2xl'?: DesignToken
-  '3xl'?: DesignToken
-  '4xl'?: DesignToken
-  '5xl'?: DesignToken
-  '6xl'?: DesignToken
-  '7xl'?: DesignToken
+  '2xs'?: TokenKey
+  xs?: TokenKey
+  sm?: TokenKey
+  md?: TokenKey
+  lg?: TokenKey
+  xl?: TokenKey
+  '2xl'?: TokenKey
+  '3xl'?: TokenKey
+  '4xl'?: TokenKey
+  '5xl'?: TokenKey
+  '6xl'?: TokenKey
+  '7xl'?: TokenKey
 }
 
 export interface FontWeightTokens extends PinceauTokens {
-  thin?: DesignToken
-  extraLight?: DesignToken
-  light?: DesignToken
-  regular?: DesignToken
-  medium?: DesignToken
-  semiBold?: DesignToken
-  bold?: DesignToken
-  extraBold?: DesignToken
-  black?: DesignToken
-  heavyBlack?: DesignToken
+  thin?: TokenKey
+  extraLight?: TokenKey
+  light?: TokenKey
+  regular?: TokenKey
+  medium?: TokenKey
+  semiBold?: TokenKey
+  bold?: TokenKey
+  extraBold?: TokenKey
+  black?: TokenKey
+  heavyBlack?: TokenKey
 }
 
 export interface ConfigSuggestion {

@@ -5,14 +5,14 @@ import type { PinceauContext, PinceauOptions } from '../types'
 import { createTokensHelper } from '../utils/$tokens'
 import { flattenTokens } from '../utils'
 import { generateTheme } from './generate'
-import { usePinceauConfig } from './config'
+import { usePinceauConfigContext } from './config'
 import { usePinceauVirtualStore } from './virtual'
 import { prepareOutputDir } from './output'
 
 /**
  * Creates the Pinceau context from the options.
  */
-export const createContext = <UserOptions extends PinceauOptions = PinceauOptions>(options: UserOptions): PinceauContext<UserOptions> => {
+export function usePinceauContext<UserOptions extends PinceauOptions = PinceauOptions>(options: UserOptions): PinceauContext<UserOptions> {
   const env: PinceauContext['env'] = 'prod'
 
   // Context state
@@ -32,7 +32,7 @@ export const createContext = <UserOptions extends PinceauOptions = PinceauOption
   const { outputs, getOutput, getOutputId, updateOutputs } = usePinceauVirtualStore()
 
   // Configuration
-  const configContext = usePinceauConfig<UserOptions>(
+  const configContext = usePinceauConfigContext<UserOptions>(
     options,
     getViteServer,
     getTransformed,

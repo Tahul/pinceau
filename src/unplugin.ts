@@ -3,7 +3,7 @@ import MagicString from 'magic-string'
 import { join } from 'pathe'
 import consola from 'consola'
 import chalk from 'chalk'
-import { createContext } from './theme/context'
+import { usePinceauContext } from './theme/context'
 import { registerAliases, registerPostCssPlugins } from './utils/plugin'
 import { replaceStyleTs, resolveStyleQuery, transformVueSFC, transformVueStyle } from './transforms'
 import { parseVueQuery } from './utils/query'
@@ -34,8 +34,9 @@ export const defaultOptions: PinceauOptions = {
   debug: false,
   componentMetaSupport: false,
   runtime: true,
-  studio: false,
   definitions: true,
+  studio: false,
+  imports: [],
 }
 
 export default createUnplugin<PinceauOptions>(
@@ -57,12 +58,12 @@ export default createUnplugin<PinceauOptions>(
       error: value => chalk.red(value),
     })
 
-    const ctx = createContext(options)
+    const ctx = usePinceauContext(options)
 
     stopPerfTimer()
 
     return {
-      name: 'pinceau',
+      name: 'pinceau-transforms',
 
       enforce: 'pre',
 
@@ -135,33 +136,29 @@ export default createUnplugin<PinceauOptions>(
         const query = parseVueQuery(id)
 
         // Create magic string from query and code
-        const magicString = new MagicString(code, { filename: query.filename })
+        const magicString = new MagicString(code || '', { filename: query.filename })
         const result = (code = magicString.toString(), ms = magicString) => {
           stopPerfTimer()
           return { code, map: ms.generateMap({ source: id, includeContent: true }) }
         }
         const missingMap = (code: string) => {
           stopPerfTimer()
-          return { code, map: new MagicString(code, { filename: query.filename }).generateMap() }
+          const magicStringLength = magicString?.length?.() || magicString?.toString?.()?.length
+          if (magicStringLength) { magicString.overwrite(0, magicStringLength, '') }
+          magicString.append(code)
+          return { code, map: magicString.generateMap({ source: id, includeContent: true }) }
         }
 
         try {
           // Handle $dt in JS(X)/TS(X) files
-          if (['js', 'jsx', 'mjs', 'ts', 'tsx', 'jsx', 'tsx', 'js', 'ts'].includes(query.ext)) {
-            return missingMap(transformDtHelper(code))
+          if (['js', 'ts', 'jsx', 'mjs', 'tsx', 'jsx', 'tsx'].includes(query.ext)) {
+            return missingMap(transformDtHelper(code, ctx))
           }
 
-          // Handle CSS files
+          // Handle CSS files & <style> tags scoped queries
           const loc = { query, source: code }
-          if (query.css && !query.vue) {
-            const { code: _code } = resolveStyleQuery(code, magicString, query, ctx, loc)
-            return missingMap(_code)
-          }
-
-          // Handle <style> tags scoped queries
-          if (query.type === 'style') {
-            const { code: _code } = resolveStyleQuery(code, magicString, query, ctx, loc)
-            return missingMap(_code)
+          if ((query.css && !query.vue) || query.type === 'style') {
+            return missingMap(resolveStyleQuery(code, magicString, query, ctx, loc).code)
           }
 
           // Return early when the query is scoped (usually style tags)
@@ -198,7 +195,10 @@ export default createUnplugin<PinceauOptions>(
         if (query.vue && query.type === 'style') {
           const vueStyle = transformVueStyle(query, ctx)
           stopPerfTimer()
-          return vueStyle
+          return {
+            code: vueStyle || '',
+            map: new MagicString(vueStyle || '', { filename: query.filename }).generateMap({ file: query.filename, includeContent: true }),
+          }
         }
       },
     }

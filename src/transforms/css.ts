@@ -29,12 +29,13 @@ export const transformCssFunction = (
     return ''
   }
 
+  // Resolve stringifiable declaration from `css()` content
   const declaration = resolveCssCallees(
     code,
     ast => evalCssDeclaration(ast, computedStyles),
   )
 
-  // Handle variants and remove them from declaration
+  // Handle variants and remove them from declaration and drop the key
   if (declaration && declaration?.variants) {
     Object.assign(variants, defu(variants || {}, declaration?.variants || {}))
     delete declaration.variants

@@ -21,13 +21,16 @@ export interface TokensFunctionOptions {
 }
 
 /**
- * $dt function typing
+ * $dt function
  */
 export type DtFunction = (
-  path: PinceauTokensPaths,
-  options?: TokensFunctionOptions
+  path: PinceauTokensPaths | (string & {}),
+  key?: 'variable' | 'value' |(string & {})
 ) => string
 
+/**
+ * $tokens function
+ */
 export type TokensFunction = (
   path?: PinceauTokensPaths | (string & {}),
   options?: TokensFunctionOptions,

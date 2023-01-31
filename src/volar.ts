@@ -37,6 +37,7 @@ const plugin: VueLanguagePlugin = _ => ({
 
     if (isCssInTsFile) {
       embeddedFile.content.unshift('\nimport type { PinceauMediaQueries, CSSFunctionType } from \'pinceau\'')
+      embeddedFile.content.unshift('\nimport \'#pinceau/utils\'')
 
       // Add variants above <script setup> content
       if (variantsContent) { embeddedFile.content.push(variantsContent) }

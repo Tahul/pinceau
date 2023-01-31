@@ -1,3 +1,4 @@
+import type { ComputedRef } from 'vue'
 import type { usePinceauThemeSheet } from '../runtime/features/theme'
 import type { DtFunction } from './dt'
 import type { ConfigOrPaths } from './context'
@@ -52,7 +53,7 @@ export interface PinceauOptions {
    *
    * @default true
    */
-  preflight?: boolean
+  preflight?: boolean | 'tailwind' | 'antfu' | 'eric-meyer' | 'normalize'
   /**
    * Excluded transform paths.
    */
@@ -102,6 +103,14 @@ export interface PinceauOptions {
    * Support for definitions.ts ; improving experience for Pinceau IntelliSense.
    */
   definitions?: boolean
+  /**
+   * Imports to append before the `utils.ts` declarations.
+   *
+   * These are usually the imports you make in your utils declaration files that Pinceau cannot automatically resolves.
+   *
+   * @example {[`import { MyThemeType } from "my-theme-types"`]}
+   */
+  utilsImports?: string[]
 }
 
 export interface ModuleHooks {
@@ -120,7 +129,7 @@ declare global {
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
     $dt: DtFunction
-    $pinceau: string
+    $pinceau: ComputedRef<string>
     $pinceauTheme: ReturnType<typeof usePinceauThemeSheet>
     $pinceauRuntime: any
   }

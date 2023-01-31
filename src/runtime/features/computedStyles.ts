@@ -15,7 +15,7 @@ export function usePinceauComputedStyles(
   watch(
     computedStyles,
     (newComputedStyles) => {
-      newComputedStyles = transformComputedStylesToDeclaration(ids.value, newComputedStyles)
+      newComputedStyles = computedStylesToDeclaration(ids.value, newComputedStyles)
       rule = sheet.pushDeclaration(
         ids.value.uid,
         'c',
@@ -36,7 +36,7 @@ export function usePinceauComputedStyles(
 /**
  * Transform computed styles and props to a stringifiable object.
  */
-export function transformComputedStylesToDeclaration(
+export function computedStylesToDeclaration(
   ids: PinceauRuntimeIds,
   computedStyles: { [id: string]: any },
 ) {

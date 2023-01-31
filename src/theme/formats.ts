@@ -10,18 +10,23 @@ import { responsiveMediaQueryRegex } from '../utils/regexes'
 /**
  * Stringify utils from object
  */
-const stringifyUtils = (value: Record<string, any>) => {
+const stringifyUtils = (value: Record<string, any>, definitions: any) => {
   const entries = Object.entries(value)
-  let result = entries.reduce(
+  return entries.reduce(
     (acc, [key, value]) => {
-      if (typeof value === 'function') { acc += `  "${key}": ${String(value)},\n` }
-      else { acc += `  "${key}": ${JSON.stringify(value, null, 4)},\n` }
+      // If definitions enabled, use typed version
+      if (definitions[`utils.${key}`]?.content) {
+        acc += `export const ${key} = ${definitions[`utils.${key}`].content}\n\n`
+        return acc
+      }
+
+      // Stringify from utils values instead
+      if (typeof value === 'function') { acc += `export const ${key} = ${String(value)}\n\n` }
+      else { acc += `export const ${key} = ${JSON.stringify(value, null, 4)}\n\n` }
       return acc
     },
-    '{\n',
+    '',
   )
-  result += '}'
-  return result
 }
 
 /**
@@ -68,35 +73,6 @@ export function tsFull(tokensObject: any) {
 
   // Default export
   result += 'export default theme'
-
-  return result
-}
-
-/**
- * Nuxt Studio schema support
- */
-export async function schemaFull(tokensObject) {
-  const schema = await resolveUntypedSchema({ tokensConfig: tokensObject })
-
-  let result = `export const schema = ${JSON.stringify({ properties: (schema.properties as any).tokensConfig, default: (schema.default as any).tokensConfig }, null, 2)} as const\n\n`
-
-  result += 'export const GeneratedPinceauThemeSchema = typeof schema\n\n'
-
-  return result
-}
-
-/**
- * import utils from '#pinceau/utils'
- */
-export const utilsFull = (utils = {}) => {
-  // Stringify utils properties
-  let result = `export const utils = ${stringifyUtils(utils)} as const\n\n`
-
-  // Type of utils
-  result += 'export type GeneratedPinceauUtils = typeof utils\n\n'
-
-  // Default export
-  result += 'export default utils'
 
   return result
 }
@@ -174,6 +150,45 @@ export const cssFull = (dictionary: Dictionary, options: Options, responsiveToke
   return css.replace(/(\n|\s\s)/g, '')
 }
 
+/**
+ * definitions.ts
+ */
 export const definitionsFull = (definitions: any) => {
   return `export const definitions = ${JSON.stringify(definitions, null, 2)} as const`
+}
+
+/**
+ * Nuxt Studio schema support
+ */
+export async function schemaFull(tokensObject) {
+  const schema = await resolveUntypedSchema({ tokensConfig: tokensObject })
+
+  let result = `export const schema = ${JSON.stringify({ properties: (schema.properties as any).tokensConfig, default: (schema.default as any).tokensConfig }, null, 2)} as const\n\n`
+
+  result += 'export const GeneratedPinceauThemeSchema = typeof schema\n\n'
+
+  return result
+}
+
+/**
+ * import utils from '#pinceau/utils'
+ */
+export const utilsFull = (utils = {}, utilsImports = [], definitions = {}) => {
+  let result = 'import { PinceauTheme, PropertyValue } from \'pinceau\'\n'
+
+  // Add utilsImports from config
+  result += utilsImports.filter(Boolean).join('\n')
+
+  // Stringify utils properties
+  result += `\n${stringifyUtils(utils, definitions)}`
+
+  result += `export const utils = { ${Object.keys(utils).join(', ')} } as const\n\n`
+
+  // Type of utils
+  result += 'export type GeneratedPinceauUtils = typeof utils\n\n'
+
+  // Default export
+  result += 'export default utils'
+
+  return result
 }

@@ -20,10 +20,10 @@ function exposedTransform(code: string, id: string) {
   const hasRuntimeStyles = Object.keys(variants).length > 0 || Object.keys(computedStyles).length > 0
 
   // Transform <template> blocks
-  if (parsedComponent.descriptor.template) { resolveTemplate(id, parsedComponent, magicString, hasRuntimeStyles) }
+  if (parsedComponent.descriptor.template) { resolveTemplate(id, parsedComponent, magicString, ctx, hasRuntimeStyles) }
 
   // Transform <script setup> blocks
-  if (parsedComponent.descriptor.scriptSetup) { resolveScriptSetup(id, parsedComponent, magicString, variants, computedStyles, parsedComponent.descriptor.scriptSetup.lang === 'ts') }
+  if (parsedComponent.descriptor.scriptSetup) { resolveScriptSetup(id, parsedComponent, magicString, variants, computedStyles, ctx, parsedComponent.descriptor.scriptSetup.lang === 'ts') }
 
   return magicString.toString()
 }

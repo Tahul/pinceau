@@ -3,18 +3,15 @@ import fsp from 'node:fs/promises'
 import { resolve } from 'pathe'
 import jiti from 'jiti'
 import type { ViteDevServer } from 'vite'
-import { defaultExport } from 'paneer'
-import type { namedTypes } from 'ast-types'
-import type { NodePath } from 'ast-types/lib/node-path'
 import { merger } from '../utils/merger'
 import { message } from '../utils/logger'
 import type { ConfigLayer, LoadConfigResult, PinceauConfigContext, PinceauOptions, PinceauTheme, ResolvedConfigLayer } from '../types'
 import { outputFileNames } from '../utils/regexes'
-import { parseAst, printAst, visitAst } from '../utils/ast'
+import { resolveDefinitions } from './definitions'
 
 const extensions = ['.js', '.ts', '.mjs', '.cjs', '.json']
 
-export function usePinceauConfig<UserOptions extends PinceauOptions = PinceauOptions>(
+export function usePinceauConfigContext<UserOptions extends PinceauOptions = PinceauOptions>(
   options: UserOptions,
   getViteServer: () => ViteDevServer,
   getTransformed: () => string[],
@@ -236,70 +233,4 @@ async function loadConfigFile({ path, ext, definitions }: { path: string; ext: s
     content,
     config: configImport,
   }
-}
-
-function isResponsiveToken(node: any, mqKeys: string[]) {
-  const properties = node?.value?.properties || []
-  const propertiesKeys = properties.map(node => node?.key?.value?.toString() || node?.key?.name?.toString())
-  if (propertiesKeys.includes('initial') && propertiesKeys.some(propKey => mqKeys.includes(propKey))) { return true }
-}
-
-function getTokenNode(node: NodePath<namedTypes.ObjectProperty>, mqKeys: string[]) {
-  if (isResponsiveToken(node, mqKeys)) { return node }
-  if (['FunctionDeclaration', 'ObjectExpression'].includes(node?.value?.value?.type)) { return }
-  return node
-}
-
-function resolveDefinitions(content: string, mediaQueriesKeys: string[], filePath: string) {
-  const definitions = {}
-
-  visitAst(
-    defaultExport(parseAst(content) as any),
-    {
-      visitObjectProperty(path) {
-        if (isResponsiveToken(path?.parent, mediaQueriesKeys)) { path = path?.parent }
-
-        const tokenNode = getTokenNode(path, mediaQueriesKeys)
-
-        if (tokenNode) {
-          const key = resolvePropertyKeyPath(tokenNode)
-
-          if (!key) { return false }
-
-          if ((key.startsWith('utils.') || key.startsWith('media.')) && key.split('.').length > 2) { return false }
-
-          definitions[key] = {
-            uri: filePath,
-            range: {
-              start: path.value.loc.start,
-              end: path.value.loc.end,
-            },
-          }
-
-          if (key.startsWith('utils.')) {
-            definitions[key].content = printAst(tokenNode as any).code
-          }
-
-          return false
-        }
-
-        return this.traverse(path)
-      },
-    },
-  )
-
-  return definitions
-}
-
-function resolvePropertyKeyPath(node: NodePath<namedTypes.ObjectProperty>) {
-  let currentPath = node
-  const currentKeyPath = []
-
-  while (currentPath.parent) {
-    const path = currentPath?.value?.key?.value?.toString() || currentPath?.value?.key?.name?.toString()
-    if (path) { currentKeyPath.push(path) }
-    currentPath = currentPath?.parent || undefined
-  }
-
-  return currentKeyPath.filter(Boolean).reverse().join('.')
 }

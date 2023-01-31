@@ -15,6 +15,14 @@ export default defineTheme({
   },
 
   color: {
+    $schema: {
+      title: 'Your website color palette.',
+      tags: [
+        '@studioInput design-token',
+        '@studioInputTokenType color',
+        '@studioIcon ph:palette',
+      ],
+    },
     white: '#FFFFFF',
     black: '#191919',
     pink: palette('#EC528D'),

@@ -91,6 +91,7 @@ export function resolveReferences(
 
       const tokenValue = typeof token === 'string' ? token : (token?.variable || token?.value)
 
+      // Fallback if value does not exist
       if (!tokenValue) { return `var(${pathToVarName(tokenPath)})` }
 
       return tokenValue as string

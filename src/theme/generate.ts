@@ -12,7 +12,7 @@ import { cssFull, definitionsFull, schemaFull, tsFull, utilsFull } from './forma
 export async function generateTheme(
   tokens: any,
   definitions: any,
-  { outputDir: buildPath, colorSchemeMode, studio, definitions: definitionsSupport }: PinceauOptions,
+  { outputDir: buildPath, colorSchemeMode, studio, definitions: definitionsSupport, utilsImports }: PinceauOptions,
   silent = true,
 ): Promise<ThemeGenerationOutput> {
   let styleDictionary: Instance = StyleDictionary
@@ -148,7 +148,7 @@ export async function generateTheme(
   styleDictionary.registerFormat({
     name: 'pinceau/utils',
     formatter() {
-      outputs.utils = utilsFull(utils)
+      outputs.utils = utilsFull(utils, utilsImports, definitions)
       return outputs.utils
     },
   })

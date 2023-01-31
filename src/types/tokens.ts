@@ -63,5 +63,5 @@ export interface DesignToken<T = RawTokenType> {
 }
 
 export interface PinceauTokens {
-  [key: string]: PinceauTokens | TokenKey
+  [key: string]: TokenKey | PinceauTokens
 }

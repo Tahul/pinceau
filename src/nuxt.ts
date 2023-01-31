@@ -36,6 +36,27 @@ const module: any = defineNuxtModule<PinceauOptions>({
     // Pinceau runtime config (to be used with Nuxt Studio integration)
     nuxt.options.runtimeConfig.pinceau = { studio: options?.studio, outputDir: options?.outputDir }
 
+    // Set `cwd` from Nuxt rootDir
+    options.cwd = nuxt.options.rootDir
+
+    // Automatically inject all components in layers into includes
+    for (const layer of options.configLayers) {
+      const layerPath = typeof layer === 'string'
+        ? layer
+        : (layer as any)?.cwd
+
+      if (layerPath) {
+        options.includes?.push(
+          ...await glob(
+            join(layerPath, '**/*.{js,jsx,mjs,ts,tsx,jsx,tsx,js,ts,vue,css,sass,scss,postcss,less,styl,stylus}'),
+            {
+              followSymbolicLinks: options.followSymbolicLinks,
+            },
+          ),
+        )
+      }
+    }
+
     // nuxt-component-meta support
     if (options.componentMetaSupport) {
       const cachedTokens = []
@@ -136,27 +157,6 @@ const module: any = defineNuxtModule<PinceauOptions>({
       if (existsSync(studioAppConfigPath)) { options.configLayers.unshift({ cwd: studioAppConfigPath, configFileName: 'tokens.config' }) }
     }
 
-    // Set `cwd` from Nuxt rootDir
-    options.cwd = nuxt.options.rootDir
-
-    // Automatically inject all components in layers into includes
-    for (const layer of options.configLayers) {
-      const layerPath = typeof layer === 'string'
-        ? layer
-        : (layer as any)?.cwd
-
-      if (layerPath) {
-        options.includes?.push(
-          ...await glob(
-            join(layerPath, '**/*.{js,jsx,mjs,ts,tsx,jsx,tsx,js,ts,vue,css,sass,scss,postcss,less,styl,stylus}'),
-            {
-              followSymbolicLinks: options.followSymbolicLinks,
-            },
-          ),
-        )
-      }
-    }
-
     nuxt.hook('nitro:config', (nitroConfig) => {
       nitroConfig.bundledStorage = nitroConfig.bundledStorage || []
       nitroConfig.bundledStorage.push('pinceau')
@@ -174,6 +174,7 @@ const module: any = defineNuxtModule<PinceauOptions>({
       getContents() {
         const lines = []
 
+        // Support runtime features
         if (options.runtime) {
           lines.push(
             'import fs from \'node:fs\'',
@@ -202,7 +203,8 @@ const module: any = defineNuxtModule<PinceauOptions>({
           )
         }
 
-        if (options?.preflight) { lines.unshift('import \'@unocss/reset/tailwind.css\'') }
+        // Support any reset from @unocss/reset
+        if (options?.preflight) { lines.unshift(`import \'@unocss/reset/${typeof options.preflight === 'boolean' ? 'tailwind' : options.preflight}.css\'`) }
 
         return lines.join('\n')
       },
@@ -225,17 +227,15 @@ const module: any = defineNuxtModule<PinceauOptions>({
             })`,
           )
         }
+        else {
+          lines.push('import \'pinceau.css\'')
+        }
 
-        if (options?.preflight) { lines.unshift('import \'@unocss/reset/tailwind.css\'') }
+        // Support any reset from @unocss/reset
+        if (options?.preflight) { lines.unshift(`import \'@unocss/reset/${typeof options.preflight === 'boolean' ? 'tailwind' : options.preflight}.css\'`) }
 
         return lines.join('\n')
       },
-    })
-
-    // Webpack plugin
-    nuxt.hook('webpack:config', (config: any) => {
-      config.plugins = config.plugins || []
-      config.plugins.unshift(pinceau.webpack(options))
     })
 
     // Vite plugin

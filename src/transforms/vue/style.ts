@@ -31,7 +31,7 @@ export const transformVueStyle = (query: VueQuery, ctx: PinceauContext) => {
  * Helper grouping all resolvers applying to <style>
  */
 export function transformStyle(code = '', ctx: PinceauContext, loc?: any) {
-  code = transformDtHelper(code)
+  code = transformDtHelper(code, ctx)
   code = transformMediaQueries(code, ctx, loc)
   code = transformScheme(code, 'dark')
   code = transformScheme(code, 'light')

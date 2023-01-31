@@ -83,6 +83,7 @@ export function resolveVariantsProps(variants, isTs: boolean) {
         prop.default = undefined
       }
 
+      // Merge options from user definition
       if (variant?.options) {
         const options = variant.options
         if (options.default) { prop.default = options.default }
@@ -108,21 +109,21 @@ export function castVariantsPropsAst(ast: ASTNode) {
         if (path.value?.key?.value === 'type') { path.value.value = expressionToAst(path.value.value.value) }
         // Cast `validator` string
         if (path.value?.key?.value === 'validator') { path.value.value = expressionToAst(path.value.value.value) }
-
+        // Cast required & default to `{value} as const`
         if (
           path.value?.key?.value === 'required'
           || path.value?.key?.value === 'default'
         ) {
+          // Resolve if value is JSON (and not a string)
           let isJSONLike
           try { isJSONLike = !!(JSON.parse(path.value.value.value).toString()) }
-          catch (e) { }
+          catch (e) {}
           path.value.value = expressionToAst(
             isJSONLike
               ? `${path.value.value.value} as const`
               : `\`${path.value.value.value}\` as const`,
           )
         }
-
         return this.traverse(path)
       },
     },
