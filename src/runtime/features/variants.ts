@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid'
 import type { ComputedRef, Ref } from 'vue'
 import { defu } from 'defu'
-import { computed, onScopeDispose, watch } from 'vue'
+import { computed, onScopeDispose, ref, watch } from 'vue'
 import type { PinceauRuntimeIds } from '../../types'
 import type { PinceauRuntimeSheet } from './stylesheet'
 
