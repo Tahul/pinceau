@@ -46,7 +46,14 @@
       "@src/utils/*": ["./src/utils/*"]
     }
   },
-  "include": ["./playground/.nuxt/nuxt.d.ts", "./src/**/*", "./playground/**/*", "./test/**/*", "./src/types/vue-shim.d.ts", "./docs"],
+  "include": [
+    "./playground/.nuxt/nuxt.d.ts",
+    "./src/**/*",
+    "./playground/**/*",
+    "./test/**/*",
+    "./src/types/vue-shim.d.ts",
+    "./docs"
+  ],
   "vueCompilerOptions": {
     "plugins": [
       "./dist/volar.cjs"
