@@ -3,6 +3,7 @@ import fsp from 'node:fs/promises'
 import { resolve } from 'pathe'
 import jiti from 'jiti'
 import type { ViteDevServer } from 'vite'
+import { normalizeConfig } from 'src/utils'
 import { merger } from '../utils/merger'
 import { message } from '../utils/logger'
 import type { ConfigLayer, LoadConfigResult, PinceauConfigContext, PinceauOptions, PinceauTheme, ResolvedConfigLayer } from '../types'
@@ -217,6 +218,8 @@ export async function loadConfigFile({ path, ext, definitions }: { path: string;
     mediaQueriesKeys = [...mediaQueriesKeys, ...Object.keys(configImport.media)]
   }
 
+  const config = normalizeConfig(configImport, mediaQueriesKeys, false)
+
   // Try to resolve tokens definitions
   let resolvedDefinitions = {}
   if (definitions) {
@@ -232,6 +235,6 @@ export async function loadConfigFile({ path, ext, definitions }: { path: string;
     path,
     definitions: resolvedDefinitions,
     content,
-    config: configImport,
+    config,
   }
 }
