@@ -1,31 +1,6 @@
-import { readFileSync } from 'fs'
-import { parseVueComponent } from '../../utils/ast'
-import type { PinceauContext, VueQuery } from '../../types'
+import type { PinceauContext } from '../../types'
 import { darkRegex, lightRegex, mqCssRegex } from '../../utils/regexes'
 import { transformDtHelper } from '../dt'
-import { transformCssFunction } from '../css'
-
-export const transformVueStyle = (query: VueQuery, ctx: PinceauContext) => {
-  const { filename } = query
-
-  const file = readFileSync(filename, 'utf8')
-
-  const { descriptor } = parseVueComponent(file, { filename })
-
-  const style = descriptor?.styles?.[query.index!]
-
-  if (!style) { return }
-
-  let source = style?.content || ''
-
-  const loc = { query, ...style.loc }
-
-  if (style.attrs.lang === 'ts') { source = transformCssFunction(query.id, source, undefined, undefined, ctx, loc) }
-
-  source = transformStyle(source, ctx, loc)
-
-  if (style?.content !== source) { return source }
-}
 
 /**
  * Helper grouping all resolvers applying to <style>
@@ -57,7 +32,7 @@ export function transformScheme(code = '', scheme: 'light' | 'dark') {
 }
 
 /**
- * Resolve `@{mediaQuery}` declarations.
+ * Resolve `@{media.xl}` declarations.
  */
 export function transformMediaQueries(code = '', ctx: PinceauContext, loc?: any): string {
   const mediaQueries = ctx.$tokens('media', { key: undefined, loc })

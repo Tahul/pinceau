@@ -52,9 +52,7 @@ export function transformVueSFC(
  */
 export function resolveStyleQuery(code: string, magicString: MagicString, query: VueQuery, ctx: PinceauContext, loc?: any) {
   // Handle `lang="ts"` even though that should not happen here.
-  if (query.lang === 'ts') {
-    code = transformCssFunction(query.id, code, {}, {}, ctx, loc)
-  }
+  if (query.lang === 'ts') { code = transformCssFunction(query.id, code, {}, {}, ctx, loc) }
 
   // Transform <style> block
   code = transformStyle(code, ctx)

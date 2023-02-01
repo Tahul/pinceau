@@ -26,7 +26,6 @@ css({
     variants: {
         padded: {
             sm: {
-                $class: [''],
                 span: {
                     padding: '{space.4} {space.8}',
                 },
@@ -52,7 +51,7 @@ css({
         },
     },
     '.big-button': {
-        display: 'inline-block',
+        display: 'inline-block {color.black}',
         borderRadius: '{radii.xl}',
         transition: 'box-shadow .1 ease-in-out',
         color: '{color.white}',

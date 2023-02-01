@@ -11,7 +11,7 @@
   "devDependencies": {
     "@nuxt/content": "^2.4.3",
     "@vitejs/plugin-vue": "latest",
-    "nuxt": "3.0.0",
+    "nuxt": "3.1.1",
     "vite": "^4.0.4",
     "vite-plugin-inspect": "^0.7.15",
     "vue": "^3.2.45"

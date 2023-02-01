@@ -1,6 +1,3 @@
-import type { ComputedRef } from 'vue'
-import type { usePinceauThemeSheet } from '../runtime/features/theme'
-import type { DtFunction } from './dt'
 import type { ConfigOrPaths, ThemeGenerationOutput } from './context'
 import type { ColorSchemeModes } from './css'
 import type { LoadConfigResult } from './config'
@@ -116,35 +113,4 @@ export interface PinceauOptions {
    * @example {[`import { MyThemeType } from "my-theme-types"`]}
    */
   utilsImports?: string[]
-}
-
-export interface ModuleHooks {
-  'pinceau:options': (options?: PinceauOptions) => Promise<void> | void
-}
-
-export interface ModuleOptions extends PinceauOptions {
-}
-
-declare global {
-  const $dt: DtFunction
-  const $pinceau: string
-  const __$pProps: any
-}
-
-declare module '@vue/runtime-core' {
-  interface ComponentCustomProperties {
-    $dt: DtFunction
-    $pinceau: ComputedRef<string>
-    $pinceauTheme: ReturnType<typeof usePinceauThemeSheet>
-    $pinceauRuntime: any
-  }
-}
-
-declare module '@nuxt/schema' {
-  interface NuxtHooks {
-    'pinceau:options': ModuleHooks['pinceau:options']
-  }
-  interface NuxtConfig {
-    pinceau?: ModuleOptions
-  }
 }

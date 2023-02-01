@@ -5,7 +5,7 @@ import consola from 'consola'
 import chalk from 'chalk'
 import { usePinceauContext } from './theme/context'
 import { registerAliases, registerPostCssPlugins } from './utils/plugin'
-import { replaceStyleTs, resolveStyleQuery, transformVueSFC, transformVueStyle } from './transforms'
+import { replaceStyleTs, resolveStyleQuery, transformVueSFC } from './transforms'
 import { parseVueQuery } from './utils/query'
 import { message, updateDebugContext } from './utils/logger'
 import type { PinceauOptions } from './types'
@@ -13,6 +13,7 @@ import { merger } from './utils/merger'
 import { useDebugPerformance } from './utils/debug'
 import { outputFileNames } from './utils'
 import { transformDtHelper } from './transforms/dt'
+import { loadVueStyle } from './utils/vue'
 
 export const defaultOptions: PinceauOptions = {
   configFileName: 'tokens.config',
@@ -127,6 +128,9 @@ export default createUnplugin<PinceauOptions>(
       },
 
       transform(code, id) {
+        // Skip empty
+        if (!code) { return }
+
         // Performance timings
         const { stopPerfTimer } = useDebugPerformance(`Transforming ${id}`, options.debug)
 
@@ -136,18 +140,34 @@ export default createUnplugin<PinceauOptions>(
         // Parse query
         const query = parseVueQuery(id)
 
+        // Create location object
+        const loc = { query, source: code }
+
         // Create magic string from query and code
-        const magicString = new MagicString(code || '', { filename: query.filename })
-        const result = (code = magicString.toString(), ms = magicString) => {
+        const magicString = new MagicString(code, { filename: query.filename })
+
+        /**
+         * Returns code and MagicString result.
+         */
+        const result = () => {
           stopPerfTimer()
-          return { code, map: ms.generateMap({ source: id, includeContent: true }) }
+          const sourceMap = magicString.generateMap()
+          sourceMap.file = query.filename
+          sourceMap.sources = [query.filename]
+          return { code: magicString.toString(), map: sourceMap }
         }
+
+        /**
+         * Overwrite current magic string with new code and return the MagicString result
+         *
+         * @TODO Skip this function and always properly update MagicString
+         */
         const missingMap = (code: string) => {
-          stopPerfTimer()
           const magicStringLength = magicString?.length?.() || magicString?.toString?.()?.length
-          if (magicStringLength) { magicString.overwrite(0, magicStringLength, '') }
-          magicString.append(code)
-          return { code, map: magicString.generateMap({ source: id, includeContent: true }) }
+          if (magicStringLength === 0) { magicString.append(code) }
+          else { magicString.update(0, magicStringLength, code) }
+          stopPerfTimer()
+          return result()
         }
 
         try {
@@ -157,14 +177,12 @@ export default createUnplugin<PinceauOptions>(
           }
 
           // Handle CSS files & <style> tags scoped queries
-          const loc = { query, source: code }
           if ((query.css && !query.vue) || query.type === 'style') {
             return missingMap(resolveStyleQuery(code, magicString, query, ctx, loc).code)
           }
 
           // Return early when the query is scoped (usually style tags)
-          const { code: _code } = transformVueSFC(code, query, magicString, ctx)
-          code = _code
+          code = transformVueSFC(code, query, magicString, ctx).code
         }
         catch (e) {
           message('TRANSFORM_ERROR', [id, e])
@@ -194,11 +212,20 @@ export default createUnplugin<PinceauOptions>(
 
         // Transform Vue scoped query
         if (query.vue && query.type === 'style') {
-          const vueStyle = transformVueStyle(query, ctx)
+          const vueStyle = loadVueStyle(query, ctx)
+
+          if (!vueStyle) { return }
+
+          // Create MagicString for this local transform
+          const sourceMap = new MagicString(vueStyle, { filename: query.filename }).generateMap({ file: query.filename, includeContent: true })
+          sourceMap.sources = [query.filename]
+          sourceMap.file = query.filename
+
           stopPerfTimer()
+
           return {
-            code: vueStyle || '',
-            map: new MagicString(vueStyle || '', { filename: query.filename }).generateMap({ file: query.filename, includeContent: true }),
+            code: vueStyle,
+            map: sourceMap,
           }
         }
       },

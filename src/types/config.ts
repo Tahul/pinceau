@@ -35,4 +35,4 @@ export type PermissiveConfigType<T extends {}> = {
     : TokenKey | PermissiveConfigType<T[K]> & { $schema?: Schema }
 }
 
-export type DefineConfigType = PermissiveConfigType<(ConfigTokens & (PinceauTheme extends undefined ? ConfigSuggestion : PinceauTheme))>
+export type DefineConfigType = PermissiveConfigType<ConfigTokens & (PinceauTheme extends undefined ? ConfigSuggestion : PinceauTheme)>
