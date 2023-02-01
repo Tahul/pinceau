@@ -1,3 +1,4 @@
+import type { HookResult } from '@nuxt/schema'
 import type { ComputedRef } from 'vue'
 import type { usePinceauThemeSheet } from './runtime/features/theme'
 import type { DtFunction, PinceauOptions } from './types'
@@ -8,7 +9,7 @@ export { palette } from './utils/palette'
 export { get } from './utils/data'
 
 export interface ModuleHooks {
-  'pinceau:options': (options?: PinceauOptions) => Promise<void> | void
+  'pinceau:options': (options: PinceauOptions) => HookResult
 }
 
 export interface ModuleOptions extends PinceauOptions {}
@@ -29,8 +30,7 @@ declare module '@vue/runtime-core' {
 }
 
 declare module '@nuxt/schema' {
-  interface NuxtHooks {
-    'pinceau:options': ModuleHooks['pinceau:options']
+  interface NuxtHooks extends ModuleHooks {
   }
   interface NuxtConfig {
     pinceau?: ModuleOptions
