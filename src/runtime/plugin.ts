@@ -31,11 +31,7 @@ export const plugin: Plugin = {
     const themeSheet = usePinceauThemeSheet(theme)
 
     // Runtime debug setup:
-    if (dev && (import.meta.hot || (process as any).server)) {
-      import('./features/debug').then(({ usePinceauRuntimeDebug }) => {
-        usePinceauRuntimeDebug(tokensHelperConfig)
-      })
-    }
+    if (dev && (import.meta.hot || (process as any).server)) { import('./features/debug').then(({ usePinceauRuntimeDebug }) => usePinceauRuntimeDebug(tokensHelperConfig)) }
 
     // Sets a unique id for this plugin instance, as Pinceau can be used in multiple apps at the same time.
     const multiAppId = multiApp ? nanoid(6) : undefined
@@ -80,13 +76,17 @@ export const plugin: Plugin = {
       if (computedStyles && computedStyles?.value && Object.keys(computedStyles.value).length > 0) { usePinceauComputedStyles(ids, computedStyles, runtimeSheet, loc) }
 
       // Variants setup
-      if (variants && variants?.value && Object.keys(variants.value).length > 0) { usePinceauVariants(ids, variants, props, runtimeSheet, classes, loc) }
+      let dynamicVariantClasses: Ref<string[]>
+      if (variants && variants?.value && Object.keys(variants.value).length > 0) {
+        const { variantsClasses } = usePinceauVariants(ids, variants, props, runtimeSheet, classes, loc)
+        dynamicVariantClasses = variantsClasses
+      }
 
       // CSS Prop setup
       if (props.value.css && Object.keys(props.value.css).length > 0) { usePinceauCssProp(ids, props, runtimeSheet, loc) }
 
       return {
-        $pinceau: computed(() => `${classes.value.v} ${classes.value.c}`),
+        $pinceau: computed(() => `${classes.value.v} ${classes.value.c} ${dynamicVariantClasses?.value?.join(' ')}`),
       }
     }
 

@@ -62,6 +62,12 @@ const messages = {
     c().logger.log(`❓ ${selector}\n`)
     c().logger.log('If you want to combine `@dark` or `@light` with `html` selector, consider using `html.dark` or `html.light`.\n')
   },
+  UTIL_NAME_CONFLICT: (debugLevel, name) => {
+    c().logger.warn('Pinceau detected a conflicting util name:')
+    c().logger.log(`❓ ${name}\n`)
+    c().logger.log('Util properties must be valid const names.\n')
+    c().logger.log('Learn more about `const` name limitations: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Grammar_and_types\n')
+  },
   WRONG_TOKEN_NAMING: (debugLevel, token) => {
     c().logger.error(`Pinceau detected an invalid token name: ${c().error(token.path.join('-'))}`)
     c().logger.log('Token paths can not contains the following characters: `.` or `-`\n')

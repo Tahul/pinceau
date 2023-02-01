@@ -9,6 +9,6 @@
   "devDependencies": {
     "@nuxt-themes/docus": "^1.6.3",
     "@vueuse/motion": "^2.0.0-beta.27",
-    "nuxt": "3.1.1"
+    "nuxt": "3.0.0"
   }
 }

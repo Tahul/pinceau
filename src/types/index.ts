@@ -1,8 +1,9 @@
 import type { ComputedRef } from 'vue'
 import type { usePinceauThemeSheet } from '../runtime/features/theme'
 import type { DtFunction } from './dt'
-import type { ConfigOrPaths } from './context'
+import type { ConfigOrPaths, ThemeGenerationOutput } from './context'
 import type { ColorSchemeModes } from './css'
+import type { LoadConfigResult } from './config'
 
 export * from './utils'
 export * from './theme'
@@ -37,7 +38,11 @@ export interface PinceauOptions {
   /**
    * A callback called each time your config gets resolved.
    */
-  configResolved?: (config: any) => void
+  configResolved?: (config: LoadConfigResult) => void
+  /**
+   * A callback called each time your config gets built.
+   */
+  configBuilt?: (config: ThemeGenerationOutput) => void
   /**
    * The directry in which you store your design tokens.
    *

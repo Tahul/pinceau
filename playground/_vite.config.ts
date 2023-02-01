@@ -30,6 +30,7 @@ export default defineConfig({
       debug: false,
       studio: true,
       definitions: true,
+      runtime: true,
       colorSchemeMode: 'class',
     }),
     Vue(),

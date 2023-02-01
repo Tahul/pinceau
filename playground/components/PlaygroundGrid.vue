@@ -14,6 +14,8 @@ css({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    flexDirection: 'column',
+    gap: '{space.24}',
     zIndex: '{zIndex.0}',
     border: '4px solid {color.grey.100}',
     '@dark': {

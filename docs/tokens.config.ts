@@ -71,6 +71,14 @@ export default defineTheme({
         dark: '{color.black}',
       },
     },
+    border: {
+      primary: {
+        default: {
+          initial: '{color.gray.200}',
+          dark: '{color.gray.800}',
+        },
+      },
+    },
   },
   typography: {
     font: {

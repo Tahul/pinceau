@@ -6,6 +6,8 @@ import { walkTokens } from '../utils/data'
 import { astTypes, printAst } from '../utils/ast'
 import { flattenTokens, objectPaths } from '../utils'
 import { responsiveMediaQueryRegex } from '../utils/regexes'
+import { isSafeConstName } from '../utils/checks'
+import { message } from '../utils/logger'
 
 /**
  * Stringify utils from object
@@ -14,6 +16,12 @@ const stringifyUtils = (value: Record<string, any>, definitions: any) => {
   const entries = Object.entries(value)
   return entries.reduce(
     (acc, [key, value]) => {
+      // Check if util has valid key
+      if (!isSafeConstName(key)) {
+        message('UTIL_NAME_CONFLICT', [key])
+        return acc
+      }
+
       // If definitions enabled, use typed version
       if (definitions[`utils.${key}`]?.content) {
         acc += `export const ${key} = ${definitions[`utils.${key}`].content}\n\n`

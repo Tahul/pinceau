@@ -21,11 +21,19 @@ export function usePinceauRuntimeSheet(
   const cache = {}
 
   /**
-   * Stringify CSS declaration.
+   * Runtime declaration stringifier.
    */
-  function stringify(decl: any, loc?: any) {
-    return _stringify(decl, (property: any, value: any, style: any, selectors: any) => resolveCssProperty(property, value, style, selectors, { $tokens, utils: utils.value, options: { colorSchemeMode }, runtime: true } as PinceauContext, loc))
-  }
+  const stringify = (decl: any, loc?: any) => _stringify(
+    decl,
+    (property: any, value: any, style: any, selectors: any) => resolveCssProperty(
+      property,
+      value,
+      style,
+      selectors,
+      { $tokens, utils: utils.value, options: { colorSchemeMode, runtime: true } } as PinceauContext,
+      loc,
+    ),
+  )
 
   /**
    * Resolve runtime stylesheet.

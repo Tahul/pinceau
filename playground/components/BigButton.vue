@@ -7,9 +7,7 @@ defineProps({
   ...variants,
 })
 
-const dt = $dt('color.black', 'value')
-
-console.log(dt)
+const black = $dt('color.black', 'value')
 </script>
 
 <template>
@@ -24,6 +22,7 @@ css({
     variants: {
         padded: {
             sm: {
+                $class: [''],
                 span: {
                     padding: '{space.4} {space.8}',
                 },
@@ -44,7 +43,7 @@ css({
                 }
             },
             options: {
-                default: 'md',
+                default: 'xl',
             },
         },
     },

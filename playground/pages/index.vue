@@ -1,10 +1,10 @@
 <script setup lang="ts">
-// import { usePinceauTheme } from 'pinceau/runtime'
+import { usePinceauTheme } from 'pinceau/runtime'
 import JSConfetti from 'js-confetti'
 import { onMounted, ref, watch } from 'vue'
 
-// const theme = usePinceauTheme()
-const theme = { theme: {} }
+const theme = usePinceauTheme()
+// const theme = { theme: {} }
 
 // const colors = ['pink', 'primary', 'red', 'blue']
 // const rand = (items: any) => items[Math.floor(Math.random() * items.length)]
@@ -39,7 +39,8 @@ onMounted(() => {
   <section>
     <canvas ref="canvas" />
     <PlaygroundGrid>
-      <BigButton color="red" @click="confettis" />
+      <BigButton color="red" :padded="{ initial: 'sm', md: 'lg' }" @click="confettis" />
+      <BigButton color="red" :padded="{ initial: 'xl', md: 'sm' }" @click="confettis" />
     </PlaygroundGrid>
   </section>
 </template>

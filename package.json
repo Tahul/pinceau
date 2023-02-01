@@ -74,7 +74,7 @@
   ],
   "scripts": {
     "build": "unbuild",
-    "dev": "pnpm -C playground run dev",
+    "dev": "pnpm -c playground run prepare && pnpm -C playground run dev",
     "lint": "eslint . --cache",
     "lint:fix": "pnpm run lint --fix",
     "build:play": "pnpm -C playground run build",
@@ -119,7 +119,7 @@
     "@antfu/eslint-config": "^0.35.1",
     "@nuxt/kit": "^3.1.1",
     "@nuxt/test-utils": "^3.1.1",
-    "@nuxthq/studio": "^0.6.5",
+    "@nuxthq/studio": "^0.6.6",
     "@nuxtjs/color-mode": "^3.2.0",
     "@types/chroma-js": "^2.1.4",
     "@types/node": "^18.11.18",

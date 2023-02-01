@@ -46,6 +46,8 @@ export function usePinceauContext<UserOptions extends PinceauOptions = PinceauOp
 
       const builtTheme = await generateTheme(resolvedConfig.config, resolvedConfig.definitions, options)
 
+      if (options?.configBuilt) { options.configBuilt(builtTheme) }
+
       if (!builtTheme) {
         stopPerfTimer()
         return
@@ -74,8 +76,6 @@ export function usePinceauContext<UserOptions extends PinceauOptions = PinceauOp
   return {
     // Local context
     env,
-    // This context is build-time only.
-    runtime: false,
     options,
 
     // Transformed files

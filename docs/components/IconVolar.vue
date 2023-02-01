@@ -1,0 +1,3 @@
+<template>
+  <svg class="logo" width="1em" height="1em" viewBox="0 0 426 372" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M223.392 366C218.773 374 207.226 374 202.608 366L1.68978 18C-2.92902 9.99998 2.84449 0 12.0821 0L413.918 0C423.156 0 428.929 10 424.31 18L223.392 366Z" fill="url(#paint0_linear_158_112)" data-v-4833280c="" /><defs data-v-4833280c=""><linearGradient id="paint0_linear_158_112" x1="451" y1="23" x2="-1.99999" y2="245" gradientUnits="userSpaceOnUse" data-v-4833280c=""><stop stop-color="#7A85EC" data-v-4833280c="" /><stop offset="1" stop-color="#3DDCFF" data-v-4833280c="" /></linearGradient></defs></svg>
+</template>

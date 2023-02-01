@@ -72,7 +72,7 @@ export function resolveTemplate(_: string, parsedComponent: SFCParseResult, magi
   newTemplateContent = transformDtHelper(newTemplateContent, ctx, '\'')
 
   // Add class if runtime styles are enabled
-  if (ctx.runtime && hasRuntimeStyles) { newTemplateContent = transformAddPinceauClass(newTemplateContent) }
+  if (ctx.options.runtime && hasRuntimeStyles) { newTemplateContent = transformAddPinceauClass(newTemplateContent) }
 
   // Overwrite <template>
   if (templateContent.loc.end?.offset && templateContent.loc.end?.offset > templateContent.loc.start.offset) {
@@ -133,7 +133,7 @@ export function resolveScriptSetup(
   // Cleanup `...variants` in any case
   code = code.replace(variantsRegex, () => '')
 
-  if (ctx.runtime) {
+  if (ctx.options.runtime) {
     // Inject runtime imports
     if (hasVariants || hasComputedStyles) { code = transformAddRuntimeImports(code) }
 

@@ -4,7 +4,7 @@ import type { DesignToken, RawTokenType, TokenKey } from './tokens'
 import type { ConfigSuggestion } from './preset'
 import type { PinceauTheme } from './theme'
 
-export interface LoadConfigResult<T> {
+export interface LoadConfigResult<T = any> {
   config: T
   definitions: { [key: string]: any }
   sources: string[]

@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { theme } from '#pinceau/theme'
+import { usePinceauTheme } from 'pinceau/runtime'
 
-const mediaQueries = Object.entries(theme).reduce(
+const theme = usePinceauTheme()
+
+const mediaQueries = Object.entries(theme.theme.value?.media).reduce(
   (acc, [key, value]) => {
-    if (key.startsWith('media.')) { return { ...acc, [key.replace('media.', '')]: value } }
+    return { ...acc, [key.replace('media.', '')]: value }
     return acc
   },
   {},
@@ -11,11 +13,13 @@ const mediaQueries = Object.entries(theme).reduce(
 </script>
 
 <template>
-  <div>
-    <span v-for="[key] of Object.entries(mediaQueries)" :key="key" :class="`bp-${key}`">
-      {{ key }}
-    </span>
-  </div>
+  <ClientOnly>
+    <div>
+      <span v-for="[key] of Object.entries(mediaQueries)" :key="key" :class="`bp-${key}`">
+        {{ key }}
+      </span>
+    </div>
+  </ClientOnly>
 </template>
 
 <style lang="ts" scoped>

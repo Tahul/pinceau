@@ -38,7 +38,7 @@ export function usePinceauConfigContext<UserOptions extends PinceauOptions = Pin
 
     if (dispatchConfigUpdate) { dispatchConfigUpdate(result) }
 
-    if (options?.configResolved) { options.configResolved(result.config) }
+    if (options?.configResolved) { options.configResolved(result) }
 
     return result
   }
@@ -195,7 +195,7 @@ export async function loadConfig<U extends PinceauTheme>(
   return result
 }
 
-async function loadConfigFile({ path, ext, definitions }: { path: string; ext: string; definitions: boolean }) {
+export async function loadConfigFile({ path, ext, definitions }: { path: string; ext: string; definitions: boolean }) {
   const content = await fsp.readFile(path, 'utf-8')
 
   if (ext === '.json') {
@@ -229,6 +229,7 @@ async function loadConfigFile({ path, ext, definitions }: { path: string; ext: s
   }
 
   return {
+    path,
     definitions: resolvedDefinitions,
     content,
     config: configImport,

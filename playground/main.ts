@@ -15,7 +15,7 @@ import Index from './pages/index.vue'
 
 import '@unocss/reset/tailwind.css'
 import './main.css'
-// import utils from '#pinceau/utils'
+import utils from '#pinceau/utils'
 
 const app = createApp(App)
 
@@ -32,7 +32,7 @@ const router = createRouter({
 
 // Plugins
 app.use(router)
-// app.use(pinceau, { colorSchemeMode: 'class', utils })
+app.use(pinceau, { colorSchemeMode: 'class', utils })
 
 // Components
 app.component('Block', Block)

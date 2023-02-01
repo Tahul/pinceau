@@ -15,6 +15,7 @@ export const usePinceauVariants = (
 ) => {
   let rule: CSSRule = sheet.hydratableRules?.[ids.value.uid]?.v
   const variantsState = computed(() => (variants && variants?.value) ? resolveVariantsState(ids.value, props.value, variants.value) : {})
+  const variantsClasses = ref<string[]>([])
 
   watch(
     variantsState,
@@ -25,14 +26,16 @@ export const usePinceauVariants = (
         const cachedRule = sheet.cache[cacheId]
         rule = cachedRule.rule
         variantClass = cachedRule.variantClass
+        if (cachedRule?.classes) { variantsClasses.value = cachedRule.classes }
         cachedRule.count++
       }
       else {
         // Push a new variant in stylesheet
         variantClass = `pv-${nanoid(6)}`
-        const transformed = variantsToDeclaration(variantClass, ids.value, variants.value, variantsProps)
-        rule = sheet.pushDeclaration(ids.value.uid, 'v', transformed, undefined, { ...loc, type: 'v' })
-        sheet.cache[cacheId] = { rule, variantClass, count: 1 }
+        const { declaration, classes } = variantsToDeclaration(variantClass, ids.value, variants.value, variantsProps)
+        variantsClasses.value = classes
+        rule = sheet.pushDeclaration(ids.value.uid, 'v', declaration, undefined, { ...loc, type: 'v' })
+        sheet.cache[cacheId] = { rule, variantClass, classes, count: 1 }
       }
 
       classes.value.v = variantClass
@@ -57,6 +60,8 @@ export const usePinceauVariants = (
       }
     },
   )
+
+  return { variantsClasses }
 }
 
 /**
@@ -68,6 +73,7 @@ export function variantsToDeclaration(
   variants: any,
   props: any,
 ) {
+  let classes = []
   const declaration = {}
 
   // Iterate through all components in `props`
@@ -85,6 +91,16 @@ export function variantsToDeclaration(
           if (!variantValue) { continue }
 
           if (!declaration[targetId]) { declaration[targetId] = {} }
+
+          // Support $class or string variant
+          if (typeof variantValue === 'string' || Array.isArray(variantValue) || variantValue?.$class) {
+            const classAttr = (typeof variantValue === 'string' || Array.isArray(variantValue)) ? variantValue : variantValue.$class
+            classes = [
+              ...classes,
+              ...(typeof classAttr === 'string' ? classAttr.split(' ') : classAttr),
+            ]
+            delete variantValue.$class
+          }
 
           if (mqId === 'initial') {
             if (!declaration[targetId]) { declaration[targetId] = {} }
@@ -113,7 +129,7 @@ export function variantsToDeclaration(
     }
   }
 
-  return declaration
+  return { declaration, classes }
 }
 
 /**
@@ -130,16 +146,9 @@ export function resolveVariantsState(ids: PinceauRuntimeIds, props: any, variant
       (acc, [propName, propValue]) => {
         if (!variants[propName]) { return acc }
 
-        if (typeof propValue === 'object') {
-          Object.entries(propValue).forEach(
-            ([key, value]) => {
-              cacheId += `${propName}:${key}:${value}|`
-            },
-          )
-        }
-        else {
-          cacheId += `${propName}:${propValue}|`
-        }
+        // Handle responsive variants usage
+        if (typeof propValue === 'object') { Object.entries(propValue).forEach(([key, value]) => cacheId += `${propName}:${key}:${value}|`) }
+        else { cacheId += `${propName}:${propValue}|` }
 
         acc[propName] = propValue
 
@@ -156,7 +165,6 @@ export function resolveVariantsState(ids: PinceauRuntimeIds, props: any, variant
  */
 export function sanitizeProps(propsObject: any, variants: any): any {
   if (!propsObject || !variants) { return {} }
-
   return Object.entries(propsObject)
     .reduce(
       (acc: any, [key, value]) => {

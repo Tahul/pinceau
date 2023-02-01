@@ -8,6 +8,6 @@ export default defineTheme({
       dark: 'blue',
     },
     testReference: '{color.testSimple}',
-    testSimpleReference: '{color.test}',
+    testSimpleReference: '{color.red.100}',
   },
 })

@@ -17,7 +17,8 @@ import { transformDtHelper } from './transforms/dt'
 export const defaultOptions: PinceauOptions = {
   configFileName: 'tokens.config',
   configLayers: [],
-  configResolved: (_) => { },
+  configResolved: (_) => {},
+  configBuilt: (_) => {},
   cwd: process.cwd(),
   outputDir: join(process.cwd(), 'node_modules/.vite/pinceau/'),
   preflight: true,
@@ -36,7 +37,7 @@ export const defaultOptions: PinceauOptions = {
   runtime: true,
   definitions: true,
   studio: false,
-  imports: [],
+  utilsImports: [],
 }
 
 export default createUnplugin<PinceauOptions>(
@@ -76,9 +77,9 @@ export default createUnplugin<PinceauOptions>(
           await ctx.updateCwd(config.root)
         },
         async configureServer(server) {
-          ctx.setViteServer(server)
           ctx.env = 'dev'
           await ctx.ready
+          ctx.setViteServer(server)
         },
         handleHotUpdate(ctx) {
           // Enforce <style lang="ts"> into <style lang="postcss">
