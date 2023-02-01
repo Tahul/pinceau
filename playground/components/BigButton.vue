@@ -7,7 +7,11 @@ defineProps({
   ...variants,
 })
 
-const black = $dt('color.black', 'value')
+const red = $dt('color.red.500', 'value')
+
+onMounted(() => {
+  console.log({ red })
+})
 </script>
 
 <template>
