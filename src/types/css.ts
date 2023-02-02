@@ -43,7 +43,7 @@ export type CSSProperties<
 
 export type CSSFunctionType<ComponentProps = {}> =
   {
-    variants?: Variants
+    variants?: Variants<ComponentProps>
   }
   &
   {
