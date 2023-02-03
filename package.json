@@ -7,7 +7,7 @@
     "docs",
     "playground"
   ],
-  "description": "A CSS-in-JS framework built to feel like a native Vue feature.",
+  "description": "Make your <script> lighter and your <style> smarter.",
   "license": "MIT",
   "homepage": "https://github.com/Tahul/pinceau#readme",
   "repository": {
