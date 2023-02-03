@@ -4,10 +4,31 @@ import JSConfetti from 'js-confetti'
 import { onMounted, ref, watch } from 'vue'
 
 const theme = usePinceauTheme()
-// const theme = { theme: {} }
 
-// const colors = ['pink', 'primary', 'red', 'blue']
-// const rand = (items: any) => items[Math.floor(Math.random() * items.length)]
+const colors = ['yellow', 'green', 'red', 'blue']
+const myVariants = [
+  {
+    initial: 'sm',
+    md: 'lg',
+    xl: 'sm',
+  },
+  {
+    initial: 'sm',
+    lg: 'md',
+    xl: 'xl',
+  },
+  {
+    initial: 'xl',
+    lg: 'lg',
+    xl: 'sm',
+  },
+  {
+    initial: 'md',
+    lg: 'xl',
+    xl: 'lg',
+  },
+]
+const rand = (items: any) => items[Math.floor(Math.random() * items.length)]
 
 let confettiInstance: JSConfetti
 const canvas = ref()
@@ -21,7 +42,7 @@ onMounted(
 
 const confettis = () => {
   confettiInstance.addConfetti({
-    emojis: ['⛰', '🏔', '🗻'],
+    emojis: ['🖖', '🖌️', '🥰', '🇳🇱'],
     emojiSize: 128,
     confettiNumber: 10,
   })
@@ -29,7 +50,6 @@ const confettis = () => {
 
 onMounted(() => {
   watch(theme.theme, theme => console.log({ theme }), { immediate: true })
-
   // @ts-ignore
   window.pinceauSheet = theme
 })
@@ -39,8 +59,7 @@ onMounted(() => {
   <section>
     <canvas ref="canvas" />
     <PlaygroundGrid>
-      <BigButton color="red" :padded="{ initial: 'sm', md: 'lg' }" @click="confettis" />
-      <BigButton color="red" :padded="{ initial: 'xl', md: 'sm' }" @click="confettis" />
+      <BigButton :color="rand(colors)" :padded="rand(myVariants)" @click="confettis" />
     </PlaygroundGrid>
   </section>
 </template>
@@ -52,12 +71,14 @@ css({
     padding: '{space.10} {space.8}'
   },
   canvas: {
+    userSelect: 'none',
+    pointerEvents: 'none',
     position: 'absolute',
     top: 0,
     left: 0,
     height: '100vh',
-    width: "100vw ",
-    zIndex: '-10'
+    width: '100vw',
+    zIndex: 1
   },
 })
 </style>

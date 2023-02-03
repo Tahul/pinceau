@@ -1,3 +1,7 @@
+<script lang="ts" setup>
+
+</script>
+
 <template>
   <section class="main-hero">
     <div class="main-title">
@@ -13,10 +17,6 @@
       <ButtonLink to="/get-started/what-is-pinceau">
         Start painting
       </ButtonLink>
-
-      <ButtonLink transparent>
-        Start painting
-      </ButtonLink>
     </div>
   </section>
 </template>
@@ -27,7 +27,7 @@ css({
     marginTop: '{space.16}',
     display: 'flex',
     flexDirection: 'column',
-    gap: '{space.24}'
+    gap: '{space.16}'
   },
 
   '.main-cta': {

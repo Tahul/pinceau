@@ -68,8 +68,8 @@ export function tsFull(tokensObject: any) {
   // Flatten tokens in full format too
   const flattenedTokens = flattenTokens(tokensObject)
 
-  // Theme object
-  result += `export const theme = ${JSON.stringify(flattenedTokens, null, 2)} as const\n\n`
+  if (Object.keys(flattenedTokens).length) { result += `export const theme = ${JSON.stringify(flattenedTokens, null, 2)} as const\n\n` }
+  else { result += 'export const theme = undefined\n\n' }
 
   // Theme type
   result += 'export type GeneratedPinceauTheme = typeof theme\n\n'

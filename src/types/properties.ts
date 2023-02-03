@@ -94,7 +94,7 @@ export type SimplePseudos =
   | '&:valid'
   | '&:visited'
 
-export type Pseudos = AdvancedPseudos | SimplePseudos
+export type Pseudos = AdvancedPseudos | SimplePseudos | VuePseudos
 
 export type PseudosProperties = { [key in Pseudos]?: NativeProperties }
 

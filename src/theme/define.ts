@@ -1,5 +1,5 @@
 import type { DefineConfigType } from '../types'
 
-export function defineTheme(config: DefineConfigType) {
+export function defineTheme<T = DefineConfigType>(config: T): typeof config {
   return config
 }

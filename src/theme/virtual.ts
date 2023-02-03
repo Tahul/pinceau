@@ -12,6 +12,9 @@ export function usePinceauVirtualStore(): PinceauVirtualContext {
     _definitions: 'export const definitions = {} as const',
   }
 
+  /**
+   * Update virtual storage from theme generation output data
+   */
   function updateOutputs(generatedTheme: ThemeGenerationOutput) {
     Object.entries(generatedTheme.outputs).forEach(
       ([key, value]) => {
@@ -20,11 +23,15 @@ export function usePinceauVirtualStore(): PinceauVirtualContext {
     )
   }
 
+  /**
+   * Get outputs from the virtual storage
+   */
   function getOutput(id: string) {
     if (id === '/__pinceau_css.css') { return outputs._css }
     if (id === '/__pinceau_ts.ts') { return outputs._ts }
     if (id === '/__pinceau_utils.ts') { return outputs._utils }
-    if (id === '/__pinceau_schema.ts') { return outputs._utils }
+    if (id === '/__pinceau_schema.ts') { return outputs._schema }
+    if (id === '/__pinceau_definitions.ts') { return outputs._definitions }
   }
 
   /**
@@ -35,6 +42,7 @@ export function usePinceauVirtualStore(): PinceauVirtualContext {
     if (id.includes('#pinceau/theme')) { return '/__pinceau_ts.ts' }
     if (id.includes('#pinceau/utils')) { return '/__pinceau_utils.ts' }
     if (id.includes('#pinceau/schema')) { return '/__pinceau_schema.ts' }
+    if (id.includes('#pinceau/definitions')) { return '/__pinceau_definitions.ts' }
   }
 
   return {

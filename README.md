@@ -1,4 +1,4 @@
-![Pinceau Cover](./docs/public/cover.png)
+![Pinceau Cover](./docs/public/cover.jpg)
 
 # Pinceau
 

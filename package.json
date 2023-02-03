@@ -98,7 +98,7 @@
     "prepare": "pnpm -C playground run prepare && npm -C docs run prepare"
   },
   "dependencies": {
-    "@unocss/reset": "^0.49.2",
+    "@unocss/reset": "^0.49.4",
     "@volar/vue-language-core": "^1.0.24",
     "acorn": "^8.8.2",
     "chroma-js": "^2.4.2",
@@ -126,8 +126,8 @@
     "@nuxtjs/color-mode": "^3.2.0",
     "@types/chroma-js": "^2.1.4",
     "@types/node": "^18.11.18",
-    "@vue/compiler-dom": "^3.2.45",
-    "@vue/test-utils": "^2.2.8",
+    "@vue/compiler-dom": "^3.2.47",
+    "@vue/test-utils": "^2.2.10",
     "eslint": "^8.33.0",
     "esno": "^0.16.3",
     "fast-glob": "^3.2.12",
@@ -141,12 +141,12 @@
     "playwright": "^1.30.0",
     "release-it": "^15.6.0",
     "rimraf": "^4.1.2",
-    "rollup": "^3.12.1",
+    "rollup": "^3.13.0",
     "typescript": "^4.9.5",
-    "vite": "^4.0.4",
+    "vite": "^4.1.1",
     "vite-plugin-inspect": "^0.7.15",
-    "vitest": "^0.28.3",
-    "vue": "^3.2.45",
+    "vitest": "^0.28.4",
+    "vue": "^3.2.47",
     "webpack": "^5.75.0"
   },
   "pnpm": {

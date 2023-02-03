@@ -7,5 +7,4 @@ export type PinceauTokensPaths = GeneratedPinceauPaths
 
 export type PinceauUtils = GeneratedPinceauUtils
 
-// @ts-ignore - Might be undefined
 export type PinceauMediaQueries = 'dark' | 'light' | 'initial' | keyof (typeof theme.media)

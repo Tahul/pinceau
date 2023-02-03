@@ -4,9 +4,8 @@ import ThemeSelect from '../components/ThemeSelect.vue'
 </script>
 
 <template>
-  <div
-    class="layout"
-  >
+  <div class="layout">
+    <img src="/background.jpg">
     <header>
       <RouterLink to="/">
         <span>
@@ -36,19 +35,23 @@ import ThemeSelect from '../components/ThemeSelect.vue'
 </template>
 
 <style lang="postcss">
-html, body {
+html,
+body {
   font-family: $dt('font.secondary');
 
-  color: $dt('color.black');
+  color: $dt('color.grey.100');
   background-color: $dt('color.white');
 
   @dark {
     color: $dt('color.white');
-    background-color: $dt('color.black');
+    background-color: $dt('color.grey.800');
   }
 }
 
-html, body, #app, #__nuxt {
+html,
+body,
+#app,
+#__nuxt {
   display: flex;
   min-height: 100vh;
   width: 100vw;
@@ -57,6 +60,7 @@ html, body, #app, #__nuxt {
 
 <style lang="postcss">
 .layout {
+  position: relative;
   height: 100%;
   width: 100%;
   display: flex;
@@ -68,8 +72,6 @@ html, body, #app, #__nuxt {
 
   header,
   footer {
-    background-color: $dt('color.black');
-    color: $dt('color.white');
     flex: 0;
     display: flex;
     align-items: center;
@@ -79,10 +81,17 @@ html, body, #app, #__nuxt {
     top: 0;
     width: 100%;
     z-index: 50;
+    background-color: $dt('color.grey.400');
+    color: $dt('color.white');
+
+    @dark {
+      background-color: $dt('color.grey.900');
+    }
 
     span {
       font-weight: bold;
     }
+
     div {
       display: flex;
       flex-direction: row;
@@ -96,6 +105,18 @@ html, body, #app, #__nuxt {
     height: 100%;
     width: 100%;
     z-index: 50;
+  }
+
+  img {
+    z-index: 0;
+    filter: blur(12px);
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    user-select: none;
   }
 }
 </style>

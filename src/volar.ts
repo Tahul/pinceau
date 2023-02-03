@@ -37,7 +37,6 @@ const plugin: VueLanguagePlugin = _ => ({
 
     if (isCssInTsFile) {
       embeddedFile.content.unshift('\nimport type { PinceauMediaQueries, CSSFunctionType } from \'pinceau\'')
-      embeddedFile.content.unshift('\nimport \'#pinceau/utils\'')
 
       // Add variants above <script setup> content
       if (variantsContent) { embeddedFile.content.push(variantsContent) }
@@ -49,9 +48,9 @@ const plugin: VueLanguagePlugin = _ => ({
 
       // Setup `css()` context
       const context = [
-        '\ntype __VLS_InstanceOmittedKeys = \'onVnodeBeforeMount\' | \'onVnodeBeforeUnmount\' | \'onVnodeBeforeUpdate\' | \'onVnodeMounted\' | \'onVnodeUnmounted\' | \'onVnodeUpdated\' | \'key\' | \'ref\' | \'ref_for\' | \'ref_key\' | \'style\' | \'class\'\n',
-        `\ntype __VLS_PropsType = Omit<InstanceType<typeof import('${fileName}').default>['$props'], __VLS_InstanceOmittedKeys>\n`,
-        '\nfunction css (declaration: CSSFunctionType<__VLS_PropsType>) { return { declaration } }\n',
+        '\ntype OmittedKeysPinceau = \'onVnodeBeforeMount\' | \'onVnodeBeforeUnmount\' | \'onVnodeBeforeUpdate\' | \'onVnodeMounted\' | \'onVnodeUnmounted\' | \'onVnodeUpdated\' | \'key\' | \'ref\' | \'ref_for\' | \'ref_key\' | \'style\' | \'class\'\n',
+        `\ntype PinceauProps = Omit<InstanceType<typeof import('${fileName}').default>['$props'], OmittedKeysPinceau>\n`,
+        '\nfunction css (declaration: CSSFunctionType<PinceauProps>) { return { declaration } }\n',
       ]
       embeddedFile.content.push(...context)
 

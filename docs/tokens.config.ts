@@ -2,7 +2,8 @@ import { defineTheme } from 'pinceau'
 
 export default defineTheme({
   color: {
-    white: '{color.yellow.500}',
+    black: '#0c0c0d',
+    white: '{color.yellow.100}',
     primary: {
       50: '{color.red.50}',
       100: '{color.red.100}',

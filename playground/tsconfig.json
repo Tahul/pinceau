@@ -96,6 +96,9 @@
       "#pinceau/schema": [
         "/Users/yaelguilloux/Code/sandbox/pinceau/playground/.nuxt/pinceau/schema.ts"
       ],
+      "#pinceau/definitions": [
+        "/Users/yaelguilloux/Code/sandbox/pinceau/playground/.nuxt/pinceau/schema.ts"
+      ],
       "#components": [
         "./.nuxt/components"
       ]

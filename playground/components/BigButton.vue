@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
 import type { PinceauTheme } from 'pinceau'
 import { computedStyle } from 'pinceau/runtime'
 
@@ -9,14 +10,13 @@ defineProps({
 
 const red = $dt('color.red.500', 'value')
 
-onMounted(() => {
-  console.log({ red })
-})
+onMounted(() => console.log({ red }))
 </script>
 
 <template>
   <button class="big-button">
-    <span>Hello Nuxt Nation 👋</span>
+    <span v-if="!$slots.default">Hello Amsterdam 👋</span>
+    <span v-else><slot /></span>
     <slot />
   </button>
 </template>
