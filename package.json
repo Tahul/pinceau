@@ -72,9 +72,6 @@
     "dist",
     "volar"
   ],
-  "resolutions": {
-    "nuxt": "3.0.0"
-  },
   "scripts": {
     "build": "unbuild",
     "dev": "pnpm -c playground run prepare && pnpm -C playground run dev",
@@ -164,6 +161,9 @@
         "vue"
       ]
     }
+  },
+  "resolutions": {
+    "nuxt": "3.0.0"
   },
   "release-it": {
     "hooks": {
