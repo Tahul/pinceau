@@ -1,6 +1,6 @@
 import type * as CSSType from 'csstype'
 import type { DefaultThemeMap } from './map'
-import type { PinceauTheme, PinceauTokensPaths } from './theme'
+import type { PinceauTokensPaths } from './theme'
 import type * as Utils from './utils'
 
 export type VuePseudos =
@@ -112,7 +112,7 @@ export type ThemeProperties<K extends keyof DefaultThemeMap> = Utils.WrapUnion<U
 /**
  * Take a key and gives a list of tokens under that key in configuration.
  */
-export type ThemeTokens<K extends keyof PinceauTheme | (string & {})> = Utils.WrapUnion<Utils.FilterStartingWith<PinceauTokensPaths, K>, '{', '}'>
+export type ThemeTokens<K extends string> = Utils.WrapUnion<Utils.FilterStartingWith<PinceauTokensPaths, K>, '{', '}'>
 
 /**
  * Supported properties in `css()` function
