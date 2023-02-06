@@ -1,4 +1,5 @@
-import { defineTheme } from '../../src'
+import { defineTheme } from 'pinceau'
+import type { PinceauTheme, ThemeTokens } from 'pinceau'
 
 export default defineTheme({
   media: {
@@ -15,14 +16,6 @@ export default defineTheme({
   },
 
   color: {
-    $schema: {
-      title: 'Your website color palette.',
-      tags: [
-        '@studioInput design-token',
-        '@studioInputTokenType color',
-        '@studioIcon ph:palette',
-      ],
-    },
     white: '#FFFFFF',
     black: '#191919',
     blue: {
@@ -149,7 +142,7 @@ export default defineTheme({
   fontSize: {
     'xs': '12px',
     'sm': '14px',
-    'base': '16px',
+    'md': '16px',
     'lg': '18px',
     'xl': '20px',
     'xxl': '24px',
@@ -275,21 +268,26 @@ export default defineTheme({
   },
 
   utils: {
-    my: (value: string) => ({ marginTop: value, marginBottom: value }),
-    mx: (value: string) => ({ marginLeft: value, marginRight: value }),
-    px: (value: string) => ({ paddingLeft: value, paddingRight: value }),
-    py: (value: string) => ({ paddingTop: value, paddingBottom: value }),
-    pt: (value: string) => ({ paddingTop: value }),
+    my: (value: ThemeTokens<'space'>) => ({
+      marginTop: value,
+      marginBottom: value,
+    }),
+    mx: (value: ThemeTokens<'space'>) => ({
+      marginLeft: value,
+      marginRight: value,
+    }),
+    surface: (value: keyof PinceauTheme['color']) => ({
+      'color': `{color.${value}.900}`,
+      'backgroundColor': `{color.${value}.200}`,
+      '@dark': {
+        color: `{color.${value}.200}`,
+        backgroundColor: `{color.${value}.900}`,
+      },
+    }),
     truncate: {
       overflow: 'hidden',
       textOverflow: 'ellipsis',
       whiteSpace: 'nowrap',
-    },
-    stateColors: (value: string) => {
-      return {
-        color: `{color.${value}.500}`,
-        backgroundColor: `{color.${value}.200}`,
-      }
     },
   },
 })

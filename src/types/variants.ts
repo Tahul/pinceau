@@ -19,13 +19,17 @@ export interface EnumVariant {
 }
 
 export interface ClassVariant<ComponentProps = {}> {
-  [key: string]: string | string[] | VariantOptions | Record<string, {
-    [k: string]: {
-      [K in Utils.Primitive]: CSSProperties<ComponentProps> | MappedProperty<K, ComponentProps> | {} } | string | string[]
-  } & { $class?: string[] }>
+  [key: string]:
+  | string
+  | string[]
+  | VariantOptions
+  | Record<string, { $class?: string[] } & { [k: string]: { [K in Utils.Primitive]: CSSProperties<ComponentProps> | MappedProperty<K, ComponentProps> | {} } | string | string[] }>
 }
 
-export type Variant<ComponentProps = {}, T = { [key: string]: CSSProperties | VariantOptions<any> | string | string[] }> =
+export type Variant<
+  ComponentProps = {},
+  T = { [key: string]: CSSProperties | VariantOptions<any> | string | string[] },
+> =
   (BooleanVariant | EnumVariant | ClassVariant<ComponentProps>) &
   {
     options?: VariantOptions<keyof T | string | number | boolean>

@@ -38,6 +38,7 @@
       "#components": ["./playground/.nuxt/components"],
       "#pinceau/theme": ["./playground/.nuxt/pinceau/index.ts"],
       "#pinceau/utils": ["./playground/.nuxt/pinceau/utils.ts"],
+      "#pinceau/definitions": ["./playground/.nuxt/pinceau/definitions.ts"],
       "pinceau.css": ["./playground/.nuxt/pinceau/theme/index.css"],
       "pinceau": ["./src/index.ts"],
       "pinceau/runtime": ["./src/runtime.ts"],

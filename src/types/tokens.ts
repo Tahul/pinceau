@@ -3,10 +3,19 @@ import type { PinceauMediaQueries } from './theme'
 
 export type RawTokenType = string | number
 
+/**
+ * A token that uses media queries as keys and value as value for this breakpoint.
+ */
 export type ResponsiveToken<T = RawTokenType> = { [key in PinceauMediaQueries]?: T }
 
+/**
+ * A token key value pair in the configurations.
+ */
 export type TokenKey<T = RawTokenType> = DesignToken<T> | ResponsiveToken<T> | T
 
+/**
+ * A Design Token object for Pinceau.
+ */
 export interface DesignToken<T = RawTokenType> {
   /**
    * The schema definition for the schema output format.
@@ -21,22 +30,6 @@ export interface DesignToken<T = RawTokenType> {
    */
   variable?: string
   /**
-   * Some naming for the token.
-   */
-  name?: string
-  /**
-   * Some comment to help you remember what this token is used for.
-   */
-  comment?: string
-  /**
-   * Is the property live-editable?
-   */
-  themeable?: boolean
-  /**
-   * Is the property using palette()?
-   */
-  palette?: Boolean
-  /**
    * The original values (not transformed)
    */
   original?: string | Omit<DesignToken, 'original'>
@@ -48,16 +41,6 @@ export interface DesignToken<T = RawTokenType> {
    * Token extraneous attributes.
    */
   attributes?: {
-    // If value is a color
-    hsl?: string
-    rgb?: string
-    hex?: string
-    variable?: string
-    category?: string
-    type?: string
-    item?: string
-    subitem?: string
-    state?: string
     [key: string]: any
   }
 }

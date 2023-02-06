@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import type { PropType } from 'vue'
+import type { PinceauTheme } from 'pinceau'
+import { computedStyle } from 'pinceau/runtime'
 
 defineProps({
-  color: {
-    type: [String, Object] as PropType<any>,
-  },
+  color: computedStyle<keyof PinceauTheme['color']>('red'),
   ...variants,
 })
 </script>
@@ -21,58 +20,26 @@ css({
     display: 'block',
     borderRadius: '{radii.lg}',
     borderWidth: '{borderWidth.md}',
+    backgroundColor: (props) => `{color.${props.color}.500}`,
+    color: (props) => `{color.${props.color}.200}`,
+    borderColor: (props) => `{color.${props.color}.300}`
   },
   variants: {
     size: {
-      sm: {
+      small: {
         padding: '{space.6}',
         fontSize: '{fontSize.sm}'
       },
-      md: {
+      medium: {
         padding: '{space.8}',
+        fontSize: '{fontSize.sm}'
+      },
+      large: {
+        padding: '{space.12}',
         fontSize: '{fontSize.md}'
       },
-      lg: {
-        padding: '{space.12}',
-        fontSize: '{fontSize.lg}'
-      },
-      xl: {
-        padding: '{space.16}',
-        fontSize: '{fontSize.xl}'
-      },
       options: {
-        default: 'xl'
-      }
-    },
-    primary: {
-      true: {
-        backgroundColor: '{color.blue.500}',
-        color: '{color.blue.200}',
-        borderColor: '{color.blue.300}'
-      },
-      options: {
-        default: true
-      }
-    },
-    success: {
-      true: {
-        backgroundColor: '{color.green.500}',
-        color: '{color.green.200}',
-        borderColor: '{color.green.300}'
-      }
-    },
-    warning: {
-      true: {
-        backgroundColor: '{color.yellow.500}',
-        color: '{color.yellow.200}',
-        borderColor: '{color.yellow.300}'
-      }
-    },
-    danger: {
-      true: {
-        backgroundColor: '{color.red.500}',
-        color: '{color.red.200}',
-        borderColor: '{color.red.300}'
+        default: 'medium'
       }
     }
   }

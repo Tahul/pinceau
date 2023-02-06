@@ -20,8 +20,9 @@ css({
     gap: '{space.24}',
     zIndex: 0,
     backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    border: '2px solid {color.grey.100}',
+    border: '2px solid {color.grey.600}',
     '@dark': {
+      backgroundColor: 'rgba(0, 0, 0, 0.6)',
       border: '2px solid {color.grey.900}',
     }
   }

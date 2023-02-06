@@ -1,6 +1,6 @@
 import type { NitroAppPlugin } from 'nitropack'
 
-// @ts-ignore nitro virtual import
+// @ts-ignore - Nitro virtual import
 import { useStorage } from '#internal/nitro'
 
 export default <NitroAppPlugin> async function (nitro) {

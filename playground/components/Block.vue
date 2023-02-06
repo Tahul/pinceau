@@ -2,7 +2,7 @@
 import { computedStyle, cssProp } from 'pinceau/runtime'
 
 defineProps({
-  palette: computedStyle('color', 'green', false),
+  palette: computedStyle('red'),
   css: cssProp,
   ...variants,
 })

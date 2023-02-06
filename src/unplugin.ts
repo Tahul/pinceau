@@ -38,6 +38,7 @@ export const defaultOptions: PinceauOptions = {
   runtime: true,
   definitions: true,
   studio: false,
+  dev: process.env.NODE_ENV !== 'production',
   utilsImports: [],
 }
 
@@ -214,20 +215,22 @@ export default createUnplugin<PinceauOptions>(
         if (query.vue && query.type === 'style') {
           const vueStyle = loadVueStyle(query, ctx)
 
-          if (!vueStyle) { return }
-
+          if (vueStyle) {
           // Create MagicString for this local transform
-          const sourceMap = new MagicString(vueStyle, { filename: query.filename }).generateMap({ file: query.filename, includeContent: true })
-          sourceMap.sources = [query.filename]
-          sourceMap.file = query.filename
+            const sourceMap = new MagicString(vueStyle, { filename: query.filename }).generateMap({ file: query.filename, includeContent: true })
+            sourceMap.sources = [query.filename]
+            sourceMap.file = query.filename
 
-          stopPerfTimer()
+            stopPerfTimer()
 
-          return {
-            code: vueStyle,
-            map: sourceMap,
+            return {
+              code: vueStyle,
+              map: sourceMap,
+            }
           }
         }
+
+        stopPerfTimer()
       },
     }
   })

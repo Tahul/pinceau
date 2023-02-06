@@ -6,21 +6,21 @@ const toggleCount = ref(0)
 const preference = computed(() => {
   const _ = toggleCount.value
   if (!doc) { return undefined }
-  const cl = doc.querySelector('html').classList
-  if (cl.contains('light')) { return 'light' }
+  const cl = doc.querySelector('html')?.classList
+  if (cl && cl.contains('light')) { return 'light' }
   return 'dark'
 })
 
 const toggle = () => {
   toggleCount.value++
-  const cl = document.querySelector('html').classList
-  if (cl.contains('dark')) {
+  const cl = document.querySelector('html')?.classList
+  if (cl && cl.contains('dark')) {
     cl.remove('dark')
     cl.add('light')
     localStorage.setItem('nuxt-color-mode', 'light')
     return
   }
-  if (cl.contains('light')) {
+  if (cl && cl.contains('light')) {
     cl.remove('light')
     cl.add('dark')
     localStorage.setItem('nuxt-color-mode', 'dark')

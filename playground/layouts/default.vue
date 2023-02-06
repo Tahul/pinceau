@@ -81,7 +81,7 @@ body,
     top: 0;
     width: 100%;
     z-index: 50;
-    background-color: $dt('color.grey.400');
+    background-color: $dt('color.grey.600');
     color: $dt('color.white');
 
     @dark {

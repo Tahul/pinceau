@@ -9,7 +9,7 @@
 [🎨 Start painting](https://stackblitz.com/github/Tahul/vitesse-pinceau?file=src%2FApp.vue) • [🧑‍🎨 Documentation](https://pinceau.dev)
 
 - Ships 0b of JavaScript to the client by default
-- [Design Tokens](https://github.com/design-tokens/community-group) compatible configuration system
+- [Design tokens](https://github.com/design-tokens/community-group) compatible configuration system
 - **Fully-typed** styling API
 - Developer Experience that feels like a native [Vue](https://vuejs.org) feature
 - Plug & play with [Nuxt 3](https://v3.nuxtjs.org) and [Vite](https://vitejs.org)
@@ -84,7 +84,7 @@ export default defineTheme({
   },
 
 
-  // Some Design Tokens
+  // Some Design tokens
   color: {
     red: {
       1: '#FCDFDA',
@@ -108,7 +108,7 @@ export default defineTheme({
     4: '1rem'
   }
 
-  // Property utils
+  // Utils properties
   utils: {
     px: (value: PropertyValue<'padding'>) => ({ paddingLeft: value, paddingRight: value }),
     py: (value: PropertyValue<'padding'>) => ({ paddingTop: value, paddingBottom: value })

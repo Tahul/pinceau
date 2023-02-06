@@ -103,7 +103,7 @@
     "csstype": "^3.1.1",
     "defu": "^6.1.2",
     "magic-string": "^0.27.0",
-    "nanoid": "^4.0.0",
+    "nanoid": "^4.0.1",
     "ohash": "^1.0.0",
     "paneer": "^0.0.1",
     "postcss-custom-properties": "13.1.1",
@@ -117,12 +117,12 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.35.1",
-    "@nuxt/kit": "^3.1.1",
-    "@nuxt/test-utils": "^3.1.1",
+    "@nuxt/kit": "^3.1.2",
+    "@nuxt/test-utils": "^3.1.2",
     "@nuxthq/studio": "^0.7.0",
     "@nuxtjs/color-mode": "^3.2.0",
     "@types/chroma-js": "^2.1.4",
-    "@types/node": "^18.11.18",
+    "@types/node": "^18.11.19",
     "@vue/compiler-dom": "^3.2.47",
     "@vue/test-utils": "^2.2.10",
     "eslint": "^8.33.0",
@@ -132,13 +132,13 @@
     "jsdom": "^21.1.0",
     "nitropack": "2.1.1",
     "nodemon": "^2.0.20",
-    "nuxi": "3.1.1",
-    "nuxt": "3.1.1",
+    "nuxi": "3.1.2",
+    "nuxt": "3.1.2",
     "nuxt-component-meta": "^0.4.3",
     "playwright": "^1.30.0",
     "release-it": "^15.6.0",
     "rimraf": "^4.1.2",
-    "rollup": "^3.13.0",
+    "rollup": "^3.14.0",
     "typescript": "^4.9.5",
     "vite": "^4.1.1",
     "vite-plugin-inspect": "^0.7.15",
@@ -161,9 +161,6 @@
         "vue"
       ]
     }
-  },
-  "resolutions": {
-    "nuxt": "3.0.0"
   },
   "release-it": {
     "hooks": {

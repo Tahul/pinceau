@@ -10,6 +10,9 @@ export default defineNuxtConfig({
     'pinceau': resolve(__dirname, '../src/index.ts'),
     'pinceau/nuxt': resolve(__dirname, '../src/nuxt.ts'),
   },
+  studio: {
+    enabled: 'production',
+  },
   pinceau: {
     followSymbolicLinks: false,
     configFileName: 'tokens.config',

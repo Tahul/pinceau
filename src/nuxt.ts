@@ -20,6 +20,7 @@ const module: any = defineNuxtModule<PinceauOptions>({
     outputDir: join(nuxt.options.buildDir, 'pinceau/'),
   }),
   async setup(options: PinceauOptions, nuxt) {
+    options.dev = nuxt.options?.dev || process.env.NODE_ENV !== 'production'
     const { stopPerfTimer } = useDebugPerformance('Setup Nuxt module', options.debug)
 
     // Local module resolver

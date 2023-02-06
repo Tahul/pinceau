@@ -28,7 +28,7 @@ export default defineConfig({
           configFileName: 'tokens.config',
         },
       ],
-      debug: false,
+      debug: true,
       studio: true,
       definitions: true,
       runtime: true,

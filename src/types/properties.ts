@@ -1,6 +1,6 @@
 import type * as CSSType from 'csstype'
 import type { DefaultThemeMap } from './map'
-import type { PinceauTokensPaths } from './theme'
+import type { PinceauTheme, PinceauTokensPaths } from './theme'
 import type * as Utils from './utils'
 
 export type VuePseudos =
@@ -104,8 +104,19 @@ export interface NativeProperties extends
   CSSType.StandardProperties,
   CSSType.SvgProperties {}
 
-export type ThemeKey<K extends keyof DefaultThemeMap> = Utils.WrapUnion<Utils.FilterStartingWith<PinceauTokensPaths, DefaultThemeMap[K]>, '{', '}'>
+/**
+ * Takes a supported key from the ThemeMap and returns a list of tokens supporting that key.
+ */
+export type ThemeProperties<K extends keyof DefaultThemeMap> = Utils.WrapUnion<Utils.FilterStartingWith<PinceauTokensPaths, DefaultThemeMap[K]>, '{', '}'>
 
+/**
+ * Take a key and gives a list of tokens under that key in configuration.
+ */
+export type ThemeTokens<K extends keyof PinceauTheme | (string & {})> = Utils.WrapUnion<Utils.FilterStartingWith<PinceauTokensPaths, K>, '{', '}'>
+
+/**
+ * Supported properties in `css()` function
+ */
 export type SupportedProperties = keyof NativeProperties | keyof DefaultThemeMap
 
 export type PropertyValue<T = string> =
@@ -114,7 +125,7 @@ export type PropertyValue<T = string> =
     // Check if that key is handled in the ThemeMap
     T extends keyof DefaultThemeMap ?
       // Theme key supported; return tokens + MDN data
-      ThemeKey<T> | NativeProperties[T] :
+      ThemeProperties<T> | NativeProperties[T] :
       // Only return MDN data
       NativeProperties[T]
     : never

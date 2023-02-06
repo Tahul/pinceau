@@ -19,7 +19,7 @@ export const loadVueStyle = (query: VueQuery, ctx: PinceauContext) => {
 
   const style = descriptor?.styles?.[query.index!]
 
-  if (!style || !style?.content) { return }
+  if (!style?.content) { return }
 
   let source = style.content
 
@@ -27,7 +27,5 @@ export const loadVueStyle = (query: VueQuery, ctx: PinceauContext) => {
 
   if (style.attrs.lang === 'ts') { source = transformCssFunction(query.id, source, undefined, undefined, ctx, loc) }
 
-  source = transformStyle(source, ctx, loc)
-
-  if (style?.content !== source) { return source }
+  return transformStyle(source, ctx, loc)
 }

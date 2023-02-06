@@ -1,6 +1,6 @@
 <template>
   <div>
-    <MovingHead />
+    <MovingHead location="logo" />
 
     <p>Pinceau</p>
   </div>

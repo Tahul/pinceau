@@ -3,7 +3,7 @@ import { usePinceauTheme } from 'pinceau/runtime'
 
 const theme = usePinceauTheme()
 
-const mediaQueries = Object.entries(theme.theme.value?.media).reduce(
+const mediaQueries = Object.entries(theme?.theme?.value?.media || {}).reduce(
   (acc, [key, value]) => {
     return { ...acc, [key.replace('media.', '')]: value }
   },

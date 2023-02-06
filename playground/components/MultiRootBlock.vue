@@ -2,7 +2,7 @@
 import { computedStyle } from 'pinceau/runtime'
 
 defineProps({
-  color: computedStyle('color', 'red', false),
+  color: computedStyle('red'),
   ...variants,
 })
 </script>
@@ -29,9 +29,9 @@ defineProps({
 <style lang="ts" scoped>
 css({
   button: {
-    backgroundColor: (props, utils) => utils.scale('color', props.color, '600'),
+    backgroundColor: (props) => `{color.${props.color}.500}`,
     '&:hover': {
-      border: (props) => `8px solid {color.${props.color}}`,
+      border: (props) => `8px solid {color.${props.color}.600}`,
     },
     display: 'flex',
     alignItems: 'center',

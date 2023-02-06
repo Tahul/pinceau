@@ -1,5 +1,5 @@
-import type { DefineConfigType } from '../types'
+import type { DefineConfigType, PermissiveConfigType, PinceauTheme } from '../types'
 
-export function defineTheme<T = DefineConfigType>(config: T): typeof config {
-  return config
+export function defineTheme<T = DefineConfigType>(config: T) {
+  return config as PermissiveConfigType<PinceauTheme>
 }
