@@ -16,6 +16,7 @@ export default defineNuxtConfig({
   pinceau: {
     followSymbolicLinks: false,
     configFileName: 'tokens.config',
+    runtime: false,
   },
   typescript: {
     includeWorkspace: true,

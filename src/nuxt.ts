@@ -184,7 +184,6 @@ const module: any = defineNuxtModule<PinceauOptions>({
         // Support runtime features
         if (options.runtime) {
           lines.push(
-            'import fs from \'node:fs\'',
             'import { dirname, join } from \'pathe\'',
             'import { useRuntimeConfig } from \'#imports\'',
             'import { plugin as pinceau } from \'pinceau/runtime\'',
@@ -192,17 +191,13 @@ const module: any = defineNuxtModule<PinceauOptions>({
             'import theme from \'#build/pinceau/index\'',
             '',
             `export default defineNuxtPlugin(async (nuxtApp) => {
-              // Setup plugin
               nuxtApp.vueApp.use(pinceau, { colorSchemeMode: '${options.colorSchemeMode}', theme, utils })
 
               const { pinceau: runtimeConfig } = useRuntimeConfig()
 
               // Handle first render of SSR styles
               nuxtApp.hook('app:rendered', async (app) => {
-                // Init
                 app.ssrContext.event.pinceauContent = app.ssrContext.event.pinceauContent || {}
-
-                // Runtime styling
                 const content = app.ssrContext.nuxt.vueApp.config.globalProperties.$pinceauSsr.get()
                 app.ssrContext.event.pinceauContent.runtime = content
               })
@@ -227,15 +222,14 @@ const module: any = defineNuxtModule<PinceauOptions>({
           lines.push(
             'import { plugin as pinceau } from \'pinceau/runtime\'',
             'import utils from \'#build/pinceau/utils\'',
-            '',
-            `export default defineNuxtPlugin(async (nuxtApp) => {
-              // Setup plugin
-              nuxtApp.vueApp.use(pinceau, { colorSchemeMode: '${options.colorSchemeMode}', utils })
-            })`,
+            `export default defineNuxtPlugin(async (nuxtApp) => nuxtApp.vueApp.use(pinceau, { colorSchemeMode: '${options.colorSchemeMode}', utils }))`,
           )
         }
         else {
-          lines.push('import \'pinceau.css\'')
+          lines.push(
+            'import \'pinceau.css\'',
+            'export default defineNuxtPlugin(() => {})',
+          )
         }
 
         // Support any reset from @unocss/reset
