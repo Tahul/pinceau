@@ -5,11 +5,12 @@ import ThemeSelect from '../components/ThemeSelect.vue'
 
 <template>
   <div class="layout">
-    <img src="/background.jpg">
+    <img class="background" src="/background.jpg">
     <header>
-      <RouterLink to="/">
+      <RouterLink class="logo" to="/">
         <span>
-          🖌&nbsp;Pinceau playground
+          <img src="/head.svg">
+          &nbsp;Pinceau
         </span>
       </RouterLink>
 
@@ -22,8 +23,8 @@ import ThemeSelect from '../components/ThemeSelect.vue'
     <slot />
 
     <footer>
-      <span>
-        🖌&nbsp;
+      <span class="logo">
+        <img src="/head.svg">
       </span>
 
       <div>
@@ -70,6 +71,26 @@ body,
   margin: 0;
   padding: 0;
 
+  .background {
+    z-index: 0;
+    filter: blur(12px);
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    user-select: none;
+  }
+
+  .logo {
+    img {
+      width: 24px;
+      height: 24px;
+      display: inline-block;
+    }
+  }
+
   header,
   footer {
     flex: 0;
@@ -105,18 +126,6 @@ body,
     height: 100%;
     width: 100%;
     z-index: 50;
-  }
-
-  img {
-    z-index: 0;
-    filter: blur(12px);
-    object-fit: cover;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    user-select: none;
   }
 }
 </style>

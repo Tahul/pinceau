@@ -19,7 +19,7 @@ export function resolveCssProperty(
   if (directive) { return directive }
 
   // Resolve custom properties
-  if (ctx.utils[property]) {
+  if (ctx?.utils?.[property]) {
     // Custom property is a function, pass value and return result
     if (typeof ctx.utils[property] === 'function') { return ctx.utils[property](value) }
 

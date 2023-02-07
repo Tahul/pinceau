@@ -12,6 +12,9 @@ export function resolveRuntimeContents(cssAst: ASTNode, computedStyles: any = {}
         if (path.value) {
           // Resolve path key
           const key = path?.value?.key?.name || path?.value?.key?.value
+
+          if (key === 'variants') { return false }
+
           const valueType = path?.value?.value?.type
 
           // Store variable tokens in local map

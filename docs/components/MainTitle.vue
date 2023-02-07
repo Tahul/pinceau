@@ -14,9 +14,7 @@
     </div>
 
     <div class="main-cta">
-      <ButtonLink to="/get-started/what-is-pinceau">
-        Start painting
-      </ButtonLink>
+      <ContentSlot :use="$slots.default" unwrap="p" />
     </div>
   </section>
 </template>
