@@ -33,7 +33,7 @@ css({
             borderRadius: '{radii.lg}',
             fontSize: '{fontSize.xl}',
             lineHeight: '{lead.none}',
-            transition: '{transition.all}',
+            transition: '{transition.all} ',
             backgroundColor: '{button.primary}',
             boxShadow: 'inset 0 -1px 1px rgba(255, 255, 255, .15)',
         },
@@ -52,7 +52,7 @@ css({
         size: {
             sm: {
                 span: {
-                    padding: '{space.6} {space.12}'
+                    padding: '{space.6} {space.12}',
                 },
             },
             md: {
