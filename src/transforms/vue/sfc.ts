@@ -1,4 +1,4 @@
-import type { SFCParseResult } from 'vue/compiler-sfc'
+import type { SFCParseResult } from '@vue/compiler-sfc'
 import type MagicString from 'magic-string'
 import { parseVueComponent } from '../../utils/ast'
 import type { PinceauContext, VueQuery } from '../../types'

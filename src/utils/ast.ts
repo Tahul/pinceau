@@ -1,5 +1,5 @@
-import type { SFCParseOptions } from 'vue/compiler-sfc'
-import { parse as sfcParse } from 'vue/compiler-sfc'
+import type { SFCParseOptions } from '@vue/compiler-sfc'
+import { parse as sfcParse } from '@vue/compiler-sfc'
 import * as recast from 'recast'
 import type { Options } from 'recast'
 import { defu } from 'defu'
@@ -14,7 +14,7 @@ export function parseAst(source: string, options?: Partial<Options>): File {
 }
 
 /**
- * Parse a Vue component with vue/compiler-sfc.
+ * Parse a Vue component with @vue/compiler-sfc.
  */
 export function parseVueComponent(source: string, options: Partial<SFCParseOptions> = {}) {
   return sfcParse(source, options)
