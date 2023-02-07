@@ -15,9 +15,7 @@ export function resolveRuntimeContents(cssAst: ASTNode, computedStyles: any = {}
           const valueType = path?.value?.value?.type
 
           // Store variable tokens in local map
-          if (key.startsWith('--')) {
-            localTokens[key] = printAst(path.value.value.body).code
-          }
+          if (key.startsWith('--')) { localTokens[key] = path.value.value }
 
           // Store computed styles in local map
           if (valueType === 'ArrowFunctionExpression' || valueType === 'FunctionExpression') {
