@@ -4,11 +4,12 @@ import * as recast from 'recast'
 import type { Options } from 'recast'
 import { defu } from 'defu'
 import { parse as tsParse } from 'recast/parsers/typescript.js'
+import type { File } from '@babel/types'
 
 /**
  * Parse AST with TypeScript parser.
  */
-export function parseAst(source: string, options?: Partial<Options>): import('@babel/types').File {
+export function parseAst(source: string, options?: Partial<Options>): File {
   return recast.parse(source, defu({ parser: { parse: tsParse } }, options))
 }
 

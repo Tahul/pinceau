@@ -28,7 +28,7 @@ css({
         color: '{color.white}',
         boxShadow: `0 8px 0 {button.primary}, 0 12px 16px rgba(0, 0, 0, .35)`,
         span: {
-            fontFamily: '{font.primary}',
+            fontFamily: '{font.sans}',
             borderRadius: '{radii.lg}',
             fontSize: '{fontSize.xl}',
             lineHeight: '1',

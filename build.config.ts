@@ -61,5 +61,7 @@ export default defineBuildConfig({
     '@volar/language-core',
     '@volar/source-map',
     'muggle-string',
+    '@babel/types',
+    'ast-types',
   ],
 })
