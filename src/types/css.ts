@@ -55,5 +55,5 @@ export type CSSFunctionType<ComponentProps = {}> =
   }
   &
   {
-    [K in Utils.Primitive]: CSSProperties<ComponentProps> | MappedProperty<K, ComponentProps> | {}
+    [K in string]: CSSProperties<ComponentProps> | MappedProperty<K, ComponentProps> | {}
   }
