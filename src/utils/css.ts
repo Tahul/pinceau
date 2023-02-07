@@ -10,6 +10,7 @@ export function resolveCssProperty(
   value: any,
   style: any,
   selectors: any,
+  localTokens: string[] = [],
   ctx: PinceauContext,
   loc?: any,
 ) {
@@ -27,7 +28,7 @@ export function resolveCssProperty(
   }
 
   // Resolve final value
-  value = castValues(property, value, ctx, loc)
+  value = castValues(property, value, localTokens, ctx, loc)
 
   // Return proper declaration
   return {
@@ -41,15 +42,16 @@ export function resolveCssProperty(
 export function castValues(
   property: any,
   value: any,
+  localTokens: string[],
   ctx: PinceauContext,
   loc?: any,
 ) {
   if (Array.isArray(value) || typeof value === 'string' || typeof value === 'number') {
     if (Array.isArray(value)) {
-      value = value.map(v => castValue(property, v, ctx, loc)).join(',')
+      value = value.map(v => castValue(property, v, localTokens, ctx, loc)).join(',')
     }
     else {
-      value = castValue(property, value, ctx, loc)
+      value = castValue(property, value, localTokens, ctx, loc)
     }
   }
   return value
@@ -61,12 +63,13 @@ export function castValues(
 export function castValue(
   property: any,
   value: any,
+  localTokens: string[],
   ctx: PinceauContext,
   loc?: any,
 ) {
   if (typeof value === 'number') { return value }
 
-  if (value.match(referencesRegex)) { value = resolveReferences(property, value, ctx, loc) }
+  if (value.match(referencesRegex)) { value = resolveReferences(property, value, localTokens, ctx, loc) }
 
   if (value === '{}') { return '' }
 
@@ -79,6 +82,7 @@ export function castValue(
 export function resolveReferences(
   _: string,
   value: string,
+  localTokens: string[],
   ctx: PinceauContext,
   loc?: any,
 ) {
@@ -87,12 +91,17 @@ export function resolveReferences(
   value = value.replace(
     referencesRegex,
     (_, tokenPath) => {
+      const varName = pathToVarName(tokenPath)
+      const variable = `var(${varName})`
+
+      if (localTokens.includes(varName)) { return variable }
+
       const token = ctx.$tokens(tokenPath, { key: undefined, loc }) as DesignToken
 
       const tokenValue = typeof token === 'string' ? token : (token?.variable || token?.value)
 
       // Fallback if value does not exist
-      if (!tokenValue) { return `var(${pathToVarName(tokenPath)})` }
+      if (!tokenValue) { return variable }
 
       return tokenValue as string
     },

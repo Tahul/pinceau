@@ -5,7 +5,7 @@ import { parse } from 'acorn'
 import { resolveCssProperty, stringify } from '../utils'
 import { message } from '../utils/logger'
 import { parseAst, printAst, visitAst } from '../utils/ast'
-import { resolveComputedStyles } from './vue/computed'
+import { resolveRuntimeContents } from './vue/computed'
 
 /**
  * Stringify every call of css() into a valid Vue <style> declaration.
@@ -13,8 +13,9 @@ import { resolveComputedStyles } from './vue/computed'
 export const transformCssFunction = (
   id: string,
   code = '',
-  variants: any | undefined = {},
-  computedStyles: any | undefined,
+  variants: any,
+  computedStyles: any,
+  localTokens: any,
   ctx: PinceauContext,
   loc?: any,
 ) => {
@@ -32,16 +33,16 @@ export const transformCssFunction = (
   // Resolve stringifiable declaration from `css()` content
   const declaration = resolveCssCallees(
     code,
-    ast => evalCssDeclaration(ast, computedStyles),
+    ast => evalCssDeclaration(ast, computedStyles, localTokens),
   )
 
   // Handle variants and remove them from declaration and drop the key
   if (declaration && declaration?.variants) {
-    Object.assign(variants, defu(variants || {}, declaration?.variants || {}))
+    Object.assign(variants || {}, defu(variants || {}, declaration?.variants || {}))
     delete declaration.variants
   }
 
-  return stringify(declaration, (property: any, value: any, _style: any, _selectors: any) => resolveCssProperty(property, value, _style, _selectors, ctx, loc))
+  return stringify(declaration, (property: any, value: any, _style: any, _selectors: any) => resolveCssProperty(property, value, _style, _selectors, Object.keys(localTokens || {}), ctx, loc))
 }
 
 /**
@@ -75,9 +76,9 @@ export function resolveCssCallees(code: string, cb: (ast: ASTNode) => any): any 
 /**
  * Resolve computed styles found in css() declaration.
  */
-export function evalCssDeclaration(cssAst: ASTNode, computedStyles: any = {}) {
+export function evalCssDeclaration(cssAst: ASTNode, computedStyles: any = {}, localTokens: any = {}) {
   // Resolve computed styled from AST of css() call
-  resolveComputedStyles(cssAst, computedStyles)
+  resolveRuntimeContents(cssAst, computedStyles, localTokens)
 
   try {
     // eslint-disable-next-line no-eval

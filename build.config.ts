@@ -14,7 +14,6 @@ export default defineBuildConfig({
     'src/runtime',
     'src/nitro',
     'src/volar',
-    'src/transform',
   ],
   hooks: {
     'build:done': async () => {

@@ -25,7 +25,7 @@ export const loadVueStyle = (query: VueQuery, ctx: PinceauContext) => {
 
   const loc = { query, ...style.loc }
 
-  if (style.attrs.lang === 'ts') { source = transformCssFunction(query.id, source, undefined, undefined, ctx, loc) }
+  if (style.attrs.lang === 'ts') { source = transformCssFunction(query.id, source, undefined, undefined, undefined, ctx, loc) }
 
   return transformStyle(source, ctx, loc)
 }

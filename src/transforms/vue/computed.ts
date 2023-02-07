@@ -3,18 +3,26 @@ import { hash } from 'ohash'
 import { camelCase, kebabCase } from 'scule'
 import { astTypes, printAst, visitAst } from '../../utils/ast'
 
-export function resolveComputedStyles(cssAst: ASTNode, computedStyles: any = {}) {
+export function resolveRuntimeContents(cssAst: ASTNode, computedStyles: any = {}, localTokens: any = {}) {
   // Search for function properties in css() AST
   visitAst(
     cssAst,
     {
       visitObjectProperty(path) {
         if (path.value) {
-          const valueType = path.value.value.type
+          // Resolve path key
+          const key = path?.value?.key?.name || path?.value?.key?.value
+          const valueType = path?.value?.value?.type
 
+          // Store variable tokens in local map
+          if (key.startsWith('--')) {
+            localTokens[key] = printAst(path.value.value.body).code
+          }
+
+          // Store computed styles in local map
           if (valueType === 'ArrowFunctionExpression' || valueType === 'FunctionExpression') {
-            const key = camelCase((path.value.key.name || path.value.key.value).replace(/--/g, '__'))
-            const id = `_${hash(path.value.loc.start).slice(0, 3)}_${key}`
+            const computedStyleKey = camelCase((key).replace(/--/g, '__'))
+            const id = `_${hash(path.value.loc.start).slice(0, 3)}_${computedStyleKey}`
 
             // Push property function to computedStyles
             computedStyles[id] = printAst(path.value.value.body).code

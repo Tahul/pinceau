@@ -4,7 +4,7 @@ import { RouterView, createRouter, createWebHistory } from 'vue-router'
 
 import App from './app.vue'
 import Block from './components/Block.vue'
-import BigButton from './components/BigButton.vue'
+import BigButton from './components/MyButton.vue'
 import Alert from './components/Alert.vue'
 import ClientOnly from './theme/ClientOnly.vue'
 import TestNuxt from './theme/components/TestNuxt.vue'

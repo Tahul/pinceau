@@ -163,7 +163,7 @@ export function usePinceauThemeSheet(
     if (!cache?.[mq]) { createMqRule(mq) }
 
     // Resolve value if it contains references
-    const resolvedValue = resolveReferences(undefined, value, { $tokens } as any)
+    const resolvedValue = resolveReferences(undefined, value, [], { $tokens } as any)
 
     // Set value in theme object
     set(

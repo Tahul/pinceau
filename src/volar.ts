@@ -36,8 +36,6 @@ const plugin: VueLanguagePlugin = _ => ({
     }
 
     if (isCssInTsFile) {
-      embeddedFile.content.unshift('\nimport type { PinceauMediaQueries, CSSFunctionType } from \'pinceau\'')
-
       // Add variants above <script setup> content
       if (variantsContent) { embeddedFile.content.push(variantsContent) }
 
@@ -50,7 +48,7 @@ const plugin: VueLanguagePlugin = _ => ({
       const context = [
         '\ntype OmittedKeysPinceau = \'onVnodeBeforeMount\' | \'onVnodeBeforeUnmount\' | \'onVnodeBeforeUpdate\' | \'onVnodeMounted\' | \'onVnodeUnmounted\' | \'onVnodeUpdated\' | \'key\' | \'ref\' | \'ref_for\' | \'ref_key\' | \'style\' | \'class\'\n',
         `\ntype PinceauProps = Omit<InstanceType<typeof import('${fileName}').default>['$props'], OmittedKeysPinceau>\n`,
-        '\nfunction css (declaration: CSSFunctionType<PinceauProps>) { return { declaration } }\n',
+        '\nfunction css (declaration: import(\'pinceau\').CSSFunctionType<PinceauProps>) { return { declaration } }\n',
       ]
       embeddedFile.content.push(...context)
 
