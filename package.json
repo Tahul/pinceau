@@ -1,7 +1,7 @@
 {
   "name": "pinceau",
   "type": "module",
-  "version": "0.14.4",
+  "version": "0.14.5",
   "packageManager": "pnpm@7.20.0",
   "workspaces": [
     "docs",
