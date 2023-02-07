@@ -22,7 +22,6 @@ css({
         '--button-primary': (props) => `{color.${props.color}.600}`,
         '--button-secondary': (props) => `{color.${props.color}.500}`,
         '--button-accent': (props) => `{color.${props.color}.300}`,
-        '--size': '{space.6} {space.12}',
         display: 'inline-block',
         borderRadius: '{radii.xl}',
         transition: 'box-shadow .1 ease-in-out',
@@ -34,10 +33,9 @@ css({
             borderRadius: '{radii.lg}',
             fontSize: '{fontSize.xl}',
             lineHeight: '{lead.none}',
-            transition: 'all .1s ease-in-out',
+            transition: '{transition.all}',
             backgroundColor: '{button.primary}',
             boxShadow: 'inset 0 -1px 1px rgba(255, 255, 255, .15)',
-            padding: '{size}'
         },
         '&:hover': {
             span: {
@@ -54,22 +52,22 @@ css({
         size: {
             sm: {
                 span: {
-                    '--size': '{space.6} {space.12}'
+                    padding: '{space.6} {space.12}'
                 },
             },
             md: {
                 span: {
-                    '--size': '{space.12} {space.16}'
+                    padding: '{space.12} {space.16}'
                 },
             },
             lg: {
                 span: {
-                    '--size': '{space.16} {space.24}'
+                    padding: '{space.16} {space.24}'
                 },
             },
             xl: {
                 span: {
-                    '--size': '{space.32} {space.48}'
+                    padding: '{space.32} {space.48}'
                 },
             },
             options: {

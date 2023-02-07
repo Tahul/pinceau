@@ -10,7 +10,7 @@ const { poof } = useConfettis(canvas)
   <section>
     <canvas ref="canvas" />
     <PlaygroundGrid>
-      <MyButton color="primary" @click="poof" />
+      <MyButton color="primary" :size="{ initial: 'sm', lg: 'xl' }" @click="poof" />
     </PlaygroundGrid>
   </section>
 </template>

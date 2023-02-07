@@ -267,6 +267,10 @@ export default defineTheme({
     200: '200px',
   },
 
+  transition: {
+    all: 'all .1s ease-in-out',
+  },
+
   utils: {
     my: (value: ThemeTokens<'space'>) => ({
       marginTop: value,
