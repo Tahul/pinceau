@@ -13,12 +13,10 @@ export function resolveRuntimeContents(cssAst: ASTNode, computedStyles: any = {}
           // Resolve path key
           const key = path?.value?.key?.name || path?.value?.key?.value
 
-          if (key === 'variants') { return false }
-
           const valueType = path?.value?.value?.type
 
           // Store variable tokens in local map
-          if (key.startsWith('--')) { localTokens[key] = path.value.value }
+          if (key.startsWith('--') && !localTokens[key]) { localTokens[key] = path.value.value }
 
           // Store computed styles in local map
           if (valueType === 'ArrowFunctionExpression' || valueType === 'FunctionExpression') {
