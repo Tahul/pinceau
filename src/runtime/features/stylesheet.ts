@@ -107,7 +107,7 @@ export function usePinceauRuntimeSheet(
     if (!sheet.value) { return '' }
     return Object.entries(sheet.value.cssRules).reduce(
       (acc, [, rule]: any) => {
-        acc += `${rule?.cssText}\n` || ''
+        acc += `${rule?.cssText} ` || ''
         return acc
       },
       '',

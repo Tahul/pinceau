@@ -27,7 +27,7 @@ export function usePinceauTheme(): ReturnType<typeof usePinceauThemeSheet> {
 export const cssProp = {
   type: Object as PropType<CSSProperties>,
   required: false as const,
-  default: undefined,
+  default: {},
 }
 
 /**
