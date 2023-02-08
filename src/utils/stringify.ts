@@ -57,7 +57,7 @@ export const stringify = (
   /** Set used to manage the opened and closed state of rules. */
   const used = new WeakSet()
 
-  const write = (cssText, selectors, conditions, name, data, isAtRuleLike) => {
+  const write = (cssText, selectors, conditions, name, data, isAtRuleLike, isVariableLike) => {
     for (let i = 0; i < conditions.length; ++i) {
       if (!used.has(conditions[i])) {
         used.add(conditions[i])
@@ -73,6 +73,9 @@ export const stringify = (
     if (isAtRuleLike) {
       name = `${name} `
     }
+    else if (isVariableLike) {
+      name = `${name}:`
+    }
     else {
       name = `${kebabCase(name)}:`
     }
@@ -87,6 +90,7 @@ export const stringify = (
 
     for (const name in style) {
       const isAtRuleLike = name.charCodeAt(0) === 64
+      const isVariableLike = (name.charCodeAt(0) === 45 && name.charCodeAt(1) === 45)
 
       for (const data of (isAtRuleLike && Array.isArray(style[name])) ? style[name] : [style[name]]) {
         if (replacer && (name !== prevName || data !== prevData)) {
@@ -141,7 +145,7 @@ export const stringify = (
           }
         }
         else {
-          cssText = write(cssText, selectors, conditions, name, data, isAtRuleLike)
+          cssText = write(cssText, selectors, conditions, name, data, isAtRuleLike, isVariableLike)
         }
       }
     }

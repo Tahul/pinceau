@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { PinceauTheme } from 'pinceau'
-import { computedStyle } from 'pinceau/runtime'
+import { computedStyle, cssProp } from 'pinceau/runtime'
 
 defineProps({
   color: computedStyle<keyof PinceauTheme['color']>('red'),
+  css: cssProp,
   ...variants,
 })
 </script>

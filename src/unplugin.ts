@@ -18,8 +18,8 @@ import { loadVueStyle } from './utils/vue'
 export const defaultOptions: PinceauOptions = {
   configFileName: 'tokens.config',
   configLayers: [],
-  configResolved: (_) => {},
-  configBuilt: (_) => {},
+  configResolved: (_) => { },
+  configBuilt: (_) => { },
   cwd: process.cwd(),
   outputDir: join(process.cwd(), 'node_modules/.vite/pinceau/'),
   preflight: true,
@@ -216,7 +216,7 @@ export default createUnplugin<PinceauOptions>(
           const vueStyle = loadVueStyle(query, ctx)
 
           if (vueStyle) {
-          // Create MagicString for this local transform
+            // Create MagicString for this local transform
             const sourceMap = new MagicString(vueStyle, { filename: query.filename }).generateMap({ file: query.filename, includeContent: true })
             sourceMap.sources = [query.filename]
             sourceMap.file = query.filename

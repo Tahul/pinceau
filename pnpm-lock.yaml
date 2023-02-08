@@ -35,7 +35,7 @@ importers:
       ohash: ^1.0.0
       paneer: ^0.0.1
       playwright: ^1.30.0
-      postcss-custom-properties: 13.1.2
+      postcss-custom-properties: 13.1.3
       postcss-dark-theme-class: 0.7.3
       postcss-nested: ^6.0.0
       recast: ^0.22.0
@@ -64,7 +64,7 @@ importers:
       nanoid: 4.0.1
       ohash: 1.0.0
       paneer: 0.0.1
-      postcss-custom-properties: 13.1.2
+      postcss-custom-properties: 13.1.3
       postcss-dark-theme-class: 0.7.3
       postcss-nested: 6.0.0
       recast: 0.22.0
@@ -1458,7 +1458,7 @@ packages:
       externality: 1.0.0
       fs-extra: 11.1.0
       get-port-please: 3.0.1
-      h3: 1.2.1
+      h3: 1.3.0
       knitwork: 1.0.0
       magic-string: 0.27.0
       mlly: 1.1.0
@@ -1519,7 +1519,7 @@ packages:
       externality: 1.0.0
       fs-extra: 11.1.0
       get-port-please: 3.0.1
-      h3: 1.2.1
+      h3: 1.3.0
       knitwork: 1.0.0
       magic-string: 0.27.0
       mlly: 1.1.0
@@ -2916,7 +2916,7 @@ packages:
         optional: true
     dependencies:
       browserslist: 4.21.5
-      caniuse-lite: 1.0.30001450
+      caniuse-lite: 1.0.30001451
       fraction.js: 4.2.0
       normalize-range: 0.1.2
       picocolors: 1.0.0
@@ -3010,8 +3010,8 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
     dependencies:
-      caniuse-lite: 1.0.30001450
-      electron-to-chromium: 1.4.288
+      caniuse-lite: 1.0.30001451
+      electron-to-chromium: 1.4.289
       node-releases: 2.0.10
       update-browserslist-db: 1.0.10_browserslist@4.21.5
 
@@ -3121,13 +3121,13 @@ packages:
     resolution: {integrity: sha512-bsTwuIg/BZZK/vreVTYYbSWoe2F+71P7K5QGEX+pT250DZbfU1MQ5prOKpPR+LL6uWKK3KMwMCAS74QB3Um1uw==}
     dependencies:
       browserslist: 4.21.5
-      caniuse-lite: 1.0.30001450
+      caniuse-lite: 1.0.30001451
       lodash.memoize: 4.1.2
       lodash.uniq: 4.5.0
     dev: true
 
-  /caniuse-lite/1.0.30001450:
-    resolution: {integrity: sha512-qMBmvmQmFXaSxexkjjfMvD5rnDL0+m+dUMZKoDYsGG8iZN29RuYh9eRoMvKsT6uMAWlyUUGDEQGJJYjzCIO9ew==}
+  /caniuse-lite/1.0.30001451:
+    resolution: {integrity: sha512-XY7UbUpGRatZzoRft//5xOa69/1iGJRBlrieH6QYrkKLIFn3m7OVEJ81dSrKoy2BnKsdbX5cLrOispZNYo9v2w==}
 
   /capital-case/1.0.4:
     resolution: {integrity: sha512-ds37W8CytHgwnhGGTi88pcPyR15qoNkOpYwmMMfnWqqWgESapLqvDx6huFjQ5vqWSn2Z06173XNA7LtMOeUh1A==}
@@ -3966,8 +3966,8 @@ packages:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
     dev: true
 
-  /electron-to-chromium/1.4.288:
-    resolution: {integrity: sha512-8s9aJf3YiokIrR+HOQzNOGmEHFXVUQzXM/JaViVvKdCkNUjS+lEa/uT7xw3nDVG/IgfxiIwUGkwJ6AR1pTpYsQ==}
+  /electron-to-chromium/1.4.289:
+    resolution: {integrity: sha512-relLdMfPBxqGCxy7Gyfm1HcbRPcFUJdlgnCPVgQ23sr1TvUrRJz0/QPoGP0+x41wOVSTN/Wi3w6YDgHiHJGOzg==}
 
   /emoji-regex/8.0.0:
     resolution: {integrity: sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==}
@@ -5404,11 +5404,12 @@ packages:
       duplexer: 0.1.2
     dev: true
 
-  /h3/1.2.1:
-    resolution: {integrity: sha512-uYRENV7pNd4kl4nGFDkVOZRZgDVmH4Ur4h64QAsqPsHj1jxI6MAU+7xT0JX9Tg3iKbmgMPpRf8QI6e4CJZ12MQ==}
+  /h3/1.3.0:
+    resolution: {integrity: sha512-nuEQOgMmdVl5wJYGoGnMwd048j004IcPcNdPmSrIjjPSbgusM4+ObSQ2b5SWqXAV7rspxjdG5+Er1ORmJOVbaQ==}
     dependencies:
       cookie-es: 0.5.0
       destr: 1.2.2
+      iron-webcrypto: 0.4.0
       radix3: 1.0.0
       ufo: 1.0.1
       uncrypto: 0.1.2
@@ -5800,6 +5801,10 @@ packages:
 
   /ip/2.0.0:
     resolution: {integrity: sha512-WKa+XuLG1A1R0UWhl2+1XQSi+fZWMsYKffMZTTYsiZaUD8k2yDAj5atimTUD2TZkyCkNEeYE5NhFZmupOGtjYQ==}
+    dev: true
+
+  /iron-webcrypto/0.4.0:
+    resolution: {integrity: sha512-5OG53gJ4dBTq4y3IJqK7MEG9CPZRsYn9EP9J4jjgH4TcP/ywdsSMAmqj9VTSzdXu0/xfUrqjGHU7WLUme2+k5Q==}
     dev: true
 
   /is-absolute-url/4.0.1:
@@ -7227,7 +7232,7 @@ packages:
       fs-extra: 11.1.0
       globby: 13.1.3
       gzip-size: 7.0.0
-      h3: 1.2.1
+      h3: 1.3.0
       hookable: 5.4.2
       http-proxy: 1.18.1
       is-primitive: 3.0.1
@@ -7255,7 +7260,7 @@ packages:
       source-map-support: 0.5.21
       std-env: 3.3.2
       ufo: 1.0.1
-      unenv: 1.1.0
+      unenv: 1.1.1
       unimport: 2.2.4_rollup@3.14.0
       unstorage: 1.1.3
     transitivePeerDependencies:
@@ -7513,7 +7518,7 @@ packages:
       estree-walker: 3.0.3
       fs-extra: 11.1.0
       globby: 13.1.3
-      h3: 1.2.1
+      h3: 1.3.0
       hash-sum: 2.0.0
       hookable: 5.4.2
       jiti: 1.16.2
@@ -7531,7 +7536,7 @@ packages:
       ufo: 1.0.1
       ultrahtml: 1.2.0
       unctx: 2.1.1
-      unenv: 1.1.0
+      unenv: 1.1.1
       unhead: 1.0.21
       unimport: 2.2.4
       unplugin: 1.0.1
@@ -7586,7 +7591,7 @@ packages:
       estree-walker: 3.0.3
       fs-extra: 11.1.0
       globby: 13.1.3
-      h3: 1.2.1
+      h3: 1.3.0
       hash-sum: 2.0.0
       hookable: 5.4.2
       jiti: 1.16.2
@@ -7604,7 +7609,7 @@ packages:
       ufo: 1.0.1
       ultrahtml: 1.2.0
       unctx: 2.1.1
-      unenv: 1.1.0
+      unenv: 1.1.1
       unhead: 1.0.21
       unimport: 2.2.4_rollup@3.14.0
       unplugin: 1.0.1
@@ -7718,6 +7723,15 @@ packages:
 
   /open/8.4.0:
     resolution: {integrity: sha512-XgFPPM+B28FtCCgSb9I+s9szOC1vZRSwgWsRUA5ylIxRTgKozqjOCrVOqGsYABPYK5qnfqClxZTFBa8PKt2v6Q==}
+    engines: {node: '>=12'}
+    dependencies:
+      define-lazy-prop: 2.0.0
+      is-docker: 2.2.1
+      is-wsl: 2.2.0
+    dev: true
+
+  /open/8.4.1:
+    resolution: {integrity: sha512-/4b7qZNhv6Uhd7jjnREh1NjnPxlTq+XNWPG88Ydkj5AILcA5m3ajvcg57pB24EQjKv0dK62XnDqk9c/hkIG5Kg==}
     engines: {node: '>=12'}
     dependencies:
       define-lazy-prop: 2.0.0
@@ -8129,8 +8143,8 @@ packages:
       postcss-value-parser: 4.2.0
     dev: true
 
-  /postcss-custom-properties/13.1.2:
-    resolution: {integrity: sha512-5d20sptRxUgGpijXsgj4yT2s6VZo1v3Y2fi0AaRQJN2ap9vhAWmNYbOM0yAiIoofRgiIDu+Aps2W3/l3Wl3fuw==}
+  /postcss-custom-properties/13.1.3:
+    resolution: {integrity: sha512-15equAsfqtnr7jyzes6vyaGdAiNmKd+50FZ35/E/huBNBt7PgGMSNL/4o765nnNoP2dmaMJklb3FwJf3fdRcpA==}
     engines: {node: ^14 || ^16 || >=18}
     peerDependencies:
       postcss: ^8.4
@@ -9085,7 +9099,7 @@ packages:
       rollup:
         optional: true
     dependencies:
-      open: 8.4.0
+      open: 8.4.1
       picomatch: 2.3.1
       rollup: 3.14.0
       source-map: 0.7.4
@@ -10014,8 +10028,8 @@ packages:
     resolution: {integrity: sha512-WxONCrssBM8TSPRqN5EmsjVrsv4A8X12J4ArBiiayv3DyyG3ZlIg6yysuuSYdZsVz3TKcTg2fd//Ujd4CHV1iA==}
     dev: true
 
-  /unenv/1.1.0:
-    resolution: {integrity: sha512-7jLgwQ5iDHVcDoW2rCJ1vB1jUw7zT+21LC+vWCs9SWWsycgk1d4SHvPUYRsu5wNuY7hqoArgjr4xQKmIkXyAmA==}
+  /unenv/1.1.1:
+    resolution: {integrity: sha512-AfQ+sKCdeSPX/rp0tL9LZz3cAu1Mt0i9UADuN1MtbsITKDS2PqSx8LQUBMf8lKuziitIWXXwU6JXrmzARFVSRw==}
     dependencies:
       defu: 6.1.2
       mime: 3.0.0
@@ -10170,7 +10184,7 @@ packages:
       anymatch: 3.1.3
       chokidar: 3.5.3
       destr: 1.2.2
-      h3: 1.2.1
+      h3: 1.3.0
       ioredis: 5.3.0
       listhen: 1.0.2
       lru-cache: 7.14.1

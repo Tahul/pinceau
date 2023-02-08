@@ -21,7 +21,7 @@ export function usePinceauCssProp(
         ids.value.uid,
         'p',
         newCss,
-        undefined,
+        rule,
         { ...loc, type: 'c' },
       )
     },
