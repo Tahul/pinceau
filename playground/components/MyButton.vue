@@ -3,17 +3,19 @@ import type { PinceauTheme } from 'pinceau'
 import { computedStyle, cssProp } from 'pinceau/runtime'
 
 defineProps({
-  color: computedStyle<keyof PinceauTheme['color']>('red'),
-  ...variants,
-  css: cssProp,
+    color: computedStyle<keyof PinceauTheme['color']>('red'),
+    ...variants,
+    css: cssProp,
 })
 </script>
 
 <template>
-  <button class="my-button">
-    <span v-if="!$slots?.default">Hello Amsterdam 👋</span>
-    <span v-else><slot /></span>
-  </button>
+    <button class="my-button">
+        <span v-if="!$slots?.default">Hello Amsterdam 👋</span>
+        <span v-else>
+            <slot />
+        </span>
+    </button>
 </template>
 
 <style scoped lang="ts">
@@ -21,21 +23,20 @@ css({
     '.my-button': {
         '--button-primary': (props) => `{color.${props.color}.600}`,
         '--button-secondary': (props) => `{color.${props.color}.500}`,
-        '--button-accent': (props) => `{color.${props.color}.300}`,
         display: 'inline-block',
         borderRadius: '{radii.xl}',
-        transition: 'box-shadow .1 ease-in-out',
+        transition: '{transition.all}',
         color: '{color.white}',
-        boxShadow: `0 5px 0 {button.primary}, 0 12px 16px rgba(0, 0, 0, .35)`,
+        boxShadow: `0 5px 0 {button.primary}, 0 12px 16px {color.dimmed}`,
         span: {
             display: 'inline-block',
             fontFamily: '{font.secondary}',
             borderRadius: '{radii.lg}',
             fontSize: '{fontSize.xl}',
             lineHeight: '{lead.none}',
-            transition: '{transition.all} ',
+            transition: '{transition.all}',
             backgroundColor: '{button.primary}',
-            boxShadow: 'inset 0 -1px 1px rgba(255, 255, 255, .15)',
+            boxShadow: 'inset 0 -1px 1px {color.dark}',
         },
         '&:hover': {
             span: {
@@ -44,7 +45,7 @@ css({
         },
         '&:active': {
             span: {
-                transform: 'translateY(4px)'
+                transform: 'translateY({space.4})'
             }
         }
     },

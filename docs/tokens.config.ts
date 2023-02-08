@@ -1,9 +1,14 @@
 import { defineTheme } from 'pinceau'
 
 export default defineTheme({
+  transition: {
+    all: 'all .1s ease-in-out',
+  },
   color: {
     black: '#0c0c0d',
     white: '{color.yellow.100}',
+    dimmed: 'rgba(0, 0, 0, .35)',
+    dark: 'rgba(255, 255, 255, .15)',
     primary: {
       50: '{color.red.50}',
       100: '{color.red.100}',

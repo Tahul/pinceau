@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useConfettis } from '../composables/useConfettis'
+import DemoButton from '../components/DemoButton.vue'
 
 const canvas = ref()
 const { poof } = useConfettis(canvas)
@@ -10,7 +11,7 @@ const { poof } = useConfettis(canvas)
   <section>
     <canvas ref="canvas" />
     <PlaygroundGrid>
-      <MyButton color="primary" :size="{ initial: 'sm', lg: 'xl' }" @click="poof" />
+      <DemoButton />
     </PlaygroundGrid>
   </section>
 </template>

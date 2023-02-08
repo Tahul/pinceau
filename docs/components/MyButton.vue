@@ -5,23 +5,25 @@ import { computedStyle, cssProp } from 'pinceau/runtime'
 import type { NuxtLinkProps } from '#app'
 
 defineProps({
-  to: {
-    type: String as PropType<NuxtLinkProps['to']>,
-    required: false,
-  },
-  color: computedStyle<keyof PinceauTheme['color']>('red'),
-  ...variants,
-  css: cssProp,
+    to: {
+        type: String as PropType<NuxtLinkProps['to']>,
+        required: false,
+    },
+    color: computedStyle<keyof PinceauTheme['color']>('red'),
+    ...variants,
+    css: cssProp,
 })
 </script>
 
 <template>
-  <NuxtLink :to="to">
-    <button class="my-button">
-      <span v-if="!$slots?.default">Hello Amsterdam 👋</span>
-      <span v-else><ContentSlot :use="$slots.default" unwrap="p" /></span>
-    </button>
-  </NuxtLink>
+    <NuxtLink :to="to">
+        <button class="my-button">
+            <span v-if="!$slots?.default">Hello Amsterdam 👋</span>
+            <span v-else>
+                <ContentSlot :use="$slots.default" unwrap="p" />
+            </span>
+        </button>
+    </NuxtLink>
 </template>
 
 <style scoped lang="ts">
@@ -29,12 +31,11 @@ css({
     '.my-button': {
         '--button-primary': (props) => `{color.${props.color}.600}`,
         '--button-secondary': (props) => `{color.${props.color}.500}`,
-        '--button-accent': (props) => `{color.${props.color}.300}`,
         display: 'inline-block',
         borderRadius: '{radii.xl}',
-        transition: 'box-shadow .1 ease-in-out',
+        transition: '{transition.all}',
         color: '{color.white}',
-        boxShadow: `0 5px 0 {button.primary}, 0 12px 16px rgba(0, 0, 0, .35)`,
+        boxShadow: `0 5px 0 {button.primary}, 0 12px 16px {color.dimmed}`,
         span: {
             display: 'inline-block',
             fontFamily: '{font.secondary}',
@@ -43,7 +44,7 @@ css({
             lineHeight: '{lead.none}',
             transition: '{transition.all}',
             backgroundColor: '{button.primary}',
-            boxShadow: 'inset 0 -1px 1px rgba(255, 255, 255, .15)',
+            boxShadow: 'inset 0 -1px 1px {color.dark}',
         },
         '&:hover': {
             span: {
@@ -52,7 +53,7 @@ css({
         },
         '&:active': {
             span: {
-                transform: 'translateY(4px)'
+                transform: 'translateY({space.1})'
             }
         }
     },
@@ -60,22 +61,22 @@ css({
         size: {
             sm: {
                 span: {
-                    padding: '{space.6} {space.12}'
+                    padding: '{space.3} {space.6}',
                 },
             },
             md: {
                 span: {
-                    padding: '{space.12} {space.16}'
+                    padding: '{space.6} {space.8}'
                 },
             },
             lg: {
                 span: {
-                    padding: '{space.16} {space.24}'
+                    padding: '{space.8} {space.12}'
                 },
             },
             xl: {
                 span: {
-                    padding: '{space.32} {space.48}'
+                    padding: '{space.12} {space.24}'
                 },
             },
             options: {

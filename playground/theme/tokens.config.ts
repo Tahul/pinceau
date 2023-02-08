@@ -18,6 +18,8 @@ export default defineTheme({
   color: {
     white: '#FFFFFF',
     black: '#191919',
+    dimmed: 'rgba(0, 0, 0, .35)',
+    dark: 'rgba(255, 255, 255, .15)',
     blue: {
       50: '#C5CDE8',
       100: '#B6C1E2',
