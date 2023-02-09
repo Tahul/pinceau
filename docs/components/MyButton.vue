@@ -38,7 +38,7 @@ css({
         boxShadow: `0 5px 0 {button.primary}, 0 12px 16px {color.dimmed}`,
         span: {
             display: 'inline-block',
-            fontFamily: '{font.secondary}',
+            fontFamily: '{typography.font.display}',
             borderRadius: '{radii.lg}',
             fontSize: '{fontSize.xl}',
             lineHeight: '{lead.none}',
