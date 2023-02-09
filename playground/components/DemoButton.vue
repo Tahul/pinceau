@@ -1,7 +1,6 @@
 <template>
   <button class="demo-button">
-    <span v-if="!$slots.default">Hello Amsterdam 👋</span>
-    <span v-else>
+    <span>
       <slot />
     </span>
   </button>
