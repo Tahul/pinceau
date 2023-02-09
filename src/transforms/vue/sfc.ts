@@ -154,10 +154,9 @@ export function resolveScriptSetup(
     // Push last runtime context
     if (hasVariants || hasComputedStyles) { code = transformFinishRuntimeSetup(code, hasComputedStyles, hasVariants, computedStyles) }
   }
-  else {
-    if (hasVariants || hasComputedStyles) {
-      message('RUNTIME_FEATURES_CONFLICT', [id])
-    }
+  else if (hasVariants || hasComputedStyles) {
+    // Warn on disabled runtime features used in components
+    message('RUNTIME_FEATURES_CONFLICT', [id])
   }
 
   // Overwrite <script setup> block with new content
