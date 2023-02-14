@@ -44,11 +44,6 @@ export function usePinceauConfigContext<UserOptions extends PinceauOptions = Pin
     return result
   }
 
-  async function getConfig() {
-    await ready
-    return resolvedConfig
-  }
-
   async function updateCwd(newCwd: string) {
     if (newCwd !== cwd) {
       cwd = newCwd
@@ -89,7 +84,6 @@ export function usePinceauConfigContext<UserOptions extends PinceauOptions = Pin
     sources,
     reloadConfig,
     resolvedConfig,
-    getConfig,
     registerConfigWatchers,
   }
 }

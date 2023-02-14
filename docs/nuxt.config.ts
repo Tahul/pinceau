@@ -17,9 +17,6 @@ export default defineNuxtConfig({
     followSymbolicLinks: false,
     configFileName: 'tokens.config',
   },
-  typescript: {
-    includeWorkspace: true,
-  },
   components: [
     {
       path: '~/components',

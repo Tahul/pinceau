@@ -1,6 +1,6 @@
-import type { PinceauTokens, TokenKey } from './tokens'
+import type { DesignTokens, TokenKey } from './tokens'
 
-export interface ScaleTokens extends PinceauTokens {
+export interface ScaleTokens extends DesignTokens {
   [key: string]: TokenKey | {
     default?: TokenKey
     50?: TokenKey
@@ -16,7 +16,7 @@ export interface ScaleTokens extends PinceauTokens {
   }
 }
 
-export interface BreakpointsTokens extends PinceauTokens {
+export interface BreakpointsTokens extends DesignTokens {
   '2xs'?: TokenKey
   xs?: TokenKey
   sm?: TokenKey
@@ -31,7 +31,7 @@ export interface BreakpointsTokens extends PinceauTokens {
   '7xl'?: TokenKey
 }
 
-export interface FontWeightTokens extends PinceauTokens {
+export interface FontWeightTokens extends DesignTokens {
   thin?: TokenKey
   extraLight?: TokenKey
   light?: TokenKey
@@ -45,20 +45,20 @@ export interface FontWeightTokens extends PinceauTokens {
 }
 
 export interface ConfigSuggestion {
-  color?: ScaleTokens | PinceauTokens
-  font?: PinceauTokens
-  fontWeight?: FontWeightTokens | PinceauTokens
-  fontSize?: BreakpointsTokens | PinceauTokens
-  size?: BreakpointsTokens | PinceauTokens
-  space?: BreakpointsTokens | PinceauTokens
-  radii?: BreakpointsTokens | PinceauTokens
-  border?: BreakpointsTokens | PinceauTokens
-  borderWidth?: BreakpointsTokens | PinceauTokens
-  borderStyle?: BreakpointsTokens | PinceauTokens
-  shadow?: BreakpointsTokens | PinceauTokens
-  opacity?: BreakpointsTokens | PinceauTokens
-  lead?: BreakpointsTokens | PinceauTokens
-  letterSpacing?: BreakpointsTokens | PinceauTokens
-  transition?: PinceauTokens | PinceauTokens
-  zIndex?: PinceauTokens | PinceauTokens
+  color?: ScaleTokens | DesignTokens
+  font?: DesignTokens
+  fontWeight?: FontWeightTokens | DesignTokens
+  fontSize?: BreakpointsTokens | DesignTokens
+  size?: BreakpointsTokens | DesignTokens
+  space?: BreakpointsTokens | DesignTokens
+  radii?: BreakpointsTokens | DesignTokens
+  border?: BreakpointsTokens | DesignTokens
+  borderWidth?: BreakpointsTokens | DesignTokens
+  borderStyle?: BreakpointsTokens | DesignTokens
+  shadow?: BreakpointsTokens | DesignTokens
+  opacity?: BreakpointsTokens | DesignTokens
+  lead?: BreakpointsTokens | DesignTokens
+  letterSpacing?: BreakpointsTokens | DesignTokens
+  transition?: DesignTokens
+  zIndex?: DesignTokens
 }

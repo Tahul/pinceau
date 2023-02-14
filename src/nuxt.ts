@@ -107,13 +107,12 @@ const module: any = defineNuxtModule<PinceauOptions>({
         tsConfig.compilerOptions.paths['#pinceau/utils'] = [`${resolve(options.outputDir, 'utils.ts')}`]
         tsConfig.compilerOptions.paths['#pinceau/theme'] = [`${resolve(options.outputDir, 'index.ts')}`]
         if (options?.studio) { tsConfig.compilerOptions.paths['#pinceau/schema'] = [`${resolve(options.outputDir, 'schema.ts')}`] }
-        if (options?.definitions) { tsConfig.compilerOptions.paths['#pinceau/definitions'] = [`${resolve(options.outputDir, 'schema.ts')}`] }
+        if (options?.definitions) { tsConfig.compilerOptions.paths['#pinceau/definitions'] = [`${resolve(options.outputDir, 'definitions.ts')}`] }
       }
 
       // Push Pinceau reference
       opts.references.push({ path: 'pinceau' })
       opts.references.push({ path: 'pinceau/runtime' })
-      opts.references.push({ path: 'pinceau/types' })
 
       // Add Volar plugin
       tsConfig.vueCompilerOptions = tsConfig.vueCompilerOptions || {}

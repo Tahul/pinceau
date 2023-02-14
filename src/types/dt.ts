@@ -1,5 +1,5 @@
 import type { PinceauTokensPaths } from './theme'
-import type { DesignToken, PinceauTokens } from './tokens'
+import type { DesignToken, DesignTokens } from './tokens'
 
 export interface TokensFunctionOptions {
   /**
@@ -25,7 +25,7 @@ export interface TokensFunctionOptions {
  */
 export type DtFunction = (
   path: PinceauTokensPaths | (string & {}),
-  key?: 'variable' | 'value' |(string & {})
+  key?: 'variable' | 'value'
 ) => string
 
 /**
@@ -35,4 +35,4 @@ export type TokensFunction = (
   path?: PinceauTokensPaths | (string & {}),
   options?: TokensFunctionOptions,
   theme?: any
-) => PinceauTokens | DesignToken | number | string
+) => DesignTokens | DesignToken | number | string

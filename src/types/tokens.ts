@@ -6,7 +6,7 @@ export type RawTokenType = string | number
 /**
  * A token that uses media queries as keys and value as value for this breakpoint.
  */
-export type ResponsiveToken<T = RawTokenType> = { [key in PinceauMediaQueries]?: T }
+export type ResponsiveToken<T = RawTokenType> = { initial: T } & { [key in PinceauMediaQueries]?: T }
 
 /**
  * A token key value pair in the configurations.
@@ -24,27 +24,30 @@ export interface DesignToken<T = RawTokenType> {
   /**
    * The raw value of the token.
    */
-  value: T | ResponsiveToken<T>
+  value: T | ResponsiveToken<T> | RawTokenType
   /**
    * CSS Variable reference that gets generated out of the token path.
    */
   variable?: string
   /**
-   * The original values (not transformed)
-   */
-  original?: string | Omit<DesignToken, 'original'>
-  /**
-   * The file path to the source of this token
+   * The file path to the source of this token.
    */
   source?: string
+  /**
+   * The raw value of this token, before transforms.
+   */
+  raw?: T | ResponsiveToken<T> | RawTokenType
   /**
    * Token extraneous attributes.
    */
   attributes?: {
-    [key: string]: any
+    [key: string | number]: any
   }
 }
 
-export interface PinceauTokens {
-  [key: string]: TokenKey | PinceauTokens
+/**
+ * Simple recursive tokens object
+ */
+export interface DesignTokens {
+  [key: string | number]: TokenKey | DesignTokens
 }

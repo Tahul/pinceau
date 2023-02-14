@@ -33,14 +33,19 @@ export const objectPaths = (data: any) => {
 /**
  * Flatten tokens object for runtime usage.
  */
-export const flattenTokens = (data: any, toValue = false) => {
+export const flattenTokens = (data: any, toValue = false, raw = true) => {
   return walkTokens(data, (value) => {
-    return toValue
+    // Get slim token value object
+    const toRet = toValue
       ? value?.value
       : {
           value: value?.value,
           variable: value?.attributes?.variable,
-          original: value?.original?.value,
         }
+
+    // Support writing raw value
+    if (!toValue && raw && value?.original?.value) { toRet.raw = value.original.value }
+
+    return toRet
   })
 }

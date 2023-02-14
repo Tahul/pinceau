@@ -5,25 +5,25 @@ import { computedStyle, cssProp } from 'pinceau/runtime'
 import type { NuxtLinkProps } from '#app'
 
 defineProps({
-    to: {
-        type: String as PropType<NuxtLinkProps['to']>,
-        required: false,
-    },
-    color: computedStyle<keyof PinceauTheme['color']>('red'),
-    ...variants,
-    css: cssProp,
+  to: {
+    type: String as PropType<NuxtLinkProps['to']>,
+    required: false,
+  },
+  color: computedStyle<keyof PinceauTheme['color']>('red'),
+  ...variants,
+  css: cssProp,
 })
 </script>
 
 <template>
-    <NuxtLink :to="to">
-        <button class="my-button">
-            <span v-if="!$slots?.default">Hello Amsterdam 👋</span>
-            <span v-else>
-                <ContentSlot :use="$slots.default" unwrap="p" />
-            </span>
-        </button>
-    </NuxtLink>
+  <NuxtLink :to="to">
+    <button class="my-button">
+      <span v-if="!$slots?.default">Hello Amsterdam 👋</span>
+      <span v-else>
+        <ContentSlot :use="$slots.default" unwrap="p" />
+      </span>
+    </button>
+  </NuxtLink>
 </template>
 
 <style scoped lang="ts">

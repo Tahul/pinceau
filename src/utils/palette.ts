@@ -1,12 +1,12 @@
 import type { Color } from 'chroma-js'
 import chroma from 'chroma-js'
-import type { PinceauTokens } from '../types'
+import type { DesignTokens } from '../types'
 
 export const palette = (
   color: string,
   suffixes: Array<string | number> = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900],
   padding = 0.1,
-): PinceauTokens => {
+): DesignTokens => {
   if (!color || typeof color !== 'string') {
     throw new Error('Please provide a valid "color" string parameter')
   }
@@ -14,7 +14,7 @@ export const palette = (
   function scalePalette(baseColor: Color | string, _suffixes: Array<string | number> = suffixes, _padding: number = padding) {
     const colorScale = chroma.scale(['white', baseColor, 'black']).padding(padding).colors(suffixes.length)
 
-    const colorRange: PinceauTokens = {}
+    const colorRange: DesignTokens = {}
 
     suffixes.forEach(
       (suffix, index) => (

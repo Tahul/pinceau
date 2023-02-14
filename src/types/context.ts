@@ -1,39 +1,62 @@
 import type { ViteDevServer } from 'vite'
+import type { PinceauVirtualContext } from '../theme/virtual'
 import type { PinceauTheme } from './theme'
 import type { TokensFunction } from './dt'
 import type { ConfigLayer, LoadConfigResult } from './config'
-import type { PinceauOptions } from './'
+import type { DesignTokens, PinceauOptions } from './'
 
+/**
+ * Supports all the different ways of expressing configuration layers from `configOrPaths` from Pinceau's options.
+ */
 export type ConfigOrPaths = (string | PinceauTheme | ConfigLayer)[]
 
+/**
+ * 
+ */
 export interface PinceauContext<UserOptions extends PinceauOptions = PinceauOptions> extends PinceauConfigContext<UserOptions>, PinceauVirtualContext {
   env: 'prod' | 'dev'
-  tokens: any
-  utils: any
+  /**
+   * Current 
+   */
+  tokens: DesignTokens
+  utils: { [key: string]: any }
   $tokens: TokensFunction
   options: PinceauOptions
   transformed: string[]
-  addTransformed: (id: string) => void
-
-  /**
-   * Marks whether the context is at runtime or at build-time
-   */
-  runtime?: boolean
-
-  // Vite
   viteServer: ViteDevServer
+  addTransformed: (id: string) => void
   setViteServer(server: ViteDevServer): void
 }
 
 export interface PinceauConfigContext<UserOptions = PinceauOptions> {
+  /**
+   * Current rootDir of Pinceau
+   */
   cwd: string
-  updateCwd: (newCwd: string) => Promise<LoadConfigResult<PinceauTheme>>
+  /**
+   * A list of watched sources
+   */
   sources: string[]
+  /**
+   * Currently resolved configuration from the configuration loader.
+   */
   resolvedConfig: any
+  /**
+   * Is the loader currently loading configurations layers?
+   */
   ready: Promise<LoadConfigResult<PinceauTheme>>
+  /**
+   * Update the current rootDir
+   */
+  updateCwd: (newCwd: string) => Promise<LoadConfigResult<PinceauTheme>>
+  /**
+   * Reload the configuration (with new options if provided)
+   */
   reloadConfig: (newOptions?: UserOptions) => Promise<LoadConfigResult<PinceauTheme>>
+  /**
+   * Registers the initial configurations watchers.
+   */
   registerConfigWatchers: () => void
-  getConfig: () => Promise<PinceauTheme>
 }
 
 export interface ThemeGenerationOutput {
@@ -42,14 +65,4 @@ export interface ThemeGenerationOutput {
   outputs: Record<string, any>
 }
 
-export interface PinceauVirtualContext {
-  outputs: Record<string, any>
-  updateOutputs: (generatedTheme: ThemeGenerationOutput) => void
-  getOutput: (key: string) => string | undefined
-  getOutputId: (key: string) => string | undefined
-}
-
-export interface PinceauTransformContext {
-  variants: Record<string, any>
-  computedStyles: Record<string, any>
-}
+export type { PinceauVirtualContext }

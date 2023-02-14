@@ -1,9 +1,9 @@
-import type { PinceauVirtualContext, ThemeGenerationOutput } from '../types'
+import type { ThemeGenerationOutput } from '../types'
 import { tsFull, utilsFull } from './formats'
 
 export const RESOLVED_ID_RE = /^(virtual:pinceau:|#)?\/__pinceau(?:(_.*?))?\.(css|ts|js)(\?.*)?$/
 
-export function usePinceauVirtualStore(): PinceauVirtualContext {
+export function usePinceauVirtualStore() {
   const outputs: ThemeGenerationOutput['outputs'] = {
     _css: '/* This file is empty because no tokens has been provided or the configuration is broken. */',
     _ts: tsFull({}),
@@ -16,11 +16,7 @@ export function usePinceauVirtualStore(): PinceauVirtualContext {
    * Update virtual storage from theme generation output data
    */
   function updateOutputs(generatedTheme: ThemeGenerationOutput) {
-    Object.entries(generatedTheme.outputs).forEach(
-      ([key, value]) => {
-        outputs[`_${key}`] = value
-      },
-    )
+    Object.entries(generatedTheme.outputs).forEach(([key, value]) => (outputs[`_${key}`] = value))
   }
 
   /**
@@ -54,3 +50,5 @@ export function usePinceauVirtualStore(): PinceauVirtualContext {
     getOutputId,
   }
 }
+
+export type PinceauVirtualContext = ReturnType<typeof usePinceauVirtualStore>

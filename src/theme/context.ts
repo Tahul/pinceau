@@ -3,7 +3,6 @@ import { useDebugPerformance } from '../utils/debug'
 import { message } from '../utils/logger'
 import type { PinceauContext, PinceauOptions } from '../types'
 import { createTokensHelper } from '../utils/$tokens'
-import { flattenTokens } from '../utils'
 import { generateTheme } from './generate'
 import { usePinceauConfigContext } from './config'
 import { usePinceauVirtualStore } from './virtual'
@@ -12,7 +11,7 @@ import { prepareOutputDir } from './output'
 /**
  * Creates the Pinceau context from the options.
  */
-export function usePinceauContext<UserOptions extends PinceauOptions = PinceauOptions>(options: UserOptions): PinceauContext<UserOptions> {
+export function usePinceauContext(options: PinceauOptions): PinceauContext {
   const env: PinceauContext['env'] = 'prod'
 
   // Context state
@@ -32,7 +31,7 @@ export function usePinceauContext<UserOptions extends PinceauOptions = PinceauOp
   const { outputs, getOutput, getOutputId, updateOutputs } = usePinceauVirtualStore()
 
   // Configuration
-  const configContext = usePinceauConfigContext<UserOptions>(
+  const configContext = usePinceauConfigContext(
     options,
     getViteServer,
     getTransformed,
@@ -53,6 +52,7 @@ export function usePinceauContext<UserOptions extends PinceauOptions = PinceauOp
         return
       }
 
+      // Update virtual outputs
       updateOutputs(builtTheme)
 
       // Update local tokens
@@ -64,7 +64,7 @@ export function usePinceauContext<UserOptions extends PinceauOptions = PinceauOp
           event: 'pinceau:themeUpdate',
           data: {
             css: builtTheme.outputs.css,
-            theme: flattenTokens(tokens),
+            theme: tokens,
           },
         })
       }

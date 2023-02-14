@@ -21,7 +21,6 @@ export default defineConfig({
     environment: 'jsdom',
   },
   plugins: [
-
     splitVendorChunkPlugin(),
     Vue({
       reactivityTransform: true,

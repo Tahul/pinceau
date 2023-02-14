@@ -3,7 +3,6 @@ import fs from 'node:fs'
 import type { Core as Instance } from 'style-dictionary-esm'
 import StyleDictionary from 'style-dictionary-esm'
 import { join } from 'pathe'
-import { flattenTokens } from '../utils/theme'
 import type { PinceauOptions, ThemeGenerationOutput } from '../types'
 import { message } from '../utils/logger'
 import { normalizeConfig } from '../utils/data'
@@ -44,8 +43,8 @@ export async function generateTheme(
 
   // Transforms used
   const transforms = [
-    'size/px',
-    'color/hex',
+    // 'size/px',
+    // 'color/hex',
     'pinceau/name',
     'pinceau/variable',
     'pinceau/responsiveTokens',
@@ -91,8 +90,8 @@ export async function generateTheme(
     type: 'name',
     matcher: () => true,
     transformer(token) {
-      if (token.path.join('').includes('-')) { message('WRONG_TOKEN_NAMING', [token]) }
-      return token.path.join('-')
+      if (token?.path?.join('').includes('-')) { message('WRONG_TOKEN_NAMING', [token]) }
+      return token?.path?.join('-')
     },
   })
 
@@ -207,7 +206,7 @@ export async function generateTheme(
           name: 'done',
           do: ({ tokens }) => {
             resolve({
-              tokens: flattenTokens(tokens),
+              tokens,
               outputs,
               buildPath,
             })

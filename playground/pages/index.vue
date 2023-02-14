@@ -4,6 +4,8 @@ import { useConfettis } from '../composables/useConfettis'
 import DemoButton from '../components/DemoButton.vue'
 
 const canvas = ref()
+
+// eslint-disable-next-line unused-imports/no-unused-vars
 const { poof } = useConfettis(canvas)
 </script>
 
@@ -11,7 +13,9 @@ const { poof } = useConfettis(canvas)
   <section>
     <canvas ref="canvas" />
     <PlaygroundGrid>
-      <DemoButton>🇳🇱 Hello Amsterdam</DemoButton>
+      <DemoButton :size="{ initial: 'sm', md: 'md' }">
+        🇳🇱 Hello Amsterdam
+      </DemoButton>
     </PlaygroundGrid>
   </section>
 </template>

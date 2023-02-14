@@ -3,19 +3,19 @@ import type { PinceauTheme } from 'pinceau'
 import { computedStyle, cssProp } from 'pinceau/runtime'
 
 defineProps({
-    color: computedStyle<keyof PinceauTheme['color']>('red'),
-    ...variants,
-    css: cssProp,
+  color: computedStyle<keyof PinceauTheme['color']>('red'),
+  ...variants,
+  css: cssProp,
 })
 </script>
 
 <template>
-    <button class="my-button">
-        <span v-if="!$slots?.default">Hello Amsterdam 👋</span>
-        <span v-else>
-            <slot />
-        </span>
-    </button>
+  <button class="my-button">
+    <span v-if="!$slots?.default">Hello Amsterdam 👋</span>
+    <span v-else>
+      <slot />
+    </span>
+  </button>
 </template>
 
 <style scoped lang="ts">
