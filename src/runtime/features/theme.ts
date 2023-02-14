@@ -1,5 +1,5 @@
 import { computed, ref } from 'vue'
-import type { PermissiveConfigType, PinceauTheme, PinceauTokensPaths, TokensFunctionOptions } from '../../types'
+import type { PinceauTheme, PinceauTokensPaths, Theme, TokensFunctionOptions } from '../../types'
 import { get, normalizeConfig, set, walkTokens } from '../../utils/data'
 import { pathToVarName } from '../../utils/$tokens'
 import { responsiveMediaQueryRegex } from '../../utils/regexes'
@@ -135,7 +135,7 @@ export function usePinceauThemeSheet(
   /**
    * Update existing theme keys with a partial config object.
    */
-  function updateTheme(value: PermissiveConfigType<PinceauTheme>) {
+  function updateTheme(value: Theme<PinceauTheme>) {
     // Media queries keys extracted from current theme object and new one
     const mqKeys = Array.from(new Set(['dark', 'light', ...Object.keys((value as any)?.media || {}), ...Object.keys(theme.value?.media || {})]))
 

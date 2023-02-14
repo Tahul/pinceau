@@ -38,27 +38,42 @@ export interface PinceauUtilsProperties {
 }
 
 /**
- * Reserved keys from the configuration file.
+ * Media queries properties.
  */
-export interface ReservedTokensConfig {
-  media?: Record<string, DesignToken | RawTokenType | Schema> & { $schema?: Schema }
+export interface PinceauMediaProperties {
+  $schema?: Schema
+  [key: string]: DesignToken<RawTokenType> | RawTokenType | Schema
+}
+
+/**
+ * Reserved keys in define config type.
+ */
+export interface ReservedConfigKeys {
+  media?: PinceauMediaProperties
   utils?: PinceauUtilsProperties
 }
 
 /**
  * Extensible configuration type
  */
-export type PermissiveConfigType<T extends {} = {}> =
+export type Theme<T> =
+  {
+    $schema?: Schema
+  }
   |
-  { [K in keyof T]?: T[K] extends DesignToken ? T[K]['raw'] extends ResponsiveToken<RawTokenType> ? T[K]['raw'] & ResponsiveToken<RawTokenType> : (T[K]['raw'] | ResponsiveToken<RawTokenType>) : never }
+  (
+    { [K in keyof T]?: T[K] extends DesignToken<ResponsiveToken> ? (T[K]['raw'] | Partial<T[K]['raw']> | DesignToken<Partial<T[K]['raw']>>) : Theme<T[K]> }
+    |
+    { [K in keyof T]?: T[K] extends DesignToken<RawTokenType> ? (T[K]['raw'] | T[K]) : Theme<T[K]> }
+  )
   |
-  { [K in keyof T]?: T[K] extends ResponsiveToken<RawTokenType> ? T[K] & ResponsiveToken<RawTokenType> : never }
-  |
-  { [K in keyof T]?: T[K] extends RawTokenType ? T[K] | ResponsiveToken<T[K] | RawTokenType> : never }
-  |
-  { [K in keyof T]?: PermissiveConfigType<T[K]> }
+  (
+    { [K in keyof T]?: T[K] extends DesignToken ? (T[K] | T[K]['raw'] | ResponsiveToken | DesignToken<ResponsiveToken> | DesignToken<T[K]['raw']>) : Theme<T[K]> }
+    |
+    { [K in keyof T]?: Theme<T[K]> }
+  )
 
 /**
  * Reserved keys and extensible configuration type
  */
-export type DefineConfigType = ReservedTokensConfig & PermissiveConfigType<PinceauTheme>
+export type DefineConfigType<T extends PinceauTheme> = Theme<T> & ReservedConfigKeys
