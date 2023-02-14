@@ -15,15 +15,13 @@ export type ConfigOrPaths = (string | PinceauTheme | ConfigLayer)[]
  */
 export interface PinceauContext<UserOptions extends PinceauOptions = PinceauOptions> extends PinceauConfigContext<UserOptions>, PinceauVirtualContext {
   env: 'prod' | 'dev'
-  /**
-   * Current 
-   */
   tokens: DesignTokens
   utils: { [key: string]: any }
   $tokens: TokensFunction
   options: PinceauOptions
   transformed: string[]
   viteServer: ViteDevServer
+  runtime?: boolean
   addTransformed: (id: string) => void
   setViteServer(server: ViteDevServer): void
 }
