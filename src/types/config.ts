@@ -1,6 +1,6 @@
 import type { Schema } from 'untyped'
 import type { CSSProperties } from './css'
-import type { DesignToken, RawTokenType, ResponsiveToken, TokenKey } from './tokens'
+import type { DesignToken, RawTokenType, ResponsiveToken } from './tokens'
 import type { PinceauTheme } from './theme'
 
 /**
@@ -15,7 +15,7 @@ export interface ConfigLayer {
 /**
  * A layer of configuration that has been resolved before being loaded.
  */
-export interface ResolvedConfigLayer<T> {
+export interface ResolvedConfigLayer<T = PinceauTheme> {
   path: string | undefined
   definitions: { [key: string]: any }
   config: T
@@ -33,7 +33,7 @@ export interface LoadConfigResult<T = any> {
 /**
  * Utils properties mappings.
  */
-export type PinceauUtilsProperties = {
+export interface PinceauUtilsProperties {
   [key: string]: CSSProperties | ((value: any) => CSSProperties)
 }
 
@@ -46,19 +46,17 @@ export interface ReservedTokensConfig {
 }
 
 /**
- * Properly unwraps a token value ensuring proper go-to definition on object keys and auto-completion on object values.
- */
-export type UnwrapTokenValue<T extends TokenKey> =
-  T extends DesignToken ?
-      (T['value'] | T['raw']) extends ResponsiveToken ?
-        Partial<(T['value'] | T['raw'] | T)> :
-        T['value'] | T['raw'] | T
-    : T
-
-/**
  * Extensible configuration type
  */
-export type PermissiveConfigType<T extends {} = {}> = T | { [K in keyof T]?: T[K] extends TokenKey ? T[K] | ResponsiveToken | UnwrapTokenValue<T[K]> : PermissiveConfigType<T[K]> }
+export type PermissiveConfigType<T extends {} = {}> =
+  |
+  { [K in keyof T]?: T[K] extends DesignToken ? T[K]['raw'] extends ResponsiveToken<RawTokenType> ? T[K]['raw'] & ResponsiveToken<RawTokenType> : (T[K]['raw'] | ResponsiveToken<RawTokenType>) : never }
+  |
+  { [K in keyof T]?: T[K] extends ResponsiveToken<RawTokenType> ? T[K] & ResponsiveToken<RawTokenType> : never }
+  |
+  { [K in keyof T]?: T[K] extends RawTokenType ? T[K] | ResponsiveToken<T[K] | RawTokenType> : never }
+  |
+  { [K in keyof T]?: PermissiveConfigType<T[K]> }
 
 /**
  * Reserved keys and extensible configuration type

@@ -69,7 +69,7 @@ const messages = {
     c().logger.log('Learn more about `const` name limitations: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Grammar_and_types\n')
   },
   WRONG_TOKEN_NAMING: (debugLevel, token) => {
-    c().logger.error(`Pinceau detected an invalid token name: ${c().error(token.path.join('-'))}`)
+    c().logger.error(`Pinceau detected an invalid token name: ${c().error(token?.path?.join('-') || 'Unknown path!')}`)
     c().logger.log('Token paths can not contains the following characters: `.` or `-`\n')
     c().logger.log('These paths keys also has to only contains characters supported in CSS stylesheets.\n')
   },

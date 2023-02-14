@@ -1,7 +1,6 @@
 import type { namedTypes } from 'ast-types'
 import type { NodePath } from 'ast-types/lib/node-path'
-import { defaultExport } from 'paneer'
-import { parseAst, printAst, visitAst } from '../utils/ast'
+import { defaultExport, parseAst, printAst, visitAst } from '../utils/ast'
 
 /**
  * Resolve tokens and utils definitions (uri, range, content)
@@ -10,7 +9,7 @@ export function resolveDefinitions(content: string, mediaQueriesKeys: string[], 
   const definitions = {}
 
   visitAst(
-    defaultExport(parseAst(content) as any),
+    defaultExport(parseAst(content)),
     {
       visitObjectProperty(path) {
         const tokenNode = getTokenNode(path, mediaQueriesKeys)
