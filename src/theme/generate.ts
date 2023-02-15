@@ -3,6 +3,7 @@ import fs from 'node:fs'
 import type { Core as Instance } from 'style-dictionary-esm'
 import StyleDictionary from 'style-dictionary-esm'
 import { join } from 'pathe'
+import { flattenTokens } from '../utils'
 import type { PinceauOptions, ThemeGenerationOutput } from '../types'
 import { message } from '../utils/logger'
 import { normalizeConfig } from '../utils/data'
@@ -206,7 +207,7 @@ export async function generateTheme(
           name: 'done',
           do: ({ tokens }) => {
             resolve({
-              tokens,
+              tokens: flattenTokens(tokens),
               outputs,
               buildPath,
             })
