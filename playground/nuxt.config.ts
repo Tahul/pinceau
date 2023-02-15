@@ -31,4 +31,7 @@ export default defineNuxtConfig({
   typescript: {
     includeWorkspace: true,
   },
+  hooks: {
+    'pinceau:options': options => console.log(options),
+  },
 })

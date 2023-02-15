@@ -61,17 +61,13 @@ export type Theme<T> =
     $schema?: Schema
   }
   |
-  (
-    { [K in keyof T]?: T[K] extends DesignToken<ResponsiveToken> ? (T[K]['raw'] | Partial<T[K]['raw']> | DesignToken<Partial<T[K]['raw']>>) : Theme<T[K]> }
-    |
-    { [K in keyof T]?: T[K] extends DesignToken<RawTokenType> ? (T[K]['raw'] | T[K]) : Theme<T[K]> }
-  )
+  { [K in keyof T]?: T[K] extends DesignToken<ResponsiveToken> ? (Partial<T[K]['raw']> | DesignToken<Partial<T[K]['raw']>> | DesignToken) : Theme<T[K]> }
   |
-  (
-    { [K in keyof T]?: T[K] extends DesignToken ? (T[K] | T[K]['raw'] | ResponsiveToken | DesignToken<ResponsiveToken> | DesignToken<T[K]['raw']>) : Theme<T[K]> }
-    |
-    { [K in keyof T]?: Theme<T[K]> }
-  )
+  { [K in keyof T]?: T[K] extends DesignToken ? (T[K]['raw'] | T[K]) : Theme<T[K]> }
+  |
+  { [K in keyof T]?: T[K] extends DesignToken ? (T[K] | T[K]['raw'] | ResponsiveToken | DesignToken<ResponsiveToken> | DesignToken<T[K]['raw']>) : Theme<T[K]> }
+  |
+  { [K in keyof T]?: DesignToken | DesignToken<ResponsiveToken> | ResponsiveToken | RawTokenType | Theme<T[K]> }
 
 /**
  * Reserved keys and extensible configuration type
