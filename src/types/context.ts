@@ -11,7 +11,7 @@ import type { DesignTokens, PinceauOptions } from './'
 export type ConfigOrPaths = (string | PinceauTheme | ConfigLayer)[]
 
 /**
- * 
+ *
  */
 export interface PinceauContext<UserOptions extends PinceauOptions = PinceauOptions> extends PinceauConfigContext<UserOptions>, PinceauVirtualContext {
   env: 'prod' | 'dev'

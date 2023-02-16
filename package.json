@@ -164,6 +164,9 @@
       ]
     }
   },
+  "resolutions": {
+    "esquery": "1.4.0"
+  },
   "release-it": {
     "hooks": {
       "before:init": [
