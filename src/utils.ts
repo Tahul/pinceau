@@ -1,4 +1,6 @@
 import * as transforms from './transforms'
+import * as theme from './theme'
+
 export * from './utils/$tokens'
 export * from './utils/ast'
 export * from './utils/checks'
@@ -14,4 +16,5 @@ export * from './utils/regexes'
 export * from './utils/stringify'
 export * from './utils/theme'
 export * from './utils/vue'
-export { transforms }
+
+export { transforms, theme }

@@ -24,6 +24,7 @@ export default defineNuxtConfig({
     configFileName: 'tokens.config',
     debug: false,
     runtime: true,
+    studio: true,
   },
   colorMode: {
     classSuffix: '',

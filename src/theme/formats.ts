@@ -1,6 +1,6 @@
 import type { Dictionary, Options } from 'style-dictionary-esm'
 import StyleDictionary from 'style-dictionary-esm'
-import { resolveSchema as resolveUntypedSchema } from 'untyped'
+import type { Schema } from 'untyped'
 import type { ColorSchemeModes } from '../types'
 import { walkTokens } from '../utils/data'
 import { astTypes, printAst } from '../utils/ast'
@@ -168,10 +168,8 @@ export const definitionsFull = (definitions: any) => {
 /**
  * Nuxt Studio schema support
  */
-export async function schemaFull(tokensObject) {
-  const schema = await resolveUntypedSchema({ tokensConfig: tokensObject })
-
-  let result = `export const schema = ${JSON.stringify({ properties: (schema.properties as any).tokensConfig, default: (schema.default as any).tokensConfig }, null, 2)} as const\n\n`
+export function schemaFull(schema: Schema) {
+  let result = `export const schema = ${JSON.stringify({ properties: schema?.properties?.tokensConfig || {}, default: (schema?.default as any)?.tokensConfig || {} }, null, 2)} as const\n\n`
 
   result += 'export const GeneratedPinceauThemeSchema = typeof schema\n\n'
 

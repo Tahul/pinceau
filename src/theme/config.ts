@@ -1,16 +1,7 @@
-import { existsSync } from 'fs'
-import fsp from 'node:fs/promises'
-import { resolve } from 'pathe'
-import jiti from 'jiti'
 import type { ViteDevServer } from 'vite'
-import { normalizeConfig } from '../utils/data'
-import { merger } from '../utils/merger'
-import { message } from '../utils/logger'
-import type { ConfigLayer, LoadConfigResult, PinceauConfigContext, PinceauOptions, PinceauTheme, ResolvedConfigLayer } from '../types'
+import type { LoadConfigResult, PinceauConfigContext, PinceauOptions, PinceauTheme } from '../types'
 import { outputFileNames } from '../utils/regexes'
-import { resolveDefinitions } from './definitions'
-
-const extensions = ['.js', '.ts', '.mjs', '.cjs', '.json']
+import { loadLayers } from './layers'
 
 export function usePinceauConfigContext<UserOptions extends PinceauOptions = PinceauOptions>(
   options: UserOptions,
@@ -23,27 +14,28 @@ export function usePinceauConfigContext<UserOptions extends PinceauOptions = Pin
   let resolvedConfig: any = {}
   let ready = reloadConfig()
 
-  function registerConfigWatchers() {
-    if (!sources.length) { return }
-    const viteServer = getViteServer()
-    viteServer.watcher.add(sources)
-    viteServer.watcher.on('change', onConfigChange)
-  }
-
+  /**
+   * Fully reloads the configuration context.
+   */
   async function reloadConfig(newOptions: UserOptions = options): Promise<LoadConfigResult<PinceauTheme>> {
-    const result = await loadConfig(newOptions || options)
+    // Load the new configurations from options
+    const result = await loadLayers(newOptions || options)
 
+    // Update local context from options
     cwd = newOptions?.cwd ?? process.cwd()
     resolvedConfig = result.config
     sources = result.sources
 
+    // Dispatch listeners
     if (dispatchConfigUpdate) { dispatchConfigUpdate(result) }
-
     if (options?.configResolved) { options.configResolved(result) }
 
     return result
   }
 
+  /**
+   * Updates the current cwd of that Pinceau config context.
+   */
   async function updateCwd(newCwd: string) {
     if (newCwd !== cwd) {
       cwd = newCwd
@@ -52,6 +44,9 @@ export function usePinceauConfigContext<UserOptions extends PinceauOptions = Pin
     return await ready
   }
 
+  /**
+   * Triggered when a configuration file has changed.
+   */
   async function onConfigChange(p: string) {
     if (!sources.includes(p)) { return }
 
@@ -73,6 +68,16 @@ export function usePinceauConfigContext<UserOptions extends PinceauOptions = Pin
     }
   }
 
+  /**
+   * Registers the watchers for the current configurations layers.
+   */
+  function registerConfigWatchers() {
+    if (!sources.length) { return }
+    const viteServer = getViteServer()
+    viteServer.watcher.add(sources)
+    viteServer.watcher.on('change', onConfigChange)
+  }
+
   return {
     get ready() {
       return ready
@@ -85,179 +90,5 @@ export function usePinceauConfigContext<UserOptions extends PinceauOptions = Pin
     reloadConfig,
     resolvedConfig,
     registerConfigWatchers,
-  }
-}
-
-export async function loadConfig<U extends PinceauTheme>(
-  {
-    cwd = process.cwd(),
-    configLayers,
-    configFileName = 'tokens.config',
-    definitions = true,
-  }: PinceauOptions,
-): Promise<LoadConfigResult<U>> {
-  const sources = resolveConfigSources({ cwd, configLayers, configFileName })
-
-  /**
-   * loadConfig result
-   */
-  const result: LoadConfigResult<U> = {
-    config: {} as any,
-    definitions: {} as any,
-    sources: [] as string[],
-  }
-
-  /**
-   * Loops through all sources and resolve result object from them.
-   */
-  for (const layer of sources) {
-    const { path, config, definitions: resolvedDefinitions } = await resolveConfigLayer({ cwd, configFileName, definitions }, layer)
-
-    if (path) { result.sources.push(path) }
-
-    if (config) { result.config = merger(config, result.config) as U }
-
-    if (definitions) { result.definitions = Object.assign(result?.definitions || {}, resolvedDefinitions) }
-  }
-
-  return result
-}
-
-export async function loadConfigFile({ path, ext, definitions }: { path: string; ext: string; definitions: boolean }) {
-  const content = await fsp.readFile(path, 'utf-8')
-
-  // Read `.json` configurations
-  if (ext === '.json') {
-    const config = JSON.parse(content)
-    return {
-      config,
-      path,
-    }
-  }
-
-  // Import configuration with JITI
-  const configImport = jiti(path, {
-    interopDefault: true,
-    requireCache: false,
-    esmResolve: true,
-  })(path)
-
-  // Resolve media queries keys
-  let mediaQueriesKeys = ['dark', 'light', 'initial']
-  if (configImport.media && configImport.media.length) {
-    mediaQueriesKeys = [...mediaQueriesKeys, ...Object.keys(configImport.media)]
-  }
-
-  // Cleanup configuration object
-  const config = normalizeConfig(configImport, mediaQueriesKeys, false)
-
-  // Try to resolve tokens definitions
-  let resolvedDefinitions = {}
-  if (definitions) {
-    try { resolvedDefinitions = resolveDefinitions(content, mediaQueriesKeys, path) }
-    catch (e) { return }
-  }
-
-  return {
-    path,
-    definitions: resolvedDefinitions,
-    content,
-    config,
-  }
-}
-
-/**
- * Resolve a safe layers array from configLayers option.
- */
-export function resolveConfigSources(
-  {
-    cwd = process.cwd(),
-    configLayers,
-    configFileName = 'tokens.config',
-  }: PinceauOptions,
-) {
-  let sources: ConfigLayer[] = [
-    {
-      cwd,
-      configFileName,
-    },
-    ...(configLayers as any).reduce(
-      (acc: ConfigLayer[], layerOrPath: PinceauTheme | string | ConfigLayer) => {
-        // Check if layer passed as-is
-        if (typeof layerOrPath === 'object' && ((layerOrPath as ConfigLayer)?.cwd || (layerOrPath as ConfigLayer)?.configFileName || (layerOrPath as ConfigLayer)?.tokens)) {
-          acc.push(layerOrPath as ConfigLayer)
-          return acc
-        }
-
-        // Check if tokens passed as straight object in the array
-        if (typeof layerOrPath === 'object') {
-          acc.push({ tokens: layerOrPath })
-          return acc
-        }
-
-        // Check if the config layer path passed as string in the array
-        if (typeof layerOrPath === 'string') {
-          acc.push({
-            cwd: layerOrPath,
-            configFileName,
-          })
-          return acc
-        }
-
-        return acc
-      },
-      [],
-    ),
-  ].reverse()
-
-  // Dedupe sources
-  sources = [...new Set(sources)]
-
-  return sources
-}
-
-/**
- * Resolves one layer of configuration
- */
-export async function resolveConfigLayer(
-  {
-    configFileName,
-    cwd,
-    definitions,
-  }: PinceauOptions,
-  layer: ConfigLayer,
-): Promise<ResolvedConfigLayer> {
-  const empty = (path = undefined) => ({ path, config: {} as any, schema: {}, definitions: {} })
-
-  let path = ''
-
-  // Resolve config path from layer
-  if (typeof layer === 'string') {
-    path = resolve(layer)
-  }
-  else if (typeof layer === 'object') {
-    path = resolve(layer?.cwd || cwd, layer?.configFileName || configFileName)
-  }
-  else { return empty() }
-
-  let filePath = ''
-  let ext
-  extensions.some((_ext) => {
-    if (existsSync(path + _ext)) {
-      filePath = path + _ext
-      ext = _ext
-      return true
-    }
-    return false
-  })
-
-  if (!filePath) { return empty() }
-
-  try {
-    return await loadConfigFile({ path: filePath, ext, definitions }) as ResolvedConfigLayer
-  }
-  catch (e) {
-    message('CONFIG_RESOLVE_ERROR', [filePath, e])
-    return empty(filePath)
   }
 }

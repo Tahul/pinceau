@@ -1,8 +1,6 @@
-import fsp from 'node:fs/promises'
-import fs from 'node:fs'
 import type { Core as Instance } from 'style-dictionary-esm'
 import StyleDictionary from 'style-dictionary-esm'
-import { join } from 'pathe'
+import { resolveSchema as resolveUntypedSchema } from 'untyped'
 import { flattenTokens } from '../utils'
 import type { PinceauOptions, ThemeGenerationOutput } from '../types'
 import { message } from '../utils/logger'
@@ -12,8 +10,15 @@ import { cssFull, definitionsFull, schemaFull, tsFull, utilsFull } from './forma
 export async function generateTheme(
   tokens: any,
   definitions: any,
-  { outputDir: buildPath, colorSchemeMode, studio, definitions: definitionsSupport, utilsImports }: PinceauOptions,
+  {
+    outputDir: buildPath,
+    colorSchemeMode,
+    studio: studioSupport,
+    definitions: definitionsSupport,
+    utilsImports,
+  }: PinceauOptions,
   silent = true,
+  write = true,
 ): Promise<ThemeGenerationOutput> {
   let styleDictionary: Instance = StyleDictionary
 
@@ -42,10 +47,17 @@ export async function generateTheme(
     })
   }
 
+  if (studioSupport) {
+    files.push({
+      destination: 'schema.ts',
+      format: 'pinceau/schema',
+    })
+  }
+
   // Transforms used
   const transforms = [
-    // 'size/px',
-    // 'color/hex',
+    'size/px',
+    'color/hex',
     'pinceau/name',
     'pinceau/variable',
     'pinceau/responsiveTokens',
@@ -162,6 +174,17 @@ export async function generateTheme(
     },
   })
 
+  // schema.ts
+  const schema = await resolveUntypedSchema({ tokensConfig: tokens })
+  console.log(JSON.stringify(schema, null, 2))
+  styleDictionary.registerFormat({
+    name: 'pinceau/schema',
+    formatter() {
+      outputs.schema = schemaFull(schema)
+      return outputs.schema
+    },
+  })
+
   // index.ts
   styleDictionary.registerFormat({
     name: 'pinceau/typescript',
@@ -190,6 +213,7 @@ export async function generateTheme(
         transformGroup: 'pinceau',
         buildPath,
         files,
+        write,
       },
 
       done: {
@@ -217,24 +241,6 @@ export async function generateTheme(
         styleDictionary.buildAllPlatforms()
       },
     )
-
-    // schema.ts ; enabled only when Studio detected
-    if (studio) {
-      try {
-        const schema = await schemaFull(tokens)
-
-        const schemaPath = join(buildPath, 'schema.ts')
-
-        if (fs.existsSync(schemaPath)) { await fsp.unlink(schemaPath) }
-
-        await fsp.writeFile(schemaPath, schema, 'utf-8')
-
-        result.outputs.schema = schema
-      }
-      catch (e) {
-        message('SCHEMA_BUILD_ERROR', [e])
-      }
-    }
   }
   catch (e) {
     message('CONFIG_BUILD_ERROR', [e])

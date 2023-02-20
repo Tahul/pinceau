@@ -13,10 +13,22 @@ export interface ConfigLayer {
 }
 
 /**
+ * A config file import content.
+ *
+ * Includes both the content of the file as string and its evalued content as import.
+ */
+export interface ConfigFileImport {
+  config: any
+  content: string
+  path: string
+}
+
+/**
  * A layer of configuration that has been resolved before being loaded.
  */
 export interface ResolvedConfigLayer<T = PinceauTheme> {
   path: string | undefined
+  content: string
   definitions: { [key: string]: any }
   config: T
 }
