@@ -15,9 +15,9 @@ importers:
       '@types/chroma-js': ^2.4.0
       '@types/node': ^18.14.0
       '@unocss/reset': ^0.49.7
-      '@volar/vue-language-core': ^1.1.3
+      '@volar/vue-language-core': ^1.1.4
       '@vue/compiler-dom': ^3.2.47
-      '@vue/test-utils': ^2.2.10
+      '@vue/test-utils': ^2.3.0
       acorn: ^8.8.2
       chroma-js: ^2.4.2
       consola: ^2.15.3
@@ -46,13 +46,13 @@ importers:
       recast: ^0.22.0
       release-it: ^15.6.0
       rimraf: ^4.1.2
-      rollup: ^3.17.1
+      rollup: ^3.17.2
       scule: ^1.0.0
-      style-dictionary-esm: ^1.2.0
+      style-dictionary-esm: ^1.3.0
       typescript: ^4.9.5
       unbuild: ^1.1.2
       unplugin: ^1.1.0
-      vite: ^4.1.2
+      vite: ^4.1.3
       vite-plugin-inspect: ^0.7.15
       vitest: ^0.28.5
       vue: ^3.2.47
@@ -75,7 +75,7 @@ importers:
       postcss-nested: 6.0.1
       recast: 0.22.0
       scule: 1.0.0
-      style-dictionary-esm: 1.2.0
+      style-dictionary-esm: 1.3.0
       unbuild: 1.1.2
       unplugin: 1.1.0
     devDependencies:
@@ -8533,7 +8533,7 @@ packages:
       postcss-nested: 6.0.1
       recast: 0.22.0
       scule: 1.0.0
-      style-dictionary-esm: 1.2.0
+      style-dictionary-esm: 1.3.0
       unbuild: 1.1.2
       unplugin: 1.1.0
     transitivePeerDependencies:
@@ -10212,8 +10212,8 @@ packages:
       acorn: 8.8.2
     dev: true
 
-  /style-dictionary-esm/1.2.0:
-    resolution: {integrity: sha512-kOMB90UCMlXfYPgp0rB0L0P1FWJHQvNR3FIhYYDpQJhSI6q7608DVqLJXQzQG7CADM4SpaP10hlvr1t90TgWmw==}
+  /style-dictionary-esm/1.3.0:
+    resolution: {integrity: sha512-+n+8bSVwpQO9k07XCXAC45R8e2Sizza7T9w/kdXjB+/A1S+040Yf+2v+eG09WBlUVQzgl23NLgZRSZTKDHbkIA==}
     engines: {node: '>=12.0.0'}
     hasBin: true
     dependencies:
@@ -10221,7 +10221,6 @@ packages:
       change-case: 4.1.2
       commander: 9.5.0
       consola: 2.15.3
-      fs-extra: 11.1.0
       glob: 8.1.0
       jiti: 1.17.1
       json5: 2.2.3
