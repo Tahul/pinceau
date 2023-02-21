@@ -15,7 +15,7 @@ importers:
       '@types/chroma-js': ^2.4.0
       '@types/node': ^18.14.0
       '@unocss/reset': ^0.49.7
-      '@volar/vue-language-core': ^1.1.4
+      '@volar/vue-language-core': ^1.1.5
       '@vue/compiler-dom': ^3.2.47
       '@vue/test-utils': ^2.3.0
       acorn: ^8.8.2
@@ -48,7 +48,7 @@ importers:
       rimraf: ^4.1.2
       rollup: ^3.17.2
       scule: ^1.0.0
-      style-dictionary-esm: ^1.3.0
+      style-dictionary-esm: ^1.3.1
       typescript: ^4.9.5
       unbuild: ^1.1.2
       unplugin: ^1.1.0
@@ -59,7 +59,7 @@ importers:
       webpack: ^5.75.0
     dependencies:
       '@unocss/reset': 0.49.7
-      '@volar/vue-language-core': 1.1.4
+      '@volar/vue-language-core': 1.1.5
       acorn: 8.8.2
       chroma-js: 2.4.2
       consola: 2.15.3
@@ -75,7 +75,7 @@ importers:
       postcss-nested: 6.0.1
       recast: 0.22.0
       scule: 1.0.0
-      style-dictionary-esm: 1.3.0
+      style-dictionary-esm: 1.3.1
       unbuild: 1.1.2
       unplugin: 1.1.0
     devDependencies:
@@ -2459,9 +2459,21 @@ packages:
     resolution: {integrity: sha512-aIktWe9Zg0M+u/RIXHCuL+IoLRHTrpsbTib8olrg4etlurHDXahoVhoEnH9wmlliray0iigIo2z5vwueYInp3g==}
     dependencies:
       '@volar/source-map': 1.2.0-alpha.16
+    dev: true
+
+  /@volar/language-core/1.2.0-alpha.17:
+    resolution: {integrity: sha512-nTJfag+EsjWPaefp7JxQ3uJIe0pLdTEfR1ZmaJgn4yKA2FkturuLdlHk3Nj3HjhAhoRDfF7S1BZFDnMjZCAegw==}
+    dependencies:
+      '@volar/source-map': 1.2.0-alpha.17
 
   /@volar/source-map/1.2.0-alpha.16:
     resolution: {integrity: sha512-/AK3VqnFqONd221COI2ZnEvfgBulfoQkjA/ZjPOXpsOkWri99TLcfZY/NTQRytp7Hx6EP/1p1DDeyGuMCUYjgA==}
+    dependencies:
+      muggle-string: 0.2.2
+    dev: true
+
+  /@volar/source-map/1.2.0-alpha.17:
+    resolution: {integrity: sha512-g0NO3HWSo5PaY4Vv8MuQ9qhIwyxCWFWI69b0fuwdXsHo9gJ4Ngf9BKgg7U0h3b9XtmNnj1efIpgIK1rtwC+nyw==}
     dependencies:
       muggle-string: 0.2.2
 
@@ -2470,6 +2482,20 @@ packages:
     dependencies:
       '@volar/language-core': 1.2.0-alpha.16
       '@volar/source-map': 1.2.0-alpha.16
+      '@vue/compiler-dom': 3.2.47
+      '@vue/compiler-sfc': 3.2.47
+      '@vue/reactivity': 3.2.47
+      '@vue/shared': 3.2.47
+      minimatch: 6.2.0
+      muggle-string: 0.2.2
+      vue-template-compiler: 2.7.14
+    dev: true
+
+  /@volar/vue-language-core/1.1.5:
+    resolution: {integrity: sha512-HpouTNZuwVX+DicGik6y+g9m2fI0Xvng9K9Wh8xZCXzMFEhvjsxsbtWVmLSgnSV6mgyF8YTM3R6n/buR6kYBWA==}
+    dependencies:
+      '@volar/language-core': 1.2.0-alpha.17
+      '@volar/source-map': 1.2.0-alpha.17
       '@vue/compiler-dom': 3.2.47
       '@vue/compiler-sfc': 3.2.47
       '@vue/reactivity': 3.2.47
@@ -3648,6 +3674,10 @@ packages:
     resolution: {integrity: sha512-Fu4hJdvzeylCfQPp9SGWidpzrMs7tTrlu6Vb8XGaRGck8QSNZJJp538Wrb60Lax4fPwR64ViY468OIUTbRlGZg==}
     dev: true
 
+  /commander/10.0.0:
+    resolution: {integrity: sha512-zS5PnTI22FIRM6ylNW8G4Ap0IEOyk62fhLSD0+uHRT9McRCLGpkVNvao4bjimpK/GShynyQkFFxHhwMcETmduA==}
+    engines: {node: '>=14'}
+
   /commander/2.20.3:
     resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==}
     dev: true
@@ -3661,10 +3691,6 @@ packages:
     resolution: {integrity: sha512-OkTL9umf+He2DZkUq8f8J9of7yL6RJKI24dVITBmNfZBmri9zYZQrKkuXiKhyfPSu8tUhnVBB1iKXevvnlR4Ww==}
     engines: {node: '>= 12'}
     dev: true
-
-  /commander/9.5.0:
-    resolution: {integrity: sha512-KRs7WVDKg86PWiuAqhDrAQnTXZKraVcCc6vFdL14qrZ/DcWwuRo7VoiYXalXO7S5GKpqYiVEwCbgFDfxNHKJBQ==}
-    engines: {node: ^12.20.0 || >=14}
 
   /commondir/1.0.1:
     resolution: {integrity: sha512-W9pAhw0ja1Edb5GVdIF1mjZw/ASI0AlShXM83UUGe2DVr5TdAPEA1OA8m/g8zWp9x6On7gqufY+FatDbC3MDQg==}
@@ -8517,7 +8543,7 @@ packages:
     resolution: {integrity: sha512-QQwmaR7NdMBl0k8ok+Vw2kKl32Gv9nO6JindHQAWsSz/1U68o1L1iriH7u4GXE9GLm0DB8DT6Mn83G2LPd1Pbg==}
     dependencies:
       '@unocss/reset': 0.49.7
-      '@volar/vue-language-core': 1.1.4
+      '@volar/vue-language-core': 1.1.5
       acorn: 8.8.2
       chroma-js: 2.4.2
       consola: 2.15.3
@@ -8533,7 +8559,7 @@ packages:
       postcss-nested: 6.0.1
       recast: 0.22.0
       scule: 1.0.0
-      style-dictionary-esm: 1.3.0
+      style-dictionary-esm: 1.3.1
       unbuild: 1.1.2
       unplugin: 1.1.0
     transitivePeerDependencies:
@@ -10212,14 +10238,14 @@ packages:
       acorn: 8.8.2
     dev: true
 
-  /style-dictionary-esm/1.3.0:
-    resolution: {integrity: sha512-+n+8bSVwpQO9k07XCXAC45R8e2Sizza7T9w/kdXjB+/A1S+040Yf+2v+eG09WBlUVQzgl23NLgZRSZTKDHbkIA==}
+  /style-dictionary-esm/1.3.1:
+    resolution: {integrity: sha512-G8Ae4Nx4kXwYgowaFSUywEeC6e6EypA0iLRnSHiJBZiGxqx8QPaHveuC1yVqTSJQMAae2aJZs5Y4GovuXdtcSQ==}
     engines: {node: '>=12.0.0'}
     hasBin: true
     dependencies:
       chalk: 4.1.2
       change-case: 4.1.2
-      commander: 9.5.0
+      commander: 10.0.0
       consola: 2.15.3
       glob: 8.1.0
       jiti: 1.17.1

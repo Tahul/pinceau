@@ -176,7 +176,6 @@ export async function generateTheme(
 
   // schema.ts
   const schema = await resolveUntypedSchema({ tokensConfig: tokens })
-  console.log(JSON.stringify(schema, null, 2))
   styleDictionary.registerFormat({
     name: 'pinceau/schema',
     formatter() {
