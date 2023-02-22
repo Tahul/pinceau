@@ -5,7 +5,6 @@ import type { ColorSchemeModes } from '../types'
 import { walkTokens } from '../utils/data'
 import { astTypes, printAst } from '../utils/ast'
 import { flattenTokens, objectPaths } from '../utils'
-import { responsiveMediaQueryRegex } from '../utils/regexes'
 import { isSafeConstName } from '../utils/checks'
 import { message } from '../utils/logger'
 
@@ -144,14 +143,7 @@ export const cssFull = (dictionary: Dictionary, options: Options, responsiveToke
       }
 
       // Write responsive tokens
-      if (responsiveSelector.match(responsiveMediaQueryRegex)) {
-        // Use raw selector
-        css += `@media { ${responsiveSelector || ''} { --pinceau-mq: ${key}; ${formattedContent}}} `
-      }
-      else {
-        // Wrap :root with media query
-        css += `@media ${responsiveSelector || ''} { :root { --pinceau-mq: ${key}; ${formattedContent}}}`
-      }
+      css += `${responsiveSelector ? `${responsiveSelector} { ` : ''}:root { --pinceau-mq: ${key}; ${formattedContent}}${responsiveSelector ? '}' : ''}`
     },
   )
 
