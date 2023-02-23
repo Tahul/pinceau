@@ -53,7 +53,8 @@
     "./playground/**/*",
     "./test/**/*",
     "./src/types/vue-shim.d.ts",
-    "./docs"
+    "./docs",
+    "./build"
   ],
   "vueCompilerOptions": {
     "plugins": [

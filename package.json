@@ -73,7 +73,9 @@
     "volar"
   ],
   "scripts": {
-    "build": "unbuild",
+    "build": "jiti build/base.ts && jiti build/browser.ts",
+    "build:browser": "jiti build/browser.ts",
+    "build:base": "jiti build/base.ts",
     "dev": "pnpm -c playground run prepare && pnpm -C playground run dev",
     "lint": "eslint . --cache",
     "lint:fix": "pnpm run lint --fix",
@@ -141,6 +143,7 @@
     "release-it": "^15.6.0",
     "rimraf": "^4.1.2",
     "rollup": "^3.17.2",
+    "tsup": "^6.6.3",
     "typescript": "^4.9.5",
     "vite": "^4.1.4",
     "vite-plugin-inspect": "^0.7.15",

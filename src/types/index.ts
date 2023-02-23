@@ -22,48 +22,58 @@ export interface PinceauOptions {
    * @default process.cwd()
    */
   cwd?: string
+
   /**
    * The path of your configuration file.
    */
   configLayers?: ConfigOrPaths
+
   /**
    * The path of your configuration file.
    *
    * @default 'tokens.config'
    */
   configFileName?: string
+
   /**
    * A callback called each time your config gets resolved.
    */
   configResolved?: (config: LoadConfigResult) => void
+
   /**
    * A callback called each time your config gets built.
    */
   configBuilt?: (config: ThemeGenerationOutput) => void
+
   /**
    * The directry in which you store your design tokens.
    *
    * @default 'tokens'
    */
   tokensDir?: string
+
   /**
    * The directory in which you want to output the built version of your configuration.
    */
   outputDir?: string
+
   /**
    * Imports the default CSS reset in the project.
    *
    * @default true
    */
   preflight?: boolean | 'tailwind' | 'antfu' | 'eric-meyer' | 'normalize'
+
   /**
    * Excluded transform paths.
    */
   excludes?: string[]
+
   /**
    * Included transform paths.
    */
   includes?: string[]
+
   /**
    * Toggle follow of symbolic links in glob.
    *
@@ -72,6 +82,7 @@ export interface PinceauOptions {
    * Enabling might be useful when using `link`.
    */
   followSymbolicLinks?: boolean
+
   /**
    * Toggles color .{dark|light} global classes.
    *
@@ -81,30 +92,37 @@ export interface PinceauOptions {
    * @default 'class'
    */
   colorSchemeMode?: ColorSchemeModes
+
   /**
    * Toggles the development mode of Pinceau.
    */
   dev?: boolean
+
   /**
    * Enables extra logging on transform failures.
    */
   debug?: boolean | 2
+
   /**
    * Enables support for nuxt-component-meta.
    */
   componentMetaSupport?: boolean
+
   /**
    * Completely enable or disable Pinceau runtime features.
    */
   runtime?: boolean
+
   /**
    * Support for @nuxthq/studio module.
    */
   studio?: boolean
+
   /**
    * Support for definitions.ts ; improving experience for Pinceau IntelliSense.
    */
   definitions?: boolean
+
   /**
    * Imports to append before the `utils.ts` declarations.
    *

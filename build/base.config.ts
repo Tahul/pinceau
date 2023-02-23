@@ -17,12 +17,12 @@ export default defineBuildConfig({
   ],
   hooks: {
     'build:done': async () => {
-      await mkdir(resolve('./dist/runtime'), { recursive: true })
-      await copyFile(resolve('./src/runtime/schema.server.mjs'), resolve('./dist/runtime/schema.server.mjs'))
+      await mkdir(resolve('../dist/runtime'), { recursive: true })
+      await copyFile(resolve('../src/runtime/schema.server.mjs'), resolve('../dist/runtime/schema.server.mjs'))
     },
   },
   failOnWarn: false,
-  clean: true,
+  clean: false,
   declaration: true,
   rollup: {
     emitCJS: true,
