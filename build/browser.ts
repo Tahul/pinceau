@@ -1,3 +1,4 @@
+import { resolve } from 'path'
 import { build } from 'tsup'
 
 build({
@@ -13,6 +14,9 @@ build({
     options.external.push('vue')
     options.external.push('jiti')
     options.splitting = false
+    options.alias = {
+      crypto: resolve(__dirname, './crypto.js'),
+    }
   },
   noExternal: [
     'style-dictionary-esm',
