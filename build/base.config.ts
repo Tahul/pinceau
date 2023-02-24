@@ -1,4 +1,4 @@
-import { copyFile, mkdir } from 'node:fs/promises'
+import { copyFile, mkdir } from 'fs/promises'
 import { createResolver } from '@nuxt/kit'
 import { defineBuildConfig } from 'unbuild'
 

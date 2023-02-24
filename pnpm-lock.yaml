@@ -19,6 +19,7 @@ importers:
       '@vue/compiler-dom': ^3.2.47
       '@vue/test-utils': ^2.3.0
       acorn: ^8.8.2
+      buffer: ^6.0.3
       chroma-js: ^2.4.2
       consola: ^2.15.3
       csstype: ^3.1.1
@@ -52,6 +53,7 @@ importers:
       tsup: ^6.6.3
       typescript: ^4.9.5
       unbuild: ^1.1.2
+      unenv: ^1.2.1
       unplugin: ^1.1.0
       vite: ^4.1.4
       vite-plugin-inspect: ^0.7.15
@@ -89,6 +91,7 @@ importers:
       '@types/node': 18.14.0
       '@vue/compiler-dom': 3.2.47
       '@vue/test-utils': 2.3.0_vue@3.2.47
+      buffer: 6.0.3
       eslint: 8.34.0
       esno: 0.16.3
       fast-glob: 3.2.12
@@ -106,6 +109,7 @@ importers:
       rollup: 3.17.2
       tsup: 6.6.3_typescript@4.9.5
       typescript: 4.9.5
+      unenv: 1.2.1
       vite: 4.1.4_@types+node@18.14.0
       vite-plugin-inspect: 0.7.15_rollup@3.17.2+vite@4.1.4
       vitest: 0.28.5_jsdom@21.1.0
@@ -7902,7 +7906,7 @@ packages:
       source-map-support: 0.5.21
       std-env: 3.3.2
       ufo: 1.1.0
-      unenv: 1.2.0
+      unenv: 1.2.1
       unimport: 2.2.4_rollup@3.17.2
       unstorage: 1.1.5
     transitivePeerDependencies:
@@ -8451,7 +8455,7 @@ packages:
       strip-literal: 1.0.1
       ufo: 1.1.0
       unctx: 2.1.2
-      unenv: 1.2.0
+      unenv: 1.2.1
       unhead: 1.0.22
       unimport: 2.2.4_rollup@3.17.2
       unplugin: 1.1.0
@@ -11855,7 +11859,7 @@ packages:
       happy-dom: 8.6.0
       magic-string: 0.27.0
       ofetch: 1.0.1
-      unenv: 1.2.0
+      unenv: 1.2.1
       vitest: 0.28.5_itn5mhdgoxdt6nk7zeh5bmcq5a
       vue: 3.2.47
     transitivePeerDependencies:

@@ -1,4 +1,4 @@
-import { existsSync } from 'node:fs'
+import { existsSync } from 'fs'
 import { join, resolve } from 'pathe'
 import glob from 'fast-glob'
 import { addPlugin, addPluginTemplate, addPrerenderRoutes, createResolver, defineNuxtModule, resolveAlias, resolveModule } from '@nuxt/kit'

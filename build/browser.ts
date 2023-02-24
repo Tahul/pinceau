@@ -1,9 +1,12 @@
-import { resolve } from 'path'
 import { build } from 'tsup'
+import { env, node, nodeless } from 'unenv'
+
+const { external } = env(nodeless, node)
 
 build({
   minify: false,
   treeshake: false,
+  platform: 'browser',
   format: ['esm', 'iife'],
   entry: ['src/index.ts', 'src/utils.ts', 'src/runtime.ts'],
   outDir: 'dist/browser',
@@ -13,10 +16,8 @@ build({
     options.external.push('@vue/*')
     options.external.push('vue')
     options.external.push('jiti')
+    options.external.push(...external)
     options.splitting = false
-    options.alias = {
-      crypto: resolve(__dirname, './crypto.js'),
-    }
   },
   noExternal: [
     'style-dictionary-esm',

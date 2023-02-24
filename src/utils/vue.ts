@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs'
+import { readFileSync } from 'fs'
 import { transformCssFunction, transformStyle } from '../transforms'
 import type { PinceauContext, VueQuery } from '../types'
 import { parseVueComponent } from './ast'
