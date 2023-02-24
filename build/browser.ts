@@ -3,7 +3,7 @@ import { build } from 'tsup'
 build({
   minify: false,
   treeshake: false,
-  format: ['cjs', 'iife'],
+  format: ['esm', 'iife'],
   entry: ['src/index.ts', 'src/utils.ts', 'src/runtime.ts'],
   outDir: 'dist/browser',
   clean: true,
@@ -12,6 +12,7 @@ build({
     options.external.push('@vue/*')
     options.external.push('vue')
     options.external.push('jiti')
+    options.splitting = false
   },
   noExternal: [
     'style-dictionary-esm',
