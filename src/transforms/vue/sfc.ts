@@ -171,7 +171,7 @@ export function transformComputedStyles(code: string, computedStyles: any): stri
     .entries(computedStyles)
     .map(
       ([key, styleFunction]) => {
-        return `\nconst ${key} = computed(() => ((props = __$pProps, utils = __$pUtils) => ${styleFunction})())\n`
+        return `\nconst ${key} = computed(() => ((props = __$pProps) => ${styleFunction})())\n`
       },
     ).join('\n') + code
 
@@ -179,21 +179,15 @@ export function transformComputedStyles(code: string, computedStyles: any): stri
 }
 
 export function transformAddRuntimeImports(code: string): string {
-  code = `\nimport { usePinceauRuntime, utils as __$pUtils } from 'pinceau/runtime'\n${code}`
+  code = `import { usePinceauRuntime } from 'pinceau/runtime'\n${code}`
 
-  // TODO: Improve these imports
-  if (!code.match(/reactive\(/gm)) {
-    code = `\nimport { reactive } from 'vue'\n${code}`
-  }
-  if (!code.match(/computed\(/gm)) {
-    code = `\nimport { computed } from 'vue'\n${code}`
-  }
-  if (!code.match(/getCurrentInstance\(/gm)) {
-    code = `\nimport { getCurrentInstance } from 'vue'\n${code}`
-  }
-  if (!code.match(/ref\(/gm)) {
-    code = `\nimport { ref } from 'vue'\n${code}`
-  }
+  // Handle necessary Vue imports
+  const vueImports = []
+  if (!code.match(/reactive\(/gm)) { vueImports.push('reactive') }
+  if (!code.match(/computed\(/gm)) { vueImports.push('computed') }
+  if (!code.match(/getCurrentInstance\(/gm)) { vueImports.push('getCurrentInstance') }
+  if (!code.match(/ref\(/gm)) { vueImports.push('ref') }
+  if (vueImports.length) { code = `import { ${vueImports.join(', ')} } from 'vue'\n${code}` }
 
   // Resolve defineProps reference or add it
   const { propsKey, code: _code } = transformAddPropsKey(code)
@@ -217,9 +211,9 @@ export function transformFinishRuntimeSetup(
   newScriptSetup += [
     `\n${(hasVariants || hasComputedStyles) ? 'const { $pinceau } = ' : ''}`,
     'usePinceauRuntime(',
-    'computed(() => __$pProps),',
+    '__$pProps,',
     `${hasVariants ? '__$pVariants' : 'undefined'},`,
-    `${hasComputedStyles ? `ref({ ${Object.keys(computedStyles).map(key => `${key}`).join(',')} })` : 'undefined'}`,
+    `${hasComputedStyles ? `{ ${Object.keys(computedStyles).map(key => `${key}`).join(',')} }` : 'undefined'}`,
     ') \n',
   ].join('')
 

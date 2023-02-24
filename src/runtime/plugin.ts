@@ -1,7 +1,7 @@
 import type { ComputedRef, Plugin, Ref } from 'vue'
 import { computed, getCurrentInstance, ref } from 'vue'
 import { nanoid } from 'nanoid'
-import type { PinceauRuntimePluginOptions } from 'pinceau/types'
+import type { PinceauRuntimePluginOptions, Variants } from 'pinceau/types'
 import { usePinceauRuntimeSheet } from './features/stylesheet'
 import { usePinceauRuntimeIds } from './ids'
 import { usePinceauThemeSheet } from './features/theme'
@@ -45,9 +45,9 @@ export const plugin: Plugin = {
      * Will be automatically added to components that use one of the Pinceau runtime features.
      */
     function usePinceauRuntime(
-      props: ComputedRef<any>,
-      variants: Ref<any>,
-      computedStyles: Ref<any>,
+      props: any = {},
+      variants: Variants,
+      computedStyles: { [key: string]: ComputedRef },
     ) {
       // Current component instance
       const instance = getCurrentInstance()
@@ -73,17 +73,17 @@ export const plugin: Plugin = {
       const ids = usePinceauRuntimeIds(instance, classes, dev)
 
       // Computed styles setup
-      if (computedStyles && computedStyles?.value && Object.keys(computedStyles.value).length > 0) { usePinceauComputedStyles(ids, computedStyles, runtimeSheet, loc) }
+      if (computedStyles && Object.keys(computedStyles).length > 0) { usePinceauComputedStyles(ids, computedStyles, runtimeSheet, loc) }
 
       // Variants setup
       let dynamicVariantClasses: Ref<string[]>
-      if (variants && variants?.value && Object.keys(variants.value).length > 0) {
+      if (variants && Object.keys(variants).length > 0) {
         const { variantsClasses } = usePinceauVariants(ids, variants, props, runtimeSheet, classes, loc)
         dynamicVariantClasses = variantsClasses
       }
 
       // CSS Prop setup
-      if (props.value.css && Object.keys(props.value.css).length > 0) { usePinceauCssProp(ids, props, runtimeSheet, loc) }
+      if (props?.css && Object.keys(props?.css).length > 0) { usePinceauCssProp(ids, props, runtimeSheet, loc) }
 
       return {
         $pinceau: computed(() => `${classes.value.v} ${classes.value.c} ${dynamicVariantClasses?.value?.join(' ')}`),

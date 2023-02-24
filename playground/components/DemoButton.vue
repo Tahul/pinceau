@@ -56,7 +56,7 @@ css({
       },
       md: {
         span: {
-          padding: '{space.16} {space.20}'
+          padding: '{space.12} {space.20}'
         }
       }
     }

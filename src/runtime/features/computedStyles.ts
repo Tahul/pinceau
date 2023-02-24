@@ -1,19 +1,19 @@
 import { kebabCase } from 'scule'
-import type { ComputedRef, Ref } from 'vue'
+import type { ComputedRef } from 'vue'
 import { onScopeDispose, unref, watch } from 'vue'
 import type { PinceauRuntimeIds } from '../../types'
 import type { PinceauRuntimeSheet } from './stylesheet'
 
 export function usePinceauComputedStyles(
   ids: ComputedRef<PinceauRuntimeIds>,
-  computedStyles: Ref<any>,
+  computedStyles: { [key: string]: ComputedRef },
   sheet: PinceauRuntimeSheet,
   loc: any,
 ) {
   let rule: CSSRule = sheet.hydratableRules?.[ids.value.uid]?.c
 
   watch(
-    computedStyles,
+    () => computedStyles,
     (newComputedStyles) => {
       newComputedStyles = computedStylesToDeclaration(ids.value, newComputedStyles)
       rule = sheet.pushDeclaration(

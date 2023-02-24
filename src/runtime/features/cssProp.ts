@@ -5,12 +5,12 @@ import type { PinceauRuntimeSheet } from './stylesheet'
 
 export function usePinceauCssProp(
   ids: ComputedRef<PinceauRuntimeIds>,
-  props: ComputedRef<any>,
+  props: any,
   sheet: PinceauRuntimeSheet,
   loc: any,
 ) {
   let rule: CSSRule = sheet.hydratableRules?.[ids.value.uid]?.p
-  const css = computed(() => props.value?.css)
+  const css = computed(() => props?.css)
 
   watch(
     css,
