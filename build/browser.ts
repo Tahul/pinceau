@@ -2,7 +2,8 @@ import { build } from 'tsup'
 
 build({
   minify: false,
-  format: 'iife',
+  treeshake: false,
+  format: ['cjs', 'iife'],
   entry: ['src/index.ts', 'src/utils.ts', 'src/runtime.ts'],
   outDir: 'dist/browser',
   clean: true,
@@ -10,5 +11,21 @@ build({
     options.external = options.external ?? []
     options.external.push('@vue/*')
     options.external.push('vue')
+    options.external.push('jiti')
   },
+  noExternal: [
+    'style-dictionary-esm',
+    'nanoid',
+    'scule',
+    'recast',
+    'ohash',
+    'scule',
+    'pathe',
+    'defu',
+    'postcss-nested',
+    'postcss-custom-properties',
+    'postcss-dark-theme-class',
+    'consola',
+    'acorn',
+  ],
 }).then(() => console.log('Build completed (browser).'))
