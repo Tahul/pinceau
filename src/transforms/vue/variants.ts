@@ -23,7 +23,7 @@ export function transformVariants(code = '', variants: any = {}, isTs: boolean):
     {},
   )
 
-  code += `\nconst __$pVariants = ${JSON.stringify(sanitizedVariants)}\n`
+  code += `const __$pVariants = ${JSON.stringify(sanitizedVariants)}\n`
 
   if (variantsProps) { code = pushVariantsProps(code, variantsProps) }
 
@@ -61,7 +61,7 @@ export function pushVariantsProps(code: string, variantsProps: any) {
 }
 
 /**
- * Resolve a Vue component props object from css() variants.
+ * Resolve a Vue component props object from css() variant.
  */
 export function resolveVariantsProps(variants, isTs: boolean) {
   const props = {}
@@ -105,24 +105,18 @@ export function castVariantsPropsAst(ast: ASTNode) {
     ast,
     {
       visitObjectProperty(path) {
+        const key = path.value?.key?.value
         // Cast `type` string
-        if (path.value?.key?.value === 'type') { path.value.value = expressionToAst(path.value.value.value) }
+        if (key === 'type') { path.value.value = expressionToAst(path.value.value.value) }
         // Cast `validator` string
-        if (path.value?.key?.value === 'validator') { path.value.value = expressionToAst(path.value.value.value) }
+        if (key === 'validator') { path.value.value = expressionToAst(path.value.value.value) }
         // Cast required & default to `{value} as const`
         if (
-          path.value?.key?.value === 'required'
-          || path.value?.key?.value === 'default'
+          key === 'required'
+          || key === 'default'
         ) {
-          // Resolve if value is JSON (and not a string)
-          let isJSONLike
-          try { isJSONLike = !!(JSON.parse(path.value.value.value).toString()) }
-          catch (e) {}
-          path.value.value = expressionToAst(
-            isJSONLike
-              ? `${path.value.value.value} as const`
-              : `\`${path.value.value.value}\` as const`,
-          )
+          const printedAst = printAst(path.value.value).code
+          path.value.value = expressionToAst(`${printedAst} as const`)
         }
         return this.traverse(path)
       },

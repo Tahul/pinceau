@@ -7,8 +7,8 @@ build({
   minify: false,
   treeshake: false,
   platform: 'browser',
-  format: ['esm', 'iife'],
-  entry: ['src/index.ts', 'src/utils.ts', 'src/runtime.ts'],
+  format: ['esm'],
+  entry: ['src/index.ts', 'src/utils.ts', 'src/runtime.ts', 'src/volar.ts'],
   outDir: 'dist/browser',
   clean: true,
   esbuildOptions: (options) => {
@@ -16,6 +16,7 @@ build({
     options.external.push('@vue/*')
     options.external.push('vue')
     options.external.push('jiti')
+    options.external.push('@volar/*')
     options.external.push(...external)
     options.splitting = false
   },

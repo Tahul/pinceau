@@ -85,9 +85,7 @@ export const plugin: Plugin = {
       // CSS Prop setup
       if (props?.css && Object.keys(props?.css).length > 0) { usePinceauCssProp(ids, props, runtimeSheet, loc) }
 
-      return {
-        $pinceau: computed(() => `${classes.value.v} ${classes.value.c} ${dynamicVariantClasses?.value?.join(' ')}`),
-      }
+      return { $pinceau: computed(() => [classes.value.v, classes.value.c, dynamicVariantClasses?.value?.join(' ')].join(' ')) }
     }
 
     // Install global variables, expose `runtimeSheet.toString()` for SSR

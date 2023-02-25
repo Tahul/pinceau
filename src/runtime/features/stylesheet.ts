@@ -49,17 +49,22 @@ export function usePinceauRuntimeSheet(
 
     // Runtime stylesheet injection
     if (global && global.document) {
+      const fullId = `pinceau-runtime${appId ? `-${appId}` : ''}`
       const doc = global.document
 
-      // Get hydratable stylesheet
-      hydratableSheet = doc.querySelector(`style#pinceau-runtime-hydratable${appId ? `-${appId}` : ''}`) as HTMLStyleElement | null
+      // Find existing sheet
+      style = doc.querySelector(`style#${fullId}`)
 
       // Create runtime stylesheet
-      const styleNode = doc.createElement('style')
-      styleNode.id = `pinceau-runtime${appId ? `-${appId}` : ''}`
-      styleNode.type = 'text/css'
+      if (!style) {
+        const styleNode = doc.createElement('style')
+        styleNode.id = fullId
+        styleNode.type = 'text/css'
+        style = doc.head.appendChild(styleNode)
+      }
 
-      style = doc.head.appendChild(styleNode)
+      // Get hydratable stylesheet
+      hydratableSheet = doc.querySelector(`style#pinceau-runtime-hydratable${appId ? `-${appId}` : ''}`) as HTMLStyleElement
     }
 
     sheet.value

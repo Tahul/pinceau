@@ -169,11 +169,8 @@ export function resolveScriptSetup(
 export function transformComputedStyles(code: string, computedStyles: any): string {
   code = Object
     .entries(computedStyles)
-    .map(
-      ([key, styleFunction]) => {
-        return `\nconst ${key} = computed(() => ((props = __$pProps) => ${styleFunction})())\n`
-      },
-    ).join('\n') + code
+    .map(([key, styleFunction]) => `\nconst ${key} = computed(() => ((props = __$pProps) => ${styleFunction})())\n`)
+    .join('') + code
 
   return code
 }
@@ -211,10 +208,10 @@ export function transformFinishRuntimeSetup(
   newScriptSetup += [
     `\n${(hasVariants || hasComputedStyles) ? 'const { $pinceau } = ' : ''}`,
     'usePinceauRuntime(',
-    '__$pProps,',
-    `${hasVariants ? '__$pVariants' : 'undefined'},`,
+    '__$pProps, ',
+    `${hasVariants ? '__$pVariants' : 'undefined'}, `,
     `${hasComputedStyles ? `{ ${Object.keys(computedStyles).map(key => `${key}`).join(',')} }` : 'undefined'}`,
-    ') \n',
+    ')\n',
   ].join('')
 
   return newScriptSetup
