@@ -49,7 +49,7 @@ importers:
       rimraf: ^4.1.2
       rollup: ^3.17.3
       scule: ^1.0.0
-      style-dictionary-esm: ^1.3.6
+      style-dictionary-esm: ^1.3.7
       tsup: ^6.6.3
       typescript: ^4.9.5
       unbuild: ^1.1.2
@@ -78,7 +78,7 @@ importers:
       postcss-nested: 6.0.1
       recast: 0.22.0
       scule: 1.0.0
-      style-dictionary-esm: 1.3.6
+      style-dictionary-esm: 1.3.7
       unbuild: 1.1.2
       unplugin: 1.1.0
     devDependencies:
@@ -8647,7 +8647,7 @@ packages:
       postcss-nested: 6.0.1
       recast: 0.22.0
       scule: 1.0.0
-      style-dictionary-esm: 1.3.6
+      style-dictionary-esm: 1.3.7
       unbuild: 1.1.2
       unplugin: 1.1.0
     transitivePeerDependencies:
@@ -10370,8 +10370,8 @@ packages:
       acorn: 8.8.2
     dev: true
 
-  /style-dictionary-esm/1.3.6:
-    resolution: {integrity: sha512-wjrns1jHSAQpBz74MI6RVDMexMx6YKZSSn6SrnhKEftouPCxxjz1um21g00fu6ggdLXzFpB466eRvEfBlUQ/6w==}
+  /style-dictionary-esm/1.3.7:
+    resolution: {integrity: sha512-xO2o8sKGera0SMLCLtix1dPvgD2ZyX2VohZ09cGRRuXBb8HQObqhgDQw4dLW+qJy4gj7r4Mdhz9J1rS2p50xDw==}
     engines: {node: '>=12.0.0'}
     hasBin: true
     dependencies:
@@ -10379,7 +10379,7 @@ packages:
       change-case: 4.1.2
       commander: 10.0.0
       consola: 2.15.3
-      fast-glob: 3.2.12
+      glob: 8.1.0
       jiti: 1.17.1
       json5: 2.2.3
       jsonc-parser: 3.2.0
