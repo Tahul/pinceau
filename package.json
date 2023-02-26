@@ -114,7 +114,7 @@
     "postcss-nested": "^6.0.1",
     "recast": "^0.22.0",
     "scule": "^1.0.0",
-    "style-dictionary-esm": "^1.3.5",
+    "style-dictionary-esm": "^1.3.6",
     "unbuild": "^1.1.2",
     "unplugin": "^1.1.0"
   },
@@ -125,7 +125,7 @@
     "@nuxthq/studio": "^0.7.7",
     "@nuxtjs/color-mode": "^3.2.0",
     "@types/chroma-js": "^2.4.0",
-    "@types/node": "^18.14.1",
+    "@types/node": "^18.14.2",
     "@vue/compiler-dom": "^3.2.47",
     "@vue/test-utils": "^2.3.0",
     "buffer": "^6.0.3",
