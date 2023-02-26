@@ -14,6 +14,7 @@ export default defineConfig({
       'pinceau/runtime': resolve(__dirname, `../${from}/runtime${ext}`),
       'pinceau': resolve(__dirname, `../${from}/index${ext}`),
     },
+    dedupe: ['vue', '@vue/*', 'vue/*'],
   },
   plugins: [
     Inspect({

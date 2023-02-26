@@ -29,9 +29,11 @@ const plugin: VueLanguagePlugin = _ => ({
       if (sfc.scriptSetup) {
         const isTs = sfc.scriptSetup.lang === 'ts'
         const variantProps = resolveVariantsProps(variants, isTs)
-        variantsContent = expressionToAst(JSON.stringify(variantProps))
-        variantsContent = castVariantsPropsAst(variantsContent)
-        variantsContent = `\nconst variants = ${printAst(variantsContent).code}\n`
+        if (variantProps && Object.keys(variantProps).length) {
+          variantsContent = expressionToAst(JSON.stringify(variantProps))
+          variantsContent = castVariantsPropsAst(variantsContent)
+          variantsContent = `\nconst variants = ${printAst(variantsContent).code}\n`
+        }
       }
     }
 
