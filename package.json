@@ -56,10 +56,7 @@
       "import": "./dist/utils.mjs"
     },
     "./volar": "./dist/volar.cjs",
-    "./browser/*": {
-      "require": "./dist/browser/*.js",
-      "import": "./dist/*.js"
-    }
+    "./browser/*": "./dist/browser/*"
   },
   "main": "dist/index.mjs",
   "module": "dist/index.mjs",
