@@ -33,7 +33,7 @@ export const cssProp = {
 /**
  * A prop to be used on any component to enable `:css` prop.
  */
-export function computedStyle<T extends string>(
+export function computedStyle<T>(
   defaultValue: ComputedStyleProp<T>,
   required = false,
 ) {

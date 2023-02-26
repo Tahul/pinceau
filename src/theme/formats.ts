@@ -76,7 +76,7 @@ export function tsFull(tokensObject: any) {
   // Tokens paths type
   const tokensPaths = objectPaths(tokensObject)
   if (tokensPaths.length) { result += `export ${enhanceTokenPaths(tokensPaths)}\n\n` }
-  else { result += 'export type GeneratedPinceauPaths = \'\'\n\n' }
+  else { result += 'export type GeneratedPinceauPaths = undefined\n\n' }
 
   // Default export
   result += 'export default theme'
@@ -180,7 +180,7 @@ export const utilsFull = (utils = {}, utilsImports = [], definitions = {}) => {
   // Stringify utils properties
   result += `\n${stringifyUtils(utils, definitions)}`
 
-  result += `export const utils = { ${Object.keys(utils).join(', ')} } as const\n\n`
+  result += `export const utils = ${Object.keys(utils).length ? Object.keys(utils).join(', ') : `undefined` }\n\n`
 
   // Type of utils
   result += 'export type GeneratedPinceauUtils = typeof utils\n\n'
