@@ -4,8 +4,8 @@ import { env, node, nodeless } from 'unenv'
 const { external, alias } = env(nodeless, node)
 
 build({
-  minify: false,
-  treeshake: false,
+  minify: true,
+  treeshake: true,
   platform: 'browser',
   format: ['esm'],
   entry: ['src/index.ts', 'src/utils.ts', 'src/runtime.ts', 'src/volar.ts'],
@@ -32,7 +32,7 @@ build({
       'process.cwd': '0',
       'process.platform': '0',
     }
-    options.splitting = false
+    options.splitting = true
   },
   noExternal: [
     'style-dictionary-esm',
