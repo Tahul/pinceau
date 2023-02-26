@@ -1,7 +1,7 @@
 import { build } from 'tsup'
 import { env, node, nodeless } from 'unenv'
 
-const { external } = env(nodeless, node)
+const { external, alias } = env(nodeless, node)
 
 build({
   minify: false,
@@ -18,6 +18,20 @@ build({
     options.external.push('jiti')
     options.external.push('@volar/*')
     options.external.push(...external)
+    options.alias = options.alias ?? {}
+    options.alias = {
+      ...options.alias,
+      ...alias,
+      'fs': 'fs',
+      'node:fs': 'node:fs',
+      'fs/promises': 'fs/promises',
+      'node:fs/promises': 'node:fs/promises',
+    }
+    options.define = {
+      'process.env': '0',
+      'process.cwd': '() => \'\'',
+      'process.platform': '0',
+    }
     options.splitting = false
   },
   noExternal: [
