@@ -29,7 +29,7 @@ build({
     }
     options.define = {
       'process.env': '0',
-      'process.cwd': '() => \'\'',
+      'process.cwd': '0',
       'process.platform': '0',
     }
     options.splitting = false
