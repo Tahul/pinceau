@@ -3,7 +3,7 @@ import type { GeneratedPinceauUtils } from '#pinceau/utils'
 
 export type PinceauTheme = GeneratedPinceauTheme extends undefined ? {} : GeneratedPinceauTheme
 
-export type PinceauTokensPaths = GeneratedPinceauPaths extends undefined ? string : GeneratedPinceauPaths
+export type PinceauTokensPaths = GeneratedPinceauPaths extends undefined ? '' : GeneratedPinceauPaths
 
 export type PinceauUtils = GeneratedPinceauUtils extends undefined ? {} : GeneratedPinceauUtils
 

@@ -171,6 +171,9 @@
         "nuxt",
         "vue"
       ]
+    },
+    "overrides": {
+      "pinceau": "latest"
     }
   },
   "resolutions": {

@@ -17,17 +17,18 @@ export default defineAppConfig({
       exclude: [],
     },
     main: {
-      padded: true,
       fluid: true,
+      padded: true,
     },
     header: {
+      fluid: true,
       title: '',
       logo: true,
       showLinkIcon: true,
       exclude: [],
-      fluid: true,
     },
     footer: {
+      fluid: true,
       credits: {
         icon: 'MovingHead',
         text: 'Built with Nuxt Studio',
@@ -40,7 +41,6 @@ export default defineAppConfig({
           label: 'Nuxt',
         },
       ],
-      fluid: true,
     },
     github: {
       dir: 'docs/content',

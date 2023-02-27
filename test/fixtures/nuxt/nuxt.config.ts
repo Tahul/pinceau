@@ -9,7 +9,6 @@ export default defineNuxtConfig({
     'pinceau': resolve(__dirname, '../../../src/index.ts'),
   },
   pinceau: {
-    configFileName: 'tokens.config',
     followSymbolicLinks: false,
   },
   pages: true,

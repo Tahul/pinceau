@@ -112,14 +112,14 @@ export type ThemeProperties<K extends keyof DefaultThemeMap> = Utils.WrapUnion<U
 /**
  * Take a key and gives a list of tokens under that key in configuration.
  */
-export type ThemeTokens<K extends string> = Utils.WrapUnion<Utils.FilterStartingWith<PinceauTokensPaths, K>, '{', '}'>
+export type ThemeTokens<K extends PinceauTokensPaths | (string & {})> = Utils.WrapUnion<Utils.FilterStartingWith<PinceauTokensPaths, K>, '{', '}'>
 
 /**
  * Supported properties in `css()` function
  */
 export type SupportedProperties = keyof NativeProperties | keyof DefaultThemeMap
 
-export type PropertyValue<T = string> =
+export type PropertyValue<T extends (keyof NativeProperties | keyof DefaultThemeMap)> =
   // Check if current property is a native CSS key
   T extends keyof NativeProperties ?
     // Check if that key is handled in the ThemeMap

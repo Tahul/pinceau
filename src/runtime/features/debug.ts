@@ -1,5 +1,5 @@
 import { nextTick } from 'vue'
-import type { TokensFunctionOptions } from 'pinceau/types'
+import type { TokensFunctionOptions } from '../../types'
 
 export function usePinceauRuntimeDebug(tokensHelperConfig: TokensFunctionOptions) {
   let nextTickGroup = []

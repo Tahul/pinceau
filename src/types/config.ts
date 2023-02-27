@@ -9,7 +9,7 @@ import type { PinceauTheme } from './theme'
 export interface ConfigLayer {
   cwd?: string
   configFileName?: string
-  tokens?: any
+  tokens?: DefineConfigType<any>
 }
 
 /**

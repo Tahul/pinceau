@@ -2,7 +2,7 @@ import { existsSync } from 'fs'
 import { readFile } from 'fs/promises'
 import createJITI from 'jiti'
 import { resolve } from 'pathe'
-import type { ConfigFileImport, ConfigLayer, LoadConfigResult, PinceauOptions, PinceauTheme, ResolvedConfigLayer } from 'pinceau/types'
+import type { ConfigFileImport, ConfigLayer, LoadConfigResult, PinceauOptions, PinceauTheme, ResolvedConfigLayer } from '../types'
 import { merger, message, normalizeConfig } from '../utils'
 import { resolveDefinitions } from './definitions'
 
@@ -34,6 +34,13 @@ export async function loadLayers<U extends PinceauTheme>(
    * Loops through all sources and resolve result object from them.
    */
   for (const layer of sources) {
+    // Support tokens passed in `configLayers: [{ tokens }]`
+    if (layer.tokens) {
+      const mediaQueriesKeys = resolveMediaQueriesKeys(result.config)
+      result.config = merger(normalizeConfig(layer.tokens, mediaQueriesKeys), result.config) as U
+      continue
+    }
+
     const { path, config, definitions: resolvedDefinitions } = await resolveConfigLayer({ cwd, configFileName, definitions }, layer)
 
     if (path) { result.sources.push(path) }
@@ -52,11 +59,7 @@ export async function loadLayers<U extends PinceauTheme>(
 export function resolveConfigFile(configFile: ConfigFileImport, definitions = true): ResolvedConfigLayer<any> {
   const { config, content, path } = configFile
 
-  // Resolve media queries keys
-  let mediaQueriesKeys = ['dark', 'light', 'initial']
-  if (config.media && config.media.length) {
-    mediaQueriesKeys = [...mediaQueriesKeys, ...Object.keys(config.media)]
-  }
+  const mediaQueriesKeys = resolveMediaQueriesKeys(config)
 
   // Cleanup configuration object
   const normalizedConfig = normalizeConfig(config, mediaQueriesKeys, false)
@@ -128,48 +131,44 @@ export async function resolveConfigLayer(
 export function resolveConfigSources(
   {
     cwd = process.cwd(),
-    configLayers,
+    configLayers = [],
     configFileName = 'tokens.config',
   }: PinceauOptions,
 ) {
-  let sources: ConfigLayer[] = [
-    {
+  let sources: ConfigLayer[] = configLayers.reduce(
+    (acc: ConfigLayer[], layerOrPath: PinceauTheme | string | ConfigLayer) => {
+      // Check if layer passed as-is
+      if (typeof layerOrPath === 'object') {
+        acc.push(layerOrPath as ConfigLayer)
+        return acc
+      }
+
+      // Check if the config layer path passed as string in the array
+      if (typeof layerOrPath === 'string') {
+        acc.push({
+          cwd: layerOrPath,
+          configFileName,
+        })
+        return acc
+      }
+
+      return acc
+    },
+    [],
+  )
+
+  // Add CWD as a source if not already in layers
+  if (cwd && !sources.some(source => source.cwd === cwd)) {
+    sources.unshift({
       cwd,
       configFileName,
-    },
-    ...(configLayers as any).reduce(
-      (acc: ConfigLayer[], layerOrPath: PinceauTheme | string | ConfigLayer) => {
-        // Check if layer passed as-is
-        if (typeof layerOrPath === 'object' && ((layerOrPath as ConfigLayer)?.cwd || (layerOrPath as ConfigLayer)?.configFileName || (layerOrPath as ConfigLayer)?.tokens)) {
-          acc.push(layerOrPath as ConfigLayer)
-          return acc
-        }
-
-        // Check if tokens passed as straight object in the array
-        if (typeof layerOrPath === 'object') {
-          acc.push({ tokens: layerOrPath })
-          return acc
-        }
-
-        // Check if the config layer path passed as string in the array
-        if (typeof layerOrPath === 'string') {
-          acc.push({
-            cwd: layerOrPath,
-            configFileName,
-          })
-          return acc
-        }
-
-        return acc
-      },
-      [],
-    ),
-  ].reverse()
+    })
+  }
 
   // Dedupe sources
   sources = [...new Set(sources)]
 
-  return sources
+  return sources.reverse()
 }
 
 /**
@@ -200,4 +199,11 @@ export async function importConfigFile({ path, ext }): Promise<ConfigFileImport>
     content,
     config: configImport,
   }
+}
+
+export function resolveMediaQueriesKeys(config: any) {
+  // Resolve media queries keys
+  let mediaQueriesKeys = ['dark', 'light', 'initial']
+  if (config.media && config.media.length) { mediaQueriesKeys = [...mediaQueriesKeys, ...Object.keys(config.media)] }
+  return mediaQueriesKeys
 }

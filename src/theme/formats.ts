@@ -142,8 +142,15 @@ export const cssFull = (dictionary: Dictionary, options: Options, responsiveToke
         if (queryToken) { responsiveSelector = queryToken.value }
       }
 
-      // Write responsive tokens
-      css += `${responsiveSelector ? `${responsiveSelector} { ` : ''}:root { --pinceau-mq: ${key}; ${formattedContent}}${responsiveSelector ? '}' : ''}`
+      let prefix = '{'
+      const content = `--pinceau-mq: ${key}; ${formattedContent}`
+      let suffix = '}'
+      if (!responsiveSelector) { prefix = ':root {' }
+      else if (responsiveSelector.startsWith('.')) { prefix = `:root${responsiveSelector} {` }
+      else if (responsiveSelector.startsWith(':root')) { prefix = `${responsiveSelector} {` }
+      else { (prefix = `${responsiveSelector} { :root {`) && (suffix += '} }') }
+
+      css += `${prefix + content + suffix}\n`
     },
   )
 
@@ -180,7 +187,7 @@ export const utilsFull = (utils = {}, utilsImports = [], definitions = {}) => {
   // Stringify utils properties
   result += `\n${stringifyUtils(utils, definitions)}`
 
-  result += `export const utils = ${Object.keys(utils).length ? Object.keys(utils).join(', ') : `undefined` }\n\n`
+  result += `export const utils = ${Object.keys(utils).length ? `{ ${Object.keys(utils).join(', ')} }` : 'undefined'}\n\n`
 
   // Type of utils
   result += 'export type GeneratedPinceauUtils = typeof utils\n\n'

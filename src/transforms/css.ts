@@ -1,7 +1,7 @@
 import type { ASTNode } from 'ast-types'
 import { defu } from 'defu'
-import type { PinceauContext } from 'pinceau/types'
 import { parse } from 'acorn'
+import type { PinceauContext } from '../types'
 import { resolveCssProperty, stringify } from '../utils'
 import { message } from '../utils/logger'
 import { parseAst, printAst, visitAst } from '../utils/ast'

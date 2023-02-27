@@ -7,7 +7,6 @@ export default defineConfig({
   logLevel: 'info',
   plugins: [
     Unplugin({
-      configFileName: 'tokens.config',
       configLayers: [
         resolve(__dirname, '../theme'),
       ],

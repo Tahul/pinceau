@@ -26,7 +26,7 @@ build({
       'node:fs': 'node:fs',
       'fs/promises': 'fs/promises',
       'node:fs/promises': 'node:fs/promises',
-      'fast-glob': 'unenv/runtime/mock/noop'
+      'fast-glob': 'unenv/runtime/mock/noop',
     }
     options.define = {
       'process.env': '0',

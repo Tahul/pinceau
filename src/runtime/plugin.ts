@@ -1,7 +1,7 @@
 import type { ComputedRef, Plugin, Ref } from 'vue'
 import { computed, getCurrentInstance, ref } from 'vue'
 import { nanoid } from 'nanoid'
-import type { PinceauRuntimePluginOptions, Variants } from 'pinceau/types'
+import type { PinceauRuntimePluginOptions, Variants } from '../types'
 import { usePinceauRuntimeSheet } from './features/stylesheet'
 import { usePinceauRuntimeIds } from './ids'
 import { usePinceauThemeSheet } from './features/theme'

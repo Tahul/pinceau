@@ -8,7 +8,7 @@ import type { DesignTokens, PinceauOptions } from './'
 /**
  * Supports all the different ways of expressing configuration layers from `configOrPaths` from Pinceau's options.
  */
-export type ConfigOrPaths = (string | PinceauTheme | ConfigLayer)[]
+export type ConfigOrPaths = (string | ConfigLayer)[]
 
 /**
  *

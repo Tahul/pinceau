@@ -21,12 +21,10 @@ export default defineConfig({
       dev: true,
     }),
     Pinceau({
-      configFileName: 'tokens.config',
       outputDir: join(__dirname, './.nuxt/pinceau/'),
       configLayers: [
         {
           cwd: resolve(__dirname, './theme'),
-          configFileName: 'tokens.config',
         },
       ],
       debug: true,

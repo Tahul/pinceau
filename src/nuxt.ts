@@ -31,32 +31,8 @@ const module: any = defineNuxtModule<PinceauOptions>({
     nuxt.options.build.transpile = nuxt.options.build.transpile || []
     nuxt.options.build.transpile.push('pinceau', 'chroma-js')
 
-    // Call options hook
-    await nuxt.callHook('pinceau:options', options)
-
-    // Pinceau runtime config (to be used with Nuxt Studio integration)
-    nuxt.options.runtimeConfig.pinceau = { studio: options?.studio, outputDir: options?.outputDir }
-
     // Set `cwd` from Nuxt rootDir
     options.cwd = nuxt.options.rootDir
-
-    // Automatically inject all components in layers into includes
-    for (const layer of options.configLayers) {
-      const layerPath = typeof layer === 'string'
-        ? layer
-        : (layer as any)?.cwd
-
-      if (layerPath) {
-        options.includes?.push(
-          ...await glob(
-            join(layerPath, '**/*.{js,jsx,mjs,ts,tsx,jsx,tsx,js,ts,vue,css,sass,scss,postcss,less,styl,stylus}'),
-            {
-              followSymbolicLinks: options.followSymbolicLinks,
-            },
-          ),
-        )
-      }
-    }
 
     // nuxt-component-meta support
     if (options.componentMetaSupport) {
@@ -138,6 +114,17 @@ const module: any = defineNuxtModule<PinceauOptions>({
       nuxt.options.css.push(join(options.outputDir, 'theme/index.css'))
     }
 
+    nuxt.hook('nitro:config', (nitroConfig) => {
+      nitroConfig.bundledStorage = nitroConfig.bundledStorage || []
+      nitroConfig.bundledStorage.push('pinceau')
+
+      nitroConfig.devStorage = nitroConfig.devStorage || {}
+      nitroConfig.devStorage.pinceau = {
+        driver: 'fs',
+        base: join(options.outputDir!, 'theme'),
+      }
+    })
+
     // Support for `extends` feature
     // Will scan each layer for a config file
     options.configLayers = [
@@ -152,27 +139,41 @@ const module: any = defineNuxtModule<PinceauOptions>({
       ),
     ]
 
-    // Setup Nitro studio plugin
+    // Call options hook
+    await nuxt.callHook('pinceau:options', options)
+
+    // Pinceau runtime config (to be used with Nuxt Studio integration)
+    nuxt.options.runtimeConfig.pinceau = { studio: options?.studio, outputDir: options?.outputDir }
+
+    // Automatically inject all components in layers into includes
+    for (const layer of options.configLayers) {
+      const layerPath = typeof layer === 'string'
+        ? layer
+        : (layer as any)?.cwd
+
+      if (layerPath) {
+        options.includes?.push(
+          ...await glob(
+            join(layerPath, '**/*.{js,jsx,mjs,ts,tsx,jsx,tsx,js,ts,vue,css,sass,scss,postcss,less,styl,stylus}'),
+            {
+              followSymbolicLinks: options.followSymbolicLinks,
+            },
+          ),
+        )
+      }
+    }
+
+    // Setup Nuxt Studio support
     if (options.studio) {
       // Add server route to know Studio is enabled
       addPlugin(resolveLocalModule('./runtime/schema.server'))
       addPrerenderRoutes('/__pinceau_tokens_config.json')
       addPrerenderRoutes('/__pinceau_tokens_schema.json')
 
+      // Push Studio config file has highest priority
       const studioAppConfigPath = resolveAlias('~/.studio')
       if (existsSync(studioAppConfigPath)) { options.configLayers.unshift({ cwd: studioAppConfigPath, configFileName: 'tokens.config' }) }
     }
-
-    nuxt.hook('nitro:config', (nitroConfig) => {
-      nitroConfig.bundledStorage = nitroConfig.bundledStorage || []
-      nitroConfig.bundledStorage.push('pinceau')
-
-      nitroConfig.devStorage = nitroConfig.devStorage || {}
-      nitroConfig.devStorage.pinceau = {
-        driver: 'fs',
-        base: join(options.outputDir!, 'theme'),
-      }
-    })
 
     addPluginTemplate({
       filename: 'pinceau-nuxt-plugin.server.mjs',

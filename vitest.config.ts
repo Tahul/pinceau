@@ -26,7 +26,6 @@ export default defineConfig({
       reactivityTransform: true,
     }),
     Unplugin({
-      configFileName: 'tokens.config',
       configLayers: [
         resolve(__dirname, './playground/theme'),
       ],

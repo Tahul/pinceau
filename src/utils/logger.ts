@@ -1,4 +1,4 @@
-import type { PinceauOptions } from 'pinceau/types'
+import type { PinceauOptions } from '../types'
 import { findLineColumn } from './debug'
 
 type DebugLevel = PinceauOptions['debug']

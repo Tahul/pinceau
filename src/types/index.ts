@@ -46,13 +46,6 @@ export interface PinceauOptions {
   configBuilt?: (config: ThemeGenerationOutput) => void
 
   /**
-   * The directry in which you store your design tokens.
-   *
-   * @default 'tokens'
-   */
-  tokensDir?: string
-
-  /**
    * The directory in which you want to output the built version of your configuration.
    */
   outputDir?: string

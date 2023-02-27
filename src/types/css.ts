@@ -14,7 +14,7 @@ export type MappedProperty<K = string, ComponentProps = {}> = K | PropertyValue<
 
 export type CSSProperties<
   ComponentProps = {},
-  UtilsProperties = PinceauUtils
+  UtilsProperties = PinceauUtils,
 > =
     // Theme-based tokens
     {
@@ -42,7 +42,7 @@ export type CSSProperties<
 export type CSSFunctionType<
   ComponentProps = {},
   UtilsProperties = PinceauUtils,
-  MediaQueries extends string = Utils.WrapUnion<PinceauMediaQueries, '@', ''>
+  MediaQueries extends string = Utils.WrapUnion<PinceauMediaQueries, '@', ''>,
 > =
   {
     variants?: Variants<ComponentProps>
