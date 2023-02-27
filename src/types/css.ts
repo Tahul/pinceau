@@ -6,11 +6,11 @@ import type { NativeProperties, PropertyValue, PseudosProperties, UsableTokens }
 
 export type ColorSchemeModes = 'media' | 'class'
 
-export type ComputedStyleProp<T = UsableTokens> = T | { [key in PinceauMediaQueries]?: T }
+export type ComputedStyleProp<T extends string> = T | { [key in PinceauMediaQueries]?: T }
 
-export type ComputedStyleDefinition<T = UsableTokens, ComponentProps = {}> = (props: ComponentProps) => PropertyValue<T> | { [key in PinceauMediaQueries]?: PropertyValue<T> }
+export type ComputedStyleDefinition<T extends string, ComponentProps = {}> = (props: ComponentProps) => PropertyValue<T> | { [key in PinceauMediaQueries]?: PropertyValue<T> }
 
-export type MappedProperty<K = string, ComponentProps = {}> = K | PropertyValue<K> | ComputedStyleDefinition<K, ComponentProps>
+export type MappedProperty<K extends string, ComponentProps = {}> = K | PropertyValue<K> | ComputedStyleDefinition<K, ComponentProps>
 
 export type CSSProperties<
   ComponentProps = {},
@@ -41,7 +41,7 @@ export type CSSProperties<
 
 export type CSSFunctionType<
   ComponentProps = {},
-  UtilsProperties = PinceauUtils,
+
   MediaQueries extends string = Utils.WrapUnion<PinceauMediaQueries, '@', ''>,
 > =
   {
@@ -49,7 +49,7 @@ export type CSSFunctionType<
   }
   &
   {
-    [K in keyof UtilsProperties]?: MappedProperty<K, ComponentProps> | ComputedStyleDefinition<UsableTokens, ComponentProps>
+    [K in keyof PinceauUtils]?: MappedProperty<K, ComponentProps> | ComputedStyleDefinition<UsableTokens, ComponentProps>
   }
   &
   {

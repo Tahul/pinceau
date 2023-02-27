@@ -1,5 +1,4 @@
 import type { CSSProperties, MappedProperty } from './css'
-import type * as Utils from './utils'
 import type { PinceauMediaQueries } from './theme'
 
 export interface VariantOptions<T = any> {
@@ -23,7 +22,7 @@ export interface ClassVariant<ComponentProps = {}> {
   | string
   | string[]
   | VariantOptions
-  | Record<string, { $class?: string[] } & { [k: string]: { [K in Utils.Primitive]: CSSProperties<ComponentProps> | MappedProperty<K, ComponentProps> | {} } | string | string[] }>
+  | Record<string, { $class?: string[] } & { [k: string]: { [K in string]: CSSProperties<ComponentProps> | MappedProperty<K, ComponentProps> | {} } | string | string[] }>
 }
 
 export type Variant<

@@ -119,7 +119,7 @@ export type ThemeTokens<K extends PinceauTokensPaths | (string & {})> = Utils.Wr
  */
 export type SupportedProperties = keyof NativeProperties | keyof DefaultThemeMap
 
-export type PropertyValue<T extends (keyof NativeProperties | keyof DefaultThemeMap)> =
+export type PropertyValue<T extends (keyof NativeProperties | keyof DefaultThemeMap | string)> =
   // Check if current property is a native CSS key
   T extends keyof NativeProperties ?
     // Check if that key is handled in the ThemeMap
