@@ -130,7 +130,6 @@
     "@nuxtjs/color-mode": "^3.2.0",
     "@types/chroma-js": "^2.4.0",
     "@types/node": "^18.14.2",
-    "@vue/compiler-dom": "^3.2.47",
     "@vue/test-utils": "^2.3.0",
     "buffer": "^6.0.3",
     "eslint": "^8.35.0",

@@ -1,5 +1,5 @@
 import { readFile } from 'fs/promises'
-import type { SFCDescriptor } from '@vue/compiler-sfc'
+import type { SFCDescriptor } from 'vue/compiler-sfc'
 import { describe, expect, it } from 'vitest'
 import { parseVueComponent } from 'pinceau/utils'
 import * as Components from './fixtures/shared/components'

@@ -34,7 +34,7 @@ export default defineBuildConfig({
     '@nuxt/kit',
     'vue',
     '@vue',
-    '@vue/compiler-sfc',
+    'vue/compiler-sfc',
     'style-dictionary-esm',
     'jiti',
     'tinycolor2',
