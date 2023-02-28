@@ -196,6 +196,5 @@ export function resolveThemeRule(
   else if (responsiveSelector.startsWith('.')) { prefix = `@media { :root${responsiveSelector} {` }
   else if (responsiveSelector.startsWith(':root')) { prefix = `@media { ${responsiveSelector} {` }
   else { prefix = `@media ${responsiveSelector} { :root {` }
-  console.log({ mq, responsiveSelector, colorSchemeMode })
   return `${`${`${prefix}--pinceau-mq: ${String(mq)}; ${content}`} } }`}\n`
 }
