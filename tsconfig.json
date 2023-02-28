@@ -41,10 +41,7 @@
       "#pinceau/definitions": ["./playground/.nuxt/pinceau/definitions.ts"],
       "pinceau.css": ["./playground/.nuxt/pinceau/theme/index.css"],
       "pinceau": ["./src/index.ts"],
-      "pinceau/runtime": ["./src/runtime.ts"],
-      "pinceau/vite": ["./src/vite.ts"],
-      "pinceau/types": ["./src/types/index.ts"],
-      "@src/utils/*": ["./src/utils/*"]
+      "pinceau/*": ["./src/*"]
     }
   },
   "include": [

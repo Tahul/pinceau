@@ -41,15 +41,15 @@ export type CSSProperties<
 
 export type CSSFunctionType<
   ComponentProps = {},
-
   MediaQueries extends string = Utils.WrapUnion<PinceauMediaQueries, '@', ''>,
+  UtilsProperties = PinceauUtils,
 > =
   {
     variants?: Variants<ComponentProps>
   }
   &
   {
-    [K in keyof PinceauUtils]?: MappedProperty<K, ComponentProps> | ComputedStyleDefinition<UsableTokens, ComponentProps>
+    [K in keyof UtilsProperties]?: K extends string ? MappedProperty<K, ComponentProps> : never | ComputedStyleDefinition<UsableTokens, ComponentProps>
   }
   &
   {

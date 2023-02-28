@@ -5,6 +5,6 @@ export type PinceauTheme = GeneratedPinceauTheme extends undefined ? {} : Genera
 
 export type PinceauTokensPaths = GeneratedPinceauPaths extends undefined ? '' : GeneratedPinceauPaths
 
-export type PinceauUtils = GeneratedPinceauUtils extends undefined ? {} : GeneratedPinceauUtils
+export type PinceauUtils = GeneratedPinceauUtils extends undefined ? { [key: string]: any } : GeneratedPinceauUtils
 
 export type PinceauMediaQueries = 'dark' | 'light' | 'initial' | keyof (typeof theme.media)
