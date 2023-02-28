@@ -24,6 +24,9 @@ export default defineBuildConfig({
   failOnWarn: false,
   clean: false,
   declaration: true,
+  rollup: {
+    emitCJS: true,
+  },
   externals: [
     'chalk',
     'ohash',

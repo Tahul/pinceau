@@ -1,14 +1,14 @@
 import { computed, ref } from 'vue'
-import type { PinceauTheme, PinceauTokensPaths, Theme, TokensFunctionOptions } from '../../types'
+import type { ColorSchemeModes, PinceauMediaQueries, PinceauTheme, PinceauTokensPaths, Theme, TokensFunctionOptions } from '../../types'
 import { get, normalizeConfig, set, walkTokens } from '../../utils/data'
 import { pathToVarName } from '../../utils/$tokens'
-import { responsiveMediaQueryRegex } from '../../utils/regexes'
-import { resolveReferences } from '../../utils/css'
+import { resolveReferences, resolveThemeRule } from '../../utils/css'
 import { createTokensHelper } from '../utils'
 
 export function usePinceauThemeSheet(
   initialTheme: any,
   tokensHelperConfig = {},
+  colorSchemeMode: ColorSchemeModes,
 ) {
   // Local theme stylesheet reference.
   const sheet = ref<CSSStyleSheet>()
@@ -149,10 +149,10 @@ export function usePinceauThemeSheet(
   /**
    * Update a specific token from its variable and a value.
    */
-  function updateToken(path: string | string[], value, mq = 'initial') {
+  function updateToken(path: string | string[], value: any, mq: PinceauMediaQueries = 'initial') {
     // Handle `mq` object passed as value
     if (typeof value === 'object') {
-      Object.entries(value).forEach(([mq, mqValue]) => updateToken(path, mqValue, mq))
+      Object.entries(value).forEach(([mq, mqValue]: [PinceauMediaQueries, string]) => updateToken(path, mqValue, mq))
       return
     }
 
@@ -209,30 +209,16 @@ export function usePinceauThemeSheet(
   /**
    * Creates a cached rule for media a specific media query.
    */
-  function createMqRule(mq: string) {
+  function createMqRule(mq: PinceauMediaQueries) {
     // Skip already existing rules
     if (cache?.[mq]) { return cache?.[mq] }
 
-    let mqValue: string
-    if (mq === 'dark' || mq === 'light') {
-      mqValue = `:root.${mq}`
-    }
-    else {
-      mqValue = theme.value?.media?.[mq]?.value
-    }
-
-    let css
-    if (mqValue.match(responsiveMediaQueryRegex)) {
-      // Use raw selector
-      css = `@media { ${mqValue} { --pinceau-mq: ${mq}; } }`
-    }
-    else {
-      // Wrap :root with media query
-      css = `@media ${mqValue} { :root { --pinceau-mq: ${mq}; } }`
-    }
+    // Create a media query theme rule
+    const mqRule = resolveThemeRule(mq, '', theme.value, colorSchemeMode)
 
     // Assign the `:root` rule as cache
-    cache[mq] = (sheet.value.cssRules.item(sheet.value.insertRule(css, sheet.value.cssRules.length)) as CSSMediaRule).cssRules[0]
+    const newRule = sheet.value.insertRule(mqRule, sheet.value.cssRules.length)
+    cache[mq] = (sheet.value.cssRules.item(newRule) as CSSMediaRule).cssRules[0]
 
     return cache[mq]
   }

@@ -31,7 +31,7 @@ export default defineConfig({
       studio: true,
       definitions: true,
       runtime: true,
-      colorSchemeMode: 'media',
+      colorSchemeMode: 'class',
     }),
     Vue(),
   ],

@@ -51,15 +51,33 @@ css({
     size: {
       sm: {
         span: {
-          padding: '{space.6} {space.12}'
-        }
+          padding: '{space.4} {space.6}',
+        },
       },
       md: {
         span: {
-          padding: '{space.12} {space.20}'
-        }
-      }
-    }
-  }
+          padding: '{space.6} {space.8}'
+        },
+      },
+      lg: {
+        span: {
+          padding: '{space.8} {space.12}'
+        },
+      },
+      xl: {
+        span: {
+          padding: '{space.12} {space.24}'
+        },
+      },
+      options: {
+        default: {
+          initial: 'sm',
+          md: 'md',
+          lg: 'lg',
+          xl: 'xl'
+        },
+      },
+    },
+  },
 })
 </style>

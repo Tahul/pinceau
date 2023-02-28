@@ -1,4 +1,4 @@
-import type { DesignToken, PinceauContext } from '../types'
+import type { ColorSchemeModes, DesignToken, PinceauContext, PinceauMediaQueries } from '../types'
 import { pathToVarName } from './$tokens'
 import { DARK, INITIAL, LIGHT, referencesRegex } from './regexes'
 
@@ -171,4 +171,31 @@ export function resolveCustomDirectives(
       [property]: value,
     }
   }
+}
+
+/**
+ * Return a theme rule from a media query key, some content and a theme.
+ */
+export function resolveThemeRule(
+  mq: PinceauMediaQueries,
+  content?: string,
+  theme?: any,
+  colorSchemeMode?: ColorSchemeModes,
+) {
+  let responsiveSelector = ''
+  if (mq === 'dark' || mq === 'light') {
+    if (colorSchemeMode === 'class') { responsiveSelector = `:root.${mq}` }
+    else { responsiveSelector = `(prefers-color-scheme: ${mq})` }
+  }
+  else if (mq !== 'initial' && theme) {
+    const queryToken = theme?.media?.[mq]
+    if (queryToken) { responsiveSelector = queryToken.value }
+  }
+  let prefix
+  if (!responsiveSelector) { prefix = '@media { :root {' }
+  else if (responsiveSelector.startsWith('.')) { prefix = `@media { :root${responsiveSelector} {` }
+  else if (responsiveSelector.startsWith(':root')) { prefix = `@media { ${responsiveSelector} {` }
+  else { prefix = `@media ${responsiveSelector} { :root {` }
+  console.log({ mq, responsiveSelector, colorSchemeMode })
+  return `${`${`${prefix}--pinceau-mq: ${String(mq)}; ${content}`} } }`}\n`
 }

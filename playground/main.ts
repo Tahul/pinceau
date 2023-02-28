@@ -3,7 +3,6 @@ import { plugin as pinceau } from 'pinceau/runtime'
 import { RouterView, createRouter, createWebHistory } from 'vue-router'
 
 import App from './app.vue'
-import Block from './components/Block.vue'
 import MyButton from './components/MyButton.vue'
 import DemoButton from './components/DemoButton.vue'
 import Alert from './components/Alert.vue'
@@ -36,7 +35,6 @@ app.use(router)
 app.use(pinceau, { colorSchemeMode: 'class', utils })
 
 // Components
-app.component('Block', Block)
 app.component('MyButton', MyButton)
 app.component('DemoButton', DemoButton)
 app.component('Alert', Alert)

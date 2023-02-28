@@ -1,39 +1,34 @@
-import type { CSSProperties, MappedProperty } from './css'
+import type { CSSProperties } from './css'
 import type { PinceauMediaQueries } from './theme'
 
-export interface VariantOptions<T = any> {
+export interface VariantOptions<T = string> {
   type?: string
   required?: boolean
-  default?: T | { [key in PinceauMediaQueries]: T }
+  default?: T | { [key in PinceauMediaQueries]?: T }
   mediaPrefix?: boolean
 }
 
 export interface BooleanVariant {
   true?: CSSProperties
   false?: CSSProperties
+  [key: string]: CSSProperties
 }
 
 export interface EnumVariant {
-  [key: string]: CSSProperties | VariantOptions
+  [key: string]: CSSProperties
 }
 
-export interface ClassVariant<ComponentProps = {}> {
-  [key: string]:
-  | string
-  | string[]
-  | VariantOptions
-  | Record<string, { $class?: string[] } & { [k: string]: { [K in string]: CSSProperties<ComponentProps> | MappedProperty<K, ComponentProps> | {} } | string | string[] }>
+export interface ClassVariant {
+  [key: string]: string | (CSSProperties & { $class?: string })
 }
 
-export type Variant<
-  ComponentProps = {},
-  T = { [key: string]: CSSProperties | VariantOptions<any> | string | string[] },
-> =
-  (BooleanVariant | EnumVariant | ClassVariant<ComponentProps>) &
+export type Variant =
+  (BooleanVariant | EnumVariant | ClassVariant)
+  &
   {
-    options?: VariantOptions<keyof T | string | number | boolean>
+    options?: VariantOptions
   }
 
-export interface Variants<ComponentProps = {}> {
-  [key: string]: Variant<ComponentProps>
+export interface Variants {
+  [key: string]: Variant
 }

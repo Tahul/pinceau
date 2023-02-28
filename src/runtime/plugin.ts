@@ -28,7 +28,7 @@ export const plugin: Plugin = {
     const { theme, tokensHelperConfig, dev, multiApp, colorSchemeMode, utils } = options
 
     // Resolve theme sheet
-    const themeSheet = usePinceauThemeSheet(theme)
+    const themeSheet = usePinceauThemeSheet(theme, tokensHelperConfig, colorSchemeMode)
 
     // Runtime debug setup:
     if (dev && (import.meta.hot || (process as any).server)) { import('./features/debug').then(({ usePinceauRuntimeDebug }) => usePinceauRuntimeDebug(tokensHelperConfig)) }

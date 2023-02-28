@@ -13,7 +13,7 @@ const { poof } = useConfettis(canvas)
   <section>
     <canvas ref="canvas" />
     <PlaygroundGrid>
-      <DemoButton color="blue" size="md">
+      <DemoButton color="blue">
         🇳🇱 Hello Amsterdam
       </DemoButton>
     </PlaygroundGrid>

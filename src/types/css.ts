@@ -45,7 +45,7 @@ export type CSSFunctionType<
   UtilsProperties = PinceauUtils,
 > =
   {
-    variants?: Variants<ComponentProps>
+    variants?: Variants
   }
   &
   {

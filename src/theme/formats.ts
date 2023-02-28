@@ -1,12 +1,13 @@
 import type { Dictionary, Options } from 'style-dictionary-esm'
 import StyleDictionary from 'style-dictionary-esm'
 import type { Schema } from 'untyped'
-import type { ColorSchemeModes } from '../types'
+import type { ColorSchemeModes, PinceauMediaQueries } from '../types'
 import { walkTokens } from '../utils/data'
 import { astTypes, printAst } from '../utils/ast'
 import { flattenTokens, objectPaths } from '../utils'
 import { isSafeConstName } from '../utils/checks'
 import { message } from '../utils/logger'
+import { resolveThemeRule } from '../utils/css'
 
 /**
  * Stringify utils from object
@@ -126,31 +127,10 @@ export const cssFull = (dictionary: Dictionary, options: Options, responsiveToke
 
   // Create all responsive tokens rules
   Object.entries(tokens).forEach(
-    ([key, value]) => {
+    ([key, value]: [PinceauMediaQueries, string]) => {
       // Resolve tokens content
       const formattedContent = formattedVariables({ format: 'css', dictionary: { ...dictionary, allTokens: value } as any, outputReferences: true, formatting: { lineSeparator: '', indentation: '', prefix: '' } as any })
-
-      // Resolve responsive selector
-      let responsiveSelector = ''
-      if (key === 'dark' || key === 'light') {
-        // Handle dark/light modes
-        if (colorSchemeMode === 'class') { responsiveSelector = `:root.${key}` }
-        else { responsiveSelector = `@media (prefers-color-scheme: ${key})` }
-      }
-      else if (key !== 'initial') {
-        const queryToken = dictionary.allTokens.find(token => token.name === `media-${key}`)
-        if (queryToken) { responsiveSelector = queryToken.value }
-      }
-
-      let prefix = '{'
-      const content = `--pinceau-mq: ${key}; ${formattedContent}`
-      let suffix = '}'
-      if (!responsiveSelector) { prefix = ':root {' }
-      else if (responsiveSelector.startsWith('.')) { prefix = `:root${responsiveSelector} {` }
-      else if (responsiveSelector.startsWith(':root')) { prefix = `${responsiveSelector} {` }
-      else { (prefix = `${responsiveSelector} { :root {`) && (suffix += '} }') }
-
-      css += `${prefix + content + suffix}\n`
+      css += resolveThemeRule(key, formattedContent, dictionary.tokens, colorSchemeMode)
     },
   )
 
