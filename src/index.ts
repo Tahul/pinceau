@@ -1,4 +1,5 @@
 import type { ComputedRef } from 'vue'
+import { version } from '../package.json'
 import type { usePinceauThemeSheet } from './runtime/features/theme'
 import type { DtFunction, PinceauOptions } from './types'
 
@@ -11,6 +12,8 @@ export interface ModuleHooks {
 export interface ModuleOptions extends PinceauOptions {}
 
 export * from './types'
+
+export { version }
 
 /**
  * Main file only exports `defineTheme`.
