@@ -196,10 +196,9 @@ export function usePinceauThemeSheet(
    * Return a token value from a path and a new value
    */
   function getSetValue(path: string | string[], value, variable, mq = 'initial') {
-    const varRef = `var(${variable})`
-    const setValue = { value, variable: varRef }
+    const setValue = { value, variable: `var(${variable})` }
     const existingValue = get(theme.value, path)
-    if (existingValue) {
+    if (existingValue && !variable.startsWith('--media')) {
       if (typeof existingValue?.value === 'object') { setValue.value = { ...existingValue.value, [mq]: value } }
       else { setValue.value = { initial: existingValue.value, [mq]: value } }
     }
