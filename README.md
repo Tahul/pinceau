@@ -6,7 +6,7 @@
 
 > Makes your `<script>` lighter and your `<style>` smarter.
 
-[🎨 Start painting](https://stackblitz.com/github/Tahul/vitesse-pinceau?file=src%2FApp.vue) • [🧑‍🎨 Documentation](https://pinceau.dev)
+[🎨 Pinceau Playground](https://play.pinceau.dev) • [🧑‍🎨 Documentation](https://pinceau.dev)
 
 - Ships 0b of JavaScript to the client by default
 - [Design tokens](https://github.com/design-tokens/community-group) compatible configuration system
