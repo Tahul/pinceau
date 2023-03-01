@@ -148,8 +148,6 @@ export function usePinceauRuntimeSheet(
 
     const ruleId = sheet.value.insertRule(cssText)
 
-    console.log({ uid, type, previousRule, declaration, cssText, ruleId })
-
     return sheet.value.cssRules[ruleId]
   }
 
