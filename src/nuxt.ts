@@ -1,6 +1,5 @@
 import { existsSync } from 'fs'
 import { join, resolve } from 'pathe'
-import glob from 'fast-glob'
 import { addPlugin, addPluginTemplate, addPrerenderRoutes, createResolver, defineNuxtModule, resolveAlias, resolveModule } from '@nuxt/kit'
 import createJITI from 'jiti'
 import type { ConfigLayer, PinceauOptions } from './types'
@@ -144,24 +143,6 @@ const module: any = defineNuxtModule<PinceauOptions>({
 
     // Pinceau runtime config (to be used with Nuxt Studio integration)
     nuxt.options.runtimeConfig.pinceau = { studio: options?.studio, outputDir: options?.outputDir }
-
-    // Automatically inject all components in layers into includes
-    for (const layer of options.configLayers) {
-      const layerPath = typeof layer === 'string'
-        ? layer
-        : (layer as any)?.cwd
-
-      if (layerPath) {
-        options.includes?.push(
-          ...await glob(
-            join(layerPath, '**/*.{js,jsx,mjs,ts,tsx,jsx,tsx,js,ts,vue,css,sass,scss,postcss,less,styl,stylus}'),
-            {
-              followSymbolicLinks: options.followSymbolicLinks,
-            },
-          ),
-        )
-      }
-    }
 
     // Setup Nuxt Studio support
     if (options.studio) {

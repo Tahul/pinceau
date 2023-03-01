@@ -1,7 +1,7 @@
 import type { SFCParseResult } from 'vue/compiler-sfc'
 import type MagicString from 'magic-string'
 import { parseVueComponent } from '../../utils/ast'
-import type { PinceauContext, VueQuery } from '../../types'
+import type { PinceauContext, PinceauQuery } from '../../types'
 import { variantsRegex } from '../../utils'
 import { transformDtHelper } from '../dt'
 import { transformCssFunction } from '../css'
@@ -13,7 +13,7 @@ import { transformAddPinceauClass } from './add-class'
 
 export function transformVueSFC(
   code: string,
-  query: VueQuery,
+  query: PinceauQuery,
   magicString: MagicString,
   ctx: PinceauContext,
 ): { code: string; magicString: MagicString; variants: any; computedStyles: any; localTokens: any } {
@@ -51,7 +51,7 @@ export function transformVueSFC(
  *
  * These does not need to resolve variants or populate computed styles.
  */
-export function resolveStyleQuery(code: string, magicString: MagicString, query: VueQuery, ctx: PinceauContext, loc?: any) {
+export function resolveStyleQuery(code: string, magicString: MagicString, query: PinceauQuery, ctx: PinceauContext, loc?: any) {
   // Handle `lang="ts"` even though that should not happen here.
   if (query.lang === 'ts') { code = transformCssFunction(query.id, code, {}, {}, {}, ctx, loc) }
 
@@ -94,7 +94,7 @@ export function resolveStyle(
   computedStyles: any,
   localTokens: any,
   ctx: PinceauContext,
-  query?: VueQuery,
+  query?: PinceauQuery,
 ) {
   const styles = parsedComponent.descriptor.styles
   styles.forEach(

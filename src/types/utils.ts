@@ -63,7 +63,7 @@ export type WrapUnion<
   [K in WrapKey<TObject, TPrefix, TSuffix>]: any
 }
 
-export interface VueQuery {
+export interface PinceauQuery {
   id: string
   ext: string
   filename: string
@@ -79,5 +79,6 @@ export interface VueQuery {
   scoped?: string
   transformed?: boolean
   issuerPath?: string
-  css: boolean
+  styles?: boolean
+  transformable?: boolean
 }
