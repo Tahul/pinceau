@@ -4,24 +4,18 @@
 
 [![NPM version](https://img.shields.io/npm/v/pinceau?color=a1b858&label=)](https://www.npmjs.com/package/pinceau)
 
-> Makes your `<script>` lighter and your `<style>` smarter.
+> Make your `<script>` lighter and your `<style>` smarter.
 
-[🎨 Pinceau Playground](https://play.pinceau.dev) • [🧑‍🎨 Documentation](https://pinceau.dev)
+[🎨 play.pinceau.dev](https://play.pinceau.dev) • [🧑‍🎨 Documentation](https://pinceau.dev)
 
-- Ships 0b of JavaScript to the client by default
-- [Design tokens](https://github.com/design-tokens/community-group) compatible configuration system
+- Ships **0kb** of JavaScript to the client
+- [Design tokens](https://github.com/design-tokens/community-group) compatible configuration
 - **Fully-typed** styling API
+- **Opt-in** runtime engine
 - Developer Experience that feels like a native [Vue](https://vuejs.org) feature
 - Plug & play with [Nuxt 3](https://v3.nuxtjs.org) and [Vite](https://vitejs.org)
-- Used by [@nuxt-themes](https://github.com/nuxt-themes) ecosystem
 - Ready for [Nuxt Studio](https://nuxt.studio)
 - [Pinceau VSCode extension](https://marketplace.visualstudio.com/items?itemName=yaelguilloux.pinceau-vscode) for **DX Sugar**
-- Integrated with [Volar](https://github.com/volarjs/volar.js)
-
-#### 🚨 Warning
-
-> Pinceau is still under heavy development, if you are missing some parts of the documentation, please [open an issue](https://github.com/Tahul/pinceau) and describe your problem.
-> I'll be happy to help.
 
 ## ⚙️ Install
 
@@ -120,10 +114,7 @@ Example: [`playground/theme/tokens.config.ts`](./playground/theme/tokens.config.
 
 </details>
 
-
-
-
-Learn more about Pinceau on the [documentation](https://pinceau.dev/get-started/what-is-pinceau).
+Learn more about Pinceau in the [documentation](https://pinceau.dev/get-started/what-is-pinceau)].
 
 ## 💖 Credits
 
@@ -137,7 +128,7 @@ Thanks to these amazing people that helped me along the way:
 - [@patak](https://github.com/patak-dev)
 - [Serhii Bedrytskyi](https://github.com/bdrtsky)
 
-This package takes a lot of inspiration in these amazing projects:
+This package takes a lot of inspiration from these amazing projects:
 
 - [Stitches](https://stitches.dev)
 - [vanilla-extract](https://vanilla-extract.style/)
