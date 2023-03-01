@@ -5,8 +5,8 @@ import { computedStyle, cssProp } from 'pinceau/runtime'
 import type { NuxtLinkProps } from '#app'
 
 defineProps({
-  to: {
-    type: String as PropType<NuxtLinkProps['to']>,
+  link: {
+    type: Object as PropType<NuxtLinkProps>,
     required: false,
   },
   color: computedStyle<keyof PinceauTheme['color']>('red'),
@@ -16,7 +16,7 @@ defineProps({
 </script>
 
 <template>
-  <NuxtLink :to="to">
+  <NuxtLink v-bind="link">
     <button class="my-button">
       <span v-if="!$slots?.default">Hello Amsterdam 👋</span>
       <span v-else>
