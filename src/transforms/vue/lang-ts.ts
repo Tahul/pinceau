@@ -1,3 +1,6 @@
+/**
+ * Transforms the `<style lang="ts">` attribute into `<style lang="postcss">`.
+ */
 export function replaceStyleTs(code: string, id: string) {
   if (id.endsWith('.vue') && !id.includes('?')) {
     const styleTagRe = /<style\b(.*?)\blang=['"][tj]sx?['"](.*?)>/g

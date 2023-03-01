@@ -8,7 +8,7 @@ import { dtRegex } from '../utils/regexes'
  */
 export const transformDtHelper = (code: string, ctx: PinceauContext, wrapper: string | undefined = undefined) => {
   const replace = (content: string): string => `${wrapper || ''}${content}${wrapper || ''}`
-  code = code.replace(dtRegex, (_, ...code) => {
+  return code.replace(dtRegex, (_, ...code) => {
     const path = code?.[0]
     const arg = code?.[2]
 
@@ -20,5 +20,4 @@ export const transformDtHelper = (code: string, ctx: PinceauContext, wrapper: st
 
     return replace(`var(--${path.split('.').join('-')})`)
   })
-  return code
 }
