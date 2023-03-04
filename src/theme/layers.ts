@@ -1,9 +1,10 @@
 import { existsSync } from 'fs'
 import { readFile } from 'fs/promises'
+import { resolveSchema as resolveUntypedSchema } from 'untyped'
 import createJITI from 'jiti'
 import { resolve } from 'pathe'
-import type { ConfigFileImport, ConfigLayer, LoadConfigResult, PinceauOptions, PinceauTheme, ResolvedConfigLayer } from '../types'
-import { merger, message, normalizeConfig } from '../utils'
+import type { ConfigFileImport, ConfigLayer, PinceauOptions, PinceauTheme, ResolvedConfig, ResolvedConfigLayer } from '../types'
+import { merger, message, normalizeTokens } from '../utils'
 import { resolveDefinitions } from './definitions'
 
 const extensions = ['.js', '.ts', '.mjs', '.cjs', '.json']
@@ -11,22 +12,19 @@ const extensions = ['.js', '.ts', '.mjs', '.cjs', '.json']
 /**
  * Resolves all `configLayers` from Pinceau options and returns a LoadConfigResult object.
  */
-export async function loadLayers<U extends PinceauTheme>(
-  {
-    cwd = process.cwd(),
-    configLayers,
-    configFileName = 'tokens.config',
-    definitions = true,
-  }: PinceauOptions,
-): Promise<LoadConfigResult<U>> {
+export async function loadLayers(options: PinceauOptions): Promise<ResolvedConfig> {
+  const { cwd, configLayers, configFileName } = options
+
   const sources = resolveConfigSources({ cwd, configLayers, configFileName })
 
   /**
    * loadConfig result
    */
-  const result: LoadConfigResult<U> = {
-    config: {} as any,
-    definitions: {} as any,
+  const result: ResolvedConfig = {
+    tokens: {},
+    utils: {},
+    definitions: {},
+    schema: {},
     sources: [] as string[],
   }
 
@@ -36,19 +34,26 @@ export async function loadLayers<U extends PinceauTheme>(
   for (const layer of sources) {
     // Support tokens passed in `configLayers: [{ tokens }]`
     if (layer.tokens) {
-      const mediaQueriesKeys = resolveMediaQueriesKeys(result.config)
-      result.config = merger(normalizeConfig(layer.tokens, mediaQueriesKeys), result.config) as U
+      const mediaQueriesKeys = resolveMediaQueriesKeys(result.tokens)
+      result.tokens = merger(normalizeTokens(layer.tokens, mediaQueriesKeys), result.tokens)
       continue
     }
 
-    const { path, config, definitions: resolvedDefinitions } = await resolveConfigLayer({ cwd, configFileName, definitions }, layer)
+    const { path, tokens, definitions, utils } = await resolveConfigLayer(options, layer)
 
+    // Push source
     if (path) { result.sources.push(path) }
 
-    if (config) { result.config = merger(config, result.config) as U }
+    // Merge tokens
+    if (tokens) { result.tokens = merger(tokens, result.tokens) }
 
-    if (definitions) { result.definitions = Object.assign(result?.definitions || {}, resolvedDefinitions) }
+    // Overwrite same-name utils & definitions
+    if (utils) { result.definitions = Object.assign(result?.definitions || {}, utils) }
+    if (definitions) { result.definitions = Object.assign(result?.definitions || {}, utils) }
   }
+
+  // Resolve schema if studio support is enabled
+  if (options.studio) { result.schema = await resolveUntypedSchema({ tokensConfig: result.tokens }) }
 
   return result
 }
@@ -56,13 +61,10 @@ export async function loadLayers<U extends PinceauTheme>(
 /**
  * Resolve a config file content for the provided ConfigFileImport.
  */
-export function resolveConfigFile(configFile: ConfigFileImport, definitions = true): ResolvedConfigLayer<any> {
-  const { config, content, path } = configFile
+export function resolveConfigFile({ definitions }: PinceauOptions, configFile: ConfigFileImport): ResolvedConfigLayer {
+  const { tokens, content, path } = configFile
 
-  const mediaQueriesKeys = resolveMediaQueriesKeys(config)
-
-  // Cleanup configuration object
-  const normalizedConfig = normalizeConfig(config, mediaQueriesKeys, false)
+  const mediaQueriesKeys = resolveMediaQueriesKeys(tokens)
 
   // Try to resolve tokens definitions
   let resolvedDefinitions
@@ -71,11 +73,19 @@ export function resolveConfigFile(configFile: ConfigFileImport, definitions = tr
     catch (e) { /* Mitigate definitions resolving errors */ }
   }
 
+  // Try to resolved the schema
+  let resolvedUtils
+  if (tokens.utils) {
+    resolvedUtils = tokens.utils
+    delete tokens.utils
+  }
+
   return {
+    tokens: normalizeTokens(tokens, mediaQueriesKeys, false),
     path,
     content,
     definitions: resolvedDefinitions,
-    config: normalizedConfig,
+    utils: resolvedUtils,
   }
 }
 
@@ -90,11 +100,10 @@ export async function resolveConfigLayer(
   }: PinceauOptions,
   layer: ConfigLayer,
 ): Promise<ResolvedConfigLayer> {
-  const empty = (path = undefined) => ({ path, content: '', config: {} as any, schema: {}, definitions: {} })
-
-  let path = ''
+  const empty = (path = undefined): ResolvedConfigLayer => ({ path, content: '', tokens: {}, definitions: {}, utils: {} })
 
   // Resolve config path from layer
+  let path = ''
   if (typeof layer === 'string') { path = resolve(layer) }
   else if (typeof layer === 'object') { path = resolve(layer?.cwd || cwd, layer?.configFileName || configFileName) }
   else { return empty() }
@@ -115,8 +124,8 @@ export async function resolveConfigLayer(
 
   try {
     return resolveConfigFile(
+      { definitions },
       await importConfigFile({ path: filePath, ext }),
-      definitions,
     )
   }
   catch (e) {
@@ -179,11 +188,10 @@ export async function importConfigFile({ path, ext }): Promise<ConfigFileImport>
 
   // Read `.json` configurations
   if (ext === '.json') {
-    const config = JSON.parse(content)
     return {
       path,
       content,
-      config,
+      tokens: JSON.parse(content),
     }
   }
 
@@ -197,7 +205,7 @@ export async function importConfigFile({ path, ext }): Promise<ConfigFileImport>
   return {
     path,
     content,
-    config: configImport,
+    tokens: configImport,
   }
 }
 

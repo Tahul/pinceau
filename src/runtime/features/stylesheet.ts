@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import type { ColorSchemeModes, PinceauContext, PinceauUidTypes, TokensFunction } from '../../types'
+import type { ColorSchemeModes, PinceauUidTypes, PinceauUtils, TokensFunction } from '../../types'
 import { resolveCssProperty } from '../../utils/css'
 import { stringify as _stringify } from '../../utils/stringify'
 
@@ -7,15 +7,12 @@ const HYDRATION_SELECTOR = '.phy[--]'
 
 export function usePinceauRuntimeSheet(
   $tokens: TokensFunction,
-  initialUtils: any = {},
+  utils: PinceauUtils,
   colorSchemeMode: ColorSchemeModes,
   appId?: string,
 ) {
   // Local runtime stylesheet reference
   const sheet = ref<CSSStyleSheet>()
-
-  // Local utils reference
-  const utils = ref<{ [key: string]: any }>(initialUtils)
 
   // Local cache for each token CSSRule index
   const cache = {}
@@ -25,14 +22,21 @@ export function usePinceauRuntimeSheet(
    */
   const stringify = (decl: any, loc?: any) => _stringify(
     decl,
-    (property: any, value: any, style: any, selectors: any) => resolveCssProperty(
-      property,
-      value,
-      style,
-      selectors,
-      [],
-      { $tokens, utils: utils.value, options: { colorSchemeMode, runtime: true } } as PinceauContext,
-      loc,
+    stringifyContext => resolveCssProperty(
+      stringifyContext,
+      {
+        loc,
+        localTokens: {},
+      } as any,
+      {
+        $tokens,
+        options: {
+          colorSchemeMode,
+        },
+        resolvedConfig: {
+          utils: utils.value,
+        } as any,
+      },
     ),
   )
 

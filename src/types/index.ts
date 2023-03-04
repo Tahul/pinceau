@@ -1,6 +1,6 @@
-import type { ConfigOrPaths, ThemeGenerationOutput } from './context'
+import type { ThemeGenerationOutput } from './context'
 import type { ColorSchemeModes } from './css'
-import type { LoadConfigResult } from './config'
+import type { ConfigOrPaths, ResolvedConfig } from './config'
 
 export * from './utils'
 export * from './theme'
@@ -14,6 +14,7 @@ export * from './map'
 export * from './preset'
 export * from './variants'
 export * from './properties'
+export * from './transforms'
 
 export interface PinceauOptions {
   /**
@@ -38,17 +39,17 @@ export interface PinceauOptions {
   /**
    * A callback called each time your config gets resolved.
    */
-  configResolved?: (config: LoadConfigResult) => void
+  configResolved?: (config: ResolvedConfig) => void | Promise<void>
 
   /**
    * A callback called each time your config gets built.
    */
-  configBuilt?: (config: ThemeGenerationOutput) => void
+  configBuilt?: (config: ThemeGenerationOutput) => void | Promise<void>
 
   /**
    * The directory in which you want to output the built version of your configuration.
    */
-  outputDir?: string
+  buildDir?: string
 
   /**
    * Imports the default CSS reset in the project.

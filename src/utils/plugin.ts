@@ -8,9 +8,9 @@ import type { PinceauOptions } from '../types'
 export function registerAliases(config: ViteConfig, options: PinceauOptions) {
   if (!config?.resolve) { config.resolve = {} }
   if (!config.resolve?.alias) { config.resolve.alias = {} }
-  if (options?.outputDir) {
-    config.resolve.alias['#pinceau/theme'] = join(options.outputDir, '/index.ts')
-    config.resolve.alias['#pinceau/utils'] = join(options.outputDir, '/utils.ts')
+  if (options?.buildDir) {
+    config.resolve.alias['#pinceau/theme'] = join(options.buildDir, '/index.ts')
+    config.resolve.alias['#pinceau/utils'] = join(options.buildDir, '/utils.ts')
   }
 }
 

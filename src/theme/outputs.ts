@@ -4,21 +4,27 @@ import { join } from 'pathe'
 import type { PinceauOptions } from '../types'
 import { schemaFull, tsFull, utilsFull } from './formats'
 
-export async function prepareOutputDir<UserOptions extends PinceauOptions = PinceauOptions>(
+export async function prepareBuildDir(
   {
-    outputDir = join(process.cwd(), 'node_modules/.vite/pinceau'),
-    studio,
-  }: UserOptions,
+    buildDir = join(process.cwd(), 'node_modules/.vite/pinceau'),
+    studio = false,
+  }: PinceauOptions,
 ) {
-  const themeDir = join(outputDir, 'theme')
+  const themeDir = join(buildDir, 'theme')
   if (!existsSync(themeDir)) { await mkdir(themeDir, { recursive: true }) }
 
-  await stubOutputs(outputDir, false, studio)
+  await stubOutputs({ buildDir, studio }, false)
 
-  return outputDir
+  return buildDir
 }
 
-export async function stubOutputs(buildPath: string, force = false, schema = false) {
+export async function stubOutputs(
+  {
+    buildDir,
+    studio,
+  }: PinceauOptions,
+  force = false,
+) {
   const files = {
     'theme/index.css': () => '/* This file is empty because no tokens has been provided or your configuration is broken. */',
     'definitions.ts': () => 'export const definitions = {} as const',
@@ -27,10 +33,10 @@ export async function stubOutputs(buildPath: string, force = false, schema = fal
   }
 
   // Support for configuration schema
-  if (schema) { files['schema.ts'] = schemaFull }
+  if (studio) { files['schema.ts'] = schemaFull }
 
   for (const [file, stubbingFunction] of Object.entries(files)) {
-    const path = join(buildPath, file)
+    const path = join(buildDir, file)
 
     if (force && existsSync(path)) { await rm(path) }
 

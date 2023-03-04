@@ -1,6 +1,6 @@
 import { computed, ref } from 'vue'
 import type { ColorSchemeModes, PinceauMediaQueries, PinceauTheme, PinceauTokensPaths, Theme, TokensFunctionOptions } from '../../types'
-import { get, normalizeConfig, set, walkTokens } from '../../utils/data'
+import { get, normalizeTokens, set, walkTokens } from '../../utils/data'
 import { pathToVarName } from '../../utils/$tokens'
 import { resolveReferences, resolveThemeRule } from '../../utils/css'
 import { createTokensHelper } from '../utils'
@@ -140,7 +140,7 @@ export function usePinceauThemeSheet(
     const mqKeys = Array.from(new Set(['dark', 'light', ...Object.keys((value as any)?.media || {}), ...Object.keys(theme.value?.media || {})]))
 
     // Turn partial configuration object into a valid design tokens configuration object
-    const config = normalizeConfig(value || {}, mqKeys, true)
+    const config = normalizeTokens(value || {}, mqKeys, true)
 
     // Walk tokens inside partial theme object and assign them to local stylesheet
     walkTokens(config, (token, _, paths) => updateToken(paths, token.value))

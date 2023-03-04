@@ -1,7 +1,13 @@
 import type { Schema } from 'untyped'
 import type { CSSProperties } from './css'
-import type { DesignToken, RawTokenType, ResponsiveToken } from './tokens'
+import type { DesignToken, DesignTokens, RawTokenType, ResponsiveToken } from './tokens'
 import type { PinceauTheme } from './theme'
+import type { VirtualOutputs } from './context'
+
+/**
+ * Supports all the different ways of expressing configuration layers from `configOrPaths` from Pinceau's options.
+ */
+export type ConfigOrPaths = (string | ConfigLayer)[]
 
 /**
  * A configuration layer as expressed by the user.
@@ -18,7 +24,7 @@ export interface ConfigLayer {
  * Includes both the content of the file as string and its evalued content as import.
  */
 export interface ConfigFileImport {
-  config: any
+  tokens: any
   content: string
   path: string
 }
@@ -26,28 +32,24 @@ export interface ConfigFileImport {
 /**
  * A layer of configuration that has been resolved before being loaded.
  */
-export interface ResolvedConfigLayer<T = PinceauTheme> {
-  path: string | undefined
-  content: string
+export interface ResolvedConfigLayer extends ConfigFileImport {
+  tokens: DesignTokens
+  utils: PinceauUtilsProperties
   definitions: { [key: string]: any }
-  config: T
 }
 
 /**
- * A configuration data once loaded by Pinceau.
+ * A full configuration data once loaded by Pinceau.
  */
-export interface LoadConfigResult<T = any> {
-  config: T
-  definitions: { [key: string]: any }
+export interface ResolvedConfig extends Omit<ResolvedConfigLayer, 'path' | 'content'> {
+  schema: { [key: string]: any }
   sources: string[]
 }
 
 /**
  * Utils properties mappings.
  */
-export interface PinceauUtilsProperties {
-  [key: string]: CSSProperties | ((value: any) => CSSProperties)
-}
+export type PinceauUtilsProperties = Record<string, ((value: any) => CSSProperties) | CSSProperties>
 
 /**
  * Media queries properties.
@@ -63,6 +65,15 @@ export interface PinceauMediaProperties {
 export interface ReservedConfigKeys {
   media?: PinceauMediaProperties
   utils?: PinceauUtilsProperties
+}
+
+/**
+ * Theme generation output.
+ */
+export interface ThemeGenerationOutput {
+  buildDir: string
+  tokens: DesignTokens
+  outputs: VirtualOutputs
 }
 
 /**

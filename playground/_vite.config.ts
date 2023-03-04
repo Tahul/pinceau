@@ -21,7 +21,7 @@ export default defineConfig({
       dev: true,
     }),
     Pinceau({
-      outputDir: join(__dirname, './.nuxt/pinceau/'),
+      buildDir: join(__dirname, './.nuxt/pinceau/'),
       configLayers: [
         {
           cwd: resolve(__dirname, './theme'),

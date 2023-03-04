@@ -1,66 +1,98 @@
 import type { ViteDevServer } from 'vite'
 import type { PinceauVirtualContext } from '../theme/virtual'
-import type { PinceauTheme } from './theme'
-import type { TokensFunction } from './dt'
-import type { ConfigLayer, LoadConfigResult } from './config'
-import type { DesignTokens, PinceauOptions } from './'
+import type { ResolvedConfig } from './config'
+import type { PinceauOptions, PinceauTheme, TokensFunction } from './'
 
-/**
- * Supports all the different ways of expressing configuration layers from `configOrPaths` from Pinceau's options.
- */
-export type ConfigOrPaths = (string | ConfigLayer)[]
-
-/**
- *
- */
-export interface PinceauContext<UserOptions extends PinceauOptions = PinceauOptions> extends PinceauConfigContext<UserOptions>, PinceauVirtualContext {
+export interface PinceauBaseContext {
+  /**
+   * The current Pinceau environment setup.
+   */
   env: 'prod' | 'dev'
-  tokens: DesignTokens
-  utils: { [key: string]: any }
-  $tokens: TokensFunction
-  options: PinceauOptions
-  transformed: string[]
-  viteServer: ViteDevServer
-  runtime?: boolean
-  addTransformed: (id: string) => void
-  setViteServer(server: ViteDevServer): void
+  /**
+   * Is this context running at runtime or build time?
+   */
+  runtime: boolean
 }
 
-export interface PinceauConfigContext<UserOptions = PinceauOptions> {
+export interface PinceauBuildContext extends PinceauBaseContext {
   /**
-   * Current rootDir of Pinceau
+   * Pinceau user options passed from Vite plugin options or Nuxt config key.
    */
-  cwd: string
+  options: PinceauOptions
+  /**
+   * Local reference to the Vite development server.
+   */
+  viteServer: ViteDevServer
+  /**
+   * A list of transformed files
+   */
+  transformed: string[]
+  /**
+   * Add a new transformed file if not already present.
+   */
+  addTransformed: (id: string) => void
+  /**
+   * The Pinceau theme object.
+   */
+  tokens: PinceauTheme
+}
+
+export interface PinceauConfigContext {
   /**
    * A list of watched sources
    */
   sources: string[]
+
   /**
    * Currently resolved configuration from the configuration loader.
    */
-  resolvedConfig: any
+  resolvedConfig: ResolvedConfig
+
   /**
    * Is the loader currently loading configurations layers?
    */
-  ready: Promise<LoadConfigResult<PinceauTheme>>
+  ready: Promise<ResolvedConfig>
+
   /**
    * Update the current rootDir
    */
-  updateCwd: (newCwd: string) => Promise<LoadConfigResult<PinceauTheme>>
+  updateCwd: (newCwd: string) => Promise<ResolvedConfig>
+
   /**
    * Reload the configuration (with new options if provided)
    */
-  reloadConfig: (newOptions?: UserOptions) => Promise<LoadConfigResult<PinceauTheme>>
+  reloadConfig: (newOptions?: PinceauOptions) => Promise<ResolvedConfig>
+
   /**
    * Registers the initial configurations watchers.
    */
   registerConfigWatchers: () => void
 }
 
-export interface ThemeGenerationOutput {
-  buildPath: string
-  tokens: any
-  outputs: Record<string, any>
+/**
+ * Complete Pinceau plugin context used at build time and in development.
+ */
+export interface PinceauContext extends
+  PinceauVirtualContext,
+  PinceauBuildContext,
+  PinceauConfigContext,
+  PinceauVirtualContext {
+  $tokens: TokensFunction
 }
+
+/**
+ * Supported virtual outputs ids
+ */
+export type VirtualOutputsIds = 'css' | 'ts' | 'utils' | 'schema' | 'definitions'
+
+/**
+ * Virtual outputs storage model
+ */
+export type VirtualOutputs = { [key in VirtualOutputsIds]?: string }
+
+/**
+ * Supported Pinceau virtual import paths
+ */
+export type VirtualImportsPaths = 'pinceau.css' | '#pinceau/theme' | '#pinceau/utils' | '#pinceau/schema' | '#pinceau/definitions'
 
 export type { PinceauVirtualContext }

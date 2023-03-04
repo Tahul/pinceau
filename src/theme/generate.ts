@@ -1,25 +1,20 @@
 import type { Core as Instance } from 'style-dictionary-esm'
 import StyleDictionary from 'style-dictionary-esm'
-import { resolveSchema as resolveUntypedSchema } from 'untyped'
-import { flattenTokens } from '../utils'
-import type { PinceauOptions, ThemeGenerationOutput } from '../types'
+import type { PinceauBuildContext, ResolvedConfig, ThemeGenerationOutput } from '../types'
 import { message } from '../utils/logger'
-import { normalizeConfig } from '../utils/data'
+import { normalizeTokens } from '../utils/data'
+import { flattenTokens } from '../utils'
 import { cssFull, definitionsFull, schemaFull, tsFull, utilsFull } from './formats'
 
 export async function generateTheme(
-  tokens: any,
-  definitions: any,
-  {
-    outputDir: buildPath,
-    colorSchemeMode,
-    studio: studioSupport,
-    definitions: definitionsSupport,
-    utilsImports,
-  }: PinceauOptions,
+  resolvedConfig: ResolvedConfig,
+  buildContext: PinceauBuildContext,
   silent = true,
   write = true,
 ): Promise<ThemeGenerationOutput> {
+  const { tokens, definitions, utils, schema } = resolvedConfig
+  const { options } = buildContext
+
   let styleDictionary: Instance = StyleDictionary
 
   // Files created by Pinceau
@@ -40,14 +35,15 @@ export async function generateTheme(
   ]
 
   // Support definitions.ts
-  if (definitionsSupport) {
+  if (options.definitions) {
     files.push({
       destination: 'definitions.ts',
       format: 'pinceau/definitions',
     })
   }
 
-  if (studioSupport) {
+  // Support schema.ts
+  if (options.studio) {
     files.push({
       destination: 'schema.ts',
       format: 'pinceau/schema',
@@ -67,18 +63,14 @@ export async function generateTheme(
   const outputs: ThemeGenerationOutput['outputs'] = {}
 
   // Generation result for virtual storage
-  let result = {
+  let result: ThemeGenerationOutput = {
     tokens: {},
     outputs: {} as Record<string, any>,
-    buildPath,
+    buildDir: options.buildDir,
   }
 
   // Skip generation if no tokens provided
   if (!tokens || typeof tokens !== 'object' || !Object.keys(tokens).length) { return result }
-
-  // Custom properties handling
-  const utils = { ...(tokens?.utils || {}) }
-  if (tokens?.utils) { delete tokens?.utils }
 
   // Responsive tokens
   const mqKeys = ['dark', 'light', ...Object.keys(tokens?.media || {})]
@@ -150,7 +142,7 @@ export async function generateTheme(
   styleDictionary.registerFormat({
     name: 'css',
     formatter({ dictionary, options }) {
-      const result = cssFull(dictionary, options, responsiveTokens, colorSchemeMode)
+      const result = cssFull(dictionary, options, responsiveTokens, options.colorSchemeMode)
       outputs.css = result
       return result
     },
@@ -160,7 +152,7 @@ export async function generateTheme(
   styleDictionary.registerFormat({
     name: 'pinceau/utils',
     formatter() {
-      outputs.utils = utilsFull(utils, utilsImports, definitions)
+      outputs.utils = utilsFull(utils, options.utilsImports, definitions)
       return outputs.utils
     },
   })
@@ -175,7 +167,6 @@ export async function generateTheme(
   })
 
   // schema.ts
-  const schema = await resolveUntypedSchema({ tokensConfig: tokens })
   styleDictionary.registerFormat({
     name: 'pinceau/schema',
     formatter() {
@@ -200,7 +191,7 @@ export async function generateTheme(
   })
 
   styleDictionary = styleDictionary.extend({
-    tokens: normalizeConfig(tokens, mqKeys, true),
+    tokens: normalizeTokens(tokens, mqKeys, true),
     platforms: {
       prepare: {
         silent,
@@ -210,7 +201,7 @@ export async function generateTheme(
       base: {
         silent,
         transformGroup: 'pinceau',
-        buildPath,
+        buildPath: options.buildDir,
         files,
         write,
       },
@@ -232,7 +223,7 @@ export async function generateTheme(
             resolve({
               tokens: flattenTokens(tokens),
               outputs,
-              buildPath,
+              buildDir: options.buildDir,
             })
           },
           undo: () => {},

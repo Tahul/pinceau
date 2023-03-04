@@ -1,49 +1,26 @@
-import type { SFCParseResult } from 'vue/compiler-sfc'
-import type MagicString from 'magic-string'
-import { parseVueComponent } from '../../utils/ast'
-import type { PinceauContext, PinceauQuery } from '../../types'
+import type { PinceauTransformContext } from 'pinceau/types/transforms'
+import type { PinceauContext } from '../../types'
 import { variantsRegex } from '../../utils'
 import { transformDtHelper } from '../dt'
 import { transformCssFunction } from '../css'
 import { message } from '../../utils/logger'
-import { transformStyle } from './style'
+import { transformCSS } from './style'
 import { transformVariants } from './variants'
-import { transformAddPropsKey } from './props-key'
 import { transformAddPinceauClass } from './add-class'
+import { } from 'vue/compiler-sfc'
 
 export function transformVueSFC(
-  code: string,
-  query: PinceauQuery,
-  magicString: MagicString,
-  ctx: PinceauContext,
-): { code: string; magicString: MagicString; variants: any; computedStyles: any; localTokens: any } {
-  // Resolve from parsing the <style lang="ts"> tag for current component
-  const variants = {}
-  const computedStyles = {}
-  const localTokens = {}
-
-  // Parse component with compiler-sfc
-  const parsedComponent = parseVueComponent(code, { filename: query.id })
-
+  transformContext: PinceauTransformContext,
+  pinceauContext: PinceauContext,
+) {
   // Transform <style> blocks
-  if (parsedComponent?.descriptor?.styles) {
-    resolveStyle(query.id, parsedComponent, magicString, variants, computedStyles, localTokens, ctx, query)
-  }
-
-  // Check if runtime styles are enabled on this component
-  const hasRuntimeStyles = Object.keys(variants).length > 0 || Object.keys(computedStyles).length > 0
+  if (transformContext.sfc()?.descriptor?.styles) { transformStyles(transformContext, pinceauContext) }
 
   // Transform <template> blocks
-  if (parsedComponent?.descriptor?.template) {
-    resolveTemplate(query.id, parsedComponent, magicString, ctx, hasRuntimeStyles)
-  }
+  if (transformContext.sfc()?.descriptor?.template) { transformTemplate(transformContext, pinceauContext) }
 
   // Transform <script setup> blocks
-  if (parsedComponent?.descriptor?.scriptSetup) {
-    resolveScriptSetup(query.id, parsedComponent, magicString, variants, computedStyles, ctx, parsedComponent.descriptor.scriptSetup.lang === 'ts')
-  }
-
-  return { code, magicString, variants, computedStyles, localTokens }
+  if (transformContext.sfc()?.descriptor?.scriptSetup) { transformScriptSetup(transformContext, pinceauContext) }
 }
 
 /**
@@ -51,69 +28,54 @@ export function transformVueSFC(
  *
  * These does not need to resolve variants or populate computed styles.
  */
-export function resolveStyleQuery(code: string, magicString: MagicString, query: PinceauQuery, ctx: PinceauContext, loc?: any) {
+export function transformStyleQuery(
+  transformContext: PinceauTransformContext,
+  pinceauContext: PinceauContext,
+) {
   // Handle `lang="ts"` even though that should not happen here.
-  if (query.lang === 'ts') { code = transformCssFunction(query.id, code, {}, {}, {}, ctx, loc) }
+  if (transformContext.query.lang === 'ts') { transformCssFunction(transformContext, pinceauContext) }
 
   // Transform <style> block
-  code = transformStyle(code, ctx)
-
-  return { code, magicString }
+  transformCSS(transformContext, pinceauContext)
 }
 
 /**
  * Transform <template> blocks.
  */
-export function resolveTemplate(_: string, parsedComponent: SFCParseResult, magicString: MagicString, ctx: PinceauContext, hasRuntimeStyles: boolean) {
+export function transformTemplate(
+  transformContext: PinceauTransformContext,
+  pinceauContext: PinceauContext,
+) {
+  // Check if runtime styles are enabled on this component
+  const hasRuntimeStyles = Object.keys(transformContext.variants).length || Object.keys(transformContext.computedStyles).length
+
   // Transform `$dt()` from template
-  const templateContent = parsedComponent.descriptor.template
-  let newTemplateContent = templateContent.content
-  newTemplateContent = transformDtHelper(newTemplateContent, ctx, '\'')
+  transformDtHelper(transformContext, pinceauContext, { wrapper: '\'' })
 
   // Add class if runtime styles are enabled
-  if (ctx.options.runtime && hasRuntimeStyles) { newTemplateContent = transformAddPinceauClass(newTemplateContent) }
-
-  // Overwrite <template>
-  if (templateContent.loc.end?.offset && templateContent.loc.end?.offset > templateContent.loc.start.offset) {
-    magicString.overwrite(
-      templateContent.loc.start.offset,
-      templateContent.loc.end.offset,
-      newTemplateContent,
-    )
-  }
+  if (pinceauContext.options.runtime && hasRuntimeStyles) { transformAddPinceauClass(transformContext) }
 }
 
 /**
  * Transform all <style> blocks.
  */
-export function resolveStyle(
-  id: string,
-  parsedComponent: SFCParseResult,
-  magicString: MagicString,
-  variants: any,
-  computedStyles: any,
-  localTokens: any,
-  ctx: PinceauContext,
-  query?: PinceauQuery,
+export function transformStyles(
+  transformContext: PinceauTransformContext,
+  pinceauContext: PinceauContext,
 ) {
-  const styles = parsedComponent.descriptor.styles
+  const styles = transformContext.sfc().descriptor.styles
+
   styles.forEach(
     (styleBlock) => {
-      const { loc, content } = styleBlock
-      let code = content
-
       if (
         styleBlock.attrs.lang === 'ts'
         || styleBlock.lang === 'ts'
         || styleBlock.attrs?.transformed
       ) {
-        code = transformCssFunction(id, code, variants, computedStyles, localTokens, ctx, { query, ...loc })
+        transformCssFunction(transformContext, pinceauContext, styleBlock)
       }
 
-      code = transformStyle(code, ctx)
-
-      magicString.remove(loc.start.offset, loc.end.offset)
-      magicString.appendRight(loc.end.offset, `\n${code}\n`)
+      transformCSS(transformContext, pinceauContext, styleBlock)
     },
   )
 }
@@ -121,98 +83,71 @@ export function resolveStyle(
 /**
  * Transforms <script setup> blocks.
  */
-export function resolveScriptSetup(
-  id: string,
-  parsedComponent: SFCParseResult,
-  magicString: MagicString,
-  variants: any,
-  computedStyles: any,
-  ctx: PinceauContext,
-  isTs: boolean,
+export function transformScriptSetup(
+  transformContext: PinceauTransformContext,
+  pinceauContext: PinceauContext,
 ) {
-  const scriptSetup = parsedComponent.descriptor.scriptSetup
-  const hasVariants = Object.keys(variants).length
-  const hasComputedStyles = Object.keys(computedStyles).length
-  let code = scriptSetup.content
+  const hasVariants = !!Object.keys(transformContext.variants).length
+  const hasComputedStyles = !!Object.keys(transformContext.computedStyles).length
 
   // Transform `$dt()` usage
-  code = transformDtHelper(code, ctx, '`')
+  transformDtHelper(transformContext, pinceauContext, { wrapper: '`' })
 
   // Cleanup `...variants` in any case
-  code = code.replace(variantsRegex, () => '')
+  transformContext.magicString.replace(variantsRegex, '')
 
-  if (ctx.options.runtime) {
+  if (pinceauContext.options.runtime) {
     // Inject runtime imports
-    if (hasVariants || hasComputedStyles) { code = transformAddRuntimeImports(code) }
+    if (hasVariants || hasComputedStyles) { transformAddRuntimeImports(transformContext) }
 
     // Check for variant props
-    if (hasVariants) { code = transformVariants(code, variants, isTs) }
+    if (hasVariants) { transformVariants(transformContext) }
 
     // Check for computed styles
-    if (hasComputedStyles) { code = transformComputedStyles(code, computedStyles) }
+    if (hasComputedStyles) { transformComputedStyles(transformContext) }
 
     // Push last runtime context
-    if (hasVariants || hasComputedStyles) { code = transformFinishRuntimeSetup(code, hasComputedStyles, hasVariants, computedStyles) }
+    if (hasVariants || hasComputedStyles) { transformFinishRuntimeSetup(transformContext, { hasVariants, hasComputedStyles }) }
   }
   else if (hasVariants || hasComputedStyles) {
     // Warn on disabled runtime features used in components
-    message('RUNTIME_FEATURES_CONFLICT', [id])
+    message('RUNTIME_FEATURES_CONFLICT', [transformContext.query.id])
   }
-
-  // Overwrite <script setup> block with new content
-  magicString.overwrite(scriptSetup.loc.start.offset, scriptSetup.loc.end.offset, code)
 }
 
 /**
  * Adds computed styles code to <script setup>
  */
-export function transformComputedStyles(code: string, computedStyles: any): string {
-  code = Object
-    .entries(computedStyles)
-    .map(([key, styleFunction]) => `\nconst ${key} = computed(() => ((props = __$pProps) => ${styleFunction})())\n`)
-    .join('') + code
+export function transformComputedStyles(transformContext: PinceauTransformContext) {
+  const scriptSetup = transformContext.sfc().descriptor.scriptSetup
 
-  return code
+  Object
+    .entries(transformContext.computedStyles)
+    .forEach(([key, styleFunction]) => scriptSetup.append(`\nconst ${key} = computed(() => ((props = getCurrentInstance().props) => ${styleFunction})())\n`))
 }
 
-export function transformAddRuntimeImports(code: string): string {
-  code = `import { usePinceauRuntime } from 'pinceau/runtime'\n${code}`
+export function transformAddRuntimeImports(transformContext: PinceauTransformContext) {
+  const scriptSetup = transformContext.sfc().descriptor.scriptSetup
+
+  scriptSetup.prepend('import { usePinceauRuntime } from \'pinceau/runtime\'\n')
 
   // Handle necessary Vue imports
   const vueImports = []
-  if (!code.match(/reactive\(/gm)) { vueImports.push('reactive') }
-  if (!code.match(/computed\(/gm)) { vueImports.push('computed') }
-  if (!code.match(/getCurrentInstance\(/gm)) { vueImports.push('getCurrentInstance') }
-  if (!code.match(/ref\(/gm)) { vueImports.push('ref') }
-  if (vueImports.length) { code = `import { ${vueImports.join(', ')} } from 'vue'\n${code}` }
-
-  // Resolve defineProps reference or add it
-  const { propsKey, code: _code } = transformAddPropsKey(code)
-  code = _code
-
-  // Props w/o const
-  if (propsKey && propsKey === '__$pProps') { return code }
-
-  // Props w/ const or no props
-  code += `\nconst __$pProps = ${propsKey || '{}'}\n`
-
-  return code
+  if (!scriptSetup.content.match(/reactive\(/gm)) { vueImports.push('reactive') }
+  if (!scriptSetup.content.match(/computed\(/gm)) { vueImports.push('computed') }
+  if (!scriptSetup.content.match(/getCurrentInstance\(/gm)) { vueImports.push('getCurrentInstance') }
+  if (!scriptSetup.content.match(/ref\(/gm)) { vueImports.push('ref') }
+  if (vueImports.length) { scriptSetup.prepend(`import { ${vueImports.join(', ')} } from 'vue'`) }
 }
 
-export function transformFinishRuntimeSetup(
-  newScriptSetup,
-  hasComputedStyles,
-  hasVariants,
-  computedStyles,
-) {
-  newScriptSetup += [
+export function transformFinishRuntimeSetup(transformContext: PinceauTransformContext, { hasVariants, hasComputedStyles }: Record<string, boolean>) {
+  const usePinceauRuntime = [
     `\n${(hasVariants || hasComputedStyles) ? 'const { $pinceau } = ' : ''}`,
     'usePinceauRuntime(',
-    '__$pProps, ',
+    'getCurrentInstance().props, ',
     `${hasVariants ? '__$pVariants' : 'undefined'}, `,
-    `${hasComputedStyles ? `{ ${Object.keys(computedStyles).map(key => `${key}`).join(',')} }` : 'undefined'}`,
+    `${hasComputedStyles ? `{ ${Object.keys(transformContext.computedStyles).map(key => `${key}`).join(',')} }` : 'undefined'}`,
     ')\n',
   ].join('')
-
-  return newScriptSetup
+  transformContext.sfc().descriptor.scriptSetup.append(usePinceauRuntime)
 }

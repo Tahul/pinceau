@@ -1,4 +1,4 @@
-import type { ColorSchemeModes, DesignToken, PinceauContext, PinceauMediaQueries } from '../types'
+import type { ColorSchemeModes, DesignToken, DesignTokens, PinceauContext, PinceauMediaQueries, PinceauTransformContext, StringifyContext } from '../types'
 import { pathToVarName } from './$tokens'
 import { DARK, INITIAL, LIGHT, referencesRegex } from './regexes'
 
@@ -6,29 +6,28 @@ import { DARK, INITIAL, LIGHT, referencesRegex } from './regexes'
  * Resolve a css function property to a stringifiable declaration.
  */
 export function resolveCssProperty(
-  property: any,
-  value: any,
-  style: any,
-  selectors: any,
-  localTokens: string[] = [],
-  ctx: PinceauContext,
-  loc?: any,
+  stringifyContext: StringifyContext,
+  transformContext: Partial<PinceauTransformContext>,
+  pinceauContext: Partial<PinceauContext>,
 ) {
+  let { property, value } = stringifyContext
+
   // Resolve custom style directives
-  const directive = resolveCustomDirectives(property, value, selectors, ctx, loc)
+  const directive = resolveCustomDirectives(stringifyContext, transformContext, pinceauContext)
   if (directive) { return directive }
 
   // Resolve custom properties
-  if (ctx?.utils?.[property]) {
-    // Custom property is a function, pass value and return result
-    if (typeof ctx.utils[property] === 'function') { return ctx.utils[property](value) }
+  const utils = pinceauContext?.resolvedConfig?.utils
+  if (utils?.[property]) {
+    // @ts-ignore - Custom property is a function, pass value and return result
+    if (typeof utils[property] === 'function') { return utils[property](value) }
 
     // Custom property is an object, if value is true, return result
-    return value ? ctx.utils[property] : {}
+    return value ? utils[property] : {}
   }
 
   // Resolve final value
-  value = castValues(property, value, localTokens, ctx, loc)
+  value = castValues(stringifyContext, transformContext, pinceauContext)
 
   // Return proper declaration
   return {
@@ -40,19 +39,14 @@ export function resolveCssProperty(
  * Cast value or values before pushing it to the style declaration
  */
 export function castValues(
-  property: any,
-  value: any,
-  localTokens: string[],
-  ctx: PinceauContext,
-  loc?: any,
+  stringifyContext: StringifyContext,
+  transformContext: Partial<PinceauTransformContext>,
+  pinceauContext: Partial<PinceauContext>,
 ) {
+  let { value } = stringifyContext
   if (Array.isArray(value) || typeof value === 'string' || typeof value === 'number') {
-    if (Array.isArray(value)) {
-      value = value.map(v => castValue(property, v, localTokens, ctx, loc)).join(',')
-    }
-    else {
-      value = castValue(property, value, localTokens, ctx, loc)
-    }
+    if (Array.isArray(value)) { value = value.map(v => castValue({ ...stringifyContext, value: v }, transformContext, pinceauContext)).join(',') }
+    else { value = castValue(stringifyContext, transformContext, pinceauContext) }
   }
   return value
 }
@@ -61,18 +55,14 @@ export function castValues(
  * Cast a value to a valid CSS unit.
  */
 export function castValue(
-  property: any,
-  value: any,
-  localTokens: string[],
-  ctx: PinceauContext,
-  loc?: any,
+  stringifyContext: StringifyContext,
+  transformContext: Partial<PinceauTransformContext>,
+  pinceauContext: Partial<PinceauContext>,
 ) {
+  let { value } = stringifyContext
   if (typeof value === 'number') { return value }
-
-  if (value.match(referencesRegex)) { value = resolveReferences(property, value, localTokens, ctx, loc) }
-
+  if (value.match(referencesRegex)) { value = resolveReferences(stringifyContext, transformContext, pinceauContext) }
   if (value === '{}') { return '' }
-
   return value
 }
 
@@ -80,23 +70,21 @@ export function castValue(
  * Resolve token references
  */
 export function resolveReferences(
-  _: string,
-  value: string,
-  localTokens: string[],
-  ctx: PinceauContext,
-  loc?: any,
+  stringifyContext: StringifyContext,
+  transformContext: Partial<PinceauTransformContext>,
+  pinceauContext: Partial<PinceauContext>,
 ) {
+  let { value } = stringifyContext
   if (!(typeof value === 'string')) { return value }
-
   value = value.replace(
     referencesRegex,
     (_, tokenPath) => {
       const varName = pathToVarName(tokenPath)
       const variable = `var(${varName})`
 
-      if (localTokens.includes(varName)) { return variable }
+      if (Object.keys(transformContext?.localTokens || {}).includes(varName)) { return variable }
 
-      const token = ctx.$tokens(tokenPath, { key: undefined, loc }) as DesignToken
+      const token = pinceauContext.$tokens(tokenPath, { key: undefined, loc: transformContext?.loc }) as DesignToken
 
       const tokenValue = typeof token === 'string' ? token : (token?.variable || token?.value)
 
@@ -106,7 +94,6 @@ export function resolveReferences(
       return tokenValue as string
     },
   )
-
   return value
 }
 
@@ -114,22 +101,22 @@ export function resolveReferences(
  * Resolve custom directives (@mq, @dark).
  */
 export function resolveCustomDirectives(
-  property: any,
-  value: any,
-  selectors: any,
-  ctx: PinceauContext,
-  loc?: any,
+  stringifyContext: StringifyContext,
+  transformContext: Partial<PinceauTransformContext>,
+  pinceauContext: Partial<PinceauContext>,
 ) {
+  const { property, value } = stringifyContext
+
   if (property.startsWith('@')) {
     const resolveColorScheme = (scheme: string) => {
-      scheme = ctx.options.colorSchemeMode === 'class'
+      scheme = pinceauContext.options.colorSchemeMode === 'class'
         ? `:root.${scheme}`
         : `@media (prefers-color-scheme: ${scheme})`
 
       const isMedia = scheme.startsWith('@media')
 
       // Runtime styling needs to be wrapped in `@media` as it does not get processed through PostCSS
-      if (ctx?.runtime) {
+      if (pinceauContext?.runtime) {
         return {
           '@media': {
             [scheme]: value,
@@ -137,9 +124,7 @@ export function resolveCustomDirectives(
         }
       }
 
-      return {
-        [isMedia ? scheme : `${scheme} &`]: value,
-      }
+      return { [isMedia ? scheme : `${scheme} &`]: value }
     }
 
     // @dark
@@ -150,14 +135,14 @@ export function resolveCustomDirectives(
 
     // @initial
     if (property === INITIAL) {
-      const token = ctx.$tokens('media.initial' as any, { key: 'value', onNotFound: false, loc })
+      const token = pinceauContext.$tokens('media.initial' as any, { key: 'value', onNotFound: false, loc: transformContext.loc })
       return {
         [`@media${token ? ` ${token}` : ''}`]: value,
       }
     }
 
     // Handle all user supplied @directives
-    const mediaQueries = ctx.$tokens('media' as any, { key: undefined, loc })
+    const mediaQueries = pinceauContext.$tokens('media' as any, { key: undefined, loc: transformContext.loc })
     if (mediaQueries) {
       const query = property.replace('@', '')
       if (mediaQueries[query]) {
@@ -178,17 +163,17 @@ export function resolveCustomDirectives(
  */
 export function resolveThemeRule(
   mq: PinceauMediaQueries,
-  content?: string,
-  theme?: any,
-  colorSchemeMode?: ColorSchemeModes,
+  content: string,
+  tokens: DesignTokens,
+  colorSchemeMode: ColorSchemeModes,
 ) {
   let responsiveSelector = ''
   if (mq === 'dark' || mq === 'light') {
     if (colorSchemeMode === 'class') { responsiveSelector = `:root.${mq}` }
     else { responsiveSelector = `(prefers-color-scheme: ${mq})` }
   }
-  else if (mq !== 'initial' && theme) {
-    const queryToken = theme?.media?.[mq]
+  else if (mq !== 'initial' && tokens) {
+    const queryToken = tokens?.media?.[mq]
     if (queryToken) { responsiveSelector = queryToken.value }
   }
   let prefix

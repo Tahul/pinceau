@@ -130,7 +130,7 @@ export const cssFull = (dictionary: Dictionary, options: Options, responsiveToke
     ([key, value]: [PinceauMediaQueries, string]) => {
       // Resolve tokens content
       const formattedContent = formattedVariables({ format: 'css', dictionary: { ...dictionary, allTokens: value } as any, outputReferences: true, formatting: { lineSeparator: '', indentation: '', prefix: '' } as any })
-      css += resolveThemeRule(key, formattedContent, dictionary.tokens, colorSchemeMode)
+      css += resolveThemeRule(key, formattedContent, tokens, colorSchemeMode)
     },
   )
 

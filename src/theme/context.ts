@@ -1,62 +1,61 @@
 import type { ViteDevServer } from 'vite'
 import { useDebugPerformance } from '../utils/debug'
 import { message } from '../utils/logger'
-import type { PinceauContext, PinceauOptions } from '../types'
+import type { PinceauBuildContext, PinceauContext, PinceauOptions, PinceauTheme } from '../types'
 import { createTokensHelper } from '../utils/$tokens'
 import { generateTheme } from './generate'
 import { usePinceauConfigContext } from './config'
 import { usePinceauVirtualStore } from './virtual'
-import { prepareOutputDir } from './output'
 
 /**
  * Creates the Pinceau context from the options.
  */
 export function usePinceauContext(options: PinceauOptions): PinceauContext {
-  const env: PinceauContext['env'] = 'prod'
+  /**
+   * Track list of files that got through Pinceau transforms.
+   */
+  let transformed: string[] = []
 
-  // Context state
-  const transformed: string[] = []
-  const getTransformed = () => transformed
+  /**
+   * Current reference of built theme tokens.
+   */
+  let tokens: PinceauTheme
+
+  /**
+   * Local reference to the Vite development server attached to Pinceau.
+   */
   let viteServer: ViteDevServer
-  const getViteServer = () => viteServer
-  let tokens = {}
-  const getTokens = () => tokens
-  let utils: any = {}
-  const getUtils = () => utils
 
-  // Prepares the output dir
-  prepareOutputDir(options)
+  const buildContext: PinceauBuildContext = {
+    env: 'prod',
+    options,
+    runtime: false,
+    get tokens() { return tokens },
+    get viteServer() { return viteServer },
+    set viteServer(v: ViteDevServer) { viteServer = v },
+    set transformed(v: string[]) { transformed = v },
+    get transformed() { return transformed },
+    addTransformed: (id: string) => !transformed.includes(id) && transformed.push(id),
+  }
 
   // Virtual storage
-  const { outputs, getOutput, getOutputId, updateOutputs } = usePinceauVirtualStore()
+  const virtualContext = usePinceauVirtualStore()
 
   // Configuration
   const configContext = usePinceauConfigContext(
-    options,
-    getViteServer,
-    getTransformed,
+    buildContext,
     async (resolvedConfig) => {
       message('CONFIG_RESOLVED', [resolvedConfig])
 
       const { stopPerfTimer } = useDebugPerformance('Build theme', options.debug)
 
-      // Preserve custom properties in memory to avoid virtual storage call on compile
-      utils = (resolvedConfig.config as any)?.utils || {}
+      const builtTheme = await generateTheme(resolvedConfig, buildContext)
 
-      const builtTheme = await generateTheme(resolvedConfig.config, resolvedConfig.definitions, options)
+      if (builtTheme.outputs) { virtualContext.updateOutputs(builtTheme.outputs) }
 
-      if (options?.configBuilt) { options.configBuilt(builtTheme) }
+      if (builtTheme.tokens) { tokens = builtTheme.tokens as PinceauTheme }
 
-      if (!builtTheme) {
-        stopPerfTimer()
-        return
-      }
-
-      // Update virtual outputs
-      updateOutputs(builtTheme)
-
-      // Update local tokens
-      tokens = builtTheme.tokens
+      if (options?.configBuilt) { await options.configBuilt(builtTheme) }
 
       if (viteServer) {
         viteServer.ws.send({
@@ -64,7 +63,7 @@ export function usePinceauContext(options: PinceauOptions): PinceauContext {
           event: 'pinceau:themeUpdate',
           data: {
             css: builtTheme.outputs.css,
-            theme: tokens,
+            theme: builtTheme.tokens,
           },
         })
       }
@@ -74,25 +73,12 @@ export function usePinceauContext(options: PinceauOptions): PinceauContext {
   )
 
   return {
-    // Local context
-    env,
-    options,
-
-    // Transformed files
-    get transformed() {
-      return getTransformed()
-    },
-    addTransformed(id: string) {
-      if (!transformed.includes(id)) { transformed.push(id) }
-    },
-
-    // $tokens
-    get tokens() {
-      return getTokens()
-    },
+    ...buildContext,
+    ...configContext,
+    ...virtualContext,
     get $tokens() {
       return createTokensHelper(
-        tokens,
+        buildContext.tokens,
         {
           onNotFound(path, options) {
             message('TOKEN_NOT_FOUND', [path, options])
@@ -100,28 +86,5 @@ export function usePinceauContext(options: PinceauOptions): PinceauContext {
         },
       )
     },
-
-    // utils
-    get utils() {
-      return getUtils()
-    },
-
-    // Vite
-    get viteServer() {
-      return getViteServer()
-    },
-    setViteServer: (server: ViteDevServer) => {
-      viteServer = server
-      configContext.registerConfigWatchers()
-    },
-
-    // Config
-    ...configContext,
-
-    // Virtual storage
-    outputs,
-    getOutput,
-    updateOutputs,
-    getOutputId,
   }
 }

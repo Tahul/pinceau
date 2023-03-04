@@ -1,4 +1,5 @@
 import { kebabCase } from 'scule'
+import type { StringifyContext } from '../types'
 
 /**
  * Forked from https://github.com/stitchesjs/stitches/blob/canary/packages/stringify
@@ -52,7 +53,7 @@ export const stringify = (
   /** Object representing the current CSS. */
   value,
   /** Replacer function. */
-  replacer = undefined,
+  replacer: (stringifyContext: StringifyContext) => any = undefined,
 ) => {
   /** Set used to manage the opened and closed state of rules. */
   const used = new WeakSet()
@@ -94,11 +95,10 @@ export const stringify = (
 
       for (const data of (isAtRuleLike && Array.isArray(style[name])) ? style[name] : [style[name]]) {
         if (replacer && (name !== prevName || data !== prevData)) {
-          const next = replacer(name, data, style, selectors)
+          const next = replacer({ property: name, value: data, style, selectors })
 
           if (next !== null) {
             cssText += (typeof next === 'object' && next) ? parse(next, selectors, conditions, name, data) : next == null ? '' : next
-
             continue
           }
         }

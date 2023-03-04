@@ -1,4 +1,4 @@
-import type { SFCParseOptions } from 'vue/compiler-sfc'
+import type { SFCParseOptions, SFCParseResult } from 'vue/compiler-sfc'
 import { parse as sfcParse } from 'vue/compiler-sfc'
 import * as recast from 'recast'
 import type { Options } from 'recast'
@@ -6,6 +6,7 @@ import { defu } from 'defu'
 import { parse as tsParse } from 'recast/parsers/typescript.js'
 import type { File } from '@babel/types'
 import type { ASTNode } from 'ast-types'
+import type { PinceauTransformContext } from '../types/transforms'
 
 /**
  * Parse AST with TypeScript parser.
@@ -17,8 +18,8 @@ export function parseAst(source: string, options?: Partial<Options>): File {
 /**
  * Parse a Vue component with vue/compiler-sfc.
  */
-export function parseVueComponent(source: string, options: Partial<SFCParseOptions> = {}) {
-  return sfcParse(source, options)
+export function parseVueComponent(transformContext: PinceauTransformContext, options: Partial<SFCParseOptions>): SFCParseResult {
+  return sfcParse(transformContext.code, options)
 }
 
 /**

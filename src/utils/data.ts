@@ -59,7 +59,7 @@ export function walkTokens(
 /**
  * Normalize a tokens object definition.
  */
-export function normalizeConfig(
+export function normalizeTokens(
   obj: any,
   mqKeys: string[],
   removeSchemaKeys = false,
@@ -105,7 +105,7 @@ export function normalizeConfig(
           continue
         }
 
-        result[k] = normalizeConfig(obj[k], mqKeys, removeSchemaKeys)
+        result[k] = normalizeTokens(obj[k], mqKeys, removeSchemaKeys)
       }
     }
   }

@@ -1,19 +1,19 @@
 import { readFileSync } from 'fs'
-import { transformCssFunction, transformStyle } from '../transforms'
-import type { PinceauContext, PinceauQuery } from '../types'
-import { parseVueComponent } from './ast'
+import type { SFCStyleBlock } from 'vue/compiler-sfc'
+import { parse as sfcParse } from 'vue/compiler-sfc'
+import type { PinceauQuery } from '../types'
 
 /**
- * Will load and transform a Vue <style> query.
+ * Load a specific <style> block from a Vue SFC query.
  */
-export const loadVueStyle = (query: PinceauQuery, ctx: PinceauContext) => {
+export const loadStyleBlock = (query: PinceauQuery): SFCStyleBlock => {
   const { filename } = query
 
   const file = readFileSync(filename, 'utf8')
 
   if (!file) { return }
 
-  const { descriptor } = parseVueComponent(file, { filename })
+  const { descriptor } = sfcParse(file, { filename: query.filename })
 
   if (!descriptor) { return }
 
@@ -21,11 +21,5 @@ export const loadVueStyle = (query: PinceauQuery, ctx: PinceauContext) => {
 
   if (!style?.content) { return }
 
-  let source = style.content
-
-  const loc = { query, ...style.loc }
-
-  if (style.attrs.lang === 'ts') { source = transformCssFunction(query.id, source, undefined, undefined, undefined, ctx, loc) }
-
-  return transformStyle(source, ctx, loc)
+  return style
 }

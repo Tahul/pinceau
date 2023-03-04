@@ -1,44 +1,38 @@
-import type { ViteDevServer } from 'vite'
-import type { LoadConfigResult, PinceauConfigContext, PinceauOptions, PinceauTheme } from '../types'
+import type { PinceauBuildContext, PinceauConfigContext, PinceauOptions, ResolvedConfig } from '../types'
 import { outputFileNames } from '../utils/regexes'
 import { loadLayers } from './layers'
 
 export function usePinceauConfigContext<UserOptions extends PinceauOptions = PinceauOptions>(
-  options: UserOptions,
-  getViteServer: () => ViteDevServer,
-  getTransformed: () => string[],
-  dispatchConfigUpdate?: (result: LoadConfigResult<PinceauTheme>) => void,
-): PinceauConfigContext<UserOptions> {
-  let cwd = options?.cwd ?? process.cwd()
-  let sources: string[] = []
-  let resolvedConfig: any = {}
+  buildContext: PinceauBuildContext,
+  dispatchConfigUpdate?: (result: ResolvedConfig) => void | Promise<void>,
+): PinceauConfigContext {
+  const sources: string[] = []
+  let resolvedConfig: ResolvedConfig
   let ready = reloadConfig()
 
   /**
    * Fully reloads the configuration context.
    */
-  async function reloadConfig(newOptions: UserOptions = options): Promise<LoadConfigResult<PinceauTheme>> {
+  async function reloadConfig(newOptions?: UserOptions): Promise<ResolvedConfig> {
     // Load the new configurations from options
-    const result = await loadLayers(newOptions || options)
+    resolvedConfig = await loadLayers(newOptions || buildContext.options)
 
     // Update local context from options
-    cwd = newOptions?.cwd ?? process.cwd()
-    resolvedConfig = result.config
-    sources = result.sources
+    buildContext.options.cwd = newOptions?.cwd ?? process.cwd()
 
     // Dispatch listeners
-    if (dispatchConfigUpdate) { dispatchConfigUpdate(result) }
-    if (options?.configResolved) { options.configResolved(result) }
+    if (dispatchConfigUpdate) { await dispatchConfigUpdate(resolvedConfig) }
+    if (buildContext.options?.configResolved) { buildContext.options.configResolved(resolvedConfig) }
 
-    return result
+    return resolvedConfig
   }
 
   /**
    * Updates the current cwd of that Pinceau config context.
    */
   async function updateCwd(newCwd: string) {
-    if (newCwd !== cwd) {
-      cwd = newCwd
+    if (newCwd !== buildContext.options.cwd) {
+      buildContext.options.cwd = newCwd
       ready = reloadConfig()
     }
     return await ready
@@ -50,21 +44,19 @@ export function usePinceauConfigContext<UserOptions extends PinceauOptions = Pin
   async function onConfigChange(p: string) {
     if (!sources.includes(p)) { return }
 
-    const viteServer = getViteServer()
-
     await reloadConfig()
 
     // Virtual imports ids
     const ids = [...outputFileNames]
 
     // Use transformed files as well
-    getTransformed().forEach(transformed => !ids.includes(transformed) && ids.push(transformed))
+    buildContext.transformed.forEach(transformed => !ids.includes(transformed) && ids.push(transformed))
 
     // Loop on ids
     for (const id of ids) {
-      const _module = viteServer.moduleGraph.getModuleById(id)
+      const _module = buildContext.viteServer.moduleGraph.getModuleById(id)
       if (!_module) { continue }
-      viteServer.reloadModule(_module)
+      buildContext.viteServer.reloadModule(_module)
     }
   }
 
@@ -73,22 +65,16 @@ export function usePinceauConfigContext<UserOptions extends PinceauOptions = Pin
    */
   function registerConfigWatchers() {
     if (!sources.length) { return }
-    const viteServer = getViteServer()
-    viteServer.watcher.add(sources)
-    viteServer.watcher.on('change', onConfigChange)
+    buildContext.viteServer.watcher.add(sources)
+    buildContext.viteServer.watcher.on('change', onConfigChange)
   }
 
   return {
-    get ready() {
-      return ready
-    },
-    get cwd() {
-      return cwd
-    },
+    get ready() { return ready },
+    get resolvedConfig() { return resolvedConfig },
+    get sources() { return sources },
     updateCwd,
-    sources,
     reloadConfig,
-    resolvedConfig,
     registerConfigWatchers,
   }
 }

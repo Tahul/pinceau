@@ -1,12 +1,14 @@
+import type { PinceauQuery } from '../../types'
+
 /**
  * Transforms the `<style lang="ts">` attribute into `<style lang="postcss">`.
+ *
+ * This transforms does not use MagicString as it is directly targeted at the Vue compiler that will trim it off.
  */
-export function replaceStyleTs(code: string, id: string) {
-  if (id.endsWith('.vue') && !id.includes('?')) {
+export function transformStyleTs(code: string, query: PinceauQuery) {
+  if (query.id.endsWith('.vue') && !query.id.includes('?')) {
     const styleTagRe = /<style\b(.*?)\blang=['"][tj]sx?['"](.*?)>/g
-    if (code.match(styleTagRe)) {
-      return code.replace(styleTagRe, '<style$1lang="postcss" transformed$2>')
-    }
+    if (code.match(styleTagRe)) { code = code.replace(styleTagRe, '<style$1lang="postcss" transformed$2>') }
   }
   return code
 }

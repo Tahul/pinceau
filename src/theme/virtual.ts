@@ -1,39 +1,34 @@
-import type { ThemeGenerationOutput } from '../types'
+import type { VirtualImportsPaths, VirtualOutputs } from '../types'
 import { tsFull, utilsFull } from './formats'
 
 export const RESOLVED_ID_RE = /^(virtual:pinceau:|#)?\/__pinceau(?:(_.*?))?\.(css|ts|js)(\?.*)?$/
 
 export function usePinceauVirtualStore() {
-  const outputs: ThemeGenerationOutput['outputs'] = {
-    _css: '/* This file is empty because no tokens has been provided or the configuration is broken. */',
-    _ts: tsFull({}),
-    _utils: utilsFull({}),
-    _schema: 'export const schema = {}\n\export const GeneratedPinceauThemeSchema = typeof schema',
-    _definitions: 'export const definitions = {} as const',
-  }
-
-  /**
-   * Update virtual storage from theme generation output data
-   */
-  function updateOutputs(generatedTheme: ThemeGenerationOutput) {
-    Object.entries(generatedTheme.outputs).forEach(([key, value]) => (outputs[`_${key}`] = value))
+  let outputs: VirtualOutputs = {
+    css: '/* This file is empty because no tokens has been provided or the configuration is broken. */',
+    ts: tsFull({}),
+    utils: utilsFull({}),
+    schema: 'export const schema = {}\n\export const GeneratedPinceauThemeSchema = typeof schema',
+    definitions: 'export const definitions = {} as const',
   }
 
   /**
    * Get outputs from the virtual storage
    */
   function getOutput(id: string) {
-    if (id === '/__pinceau_css.css') { return outputs._css }
-    if (id === '/__pinceau_ts.ts') { return outputs._ts }
-    if (id === '/__pinceau_utils.ts') { return outputs._utils }
-    if (id === '/__pinceau_schema.ts') { return outputs._schema }
-    if (id === '/__pinceau_definitions.ts') { return outputs._definitions }
+    if (id === '/__pinceau_css.css') { return outputs.css }
+    if (id === '/__pinceau_ts.ts') { return outputs.ts }
+    if (id === '/__pinceau_utils.ts') { return outputs.utils }
+    if (id === '/__pinceau_schema.ts') { return outputs.schema }
+    if (id === '/__pinceau_definitions.ts') { return outputs.definitions }
   }
 
   /**
    * Resolves the virtual module id from an import like `pinceau.css` or `pinceau.ts`
+   *
+   * Uses `includes` in case it the import paths gets called with `?query=`.
    */
-  function getOutputId(id: string) {
+  function getOutputId(id: VirtualImportsPaths | (string & {})) {
     if (id.includes('pinceau.css')) { return '/__pinceau_css.css' }
     if (id.includes('#pinceau/theme')) { return '/__pinceau_ts.ts' }
     if (id.includes('#pinceau/utils')) { return '/__pinceau_utils.ts' }
@@ -42,12 +37,11 @@ export function usePinceauVirtualStore() {
   }
 
   return {
-    get outputs() {
-      return outputs
-    },
-    updateOutputs,
+    get outputs() { return outputs },
+    set outputs(v: VirtualOutputs) { outputs = v },
     getOutput,
     getOutputId,
+    updateOutputs: (outputUpdate: Partial<VirtualOutputs>) => Object.assign(outputs, outputUpdate),
   }
 }
 

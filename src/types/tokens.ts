@@ -49,5 +49,5 @@ export interface DesignToken<T = RawTokenType> {
  * Simple recursive tokens object
  */
 export interface DesignTokens {
-  [key: string | number]: TokenKey | DesignTokens
+  [key: string]: TokenKey | DesignTokens
 }

@@ -1,9 +1,10 @@
 import type { ASTNode } from 'ast-types'
 import { hash } from 'ohash'
 import { camelCase, kebabCase } from 'scule'
+import type { PinceauTransformContext } from '../../types'
 import { astTypes, printAst, visitAst } from '../../utils/ast'
 
-export function resolveRuntimeContents(cssAst: ASTNode, computedStyles: any = {}, localTokens: any = {}) {
+export function resolveRuntimeContents(cssAst: ASTNode, transformContext: PinceauTransformContext) {
   // Search for function properties in css() AST
   visitAst(
     cssAst,
@@ -16,7 +17,7 @@ export function resolveRuntimeContents(cssAst: ASTNode, computedStyles: any = {}
           const valueType = path?.value?.value?.type
 
           // Store variable tokens in local map
-          if (key.startsWith('--') && !localTokens[key]) { localTokens[key] = path.value.value }
+          if (key.startsWith('--') && !transformContext.localTokens[key]) { transformContext.localTokens[key] = path.value.value }
 
           // Store computed styles in local map
           if (valueType === 'ArrowFunctionExpression' || valueType === 'FunctionExpression') {
@@ -24,7 +25,7 @@ export function resolveRuntimeContents(cssAst: ASTNode, computedStyles: any = {}
             const id = `_${hash(path.value.loc.start).slice(0, 3)}_${computedStyleKey}`
 
             // Push property function to computedStyles
-            computedStyles[id] = printAst(path.value.value.body).code
+            transformContext.computedStyles[id] = printAst(path.value.value.body).code
 
             path.replace(
               astTypes.builders.objectProperty(

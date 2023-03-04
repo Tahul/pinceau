@@ -4,7 +4,7 @@ import { addPlugin, addPluginTemplate, addPrerenderRoutes, createResolver, defin
 import createJITI from 'jiti'
 import type { ConfigLayer, PinceauOptions } from './types'
 import pinceau, { defaultOptions } from './unplugin'
-import { prepareOutputDir } from './theme/output'
+import { prepareBuildDir } from './theme/outputs'
 import { useDebugPerformance } from './utils/debug'
 import { walkTokens } from './utils'
 
@@ -16,7 +16,7 @@ const module: any = defineNuxtModule<PinceauOptions>({
   defaults: nuxt => ({
     ...defaultOptions,
     colorSchemeMode: 'class',
-    outputDir: join(nuxt.options.buildDir, 'pinceau/'),
+    buildDir: join(nuxt.options.buildDir, 'pinceau/'),
   }),
   async setup(options: PinceauOptions, nuxt) {
     options.dev = nuxt.options?.dev || process.env.NODE_ENV !== 'production'
@@ -44,8 +44,8 @@ const module: any = defineNuxtModule<PinceauOptions>({
             const resolvedTokens = []
 
             // Grab built tokens and resolve all tokens paths
-            if (!cachedTokens && existsSync(join(options.outputDir, 'index.ts'))) {
-              const _tokens = createJITI(options.outputDir)(join(options.outputDir, 'index.ts')).default
+            if (!cachedTokens && existsSync(join(options.buildDir, 'index.ts'))) {
+              const _tokens = createJITI(options.buildDir)(join(options.buildDir, 'index.ts')).default
               walkTokens(_tokens?.theme || _tokens, (_, __, paths) => cachedTokens.push(paths.join('.')))
             }
 
@@ -78,11 +78,11 @@ const module: any = defineNuxtModule<PinceauOptions>({
       tsConfig.compilerOptions = tsConfig.compilerOptions || {}
       tsConfig.compilerOptions.paths = tsConfig.compilerOptions.paths || {}
 
-      if (options?.outputDir) {
-        tsConfig.compilerOptions.paths['#pinceau/utils'] = [`${resolve(options.outputDir, 'utils.ts')}`]
-        tsConfig.compilerOptions.paths['#pinceau/theme'] = [`${resolve(options.outputDir, 'index.ts')}`]
-        if (options?.studio) { tsConfig.compilerOptions.paths['#pinceau/schema'] = [`${resolve(options.outputDir, 'schema.ts')}`] }
-        if (options?.definitions) { tsConfig.compilerOptions.paths['#pinceau/definitions'] = [`${resolve(options.outputDir, 'definitions.ts')}`] }
+      if (options?.buildDir) {
+        tsConfig.compilerOptions.paths['#pinceau/utils'] = [`${resolve(options.buildDir, 'utils.ts')}`]
+        tsConfig.compilerOptions.paths['#pinceau/theme'] = [`${resolve(options.buildDir, 'index.ts')}`]
+        if (options?.studio) { tsConfig.compilerOptions.paths['#pinceau/schema'] = [`${resolve(options.buildDir, 'schema.ts')}`] }
+        if (options?.definitions) { tsConfig.compilerOptions.paths['#pinceau/definitions'] = [`${resolve(options.buildDir, 'definitions.ts')}`] }
       }
 
       // Push Pinceau reference
@@ -95,7 +95,7 @@ const module: any = defineNuxtModule<PinceauOptions>({
       tsConfig.vueCompilerOptions.plugins.push('pinceau/volar')
 
       // Prepares the output dir
-      await prepareOutputDir(options)
+      await prepareBuildDir(options)
     })
 
     // Setup Nitro plugin

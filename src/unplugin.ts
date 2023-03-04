@@ -1,5 +1,4 @@
 import { createUnplugin } from 'unplugin'
-import MagicString from 'magic-string'
 import { join } from 'pathe'
 import consola from 'consola'
 import chalk from 'chalk'
@@ -7,14 +6,17 @@ import {
   usePinceauContext,
 } from './theme'
 import {
-  replaceStyleTs,
-  resolveStyleQuery,
+  getTransformContext,
+  transformCSS,
+  transformCssFunction,
   transformDtHelper,
+  transformStyleQuery,
+  transformStyleTs,
   transformVueSFC,
 } from './transforms'
 import {
   JS_EXTENSIONS,
-  loadVueStyle,
+  loadStyleBlock,
   merger,
   message,
   outputFileNames,
@@ -24,7 +26,8 @@ import {
   updateDebugContext,
   useDebugPerformance,
 } from './utils'
-import type { PinceauOptions } from './types'
+import type { PinceauOptions, PinceauQuery } from './types'
+import type { PinceauTransformContext } from './types/transforms'
 
 export const defaultOptions: PinceauOptions = {
   configFileName: 'tokens.config',
@@ -32,7 +35,7 @@ export const defaultOptions: PinceauOptions = {
   configResolved: (_) => {},
   configBuilt: (_) => {},
   cwd: process.cwd(),
-  outputDir: join(process.cwd(), 'node_modules/.vite/pinceau/'),
+  buildDir: join(process.cwd(), 'node_modules/.vite/pinceau/'),
   preflight: true,
   includes: [],
   excludes: [
@@ -71,7 +74,7 @@ export default createUnplugin<PinceauOptions>((options) => {
     error: value => chalk.red(value),
   })
 
-  const ctx = usePinceauContext(options)
+  const pinceauContext = usePinceauContext(options)
 
   stopPerfTimer()
 
@@ -86,19 +89,19 @@ export default createUnplugin<PinceauOptions>((options) => {
         registerPostCssPlugins(config, options)
       },
       async configResolved(config) {
-        await ctx.updateCwd(config.root)
+        await pinceauContext.updateCwd(config.root)
       },
       async configureServer(server) {
-        ctx.env = 'dev'
-        await ctx.ready
-        ctx.setViteServer(server)
+        pinceauContext.env = 'dev'
+        await pinceauContext.ready
+        pinceauContext.viteServer = server
       },
-      handleHotUpdate(ctx) {
+      handleHotUpdate(hmrContext) {
         // Enforce <style lang="ts"> into <style lang="postcss">
-        const defaultRead = ctx.read
-        ctx.read = async function () {
+        const defaultRead = hmrContext.read
+        hmrContext.read = async function () {
           const code = await defaultRead()
-          return replaceStyleTs(code, ctx.file) || code
+          return transformStyleTs(code, { vue: hmrContext.file.endsWith('.vue') } as PinceauQuery)
         }
       },
       transformIndexHtml: {
@@ -109,17 +112,13 @@ export default createUnplugin<PinceauOptions>((options) => {
           // Support `<pinceau />`
           html = html.replace(
             '<pinceau />',
-            `<style id="pinceau-theme">${ctx.getOutput(
-              '/__pinceau_css.css',
-            )}</style>`,
+            `<style id="pinceau-theme">${pinceauContext.getOutput('/__pinceau_css.css')}</style>`,
           )
 
           // Support `<style id="pinceau-theme"></style>` (Slidev / index.html merging frameworks)
           html = html.replace(
             '<style id="pinceau-theme"></style>',
-            `<style id="pinceau-theme">${ctx.getOutput(
-              '/__pinceau_css.css',
-            )}</style>`,
+            `<style id="pinceau-theme">${pinceauContext.getOutput('/__pinceau_css.css')}</style>`,
           )
 
           return html
@@ -137,99 +136,69 @@ export default createUnplugin<PinceauOptions>((options) => {
       if (
         options.excludes
         && options.excludes.some(path => id.includes(path))
-      ) {
-        toRet = false
-      }
+      ) { toRet = false }
 
       // Run only on Nuxt loaded components
       if (
         toRet !== false
         && options.includes
         && options.includes.some(path => id.includes(path))
-      ) {
-        toRet = true
-      }
+      ) { toRet = true }
 
       // Allow transformable files
-      if (toRet !== false && query?.transformable) {
-        toRet = true
-      }
+      if (toRet !== false && query?.transformable) { toRet = true }
 
       // Push included file into context
-      if (toRet) {
-        ctx.addTransformed(id)
-      }
+      if (toRet) { pinceauContext.addTransformed(id) }
 
       return toRet
     },
 
     transform(code, id) {
-      // Skip empty
       if (!code) { return }
 
-      // Performance timings
-      const { stopPerfTimer } = useDebugPerformance(
-        `Transforming ${id}`,
-        options.debug,
-      )
-
-      // Enforce <style lang="ts"> into <style lang="postcss">
-      code = replaceStyleTs(code, id)
-
-      // Parse query
       const query = parsePinceauQuery(id)
 
-      // Create location object
-      const loc = { query, source: code }
-
-      // Create magic string from query and code
-      const magicString = new MagicString(code, { filename: query.filename })
-
-      /**
-       * Returns code and MagicString result.
-       */
-      const result = () => {
-        stopPerfTimer()
-        const sourceMap = magicString.generateMap()
-        sourceMap.file = query.filename
-        sourceMap.sources = [query.filename]
-        return { code: magicString.toString(), map: sourceMap }
-      }
+      const transformContext: PinceauTransformContext = getTransformContext(code, query, pinceauContext)
 
       try {
         // Handle $dt in JS(X)/TS(X) files
-        if (JS_EXTENSIONS.includes(query.ext)) { return { code: transformDtHelper(code, ctx) } }
+        if (JS_EXTENSIONS.includes(query.ext)) {
+          transformDtHelper(transformContext, pinceauContext)
+          return transformContext.result()
+        }
 
         // Handle CSS files & <style> tags scoped queries
-        if ((query.styles && !query.vue) || query.type === 'style') { return { code: resolveStyleQuery(code, magicString, query, ctx, loc).code } }
+        if ((query.styles && !query.vue) || query.type === 'style') {
+          transformStyleQuery(transformContext, pinceauContext)
+          return transformContext.result()
+        }
 
         // Transform Vue
-        code = transformVueSFC(code, query, magicString, ctx).code
+        transformVueSFC(transformContext, pinceauContext)
       }
       catch (e) {
         message('TRANSFORM_ERROR', [id, e])
+        console.log({ e })
         return { code }
       }
 
-      return result()
+      return transformContext.result()
     },
 
-    resolveId(id) {
-      return ctx.getOutputId(id)
+    resolveId(id: string) {
+      return pinceauContext.getOutputId(id)
     },
 
     load(id) {
       // Performance timings
-      const { stopPerfTimer } = useDebugPerformance(
-        `Load ${id}`,
-        options.debug,
-      )
+      const { stopPerfTimer } = useDebugPerformance(`Load ${id}`, options.debug)
 
       // Check if id refers to local output
-      const output = ctx.getOutput(id)
+      const output = pinceauContext.getOutput(id)
       if (output) {
         stopPerfTimer()
-        return output
+        return { code: output }
       }
 
       // Parse query
@@ -237,22 +206,15 @@ export default createUnplugin<PinceauOptions>((options) => {
 
       // Transform Vue scoped query
       if (query.vue && query.type === 'style') {
-        const vueStyle = loadVueStyle(query, ctx)
+        const styleBlock = loadStyleBlock(query)
 
-        if (vueStyle) {
-          // Create MagicString for this local transform
-          const sourceMap = new MagicString(vueStyle, {
-            filename: query.filename,
-          }).generateMap({ file: query.filename, includeContent: true })
-          sourceMap.sources = [query.filename]
-          sourceMap.file = query.filename
+        if (styleBlock) {
+          const transformContext = getTransformContext(styleBlock.content, query, pinceauContext)
 
-          stopPerfTimer()
+          if (styleBlock.attrs.lang === 'ts' || styleBlock.lang === 'ts' || styleBlock.attrs?.transformed) { transformCssFunction(transformContext, pinceauContext) }
+          else { transformCSS(transformContext, pinceauContext) }
 
-          return {
-            code: vueStyle,
-            map: sourceMap,
-          }
+          return transformContext.result()
         }
       }
 

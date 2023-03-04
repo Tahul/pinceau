@@ -56,5 +56,4 @@ declare module '@nuxt/schema' {
 declare global {
   const $dt: DtFunction
   const $pinceau: string
-  const __$pProps: any
 }

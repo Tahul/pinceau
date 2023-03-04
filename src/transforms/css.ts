@@ -1,9 +1,11 @@
-import type { ASTNode } from 'ast-types'
+import type { ASTNode, namedTypes } from 'ast-types'
 import { defu } from 'defu'
 import { parse } from 'acorn'
+import type { NodePath } from 'ast-types/lib/node-path'
+import type { SFCStyleBlock } from 'vue/compiler-sfc'
+import type { PinceauTransformContext } from '../types/transforms'
 import type { PinceauContext } from '../types'
 import { resolveCssProperty, stringify } from '../utils'
-import { message } from '../utils/logger'
 import { parseAst, printAst, visitAst } from '../utils/ast'
 import { resolveRuntimeContents } from './vue/computed'
 
@@ -11,75 +13,86 @@ import { resolveRuntimeContents } from './vue/computed'
  * Stringify every call of css() into a valid Vue <style> declaration.
  */
 export const transformCssFunction = (
-  id: string,
-  code = '',
-  variants: any,
-  computedStyles: any,
-  localTokens: any,
-  ctx: PinceauContext,
-  loc?: any,
+  transformContext: PinceauTransformContext,
+  pinceauContext: PinceauContext,
+  styleBlock?: SFCStyleBlock,
 ) => {
+  const code = styleBlock?.content || transformContext.code
+
   // Enhance error logging for `css()`
   try {
     parse(code, { ecmaVersion: 'latest' })
   }
   catch (e) {
-    e.loc.line = (loc.start.line + e.loc.line) - 1
-    const filePath = `${id.split('?')[0]}:${e.loc.line}:${e.loc.column}`
-    message('TRANSFORM_ERROR', [filePath, e])
+    // if (!e.loc) { e.loc = {} }
+    // e.loc.line = (transformContext.loc.start.line + e.loc.line) - 1
+    // const filePath = `${transformContext.query.id.split('?')[0]}:${e.loc.line}:${e.loc.column}`
+    // message('TRANSFORM_ERROR', [filePath, e])
+    console.log({ e, code, query: transformContext.query })
     return ''
   }
 
+  let cssContent = ''
+
   // Resolve stringifiable declaration from `css()` content
-  const declaration = resolveCssCallees(
+  resolveCssCallees(
     code,
-    ast => evalCssDeclaration(ast, computedStyles, localTokens),
-  )
+    (ast) => {
+      const value = ast.value.arguments[0]
 
-  // Handle variants and remove them from declaration and drop the key
-  if (declaration && declaration?.variants) {
-    Object.assign(variants || {}, defu(variants || {}, declaration?.variants || {}))
-    delete declaration.variants
-  }
+      // Resolve computed styled from AST of css() call
+      resolveRuntimeContents(value, transformContext)
 
-  return stringify(declaration, (property: any, value: any, _style: any, _selectors: any) => resolveCssProperty(property, value, _style, _selectors, Object.keys(localTokens || {}), ctx, loc))
-}
+      // Get declaration object
+      const declaration = evalCssDeclaration(value)
 
-/**
- * Transform a variants property to nested selectors.
- */
-export function castVariants(property: any, value: any) {
-  return Object.entries(value).reduce(
-    (acc: any, [key, value]) => {
-      acc[key] = value
-      return acc
+      // Remove variants from declaration and drop the key
+      if (declaration && declaration?.variants) {
+        Object.assign(
+          transformContext.variants || {},
+          defu(transformContext.variants || {}, declaration?.variants || {}),
+        )
+        delete declaration.variants
+      }
+
+      cssContent += stringify(
+        declaration,
+        stringifyContext => resolveCssProperty(
+          stringifyContext,
+          transformContext,
+          pinceauContext,
+        ),
+      )
     },
-    {},
   )
+
+  if (code && styleBlock) {
+    transformContext.magicString.remove(styleBlock.loc.start.offset, styleBlock.loc.end.offset)
+    transformContext.magicString.appendRight(styleBlock.loc.start.offset, cssContent)
+  }
+  else {
+    transformContext.magicString.remove(0, transformContext.loc.source.length)
+    transformContext.magicString.appendRight(0, cssContent)
+  }
 }
 
 /**
  * Find all calls of css() and call a callback on each.
  */
-export function resolveCssCallees(code: string, cb: (ast: ASTNode) => any): any {
+export function resolveCssCallees(code: string, cb: (ast: NodePath<namedTypes.CallExpression, any>) => void): any {
   const ast = parseAst(code)
-  let result: any = false
   visitAst(ast, {
-    visitCallExpression(path: any) {
-      if (path.value.callee.name === 'css') { result = defu(result || {}, cb(path.value.arguments[0])) }
+    visitCallExpression(path) {
+      if (path.value.callee.name === 'css') { cb(path) }
       return this.traverse(path)
     },
   })
-  return result
 }
 
 /**
  * Resolve computed styles found in css() declaration.
  */
-export function evalCssDeclaration(cssAst: ASTNode, computedStyles: any = {}, localTokens: any = {}) {
-  // Resolve computed styled from AST of css() call
-  resolveRuntimeContents(cssAst, computedStyles, localTokens)
-
+export function evalCssDeclaration(cssAst: ASTNode) {
   try {
     // eslint-disable-next-line no-eval
     const _eval = eval
