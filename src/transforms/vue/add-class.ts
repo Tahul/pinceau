@@ -12,14 +12,14 @@ import { astTypes, expressionToAst, printAst } from '../../utils/ast'
  * 5 - If $pinceau is already present somewhere in the template, just skip this transform
  */
 export function transformAddPinceauClass(transformContext: PinceauTransformContext): string {
-  const code = transformContext.sfc.descriptor.template.content
+  const templateBlock = transformContext.sfc.descriptor.template
 
-  if (!code) { return }
+  if (!templateBlock?.content) { return }
 
   // $pinceau class already here
-  if (code.includes('$pinceau')) { return code }
+  if (templateBlock.content.includes('$pinceau')) { return templateBlock.content }
 
-  const firstTag = code.match(/<([a-zA-Z]+)([^>]+)*>/)
+  const firstTag = templateBlock.content.match(/<([a-zA-Z]+)([^>]+)*>/)
 
   let result = ''
 
@@ -62,8 +62,8 @@ export function transformAddPinceauClass(transformContext: PinceauTransformConte
       result = _source.replace('>', ' :class="[$pinceau]">')
     }
 
-    transformContext.replace(_source, result)
+    const startIndex = templateBlock.loc.start.offset + firstTag.index
+    transformContext.magicString.remove(startIndex, startIndex + firstTag[0].length)
+    transformContext.magicString.appendRight(startIndex, result)
   }
-
-  return code
 }

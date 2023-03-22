@@ -6,13 +6,13 @@ import {
   usePinceauContext,
 } from './theme'
 import {
-  getTransformContext,
   transformCSS,
   transformCssFunction,
   transformDtHelper,
   transformStyleQuery,
   transformStyleTs,
   transformVueSFC,
+  useTransformContext,
 } from './transforms'
 import {
   JS_EXTENSIONS,
@@ -26,7 +26,7 @@ import {
   updateDebugContext,
   useDebugPerformance,
 } from './utils'
-import type { PinceauOptions, PinceauQuery } from './types'
+import type { PinceauOptions } from './types'
 import type { PinceauTransformContext } from './types/transforms'
 
 export const defaultOptions: PinceauOptions = {
@@ -101,7 +101,7 @@ export default createUnplugin<PinceauOptions>((options) => {
         const defaultRead = hmrContext.read
         hmrContext.read = async function () {
           const code = await defaultRead()
-          return transformStyleTs(code, { vue: hmrContext.file.endsWith('.vue') } as PinceauQuery)
+          return transformStyleTs(code, undefined, true)
         }
       },
       transformIndexHtml: {
@@ -159,7 +159,9 @@ export default createUnplugin<PinceauOptions>((options) => {
 
       const query = parsePinceauQuery(id)
 
-      const transformContext: PinceauTransformContext = getTransformContext(code, query, pinceauContext)
+      code = transformStyleTs(code, query)
+
+      const transformContext: PinceauTransformContext = useTransformContext(code, query, pinceauContext)
 
       try {
         // Handle $dt in JS(X)/TS(X) files
@@ -209,10 +211,10 @@ export default createUnplugin<PinceauOptions>((options) => {
         const styleBlock = loadStyleBlock(query)
 
         if (styleBlock) {
-          const transformContext = getTransformContext(styleBlock.content, query, pinceauContext)
+          const transformContext = useTransformContext(styleBlock.content, query, pinceauContext)
 
           if (styleBlock.attrs.lang === 'ts' || styleBlock.lang === 'ts' || styleBlock.attrs?.transformed) { transformCssFunction(transformContext, pinceauContext) }
-          else { transformCSS(transformContext, pinceauContext) }
+          transformCSS(transformContext, pinceauContext)
 
           return transformContext.result()
         }

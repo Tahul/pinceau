@@ -1,26 +1,27 @@
 import type { PinceauTransformContext } from 'pinceau/types/transforms'
 import type { PinceauContext } from '../../types'
-import { variantsRegex } from '../../utils'
 import { transformDtHelper } from '../dt'
-import { transformCssFunction } from '../css'
+import { transformCssFunction } from '../css-function'
 import { message } from '../../utils/logger'
-import { transformCSS } from './style'
-import { transformVariants } from './variants'
+import { transformCSS } from '../css'
 import { transformAddPinceauClass } from './add-class'
 import { } from 'vue/compiler-sfc'
+import { transformVariants } from './variants'
 
 export function transformVueSFC(
   transformContext: PinceauTransformContext,
   pinceauContext: PinceauContext,
 ) {
+  const sfc = transformContext.sfc
+
   // Transform <style> blocks
-  if (transformContext.sfc()?.descriptor?.styles) { transformStyles(transformContext, pinceauContext) }
+  if (sfc?.descriptor?.styles) { transformStyles(transformContext, pinceauContext) }
 
   // Transform <template> blocks
-  if (transformContext.sfc()?.descriptor?.template) { transformTemplate(transformContext, pinceauContext) }
+  if (sfc?.descriptor?.template) { transformTemplate(transformContext, pinceauContext) }
 
   // Transform <script setup> blocks
-  if (transformContext.sfc()?.descriptor?.scriptSetup) { transformScriptSetup(transformContext, pinceauContext) }
+  if (sfc?.descriptor?.scriptSetup) { transformScriptSetup(transformContext, pinceauContext) }
 }
 
 /**
@@ -63,18 +64,11 @@ export function transformStyles(
   transformContext: PinceauTransformContext,
   pinceauContext: PinceauContext,
 ) {
-  const styles = transformContext.sfc().descriptor.styles
+  const styles = transformContext.sfc.descriptor.styles
 
   styles.forEach(
     (styleBlock) => {
-      if (
-        styleBlock.attrs.lang === 'ts'
-        || styleBlock.lang === 'ts'
-        || styleBlock.attrs?.transformed
-      ) {
-        transformCssFunction(transformContext, pinceauContext, styleBlock)
-      }
-
+      if (styleBlock.attrs.lang === 'ts' || styleBlock.lang === 'ts' || styleBlock.attrs?.transformed) { transformCssFunction(transformContext, pinceauContext, styleBlock) }
       transformCSS(transformContext, pinceauContext, styleBlock)
     },
   )
@@ -91,10 +85,7 @@ export function transformScriptSetup(
   const hasComputedStyles = !!Object.keys(transformContext.computedStyles).length
 
   // Transform `$dt()` usage
-  transformDtHelper(transformContext, pinceauContext, { wrapper: '`' })
-
-  // Cleanup `...variants` in any case
-  transformContext.magicString.replace(variantsRegex, '')
+  // transformDtHelper(transformContext, pinceauContext, { wrapper: '`' })
 
   if (pinceauContext.options.runtime) {
     // Inject runtime imports
@@ -115,39 +106,48 @@ export function transformScriptSetup(
   }
 }
 
+export function transformAddRuntimeImports(transformContext: PinceauTransformContext) {
+  // Handle necessary Vue imports
+  let vueImports: string[] | string = []
+  const content = transformContext.sfc?.descriptor?.scriptSetup?.content
+
+  if (!content) { return }
+
+  if (!content.match(/reactive\(/gm)) { vueImports.push('reactive') }
+  if (!content.match(/computed\(/gm)) { vueImports.push('computed') }
+  if (!content.match(/getCurrentInstance\(/gm)) { vueImports.push('getCurrentInstance') }
+  if (!content.match(/ref\(/gm)) { vueImports.push('ref') }
+  if (vueImports.length) { vueImports = `import { ${vueImports.join(', ')} } from 'vue'` }
+  else { vueImports = '' }
+
+  transformContext.magicString.appendRight(
+    transformContext.sfc.descriptor.scriptSetup.loc.start.offset,
+    `\nimport { usePinceauRuntime } from \'pinceau/runtime\'\n${vueImports}`,
+  )
+}
+
 /**
  * Adds computed styles code to <script setup>
  */
 export function transformComputedStyles(transformContext: PinceauTransformContext) {
-  const scriptSetup = transformContext.sfc().descriptor.scriptSetup
-
   Object
     .entries(transformContext.computedStyles)
-    .forEach(([key, styleFunction]) => scriptSetup.append(`\nconst ${key} = computed(() => ((props = getCurrentInstance().props) => ${styleFunction})())\n`))
-}
-
-export function transformAddRuntimeImports(transformContext: PinceauTransformContext) {
-  const scriptSetup = transformContext.sfc().descriptor.scriptSetup
-
-  scriptSetup.prepend('import { usePinceauRuntime } from \'pinceau/runtime\'\n')
-
-  // Handle necessary Vue imports
-  const vueImports = []
-  if (!scriptSetup.content.match(/reactive\(/gm)) { vueImports.push('reactive') }
-  if (!scriptSetup.content.match(/computed\(/gm)) { vueImports.push('computed') }
-  if (!scriptSetup.content.match(/getCurrentInstance\(/gm)) { vueImports.push('getCurrentInstance') }
-  if (!scriptSetup.content.match(/ref\(/gm)) { vueImports.push('ref') }
-  if (vueImports.length) { scriptSetup.prepend(`import { ${vueImports.join(', ')} } from 'vue'`) }
+    .forEach(([key, styleFunction]) => {
+      const end = transformContext.sfc.descriptor.scriptSetup.loc.start.offset + transformContext.sfc.descriptor.scriptSetup.content.length
+      transformContext.magicString.prependLeft(end, `\nconst ${key} = computed(() => ((props = getCurrentInstance().props) => ${styleFunction})())\n`)
+    })
 }
 
 export function transformFinishRuntimeSetup(transformContext: PinceauTransformContext, { hasVariants, hasComputedStyles }: Record<string, boolean>) {
-  const usePinceauRuntime = [
-    `\n${(hasVariants || hasComputedStyles) ? 'const { $pinceau } = ' : ''}`,
-    'usePinceauRuntime(',
-    'getCurrentInstance().props, ',
-    `${hasVariants ? '__$pVariants' : 'undefined'}, `,
-    `${hasComputedStyles ? `{ ${Object.keys(transformContext.computedStyles).map(key => `${key}`).join(',')} }` : 'undefined'}`,
-    ')\n',
-  ].join('')
-  transformContext.sfc().descriptor.scriptSetup.append(usePinceauRuntime)
+  transformContext.magicString.prependLeft(
+    transformContext.sfc.descriptor.scriptSetup.loc.end.offset,
+    [
+      `\n${(hasVariants || hasComputedStyles) ? 'const { $pinceau } = ' : ''}`,
+      'usePinceauRuntime(',
+      'getCurrentInstance().props, ',
+      `${hasVariants ? '__$pVariants' : 'undefined'}, `,
+      `${hasComputedStyles ? `{ ${Object.keys(transformContext.computedStyles).map(key => `${key}`).join(',')} }` : 'undefined'}`,
+      ')\n',
+    ].join(''),
+  )
 }

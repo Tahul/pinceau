@@ -1,6 +1,6 @@
 import type { ASTNode } from 'ast-types'
 import type { PinceauTransformContext } from '../../types'
-import { astTypes, expressionToAst, parseAst, printAst, visitAst } from '../../utils/ast'
+import { expressionToAst, parseAst, printAst, visitAst } from '../../utils/ast'
 
 export interface PropOptions {
   type?: any
@@ -12,8 +12,17 @@ export interface PropOptions {
 /**
  * Takes variants object and turns it into a `const` inside `<script setup>`
  */
-export function transformVariants(transformContext: PinceauTransformContext) {
-  const variantsProps = resolveVariantsProps(transformContext)
+export function transformVariants(transformContext: PinceauTransformContext, isTs?: boolean) {
+  const scriptSetupBlock = transformContext.sfc.descriptor.scriptSetup
+
+  isTs = typeof isTs === 'undefined'
+    ? (
+        transformContext.sfc.descriptor.scriptSetup.lang === 'ts'
+        || transformContext.sfc.descriptor.scriptSetup.attrs.lang === 'ts'
+      )
+    : isTs
+
+  const variantsProps = resolveVariantsProps(transformContext, isTs)
 
   const sanitizedVariants = Object.entries(transformContext.variants || {}).reduce(
     (acc, [key, variant]: any) => {
@@ -24,9 +33,12 @@ export function transformVariants(transformContext: PinceauTransformContext) {
     {},
   )
 
-  transformContext.append(`const __$pVariants = ${JSON.stringify(sanitizedVariants)}\n`)
+  transformContext.magicString.prependLeft(
+    scriptSetupBlock.loc.end.offset,
+    `\nconst __$pVariants = ${JSON.stringify(sanitizedVariants)}\n`,
+  )
 
-  if (variantsProps) { pushVariantsProps(transformContext, variantsProps) }
+  if (variantsProps) { pushVariantsProps(transformContext, variantsProps, isTs) }
 
   return transformContext
 }
@@ -39,23 +51,31 @@ export function transformVariants(transformContext: PinceauTransformContext) {
 export function pushVariantsProps(
   transformContext: PinceauTransformContext,
   variantsProps: any,
+  isTs: boolean,
 ) {
-  const scriptAst = parseAst(transformContext.code)
+  const code = transformContext.sfc.descriptor.scriptSetup.content
+  const scriptSetupBlock = transformContext.sfc.descriptor.scriptSetup
+
+  const scriptAst = parseAst(code)
 
   let propsAst = expressionToAst(JSON.stringify(variantsProps))
 
-  propsAst = castVariantsPropsAst(propsAst)
+  propsAst = castVariantsPropsAst(propsAst, isTs)
 
-  // Push to defineProps
-  const propsObject = astTypes.builders.spreadElement(propsAst).loc.source
-
-  transformContext.prepend(printAst(scriptAst).code)
+  visitAst(
+    scriptAst,
+    {
+      visitSpreadElement(path) {
+        return this.traverse(path)
+      },
+    },
+  )
 }
 
 /**
  * Resolve a Vue component props object from css() variant.
  */
-export function resolveVariantsProps(transformContext: PinceauTransformContext) {
+export function resolveVariantsProps(transformContext: PinceauTransformContext, isTs: boolean) {
   const props: Record<string, PropOptions> = {}
 
   Object.entries(transformContext.variants).forEach(
@@ -66,12 +86,12 @@ export function resolveVariantsProps(transformContext: PinceauTransformContext) 
 
       const isBooleanVariant = Object.keys(variant).some(key => (key === 'true' || key === 'false'))
       if (isBooleanVariant) {
-        prop.type = transformContext.isTs ? ' [Boolean, Object] as import(\'vue\').PropType<boolean | { [key in import(\'pinceau\').PinceauMediaQueries]?: boolean }>' : ' [Boolean, Object]'
+        prop.type = isTs ? ' [Boolean, Object] as import(\'vue\').PropType<boolean | { [key in import(\'pinceau\').PinceauMediaQueries]?: boolean }>' : ' [Boolean, Object]'
         prop.default = false
       }
       else {
         const possibleValues = `\'${Object.keys(variant).filter(key => key !== 'options').join('\' | \'')}\'`
-        prop.type = transformContext.isTs ? ` [String, Object] as import(\'vue\').PropType<${possibleValues} | { [key in import(\'pinceau\').PinceauMediaQueries]?: ${possibleValues} }>` : ' [String, Object]'
+        prop.type = isTs ? ` [String, Object] as import(\'vue\').PropType<${possibleValues} | { [key in import(\'pinceau\').PinceauMediaQueries]?: ${possibleValues} }>` : ' [String, Object]'
         prop.default = undefined
       }
 
@@ -94,7 +114,7 @@ export function resolveVariantsProps(transformContext: PinceauTransformContext) 
 /**
  * Cast a variants props AST output to a type-safe props object.
  */
-export function castVariantsPropsAst(ast: ASTNode) {
+export function castVariantsPropsAst(ast: ASTNode, isTs?: boolean) {
   // Cast stringified values
   visitAst(
     ast,
@@ -106,10 +126,7 @@ export function castVariantsPropsAst(ast: ASTNode) {
         // Cast `validator` string
         if (key === 'validator') { path.value.value = expressionToAst(path.value.value.value) }
         // Cast required & default to `{value} as const`
-        if (
-          key === 'required'
-          || key === 'default'
-        ) {
+        if ((key === 'required' || key === 'default') && isTs) {
           const printedAst = printAst(path.value.value).code
           path.value.value = expressionToAst(`${printedAst} as const`)
         }

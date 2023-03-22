@@ -1,33 +1,30 @@
 import MagicString from 'magic-string'
+import type { SFCParseResult } from 'vue/compiler-sfc'
 import { parse as sfcParse } from 'vue/compiler-sfc'
 import { useDebugPerformance } from '../utils'
 import type { PinceauContext, PinceauQuery } from '../types'
-import type { PinceauParsedSFC, PinceauTransformContext } from '../types/transforms'
-import { transformStyleTs } from './vue'
+import type { PinceauTransformContext } from '../types/transforms'
 
-export function getTransformContext(
+export function useTransformContext(
   source: string,
   query: PinceauQuery,
   pinceauContext: PinceauContext,
 ): PinceauTransformContext {
   const { stopPerfTimer } = useDebugPerformance(`Transforming ${query.id}`, pinceauContext.options.debug)
 
-  // Enforce <style lang="ts"> into <style lang="postcss">
-  // This transform is applied beyond source maps as it is directed towards vue/compiler-sfc.
-  source = transformStyleTs(source, query)
-
   const ms = new MagicString(source, { filename: query.filename })
 
-  let parsedSfc: PinceauParsedSFC
+  let parsedSfc: SFCParseResult
+  let lastParsedContent: string
 
   const transformContext: PinceauTransformContext = {
     query,
-    magicString: ms,
+    get magicString() { return ms },
 
     /**
      * Original code informations.
      */
-    loc: { source },
+    loc: { start: { column: 0, line: 0, offset: 0 }, end: { column: 0, line: 0, offset: 0 }, source },
 
     /**
      * Pinceau transform state.
@@ -44,43 +41,16 @@ export function getTransformContext(
     /**
      * Returns the SFCParseResult of a transform target if it is a Vue file.
      */
-    sfc: () => {
+    get sfc() {
       // This file is not a `.vue` component, skip `sfc`
       if (!query.vue) { return undefined }
 
-      // Component has already been parsed
-      if (parsedSfc) { return parsedSfc }
+      const sfcCompilerResult = sfcParse(ms.toString(), { filename: query.filename })
 
-      const sfcCompilerResult = sfcParse(source, { filename: query.filename })
+      lastParsedContent = ms.toString()
+      parsedSfc = sfcCompilerResult as SFCParseResult
 
-      const superChargeBlock = (block: any) => {
-        if (!block?.loc?.start?.offset || !block?.loc?.end?.offset) { return }
-        const start = block.loc.start.offset
-        const end = block.loc.end.offset
-        block.append = (text: string) => ms.appendRight(end.offset, text)
-        block.prepend = (text: string) => ms.prependLeft(start.offset, text)
-      }
-
-      // Supercharge vue/compiler-sfc result with MagicString helpers
-      ;['styles', 'script', 'customBlocks', 'scriptSetup', 'template'].forEach(
-        (key) => {
-          const block = sfcCompilerResult.descriptor?.[key]
-          if ((key === 'styles' || key === 'customBlocks') && block) { block.forEach(superChargeBlock) }
-          if (block) { superChargeBlock(block) }
-        },
-      )
-
-      parsedSfc = sfcCompilerResult as PinceauParsedSFC
-
-      return parsedSfc
-    },
-
-    /**
-     * Check if the current transform target is a TypeScript module.
-     */
-    get isTs() {
-      if (query?.lang === 'ts' || query?.ext === 'ts' || this.sfc?.descriptor?.scriptSetup?.lang === 'ts') { return true }
-      return false
+      return sfcCompilerResult
     },
 
     /**
@@ -88,16 +58,16 @@ export function getTransformContext(
      */
     result() {
       stopPerfTimer()
-      const sourceMap = ms.generateMap()
-      sourceMap.file = query.filename
-      sourceMap.sources = [query.filename]
-      if (query.vue) {
-        console.log({
-          query,
-          code: ms.toString(),
-        })
+      if (ms.hasChanged) {
+        const code = ms.toString()
+        if (query.vue) {
+          console.log({ code })
+        }
+        const sourceMap = ms.generateMap()
+        sourceMap.file = query.filename
+        sourceMap.sources = [query.filename]
+        return { code, map: sourceMap }
       }
-      return { code: ms.toString(), map: sourceMap }
     },
   }
 
