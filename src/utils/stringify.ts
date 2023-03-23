@@ -145,7 +145,11 @@ export const stringify = (
           }
         }
         else {
-          cssText = write(cssText, selectors, conditions, name, data, isAtRuleLike, isVariableLike)
+          let cssRuleData = data
+          if (name === 'content') {
+            cssRuleData = data ? `${data}` : '""'
+          }
+          cssText = write(cssText, selectors, conditions, name, cssRuleData, isAtRuleLike, isVariableLike)
         }
       }
     }
