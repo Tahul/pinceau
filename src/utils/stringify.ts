@@ -147,13 +147,12 @@ export const stringify = (
         else {
           let cssRuleData = data
           if (name === 'content') {
-            cssRuleData = data ? `${data}` : '""'
+            cssRuleData = data ? `"${data}"` : '""'
           }
           cssText = write(cssText, selectors, conditions, name, cssRuleData, isAtRuleLike, isVariableLike)
         }
       }
     }
-
     return cssText
   }
 
