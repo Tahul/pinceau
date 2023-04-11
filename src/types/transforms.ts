@@ -2,8 +2,8 @@ import type MagicString from 'magic-string'
 import type { SourceMapCompact } from 'unplugin'
 import type { SourceMapInput } from 'rollup'
 import type { SourceLocation } from '@vue/compiler-core'
-import type { SFCParseResult } from 'vue/compiler-sfc'
 import type { PinceauQuery } from './utils'
+import type { MagicVueSFC } from 'sfc-composer'
 
 export interface PinceauTransformContext {
   magicString: MagicString
@@ -14,7 +14,7 @@ export interface PinceauTransformContext {
   query: PinceauQuery
   result: () => { code: string; map: SourceMapInput | SourceMapCompact | null }
   loc?: SourceLocation
-  sfc?: SFCParseResult
+  sfc?: MagicVueSFC
 }
 
 export interface StringifyContext {

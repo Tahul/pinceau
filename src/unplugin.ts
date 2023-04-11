@@ -181,7 +181,7 @@ export default createUnplugin<PinceauOptions>((options) => {
       }
       catch (e) {
         message('TRANSFORM_ERROR', [id, e])
-        console.log({ e })
+        console.log(e)
         return { code }
       }
 
@@ -213,7 +213,7 @@ export default createUnplugin<PinceauOptions>((options) => {
         if (styleBlock) {
           const transformContext = useTransformContext(styleBlock.content, query, pinceauContext)
 
-          if (styleBlock.attrs.lang === 'ts' || styleBlock.lang === 'ts' || styleBlock.attrs?.transformed) { transformCssFunction(transformContext, pinceauContext) }
+          if (styleBlock?.attrs?.lang === 'ts' || styleBlock?.lang === 'ts' || styleBlock?.attrs?.transformed) { transformCssFunction(transformContext, pinceauContext) }
           transformCSS(transformContext, pinceauContext)
 
           return transformContext.result()

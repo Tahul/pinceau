@@ -17,6 +17,8 @@ export function transformCSS(
   code = transformColorScheme({ ...transformContext, code }, 'dark')
   code = transformColorScheme({ ...transformContext, code }, 'light')
 
+  if (!styleBlock?.loc) return
+
   if (styleBlock && code !== styleBlock.content) {
     transformContext.magicString.remove(styleBlock.loc.start.offset, styleBlock.loc.end.offset)
     transformContext.magicString.prependLeft(styleBlock.loc.end.offset, code)

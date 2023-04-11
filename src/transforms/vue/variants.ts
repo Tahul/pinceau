@@ -13,12 +13,12 @@ export interface PropOptions {
  * Takes variants object and turns it into a `const` inside `<script setup>`
  */
 export function transformVariants(transformContext: PinceauTransformContext, isTs?: boolean) {
-  const scriptSetupBlock = transformContext.sfc.descriptor.scriptSetup
+  const scriptSetupBlock = transformContext.sfc.scriptSetup
 
   isTs = typeof isTs === 'undefined'
     ? (
-        transformContext.sfc.descriptor.scriptSetup.lang === 'ts'
-        || transformContext.sfc.descriptor.scriptSetup.attrs.lang === 'ts'
+        transformContext.sfc.scriptSetup.lang === 'ts'
+        || transformContext.sfc.scriptSetup.attrs.lang === 'ts'
       )
     : isTs
 
@@ -53,8 +53,8 @@ export function pushVariantsProps(
   variantsProps: any,
   isTs: boolean,
 ) {
-  const code = transformContext.sfc.descriptor.scriptSetup.content
-  const scriptSetupBlock = transformContext.sfc.descriptor.scriptSetup
+  const code = transformContext.sfc.scriptSetup.content
+  const scriptSetupBlock = transformContext.sfc.scriptSetup
 
   const scriptAst = parseAst(code)
 

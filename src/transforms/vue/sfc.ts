@@ -15,13 +15,13 @@ export function transformVueSFC(
   const sfc = transformContext.sfc
 
   // Transform <style> blocks
-  if (sfc?.descriptor?.styles) { transformStyles(transformContext, pinceauContext) }
+  if (sfc?.styles) { transformStyles(transformContext, pinceauContext) }
 
   // Transform <template> blocks
-  if (sfc?.descriptor?.template) { transformTemplate(transformContext, pinceauContext) }
+  if (sfc?.template) { transformTemplate(transformContext, pinceauContext) }
 
   // Transform <script setup> blocks
-  if (sfc?.descriptor?.scriptSetup) { transformScriptSetup(transformContext, pinceauContext) }
+  if (sfc?.scriptSetup) { transformScriptSetup(transformContext, pinceauContext) }
 }
 
 /**
@@ -64,14 +64,12 @@ export function transformStyles(
   transformContext: PinceauTransformContext,
   pinceauContext: PinceauContext,
 ) {
-  const styles = transformContext.sfc.descriptor.styles
+  const styles = transformContext.sfc.styles
 
-  styles.forEach(
-    (styleBlock) => {
-      if (styleBlock.attrs.lang === 'ts' || styleBlock.lang === 'ts' || styleBlock.attrs?.transformed) { transformCssFunction(transformContext, pinceauContext, styleBlock) }
-      transformCSS(transformContext, pinceauContext, styleBlock)
-    },
-  )
+  for (const styleBlock of styles) {
+    if (styleBlock?.attrs?.lang === 'ts' || styleBlock?.lang === 'ts' || styleBlock?.attrs?.transformed) { transformCssFunction(transformContext, pinceauContext, styleBlock) }
+    transformCSS(transformContext, pinceauContext, styleBlock)
+  }
 }
 
 /**
@@ -109,7 +107,7 @@ export function transformScriptSetup(
 export function transformAddRuntimeImports(transformContext: PinceauTransformContext) {
   // Handle necessary Vue imports
   let vueImports: string[] | string = []
-  const content = transformContext.sfc?.descriptor?.scriptSetup?.content
+  const content = transformContext.sfc?.scriptSetup?.content
 
   if (!content) { return }
 
@@ -121,7 +119,7 @@ export function transformAddRuntimeImports(transformContext: PinceauTransformCon
   else { vueImports = '' }
 
   transformContext.magicString.appendRight(
-    transformContext.sfc.descriptor.scriptSetup.loc.start.offset,
+    transformContext.sfc.scriptSetup.loc.start.offset,
     `\nimport { usePinceauRuntime } from \'pinceau/runtime\'\n${vueImports}`,
   )
 }
@@ -133,14 +131,14 @@ export function transformComputedStyles(transformContext: PinceauTransformContex
   Object
     .entries(transformContext.computedStyles)
     .forEach(([key, styleFunction]) => {
-      const end = transformContext.sfc.descriptor.scriptSetup.loc.start.offset + transformContext.sfc.descriptor.scriptSetup.content.length
+      const end = transformContext.sfc.scriptSetup.loc.start.offset + transformContext.sfc.scriptSetup.content.length
       transformContext.magicString.prependLeft(end, `\nconst ${key} = computed(() => ((props = getCurrentInstance().props) => ${styleFunction})())\n`)
     })
 }
 
 export function transformFinishRuntimeSetup(transformContext: PinceauTransformContext, { hasVariants, hasComputedStyles }: Record<string, boolean>) {
   transformContext.magicString.prependLeft(
-    transformContext.sfc.descriptor.scriptSetup.loc.end.offset,
+    transformContext.sfc.scriptSetup.loc.end.offset,
     [
       `\n${(hasVariants || hasComputedStyles) ? 'const { $pinceau } = ' : ''}`,
       'usePinceauRuntime(',

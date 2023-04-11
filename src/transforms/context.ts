@@ -1,9 +1,8 @@
 import MagicString from 'magic-string'
-import type { SFCParseResult } from 'vue/compiler-sfc'
-import { parse as sfcParse } from 'vue/compiler-sfc'
 import { useDebugPerformance } from '../utils'
 import type { PinceauContext, PinceauQuery } from '../types'
 import type { PinceauTransformContext } from '../types/transforms'
+import { MagicVueSFC } from 'sfc-composer'
 
 export function useTransformContext(
   source: string,
@@ -13,9 +12,6 @@ export function useTransformContext(
   const { stopPerfTimer } = useDebugPerformance(`Transforming ${query.id}`, pinceauContext.options.debug)
 
   const ms = new MagicString(source, { filename: query.filename })
-
-  let parsedSfc: SFCParseResult
-  let lastParsedContent: string
 
   const transformContext: PinceauTransformContext = {
     query,
@@ -45,10 +41,7 @@ export function useTransformContext(
       // This file is not a `.vue` component, skip `sfc`
       if (!query.vue) { return undefined }
 
-      const sfcCompilerResult = sfcParse(ms.toString(), { filename: query.filename })
-
-      lastParsedContent = ms.toString()
-      parsedSfc = sfcCompilerResult as SFCParseResult
+      const sfcCompilerResult = new MagicVueSFC(ms)
 
       return sfcCompilerResult
     },
@@ -60,9 +53,6 @@ export function useTransformContext(
       stopPerfTimer()
       if (ms.hasChanged) {
         const code = ms.toString()
-        if (query.vue) {
-          console.log({ code })
-        }
         const sourceMap = ms.generateMap()
         sourceMap.file = query.filename
         sourceMap.sources = [query.filename]

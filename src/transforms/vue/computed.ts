@@ -4,10 +4,10 @@ import { camelCase, kebabCase } from 'scule'
 import type { PinceauTransformContext } from '../../types'
 import { astTypes, printAst, visitAst } from '../../utils/ast'
 
-export function resolveRuntimeContents(cssAst: ASTNode, transformContext: PinceauTransformContext) {
+export function resolveRuntimeContents(cssFunctionAst: ASTNode, transformContext: PinceauTransformContext) {
   // Search for function properties in css() AST
   visitAst(
-    cssAst,
+    cssFunctionAst,
     {
       visitObjectProperty(path) {
         if (path.value) {

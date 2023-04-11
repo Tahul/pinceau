@@ -12,7 +12,7 @@ import { astTypes, expressionToAst, printAst } from '../../utils/ast'
  * 5 - If $pinceau is already present somewhere in the template, just skip this transform
  */
 export function transformAddPinceauClass(transformContext: PinceauTransformContext): string {
-  const templateBlock = transformContext.sfc.descriptor.template
+  const templateBlock = transformContext.sfc.template
 
   if (!templateBlock?.content) { return }
 
