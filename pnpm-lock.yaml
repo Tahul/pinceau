@@ -20,7 +20,7 @@ importers:
       acorn: ^8.8.2
       buffer: ^6.0.3
       chroma-js: ^2.4.2
-      consola: ^2.15.3
+      consola: ^3.0.1
       csstype: ^3.1.1
       defu: ^6.1.2
       eslint: ^8.35.0
@@ -64,7 +64,7 @@ importers:
       '@volar/vue-language-core': 1.2.0
       acorn: 8.8.2
       chroma-js: 2.4.2
-      consola: 2.15.3
+      consola: 3.0.1
       csstype: 3.1.1
       defu: 6.1.2
       magic-string: 0.30.0
@@ -263,6 +263,13 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       '@babel/highlight': 7.18.6
+
+  /@babel/code-frame/7.21.4:
+    resolution: {integrity: sha512-LYvhNKfwWSPpocw8GI7gpK2nq3HSDuEPC/uSYaALSJu9xjsalaaYFOq0Pwt5KmVqwEbZlDu81aLXwBOmD/Fv9g==}
+    engines: {node: '>=6.9.0'}
+    dependencies:
+      '@babel/highlight': 7.18.6
+    optional: true
 
   /@babel/compat-data/7.21.0:
     resolution: {integrity: sha512-gMuZsmsgxk/ENC3O/fRw5QY8A9/uxQbbCEypnLIiYYc/qVJtEV7ouxC3EllIIwNzMqAQee5tanFabWsUOutS7g==}
@@ -1981,8 +1988,8 @@ packages:
       '@octokit/openapi-types': 16.0.0
     dev: true
 
-  /@planetscale/database/1.5.0:
-    resolution: {integrity: sha512-Qwh7Or1W5dB5mZ9EQqDkgvkDKhBBmQe58KIVUy0SGocNtr5fP4JAWtvZ6EdLAV6C6hVpzNlCA2xIg9lKTswm1Q==}
+  /@planetscale/database/1.7.0:
+    resolution: {integrity: sha512-lWR6biXChUyQnxsT4RT1CIeR3ZJvwTQXiQ+158MnY3VjLwjHEGakDzdH9kwUGPk6CHvu6UeqRXp1DgUOVHJFTw==}
     engines: {node: '>=16'}
     requiresBuild: true
     dev: true
@@ -2492,7 +2499,7 @@ packages:
       '@babel/core': 7.21.0
       '@babel/plugin-transform-typescript': 7.21.0_@babel+core@7.21.0
       '@vue/babel-plugin-jsx': 1.1.1_@babel+core@7.21.0
-      vite: 4.1.4
+      vite: 4.1.4_@types+node@18.14.2
       vue: 3.2.47
     transitivePeerDependencies:
       - supports-color
@@ -2508,7 +2515,7 @@ packages:
       vue:
         optional: true
     dependencies:
-      vite: 4.1.4
+      vite: 4.1.4_@types+node@18.14.2
       vue: 3.2.47
     dev: true
 
@@ -3848,6 +3855,10 @@ packages:
 
   /consola/2.15.3:
     resolution: {integrity: sha512-9vAdYbHj6x2fLKC4+oPH0kFzY/orMZyG2Aj+kNylHxKGJ/Ed4dpNyAQYwJOdqO4zdM7XpVHmyejQDcQHrnuXbw==}
+
+  /consola/3.0.1:
+    resolution: {integrity: sha512-08E7bC2N6gaFdzPU/qtBi4ulVvJitYnfrDdxEiwElC3jSNICbOvkcE+8N56EfIrBoxp37O9Qnn5ZZPElov83UQ==}
+    dev: false
 
   /console-control-strings/1.1.0:
     resolution: {integrity: sha512-ty/fTekppD2fIwRvnZAVdeOiGd1c7YXEixbgJTNzqcxJWKQnjJ/V1bNEEE6hygpM3WjwHFUVK6HTjWSzV4a8sQ==}
@@ -9853,7 +9864,7 @@ packages:
       rollup: 3.17.3
       typescript: 4.9.5
     optionalDependencies:
-      '@babel/code-frame': 7.18.6
+      '@babel/code-frame': 7.21.4
 
   /rollup-plugin-visualizer/5.9.0_rollup@3.17.3:
     resolution: {integrity: sha512-bbDOv47+Bw4C/cgs0czZqfm8L82xOZssk4ayZjG40y9zbXclNk7YikrZTDao6p7+HDiGxrN0b65SgZiVm9k1Cg==}
@@ -11157,7 +11168,7 @@ packages:
       ufo: 1.1.1
       ws: 8.12.1
     optionalDependencies:
-      '@planetscale/database': 1.5.0
+      '@planetscale/database': 1.7.0
     transitivePeerDependencies:
       - bufferutil
       - supports-color
