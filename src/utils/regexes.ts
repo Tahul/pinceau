@@ -28,6 +28,8 @@ export const dtRegex = /\$dt\(['|`|"]([a-zA-Z0-9.]+)['|`|"](?:,\s*(['|`|"]([a-zA
 
 export const variantsRegex = /(...)?variants(,)?/mg
 
+export const importRegex = /\bimport\s+.*?\bfrom\s+(?:"([^"]+)"|'([^']+)'|[^\s;'"]+)[\s;]/g
+
 export const responsiveMediaQueryRegex = /^(:|\.)/
 
 export const outputFileNames = [

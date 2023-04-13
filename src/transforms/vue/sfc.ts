@@ -1,8 +1,10 @@
 import type { SFCParseResult } from 'vue/compiler-sfc'
 import type MagicString from 'magic-string'
+import { parseModule } from 'magicast'
+import consola from 'consola'
 import { parseVueComponent } from '../../utils/ast'
 import type { PinceauContext, PinceauQuery } from '../../types'
-import { variantsRegex } from '../../utils'
+import { importRegex, variantsRegex } from '../../utils'
 import { transformDtHelper } from '../dt'
 import { transformCssFunction } from '../css'
 import { message } from '../../utils/logger'
@@ -21,13 +23,14 @@ export function transformVueSFC(
   const variants = {}
   const computedStyles = {}
   const localTokens = {}
+  const imports = {}
 
   // Parse component with compiler-sfc
   const parsedComponent = parseVueComponent(code, { filename: query.id })
 
   // Transform <style> blocks
   if (parsedComponent?.descriptor?.styles) {
-    resolveStyle(query.id, parsedComponent, magicString, variants, computedStyles, localTokens, ctx, query)
+    resolveStyle(query.id, parsedComponent, magicString, variants, computedStyles, localTokens, imports, ctx, query)
   }
 
   // Check if runtime styles are enabled on this component
@@ -40,7 +43,7 @@ export function transformVueSFC(
 
   // Transform <script setup> blocks
   if (parsedComponent?.descriptor?.scriptSetup) {
-    resolveScriptSetup(query.id, parsedComponent, magicString, variants, computedStyles, ctx, parsedComponent.descriptor.scriptSetup.lang === 'ts')
+    resolveScriptSetup(query.id, parsedComponent, magicString, variants, computedStyles, imports, ctx, parsedComponent.descriptor.scriptSetup.lang === 'ts')
   }
 
   return { code, magicString, variants, computedStyles, localTokens }
@@ -93,6 +96,7 @@ export function resolveStyle(
   variants: any,
   computedStyles: any,
   localTokens: any,
+  imports: any,
   ctx: PinceauContext,
   query?: PinceauQuery,
 ) {
@@ -107,6 +111,11 @@ export function resolveStyle(
         || styleBlock.lang === 'ts'
         || styleBlock.attrs?.transformed
       ) {
+        const mod = parseModule(content)
+        if (Object.keys(mod.imports).length > 0) {
+          Object.assign(imports, mod.imports)
+          code = code.replace(importRegex, () => '')
+        }
         code = transformCssFunction(id, code, variants, computedStyles, localTokens, ctx, { query, ...loc })
       }
 
@@ -127,12 +136,14 @@ export function resolveScriptSetup(
   magicString: MagicString,
   variants: any,
   computedStyles: any,
+  imports: any,
   ctx: PinceauContext,
   isTs: boolean,
 ) {
   const scriptSetup = parsedComponent.descriptor.scriptSetup
   const hasVariants = Object.keys(variants).length
   const hasComputedStyles = Object.keys(computedStyles).length
+  const hasImports = Object.keys(imports).length
   let code = scriptSetup.content
 
   // Transform `$dt()` usage
@@ -144,6 +155,8 @@ export function resolveScriptSetup(
   if (ctx.options.runtime) {
     // Inject runtime imports
     if (hasVariants || hasComputedStyles) { code = transformAddRuntimeImports(code) }
+
+    if (hasImports) { code = transformAddStyleImports(code, imports) }
 
     // Check for variant props
     if (hasVariants) { code = transformVariants(code, variants, isTs) }
@@ -172,6 +185,19 @@ export function transformComputedStyles(code: string, computedStyles: any): stri
     .map(([key, styleFunction]) => `\nconst ${key} = computed(() => ((props = __$pProps) => ${styleFunction})())\n`)
     .join('') + code
 
+  return code
+}
+
+export function transformAddStyleImports(code: string, imports: any) {
+  const addImports: any[] = []
+  for (const item of Object.entries(imports)) {
+    const [key, value] = item as any
+    const { from, imported } = value
+
+    addImports.push(imported === 'default' ? `import ${key} from "${from}"\n` : `import { ${key} } from "${from}"\n`)
+  }
+
+  code = addImports.join('') + code
   return code
 }
 

@@ -29,6 +29,7 @@ importers:
       js-confetti: ^0.11.0
       jsdom: ^21.1.1
       magic-string: ^0.30.0
+      magicast: ^0.2.3
       nanoid: ^4.0.2
       nitropack: 2.3.3
       nodemon: ^2.0.22
@@ -68,6 +69,7 @@ importers:
       csstype: 3.1.2
       defu: 6.1.2
       magic-string: 0.30.0
+      magicast: 0.2.3
       nanoid: 4.0.2
       ohash: 1.0.0
       paneer: 0.1.0
@@ -2334,7 +2336,7 @@ packages:
       '@babel/core': 7.21.4
       '@babel/plugin-transform-typescript': 7.21.3_@babel+core@7.21.4
       '@vue/babel-plugin-jsx': 1.1.1_@babel+core@7.21.4
-      vite: 4.2.1
+      vite: 4.2.1_@types+node@18.15.11
       vue: 3.2.47
     transitivePeerDependencies:
       - supports-color
@@ -2350,7 +2352,7 @@ packages:
       vue:
         optional: true
     dependencies:
-      vite: 4.2.1
+      vite: 4.2.1_@types+node@18.15.11
       vue: 3.2.47
     dev: true
 
@@ -6887,7 +6889,6 @@ packages:
       '@babel/parser': 7.21.4
       '@babel/types': 7.21.4
       recast: 0.22.0
-    dev: true
 
   /make-dir/3.1.0:
     resolution: {integrity: sha512-g3FeP20LNwhALb/6Cz6Dd4F2ngze0jz7tbzrD2wAV+o9FeNHe4rL+yK2md0J/fiSf1sa1ADhXqi5+oVwOM/eGw==}

@@ -116,6 +116,7 @@
     "csstype": "^3.1.2",
     "defu": "^6.1.2",
     "magic-string": "^0.30.0",
+    "magicast": "^0.2.3",
     "nanoid": "^4.0.2",
     "ohash": "^1.0.0",
     "paneer": "^0.1.0",

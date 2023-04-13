@@ -2,7 +2,7 @@ import type { ASTNode } from 'ast-types'
 import { defu } from 'defu'
 import { parse } from 'acorn'
 import type { PinceauContext } from '../types'
-import { resolveCssProperty, stringify } from '../utils'
+import { importRegex, resolveCssProperty, stringify } from '../utils'
 import { message } from '../utils/logger'
 import { parseAst, printAst, visitAst } from '../utils/ast'
 import { resolveRuntimeContents } from './vue/computed'
@@ -21,6 +21,7 @@ export const transformCssFunction = (
 ) => {
   // Enhance error logging for `css()`
   try {
+    code = code.replace(importRegex, () => '')
     parse(code, { ecmaVersion: 'latest' })
   }
   catch (e) {
