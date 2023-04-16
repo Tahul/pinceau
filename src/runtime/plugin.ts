@@ -46,7 +46,7 @@ export const plugin: Plugin = {
      */
     function usePinceauRuntime(
       props: any = {},
-      variants: Variants,
+      variants: Variants<typeof props>,
       computedStyles: { [key: string]: ComputedRef },
     ) {
       // Current component instance

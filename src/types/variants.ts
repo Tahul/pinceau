@@ -1,34 +1,16 @@
-import type { CSSProperties } from './css'
-import type { PinceauMediaQueries } from './theme'
+import type { CSSProperties } from './css';
 
-export interface VariantOptions<T = string> {
-  type?: string
-  required?: boolean
-  default?: T | { [key in PinceauMediaQueries]?: T }
-  mediaPrefix?: boolean
-}
+export type Variant<T> = {
+  [K in keyof T]: {
+    [key: string]: string | (CSSProperties & { $class?: string });
+  } & {
+    options?: {
+      default?: T[K];
+      required?: boolean;
+      mediaPrefix?: boolean;
+      readonly type?: T[K];
+    };
+  };
+};
 
-export interface BooleanVariant {
-  true?: CSSProperties
-  false?: CSSProperties
-  [key: string]: CSSProperties
-}
-
-export interface EnumVariant {
-  [key: string]: CSSProperties
-}
-
-export interface ClassVariant {
-  [key: string]: string | (CSSProperties & { $class?: string })
-}
-
-export type Variant =
-  (BooleanVariant | EnumVariant | ClassVariant)
-  &
-  {
-    options?: VariantOptions
-  }
-
-export interface Variants {
-  [key: string]: Variant
-}
+export type Variants<T> = T extends Record<string, any> ? Variant<T> : any;
