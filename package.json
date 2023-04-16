@@ -1,7 +1,7 @@
 {
   "name": "pinceau",
   "type": "module",
-  "version": "0.18.8",
+  "version": "0.19.0",
   "packageManager": "pnpm@7.20.0",
   "workspaces": [
     "docs",
@@ -28,30 +28,37 @@
   ],
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "require": "./dist/index.cjs",
       "import": "./dist/index.mjs"
     },
     "./types": {
+      "types": "./dist/index.d.d.ts",
       "require": "./dist/index.d.ts",
       "import": "./dist/index.d.ts"
     },
     "./vite": {
+      "types": "./dist/vite.d.ts",
       "require": "./dist/vite.cjs",
       "import": "./dist/vite.mjs"
     },
     "./nuxt": {
+      "types": "./dist/nuxt.d.ts",
       "require": "./dist/nuxt.cjs",
       "import": "./dist/nuxt.mjs"
     },
     "./runtime": {
+      "types": "./dist/runtime.d.ts",
       "require": "./dist/runtime.cjs",
       "import": "./dist/runtime.mjs"
     },
     "./nitro": {
+      "types": "./dist/nitro.d.ts",
       "require": "./dist/nitro.cjs",
       "import": "./dist/nitro.mjs"
     },
     "./utils": {
+      "types": "./dist/utils.d.ts",
       "require": "./dist/utils.cjs",
       "import": "./dist/utils.mjs"
     },
