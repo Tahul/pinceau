@@ -1,8 +1,8 @@
 import MagicString from 'magic-string'
+import { MagicVueSFC } from 'sfc-composer'
 import { useDebugPerformance } from '../utils'
 import type { PinceauContext, PinceauQuery } from '../types'
 import type { PinceauTransformContext } from '../types/transforms'
-import { MagicVueSFC } from 'sfc-composer'
 
 export function useTransformContext(
   source: string,

@@ -1,6 +1,6 @@
 import type { ASTNode } from 'ast-types'
 import type { PinceauTransformContext } from '../../types'
-import { expressionToAst, parseAst, printAst, visitAst } from '../../utils/ast'
+import { astTypes, expressionToAst, parseAst, printAst, visitAst } from '../../utils/ast'
 
 export interface PropOptions {
   type?: any
@@ -48,25 +48,35 @@ export function transformVariants(transformContext: PinceauTransformContext, isT
  *
  * Only work with `defineProps()`.
  */
-export function pushVariantsProps(
-  transformContext: PinceauTransformContext,
-  variantsProps: any,
-  isTs: boolean,
-) {
-  const code = transformContext.sfc.scriptSetup.content
-  const scriptSetupBlock = transformContext.sfc.scriptSetup
-
-  const scriptAst = parseAst(code)
+export function pushVariantsProps(transformContext: PinceauTransformContext, variantsProps: any, isTs: boolean) {
+  let scriptAst = parseAst(transformContext.code)
 
   let propsAst = expressionToAst(JSON.stringify(variantsProps))
 
   propsAst = castVariantsPropsAst(propsAst, isTs)
 
+  // Push to defineProps
+  propsAst = visitAst(
+    scriptAst,
+    {
+      visitCallExpression(path) {
+        if (path?.value?.callee?.name === 'defineProps') {
+          path.value.arguments[0].properties.push(
+            astTypes.builders.spreadElement(propsAst),
+          )
+        }
+        return this.traverse(path)
+      },
+    },
+  )
+
+  scriptAst = parseAst(printAst(scriptAst).code)
+
   visitAst(
     scriptAst,
     {
       visitSpreadElement(path) {
-        return this.traverse(path)
+        console.log({ path })
       },
     },
   )

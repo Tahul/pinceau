@@ -12,11 +12,11 @@ import { resolveRuntimeContents } from './vue/computed'
 /**
  * Stringify every call of css() into a valid Vue <style> declaration.
  */
-export const transformCssFunction = (
+export function transformCssFunction(
   transformContext: PinceauTransformContext,
   pinceauContext: PinceauContext,
   styleBlock?: SFCStyleBlock,
-) => {
+) {
   const code = styleBlock?.content || transformContext.code
 
   // Enhance error logging for `css()`
@@ -24,10 +24,10 @@ export const transformCssFunction = (
     parse(code, { ecmaVersion: 'latest' })
   }
   catch (e) {
-    e.loc.line = (styleBlock?.loc?.start?.line + e.loc.line) - 1
-    const filePath = `${transformContext.query.id.split('?')[0]}:${e.loc.line}:${e.loc.column}`
+    if (e.loc) { e.loc.line = (styleBlock?.loc?.start?.line + e?.loc?.line) - 1 }
+    const filePath = `${transformContext.query.id.split('?')[0]}:${e?.loc?.line}:${e?.loc?.column}`
     message('TRANSFORM_ERROR', [filePath, e])
-    return ''
+    return
   }
 
   // Resolve stringifiable declaration from `css()` content
@@ -60,11 +60,13 @@ export const transformCssFunction = (
         ),
       )
 
-      transformContext.magicString.overwrite(
-        styleBlock.loc.start.offset + ast.value.loc.start.index,
-        styleBlock.loc.start.offset + ast.value.loc.end.index,
-        cssContent,
-      )
+      if (styleBlock.loc && ast.value.loc) {
+        transformContext.magicString.overwrite(
+          styleBlock.loc.start.offset + ast.value.loc.start.index,
+          styleBlock.loc.start.offset + ast.value.loc.end.index,
+          cssContent,
+        )
+      }
     },
   )
 }

@@ -1,8 +1,8 @@
-import { performance } from 'perf_hooks'
+import { performance } from 'node:perf_hooks'
 import type { PinceauOptions } from 'pinceau'
 import { debugMarker, getDebugContext } from '../utils/logger'
 
-export const useDebugPerformance = (text: string, debug: PinceauOptions['debug'], logOnStop = true) => {
+export function useDebugPerformance(text: string, debug: PinceauOptions['debug'], logOnStop = true) {
   const isDebug = debug === 2
 
   const performanceTimerStart = performance.now()

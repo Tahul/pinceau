@@ -1,5 +1,5 @@
-import { existsSync } from 'fs'
-import { mkdir, rm, writeFile } from 'fs/promises'
+import { existsSync } from 'node:fs'
+import { mkdir, rm, writeFile } from 'node:fs/promises'
 import { join } from 'pathe'
 import type { PinceauOptions } from '../types'
 import { schemaFull, tsFull, utilsFull } from './formats'

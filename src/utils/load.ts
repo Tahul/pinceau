@@ -1,17 +1,23 @@
-import { readFileSync } from 'fs'
+import { readFileSync } from 'node:fs'
 import type { SFCStyleBlock } from 'vue/compiler-sfc'
 import { parse as sfcParse } from 'vue/compiler-sfc'
 import type { PinceauQuery } from '../types'
 
-/**
- * Load a specific <style> block from a Vue SFC query.
- */
-export const loadStyleBlock = (query: PinceauQuery): SFCStyleBlock => {
+export function loadComponentFile(query: PinceauQuery) {
   const { filename } = query
 
   const file = readFileSync(filename, 'utf8')
 
   if (!file) { return }
+
+  return file
+}
+
+/**
+ * Load a specific <style> block from a Vue SFC query.
+ */
+export function loadStyleBlock(query: PinceauQuery): SFCStyleBlock {
+  const file = loadComponentFile(query)
 
   const { descriptor } = sfcParse(file, { filename: query.filename })
 

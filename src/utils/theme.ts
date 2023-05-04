@@ -3,7 +3,7 @@ import { walkTokens } from '../utils/data'
 /**
  * Make a list of `get()` compatible paths for any object.
  */
-export const objectPaths = (data: any) => {
+export function objectPaths(data: any) {
   const output: any = []
   function step(obj: any, prev?: string) {
     Object.keys(obj).forEach((key) => {
@@ -33,7 +33,7 @@ export const objectPaths = (data: any) => {
 /**
  * Flatten tokens object for runtime usage.
  */
-export const flattenTokens = (data: any, toValue = false, raw = true) => {
+export function flattenTokens(data: any, toValue = false, raw = true) {
   return walkTokens(data, (value) => {
     // Get slim token value object
     const toRet = toValue

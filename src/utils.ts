@@ -14,6 +14,6 @@ export * from './utils/query'
 export * from './utils/regexes'
 export * from './utils/stringify'
 export * from './utils/theme'
-export * from './utils/vue'
+export * from './utils/load'
 
 export { transforms, theme }

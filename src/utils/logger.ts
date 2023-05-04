@@ -4,7 +4,9 @@ import { findLineColumn } from './debug'
 type DebugLevel = PinceauOptions['debug']
 
 // Setup context
-const noopHelper = (value: string | number) => value?.toString() || value
+function noopHelper(value: string | number) {
+  return value?.toString() || value
+}
 let context: { logger: any; debugLevel: DebugLevel; tag: any; info: any; warning: any; error: any; success: any } = {
   // consola.withScope(' 🖌 ')
   logger: console,
@@ -21,20 +23,30 @@ let context: { logger: any; debugLevel: DebugLevel; tag: any; info: any; warning
   // chalk.green
   success: noopHelper,
 }
-const updateDebugContext = (newContext: Partial<typeof context>) => {
+function updateDebugContext(newContext: Partial<typeof context>) {
   context = {
     ...context,
     ...newContext,
   }
 }
-const getDebugContext = () => context
+function getDebugContext() {
+  return context
+}
 const c = getDebugContext
 
 // Custom exposed helpers
-const fileLink = (id: string) => c().logger.log(`🔗 ${c().info(id)}\n`)
-const errorMessage = (message: string) => c().logger.log(`🚧 ${c().warning(message)}\n`)
-const DEBUG_MARKER = () => c().tag(' DEBUG ')
-const debugMarker = (text, timing) => c().logger.info(`${DEBUG_MARKER()} ${text} ${timing ? `[${timing}ms]` : ''}`)
+function fileLink(id: string) {
+  return c().logger.log(`🔗 ${c().info(id)}\n`)
+}
+function errorMessage(message: string) {
+  return c().logger.log(`🚧 ${c().warning(message)}\n`)
+}
+function DEBUG_MARKER() {
+  return c().tag(' DEBUG ')
+}
+function debugMarker(text, timing) {
+  return c().logger.info(`${DEBUG_MARKER()} ${text} ${timing ? `[${timing}ms]` : ''}`)
+}
 
 // All available messages
 const messages = {
@@ -121,6 +133,8 @@ type Messages = typeof messages
 
 type DropFirst<T extends unknown[]> = T extends [any, ...infer U] ? U : never
 
-const message = <T extends keyof Messages>(id: T, options?: DropFirst<Parameters<Messages[T]>>) => messages[id].bind(undefined, c().debugLevel, ...options)()
+function message <T extends keyof Messages>(id: T, options?: DropFirst<Parameters<Messages[T]>>) {
+  return messages[id].bind(undefined, c().debugLevel, ...options)()
+}
 
 export { message, updateDebugContext, getDebugContext, debugMarker, fileLink, errorMessage }

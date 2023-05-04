@@ -10,11 +10,9 @@ interface TransformDtHelperOptions {
  *
  * Supports `wrapper` to be used in both `<style>` and `<script>` or `<template>` tags.
  */
-export const transformDtHelper = (
-  { code }: Partial<PinceauTransformContext>,
+export function transformDtHelper({ code }: Partial<PinceauTransformContext>,
   { $tokens }: Partial<PinceauContext>,
-  options: TransformDtHelperOptions = {},
-): string => {
+  options: TransformDtHelperOptions = {}): string {
   const replace = (content: string): string => `${options?.wrapper || ''}${content}${options?.wrapper || ''}`
 
   return code.replace(dtRegex, (_, ...code) => {

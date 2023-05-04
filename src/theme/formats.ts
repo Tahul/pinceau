@@ -12,7 +12,7 @@ import { resolveThemeRule } from '../utils/css'
 /**
  * Stringify utils from object
  */
-const stringifyUtils = (value: Record<string, any>, definitions: any) => {
+function stringifyUtils(value: Record<string, any>, definitions: any) {
   const entries = Object.entries(value)
   return entries.reduce(
     (acc, [key, value]) => {
@@ -40,7 +40,7 @@ const stringifyUtils = (value: Record<string, any>, definitions: any) => {
 /**
  * Enhance tokens paths list
  */
-const enhanceTokenPaths = (value = []) => {
+function enhanceTokenPaths(value = []) {
   const tokensLiteralNodes = []
 
   value.forEach(([keyPath]) => {
@@ -88,7 +88,7 @@ export function tsFull(tokensObject: any) {
 /**
  * import 'pinceau.css'
  */
-export const cssFull = (dictionary: Dictionary, options: Options, responsiveTokens: any, colorSchemeMode: ColorSchemeModes) => {
+export function cssFull(dictionary: Dictionary, options: Options, responsiveTokens: any, colorSchemeMode: ColorSchemeModes) {
   const { formattedVariables } = StyleDictionary.formatHelpers
 
   // Create :root tokens list
@@ -140,7 +140,7 @@ export const cssFull = (dictionary: Dictionary, options: Options, responsiveToke
 /**
  * definitions.ts
  */
-export const definitionsFull = (definitions: any) => {
+export function definitionsFull(definitions: any) {
   return `export const definitions = ${JSON.stringify(definitions, null, 2)} as const`
 }
 
@@ -158,7 +158,7 @@ export function schemaFull(schema: Schema) {
 /**
  * import utils from '#pinceau/utils'
  */
-export const utilsFull = (utils = {}, utilsImports = [], definitions = {}) => {
+export function utilsFull(utils = {}, utilsImports = [], definitions = {}) {
   let result = 'import { PinceauTheme, PropertyValue } from \'pinceau\'\n'
 
   // Add utilsImports from config

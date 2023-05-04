@@ -1,5 +1,5 @@
-import { existsSync } from 'fs'
-import { readFile } from 'fs/promises'
+import { existsSync } from 'node:fs'
+import { readFile } from 'node:fs/promises'
 import { resolveSchema as resolveUntypedSchema } from 'untyped'
 import createJITI from 'jiti'
 import { resolve } from 'pathe'

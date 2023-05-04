@@ -6,19 +6,12 @@ import {
   usePinceauContext,
 } from './theme'
 import {
-  transformCSS,
-  transformCssFunction,
-  transformDtHelper,
-  transformStyleQuery,
   transformStyleTs,
-  transformVueSFC,
   useTransformContext,
 } from './transforms'
 import {
-  JS_EXTENSIONS,
-  loadStyleBlock,
+  loadComponentFile,
   merger,
-  message,
   outputFileNames,
   parsePinceauQuery,
   registerAliases,
@@ -28,6 +21,7 @@ import {
 } from './utils'
 import type { PinceauOptions } from './types'
 import type { PinceauTransformContext } from './types/transforms'
+import { transformComponent } from './transform'
 
 export const defaultOptions: PinceauOptions = {
   configFileName: 'tokens.config',
@@ -63,7 +57,7 @@ export default createUnplugin<PinceauOptions>((options) => {
   const { stopPerfTimer } = useDebugPerformance('Setup Unplugin', options?.debug)
   updateDebugContext({
     debugLevel: options?.dev ? options.debug : false,
-    logger: consola.withScope(' 🖌 '),
+    logger: consola.withTag(' 🖌 '),
     // chalk.bgBlue.blue
     tag: value => chalk.bgBlue.blue(value),
     // chalk.blue
@@ -163,27 +157,10 @@ export default createUnplugin<PinceauOptions>((options) => {
 
       const transformContext: PinceauTransformContext = useTransformContext(code, query, pinceauContext)
 
-      try {
-        // Handle $dt in JS(X)/TS(X) files
-        if (JS_EXTENSIONS.includes(query.ext)) {
-          transformDtHelper(transformContext, pinceauContext)
-          return transformContext.result()
-        }
-
-        // Handle CSS files & <style> tags scoped queries
-        if ((query.styles && !query.vue) || query.type === 'style') {
-          transformStyleQuery(transformContext, pinceauContext)
-          return transformContext.result()
-        }
-
-        // Transform Vue
-        transformVueSFC(transformContext, pinceauContext)
-      }
-      catch (e) {
-        message('TRANSFORM_ERROR', [id, e])
-        console.log(e)
-        return { code }
-      }
+      transformComponent(
+        transformContext,
+        pinceauContext,
+      )
 
       return transformContext.result()
     },
@@ -208,15 +185,27 @@ export default createUnplugin<PinceauOptions>((options) => {
 
       // Transform Vue scoped query
       if (query.vue && query.type === 'style') {
-        const styleBlock = loadStyleBlock(query)
+        const component = loadComponentFile(query)
 
-        if (styleBlock) {
-          const transformContext = useTransformContext(styleBlock.content, query, pinceauContext)
+        try {
+          if (component) {
+            const transformContext = useTransformContext(component, query, pinceauContext)
 
-          if (styleBlock?.attrs?.lang === 'ts' || styleBlock?.lang === 'ts' || styleBlock?.attrs?.transformed) { transformCssFunction(transformContext, pinceauContext) }
-          transformCSS(transformContext, pinceauContext)
+            transformComponent(
+              transformContext,
+              pinceauContext,
+            )
 
-          return transformContext.result()
+            console.log({
+              query,
+              code: transformContext.sfc?.styles?.[query.index!],
+            })
+
+            return { code: transformContext.sfc?.styles?.[query.index!].content }
+          }
+        }
+        catch (e) {
+          console.log({ query, component, e })
         }
       }
 

@@ -5,14 +5,12 @@ import { computed, onScopeDispose, ref, watch } from 'vue'
 import type { PinceauRuntimeIds } from '../../types'
 import type { PinceauRuntimeSheet } from './stylesheet'
 
-export const usePinceauVariants = (
-  ids: ComputedRef<PinceauRuntimeIds>,
+export function usePinceauVariants(ids: ComputedRef<PinceauRuntimeIds>,
   variants: any,
   props: any,
   sheet: PinceauRuntimeSheet,
   classes: Ref<any>,
-  loc: any,
-) => {
+  loc: any) {
   let rule: CSSRule = sheet.hydratableRules?.[ids.value.uid]?.v
   const variantsState = computed(() => variants ? resolveVariantsState(ids.value, props, variants) : {})
   const variantsClasses = ref<string[]>([])
