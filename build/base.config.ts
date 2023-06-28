@@ -22,7 +22,7 @@ export default defineBuildConfig({
     },
   },
   failOnWarn: false,
-  clean: false,
+  clean: true,
   declaration: true,
   rollup: {
     emitCJS: true,

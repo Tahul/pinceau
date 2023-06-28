@@ -4,11 +4,12 @@
   "scripts": {
     "dev": "nuxi dev",
     "build": "nuxi generate",
-    "prepare": "nuxi prepare"
+    "_prepare": "nuxi prepare"
   },
   "devDependencies": {
-    "@nuxt-themes/docus": "^1.10.1",
-    "@vueuse/motion": "^2.0.0-beta.27"
+    "@nuxt-themes/docus": "^1.12.3",
+    "@types/node": "^20.3.1",
+    "@vueuse/motion": "^2.0.0"
   },
   "resolutions": {
     "pinceau": "workspace:*"

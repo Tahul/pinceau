@@ -1,61 +1,44 @@
 {
   "compilerOptions": {
-    "jsx": "preserve",
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "Node",
-    "skipLibCheck": true,
-    "strict": false,
-    "allowJs": true,
-    "noEmit": true,
+    "target": "es2018",
+    "module": "esnext",
+    "lib": ["esnext"],
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "strict": true,
+    "strictNullChecks": true,
     "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true,
-    "types": ["node"],
-    "baseUrl": ".",
+    "skipDefaultLibCheck": true,
+    "noImplicitAny": false,
+    "skipLibCheck": true,
+    "jsx": "preserve",
+    "types": [
+      "node",
+      "vite/client",
+      "vitest/importMeta"
+    ],
     "paths": {
-      "~~": ["./playground"],
-      "~~/*": ["./playground/*"],
-      "@@": ["./playground"],
-      "@@/*": ["./playground/*"],
-      "~": ["./playground"],
-      "~/*": ["./playground/*"],
-      "@": ["./playground"],
-      "@/*": ["./playground/*"],
-      "assets": ["./playground/assets"],
-      "public": ["./playground/public"],
-      "public/*": ["./playground/public/*"],
-      "#app": ["./playground/node_modules/nuxt/dist/app"],
-      "#app/*": ["./playground/node_modules/nuxt/dist/app/*"],
-      "vue-demi": ["./playground/node_modules/nuxt/dist/app/compat/vue-demi"],
-      "#design-tokens": ["./playground/.nuxt/tokens/index"],
-      "#design-tokens/style": ["./playground/.nuxt/tokens/tokens"],
-      "#design-tokens/types": ["./playground/.nuxt/tokens/types"],
-      "#head": ["./playground/node_modules/nuxt/dist/head/runtime"],
-      "#head/*": ["./playground/node_modules/nuxt/dist/head/runtime/*"],
-      "#imports": ["./playground/.nuxt/imports"],
-      "#build": ["./playground/.nuxt"],
-      "#build/*": ["./playground/.nuxt/*"],
-      "#components": ["./playground/.nuxt/components"],
-      "#pinceau/theme": ["./playground/.nuxt/pinceau/index.ts"],
-      "#pinceau/utils": ["./playground/.nuxt/pinceau/utils.ts"],
-      "#pinceau/definitions": ["./playground/.nuxt/pinceau/definitions.ts"],
-      "pinceau.css": ["./playground/.nuxt/pinceau/theme/index.css"],
-      "pinceau": ["./src/index.ts"],
-      "pinceau/*": ["./src/*"]
+      "pinceau": ["./packages/pinceau/src/index.ts"],
+      "@pinceau/nuxt": ["./packages/nuxt/src/index.ts"],
+      "@pinceau/runtime": ["./packages/runtime/src/index.ts"],
+      "@pinceau/shared": ["./packages/shared/src/index.ts"],
+      "@pinceau/css": ["./packages/css/src/index.ts"],
+      "@pinceau/theme": ["./packages/theme/src/index.ts"],
+      "@pinceau/vite": ["./packages/vite/src/index.ts"],
+      "@pinceau/volar": ["./packages/volar/src/index.ts"],
+      "@pinceau/vue": ["./packages/vue/src/rules.ts"],
+      "#pinceau/theme": ["./packages/data/index.ts"],
+      "#pinceau/utils": ["./packages/data/utils.ts"],
+      "#pinceau/schema": ["./packages/data/schema.ts"],
+      "pinceau.css": ["./packages/data/theme/index.css"]
     }
   },
-  "include": [
-    "./playground/.nuxt/nuxt.d.ts",
-    "./src/**/*",
-    "./playground/**/*",
-    "./test/**/*",
-    "./src/types/vue-shim.d.ts",
-    "./docs",
-    "./build"
-  ],
-  "vueCompilerOptions": {
-    "plugins": [
-      "./dist/volar.cjs"
-    ]
-  }
+  "exclude": [
+    "**/dist/**",
+    "**/node_modules/**",
+    "**/playground/**",
+    "**/examples/**",
+    "**/fixtures/**",
+    "**/test/dts/**"
+  ]
 }

@@ -1,0 +1,17 @@
+{
+  "private": true,
+  "scripts": {
+    "_prepare": "nuxi prepare",
+    "build": "nuxi build",
+    "dev": "nuxi dev",
+    "preview": "nuxi preview"
+  },
+  "devDependencies": {
+    "@pinceau/nuxt": "workspace:*",
+    "nuxt": "^3.5.3"
+  },
+  "stackblitz": {
+    "installDependencies": false,
+    "startCommand": "node .stackblitz.mjs && npm install && npm run dev"
+  }
+}

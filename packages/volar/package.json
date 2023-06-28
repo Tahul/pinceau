@@ -1,0 +1,14 @@
+{
+  "name": "@pinceau/volar",
+  "version": "0.1.0",
+  "scripts": {
+    "build": "unbuild",
+    "stub": "unbuild --stub"
+  },
+  "dependencies": {
+    "@pinceau/shared": "workspace:*",
+    "@pinceau/css": "workspace:*",
+    "@pinceau/vue": "workspace:*",
+    "@volar/vue-language-core": "^1.6.5"
+  }
+}
