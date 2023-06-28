@@ -1,4 +1,4 @@
-import { readFile } from 'fs/promises'
+import { readFile } from 'node:fs/promises'
 import type { SFCDescriptor } from 'vue/compiler-sfc'
 import { describe, expect, it } from 'vitest'
 import { parseVueComponent } from 'pinceau/utils'

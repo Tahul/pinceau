@@ -2,11 +2,9 @@ import type { Color } from 'chroma-js'
 import chroma from 'chroma-js'
 import type { DesignTokens } from '../types'
 
-export const palette = (
-  color: string,
+export function palette(color: string,
   suffixes: Array<string | number> = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900],
-  padding = 0.1,
-): DesignTokens => {
+  padding = 0.1): DesignTokens {
   if (!color || typeof color !== 'string') {
     throw new Error('Please provide a valid "color" string parameter')
   }

@@ -1,5 +1,5 @@
-import { existsSync } from 'fs'
-import { readFile } from 'fs/promises'
+import { existsSync } from 'node:fs'
+import { readFile } from 'node:fs/promises'
 import createJITI from 'jiti'
 import { resolve } from 'pathe'
 import type { ConfigFileImport, ConfigLayer, LoadConfigResult, PinceauOptions, PinceauTheme, ResolvedConfigLayer } from '../types'

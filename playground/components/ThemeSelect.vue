@@ -11,7 +11,7 @@ const preference = computed(() => {
   return 'dark'
 })
 
-const toggle = () => {
+function toggle() {
   toggleCount.value++
   const cl = document.querySelector('html')?.classList
   if (cl && cl.contains('dark')) {

@@ -1,4 +1,4 @@
-import { resolve } from 'path'
+import { resolve } from 'node:path'
 import PinceauModule from '../../../src/nuxt'
 
 export default defineNuxtConfig({

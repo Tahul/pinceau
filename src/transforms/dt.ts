@@ -6,7 +6,7 @@ import { dtRegex } from '../utils/regexes'
  *
  * Supports `wrapper` to be used in both `<style>` and `<script>` or `<template>` tags.
  */
-export const transformDtHelper = (code: string, ctx: PinceauContext, wrapper: string | undefined = undefined) => {
+export function transformDtHelper(code: string, ctx: PinceauContext, wrapper: string | undefined = undefined) {
   const replace = (content: string): string => `${wrapper || ''}${content}${wrapper || ''}`
   return code.replace(dtRegex, (_, ...code) => {
     const path = code?.[0]

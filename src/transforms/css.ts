@@ -10,15 +10,13 @@ import { resolveRuntimeContents } from './vue/computed'
 /**
  * Stringify every call of css() into a valid Vue <style> declaration.
  */
-export const transformCssFunction = (
-  id: string,
+export function transformCssFunction(id: string,
   code = '',
   variants: any,
   computedStyles: any,
   localTokens: any,
   ctx: PinceauContext,
-  loc?: any,
-) => {
+  loc?: any) {
   // Enhance error logging for `css()`
   try {
     parse(code, { ecmaVersion: 'latest' })

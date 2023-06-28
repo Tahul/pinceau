@@ -157,7 +157,7 @@ export function usePinceauRuntimeSheet(
   function deleteRule(rule: CSSRule) {
     const ruleIndex = Object.values(sheet.value.cssRules).indexOf(rule)
 
-    if (typeof ruleIndex === 'undefined' || isNaN(ruleIndex)) { return }
+    if (typeof ruleIndex === 'undefined' || Number.isNaN(ruleIndex)) { return }
 
     try { sheet.value.deleteRule(ruleIndex) }
     catch (e) { /* Continue regardless of errors */ }

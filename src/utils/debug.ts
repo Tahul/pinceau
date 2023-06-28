@@ -1,8 +1,8 @@
-import { performance } from 'perf_hooks'
+import { performance } from 'node:perf_hooks'
 import type { PinceauOptions } from 'pinceau'
 import { debugMarker, getDebugContext } from '../utils/logger'
 
-export const useDebugPerformance = (text: string, debug: PinceauOptions['debug'], logOnStop = true) => {
+export function useDebugPerformance(text: string, debug: PinceauOptions['debug'], logOnStop = true) {
   const isDebug = debug === 2
 
   const performanceTimerStart = performance.now()
@@ -16,9 +16,9 @@ export const useDebugPerformance = (text: string, debug: PinceauOptions['debug']
   function timing() {
     const { error, success, warning } = getDebugContext()
 
-    let count = Number(parseFloat(`${performanceTimerStop - performanceTimerStart}`).toFixed(2))
+    let count = Number(Number.parseFloat(`${performanceTimerStop - performanceTimerStart}`).toFixed(2))
 
-    if (isNaN(count)) {
+    if (Number.isNaN(count)) {
       count = 0
     }
 

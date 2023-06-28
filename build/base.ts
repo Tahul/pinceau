@@ -1,4 +1,4 @@
-import { resolve } from 'path'
+import { resolve } from 'node:path'
 import { build } from 'unbuild'
 import baseBuildConfig from './base.config'
 

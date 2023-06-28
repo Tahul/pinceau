@@ -15,13 +15,10 @@ import { kebabCase } from 'scule'
 const comma = /\s*,\s*(?![^()]*\))/
 
 /** Returns selectors resolved from parent selectors and nested selectors. */
-export const getResolvedSelectors = (
-  /** @type {string[]} Parent selectors (e.g. `["a", "button"]`). */
-  parentSelectors,
+export function getResolvedSelectors(parentSelectors,
   /** @type {string[]} Nested selectors (e.g. `["&:hover", "&:focus"]`). */
-  nestedSelectors,
-) => (
-  parentSelectors.reduce(
+  nestedSelectors) {
+  return parentSelectors.reduce(
     (resolvedSelectors, parentSelector) => {
       resolvedSelectors.push(
         ...nestedSelectors.map(
@@ -42,18 +39,15 @@ export const getResolvedSelectors = (
     },
     [],
   )
-)
+}
 
 /* Grab object prototype to compare in the loop */
 const { prototype: { toString } } = Object
 
 /** Returns a string of CSS from an object of CSS. */
-export const stringify = (
-  /** Object representing the current CSS. */
-  value,
+export function stringify(value,
   /** Replacer function. */
-  replacer = undefined,
-) => {
+  replacer = undefined) {
   /** Set used to manage the opened and closed state of rules. */
   const used = new WeakSet()
 

@@ -21,7 +21,7 @@ let context: { logger: any; debugLevel: DebugLevel; tag: any; info: any; warning
   // chalk.green
   success: noopHelper,
 }
-const updateDebugContext = (newContext: Partial<typeof context>) => {
+function updateDebugContext(newContext: Partial<typeof context>) {
   context = {
     ...context,
     ...newContext,

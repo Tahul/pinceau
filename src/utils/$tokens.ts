@@ -34,6 +34,7 @@ export function createTokensHelper(theme: any = {}, options: TokensFunctionOptio
       : token
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-invalid-this
   return $tokens.bind(this)
 }
 

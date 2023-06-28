@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs'
+import { readFileSync } from 'node:fs'
 import { transformCssFunction, transformStyle } from '../transforms'
 import type { PinceauContext, PinceauQuery } from '../types'
 import { parseVueComponent } from './ast'
@@ -6,7 +6,7 @@ import { parseVueComponent } from './ast'
 /**
  * Will load and transform a Vue <style> query.
  */
-export const loadVueStyle = (query: PinceauQuery, ctx: PinceauContext) => {
+export function loadVueStyle(query: PinceauQuery, ctx: PinceauContext) {
   const { filename } = query
 
   const file = readFileSync(filename, 'utf8')
