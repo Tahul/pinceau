@@ -1,6 +1,6 @@
-import { existsSync } from 'fs'
+import { existsSync } from 'node:fs'
 import { join, resolve } from 'pathe'
-import { addPlugin, addPluginTemplate, addPrerenderRoutes, createResolver, defineNuxtModule, resolveAlias, resolveModule } from '@nuxt/kit'
+import { addPlugin, addPluginTemplate, createResolver, defineNuxtModule, resolveAlias, resolveModule } from '@nuxt/kit'
 import createJITI from 'jiti'
 import type { ConfigLayer, PinceauOptions } from './types'
 import pinceau, { defaultOptions } from './unplugin'
@@ -148,8 +148,6 @@ const module: any = defineNuxtModule<PinceauOptions>({
     if (options.studio) {
       // Add server route to know Studio is enabled
       addPlugin(resolveLocalModule('./runtime/schema.server'))
-      addPrerenderRoutes('/__pinceau_tokens_config.json')
-      addPrerenderRoutes('/__pinceau_tokens_schema.json')
 
       // Push Studio config file has highest priority
       const studioAppConfigPath = resolveAlias('~/.studio')
