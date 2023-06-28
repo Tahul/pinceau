@@ -118,7 +118,6 @@
     "magic-string": "^0.30.0",
     "nanoid": "^4.0.2",
     "ohash": "^1.1.2",
-    "paneer": "^0.1.0",
     "pathe": "^1.1.1",
     "postcss-custom-properties": "13.2.0",
     "postcss-dark-theme-class": "0.7.3",
