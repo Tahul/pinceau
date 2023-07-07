@@ -212,7 +212,7 @@ const module: any = defineNuxtModule<PinceauOptions>({
         }
 
         // Support any reset from @unocss/reset
-        if (options?.preflight) { lines.unshift(`import \'@unocss/reset/${typeof options.preflight === 'boolean' ? 'tailwind' : options.preflight}.css\'`) }
+        if (options?.preflight) { lines.unshift(`import \'@unocss/reset/${typeof options.preflight === 'boolean' ? 'tailwind' : options.preflight === 'sanitize' ? 'sanitize/sanitize' : options.preflight}.css\'`) }
 
         return lines.join('\n')
       },

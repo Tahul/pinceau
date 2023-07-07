@@ -55,7 +55,7 @@ export interface PinceauOptions {
    *
    * @default true
    */
-  preflight?: boolean | 'tailwind' | 'antfu' | 'eric-meyer' | 'normalize'
+  preflight?: boolean | 'normalize' | 'sanitize' | 'eric-meyer' | 'tailwind' | 'tailwind-compat'
 
   /**
    * Excluded transform paths.
