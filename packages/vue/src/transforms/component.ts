@@ -1,4 +1,4 @@
-import { transforms as staticTransforms } from '@pinceau/css'
+import { transforms as staticTransforms } from '@pinceau/style'
 import type { PinceauContext, PinceauTransformContext } from '@pinceau/shared'
 import { JS_EXTENSIONS, message } from '@pinceau/shared'
 import { transformStyleQuery } from './style'

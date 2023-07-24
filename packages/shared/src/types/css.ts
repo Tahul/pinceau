@@ -8,39 +8,39 @@ export type ColorSchemeModes = 'media' | 'class'
 
 export type ComputedStyleProp<T extends string> = T | { [key in PinceauMediaQueries]?: T }
 
-export type ComputedStyleDefinition<T extends string, ComponentProps = {}> = (props: ComponentProps) => PropertyValue<T> | { [key in PinceauMediaQueries]?: PropertyValue<T> }
+export type ComputedStyleDefinition<T extends string, ComponentProps = object> = (props: ComponentProps) => PropertyValue<T> | { [key in PinceauMediaQueries]?: PropertyValue<T> }
 
-export type MappedProperty<K extends string, ComponentProps = {}> = K | PropertyValue<K> | ComputedStyleDefinition<K, ComponentProps>
+export type MappedProperty<K extends string, ComponentProps = object> = K | PropertyValue<K> | ComputedStyleDefinition<K, ComponentProps>
 
 export type CSSProperties<
-  ComponentProps = {},
+  ComponentProps = object,
   UtilsProperties = PinceauUtils,
 > =
     // Theme-based tokens
     {
-      [K in keyof DefaultThemeMap]?: MappedProperty<K, ComponentProps> | {}
+      [K in keyof DefaultThemeMap]?: MappedProperty<K, ComponentProps> | object
     }
     &
     // Native properties tokens
     {
-      [K in keyof NativeProperties]?: MappedProperty<K, ComponentProps> | {}
+      [K in keyof NativeProperties]?: MappedProperty<K, ComponentProps> | object
     }
     &
     {
-      [K in keyof PseudosProperties]?: CSSProperties<ComponentProps> | {}
+      [K in keyof PseudosProperties]?: CSSProperties<ComponentProps> | object
     }
     &
     // Custom properties
     {
-      [K in keyof UtilsProperties]?: UsableTokens | ComputedStyleDefinition<UsableTokens, ComponentProps> | {}
+      [K in keyof UtilsProperties]?: UsableTokens | ComputedStyleDefinition<UsableTokens, ComponentProps> | object
     }
     &
     {
-      [K in string]?: CSSProperties<ComponentProps> | MappedProperty<K, ComponentProps> | {}
+      [K in string]?: CSSProperties<ComponentProps> | MappedProperty<K, ComponentProps> | object
     }
 
 export type CSSFunctionType<
-  ComponentProps = {},
+  ComponentProps = object,
   MediaQueries extends string = Utils.WrapUnion<PinceauMediaQueries, '@', ''>,
   UtilsProperties = PinceauUtils,
 > =
@@ -53,9 +53,9 @@ export type CSSFunctionType<
   }
   &
   {
-    [K in MediaQueries]?: CSSProperties<ComponentProps> | {}
+    [K in MediaQueries]?: CSSProperties<ComponentProps> | object
   }
   &
   {
-    [K in string]: CSSProperties<ComponentProps> | MappedProperty<K, ComponentProps> | {}
+    [K in string]: CSSProperties<ComponentProps> | MappedProperty<K, ComponentProps> | object
   }

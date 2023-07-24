@@ -6,16 +6,20 @@ import type { MagicVueSFC } from 'sfc-composer'
 import type { PinceauQuery } from './utils'
 
 export interface PinceauTransformContext {
+  // Transform context
   magicString: MagicString
   ms: MagicString
   code: string
-  computedStyles: Record<string, any>
-  localTokens: Record<string, any>
-  variants: Record<string, any>
   query: PinceauQuery
   result: () => { code: string; map: SourceMapInput | SourceMapCompact | null } | void
   loc?: SourceLocation
-  sfc?: MagicVueSFC
+}
+
+export interface PinceauSFCTransformContext extends PinceauTransformContext {
+  sfc: MagicVueSFC
+  computedStyles: Record<string, any>
+  localTokens: Record<string, any>
+  variants: Record<string, any>
 }
 
 export interface StringifyContext {

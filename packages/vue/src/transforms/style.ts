@@ -1,5 +1,5 @@
 import type { PinceauContext, PinceauTransformContext } from '@pinceau/shared'
-import { transforms } from '@pinceau/css'
+import { transforms } from '@pinceau/style'
 
 const { transformCssFunction, transformCSS } = transforms
 

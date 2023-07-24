@@ -1,4 +1,5 @@
-export * from './config'
+import PinceauThemePlugin from './plugin'
+
 export * from './context'
 export * from './define'
 export * from './definitions'
@@ -7,4 +8,5 @@ export * from './generate'
 export * from './layers'
 export * from './outputs'
 export * from './virtual'
-export * from './plugin'
+
+export default PinceauThemePlugin

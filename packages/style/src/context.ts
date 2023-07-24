@@ -1,5 +1,4 @@
 import MagicString from 'magic-string'
-import { MagicVueSFC } from 'sfc-composer'
 import type { PinceauContext, PinceauQuery, PinceauTransformContext } from '@pinceau/shared'
 
 export function usePinceauTransformContext(
@@ -20,28 +19,9 @@ export function usePinceauTransformContext(
     loc: { start: { column: 0, line: 0, offset: 0 }, end: { column: 0, line: 0, offset: 0 }, source },
 
     /**
-     * Pinceau transform state.
-     */
-    computedStyles: {},
-    localTokens: {},
-    variants: {},
-
-    /**
      * Get the current code at this state of the transform.
      */
     get code() { return ms.toString() },
-
-    /**
-     * Returns the SFCParseResult of a transform target if it is a Vue file.
-     */
-    get sfc() {
-      // This file is not a `.vue` component, skip `sfc`
-      if (!query.vue) { return undefined }
-
-      const sfcCompilerResult = new MagicVueSFC(ms)
-
-      return sfcCompilerResult
-    },
 
     /**
      * Stops transform and return result.

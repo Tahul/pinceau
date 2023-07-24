@@ -36,15 +36,8 @@ export function usePinceauThemeSheet(
     // Deep update theme from new definition
     import.meta.hot.on(
       'pinceau:theme',
-      (newTheme) => {
+      () => {
         if (!sheet) { return }
-
-        // Swap stylesheet
-        const styleNode = document.createElement('style')
-        styleNode.id = 'pinceau-theme'
-        styleNode.textContent = newTheme.css
-        if (sheet.ownerNode) { sheet.ownerNode.replaceWith(styleNode) }
-        sheet = styleNode.sheet as CSSStyleSheet
 
         // Resolve stylesheet
         hydrateStylesheet(sheet.cssRules)

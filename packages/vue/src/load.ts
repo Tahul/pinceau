@@ -1,9 +1,8 @@
 import { readFileSync } from 'node:fs'
-import type { SFCStyleBlock } from 'vue/compiler-sfc'
 import { parse as sfcParse } from 'vue/compiler-sfc'
 import type { PinceauQuery } from '@pinceau/shared'
 
-export function loadComponentFile(query: PinceauQuery) {
+export function loadFile(query: PinceauQuery) {
   const { filename } = query
 
   const file = readFileSync(filename, 'utf8')
@@ -16,16 +15,30 @@ export function loadComponentFile(query: PinceauQuery) {
 /**
  * Load a specific <style> block from a Vue SFC query.
  */
-export function loadStyleBlock(query: PinceauQuery): SFCStyleBlock | undefined {
-  const file = loadComponentFile(query) || ''
+export function loadComponentBlock(query: PinceauQuery): string | undefined {
+  const file = loadFile(query) || ''
 
   const { descriptor } = sfcParse(file, { filename: query.filename })
 
-  if (!descriptor) { return }
+  if (query.type === 'style') {
+    const style = descriptor?.styles?.[query.index!]?.content
+    if (style) { return style }
+  }
 
-  const style = descriptor?.styles?.[query.index!]
+  if (query.type === 'template') {
+    const template = descriptor?.template?.content
+    if (template) { return template }
+  }
 
-  if (!style?.content) { return }
+  if (query.type === 'script') {
+    const script = descriptor?.script?.content
+    if (script) { return script }
+  }
 
-  return style
+  if (query.type === 'script') {
+    const scriptSetup = descriptor?.scriptSetup?.content
+    if (scriptSetup) { return scriptSetup }
+  }
+
+  return file
 }

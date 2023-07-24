@@ -11,7 +11,10 @@ export default defineBuildConfig({
     emitCJS: true,
   },
   externals: [
-    '@pinceau/css',
+    '@pinceau/style',
     '@volar/vue-language-core',
+    '@volar/language-core',
+    '@volar/source-map',
+    'muggle-string',
   ],
 })

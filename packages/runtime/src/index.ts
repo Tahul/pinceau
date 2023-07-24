@@ -1,3 +1,4 @@
+import process from 'node:process'
 import type { PinceauRuntimePluginOptions } from '@pinceau/shared'
 
 export { usePinceauRuntimeSheet } from './features/stylesheet'

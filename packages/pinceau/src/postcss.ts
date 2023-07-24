@@ -1,29 +1,25 @@
-import type { UserConfig as ViteConfig } from 'vite'
 import postCssNested from 'postcss-nested'
 import postCssCustomProperties from 'postcss-custom-properties'
 import postCssDarkThemeClass from 'postcss-dark-theme-class'
-import type { PinceauOptions } from './types'
+import type { PinceauOptions } from '@pinceau/shared'
 
 /**
- * Registers PostCSS plugins.
+ * Registers PostCSS plugins inside Vite config.
  */
-export function registerPostCssPlugins(config: ViteConfig, options: PinceauOptions) {
+export function registerPostCSSPlugins(config: any, options: PinceauOptions) {
   if (!config?.css) { config.css = {} }
   if (!config.css?.postcss) { config.css.postcss = {} }
-  // @ts-expect-error
-  if (!config.css?.postcss.plugins) {
-    (config.css.postcss as any).plugins = []
-  }
+  if (!config.css?.postcss.plugins) { config.css.postcss.plugins = [] }
 
   // Add PostCSS plugins
-  (config.css.postcss as any).plugins.push(
+  config.css.postcss.plugins.push(
     postCssNested,
     postCssCustomProperties,
   )
 
   // If `colorSchemeMode` is set to `class`, add postcss-dark-theme-class
-  if (options?.colorSchemeMode === 'class') {
-    (config.css.postcss as any).plugins.push(
+  if (options.theme.colorSchemeMode === 'class') {
+    config.css.postcss.plugins.push(
       postCssDarkThemeClass({
         darkSelector: '.dark',
         lightSelector: '.light',

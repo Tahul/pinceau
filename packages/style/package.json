@@ -1,5 +1,5 @@
 {
-  "name": "@pinceau/css",
+  "name": "@pinceau/style",
   "version": "0.1.0",
   "type": "module",
   "exports": {
@@ -17,6 +17,14 @@
     "stub": "unbuild --stub"
   },
   "dependencies": {
-    "@pinceau/shared": "workspace:*"
+    "@pinceau/shared": "workspace:*",
+    "acorn": "^8.10.0",
+    "defu": "^6.1.2",
+    "magic-string": "^0.30.1",
+    "sfc-composer": "^0.0.5",
+    "ohash": "^1.1.2",
+    "recast": "^0.23.3",
+    "scule": "^1.0.0",
+    "unplugin": "^1.4.0"
   }
 }

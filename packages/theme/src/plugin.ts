@@ -1,8 +1,13 @@
-import { type PinceauContext, getPinceauContext } from '@pinceau/shared'
+import { getPinceauContext } from '@pinceau/shared'
+import type { PinceauConfigContext, PinceauContext } from '@pinceau/shared'
 import { createUnplugin } from 'unplugin'
+import { transformIndexHtmlHandler } from './html'
+import { usePinceauConfigContext } from './context'
+import { registerVirtualOutputs } from './virtual'
 
-export const PinceauThemePlugin = createUnplugin(() => {
+const PinceauThemePlugin = createUnplugin(() => {
   let ctx: PinceauContext
+  let configCtx: PinceauConfigContext
 
   return {
     name: 'pinceau:theme-plugin',
@@ -10,40 +15,24 @@ export const PinceauThemePlugin = createUnplugin(() => {
     enforce: 'pre',
 
     vite: {
-      configureServer(server) {
+      async configureServer(server) {
         ctx = getPinceauContext(server)
+
+        registerVirtualOutputs(ctx)
+
+        configCtx = usePinceauConfigContext(ctx)
+
+        await configCtx.ready
+
+        configCtx.registerConfigWatchers()
       },
 
       transformIndexHtml: {
         order: 'post',
-        handler(html) {
-          // Vite replace Pinceau theme injection by actual content of `pinceau.css`
-          let hmrScript = ''
-          let devId = ''
-
-          // Enables HMR in development
-          if (ctx.options.dev) {
-            devId = ' data-vite-dev-id="/__pinceau_css.css"'
-            hmrScript = '<script type="module" src="/__pinceau_hmr.ts"></script>'
-          }
-
-          const themeOutput = `<style type="text/css" id="pinceau-theme"${devId}>${ctx.getOutput('/__pinceau_css.css')}</style>${hmrScript}`
-
-          // Support `<pinceau />`
-          html = html.replace(
-            '<pinceau />',
-            themeOutput,
-          )
-
-          // Support `<style id="pinceau-theme"></style>` (Slidev / index.html merging frameworks)
-          html = html.replace(
-            '<style id="pinceau-theme"></style>',
-            themeOutput,
-          )
-
-          return html
-        },
+        handler: html => transformIndexHtmlHandler(html, ctx),
       },
     },
   }
-}).vite
+})
+
+export default PinceauThemePlugin

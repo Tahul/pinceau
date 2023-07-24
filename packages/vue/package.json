@@ -19,6 +19,14 @@
   "dependencies": {
     "@pinceau/runtime": "workspace:*",
     "@pinceau/shared": "workspace:*",
-    "@pinceau/css": "workspace:*"
+    "@pinceau/style": "workspace:*",
+    "ast-types": "0.16.1",
+    "defu": "^6.1.2",
+    "magic-string": "^0.30.1",
+    "sfc-composer": "^0.0.5",
+    "nanoid": "^4.0.2",
+    "ohash": "^1.1.2",
+    "scule": "^1.0.0",
+    "unplugin": "^1.4.0"
   }
 }

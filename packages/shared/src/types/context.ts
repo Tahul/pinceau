@@ -1,26 +1,18 @@
 import type { ViteDevServer } from 'vite'
 import type { ResolvedConfig } from './config'
-import type { PinceauOptions, PinceauTheme, TokensFunction } from './'
+import type { PinceauOptions, PinceauQuery, PinceauTheme, PinceauUtils, TokensFunction } from './'
 
-export interface PinceauVirtualContext {
-  outputs: VirtualOutputs
-  getOutput: (id: string) => any
-  getOutputId: (id: VirtualImportsPaths | string) => '/__pinceau_css.css' | '/__pinceau_ts.ts' | '/__pinceau_utils.ts' | '/__pinceau_schema.ts' | '/__pinceau_definitions.ts' | '/__pinceau_hmr.ts' | undefined
-  updateOutputs: (outputUpdate: VirtualOutputs) => any
+/**
+ * Complete Pinceau plugin context used at build time and in development.
+ */
+export interface PinceauContext extends
+  PinceauVirtualContext,
+  PinceauBuildContext,
+  PinceauVirtualContext {
+  $tokens: TokensFunction
 }
 
-export interface PinceauBaseContext {
-  /**
-   * The current Pinceau environment setup.
-   */
-  env: 'prod' | 'dev'
-  /**
-   * Is this context running at runtime or build time?
-   */
-  runtime: boolean
-}
-
-export interface PinceauBuildContext extends PinceauBaseContext {
+export interface PinceauBuildContext {
   /**
    * Pinceau user options passed from Vite plugin options or Nuxt config key.
    */
@@ -32,19 +24,47 @@ export interface PinceauBuildContext extends PinceauBaseContext {
   /**
    * Updates the local ViteDevServer reference.
    */
-  updateViteServer: (server: ViteDevServer) => void
+  updateViteServer: (server: ViteDevServer) => ViteDevServer
   /**
    * A list of transformed files
    */
-  transformed: string[]
+  transformed: { [key: string]: PinceauQuery | undefined }
+  /**
+   * Is a module transformable
+   */
+  isTransformable: (id: string) => PinceauQuery | undefined
   /**
    * Add a new transformed file if not already present.
    */
-  addTransformed: (id: string) => void
+  addTransformed: (id: string, query?: PinceauQuery) => { [key: string]: PinceauQuery | undefined }
   /**
-   * The Pinceau theme object.
+   * A list of transformed files
    */
-  tokens: PinceauTheme
+  loaded: { [key: string]: PinceauQuery | undefined }
+  /**
+   * Is a module transformable
+   */
+  isLoadable: (id: string) => PinceauQuery | undefined
+  /**
+   * Add a new Loaded file if not already present.
+   */
+  addLoaded: (id: string, query?: PinceauQuery) => { [key: string]: PinceauQuery | undefined }
+  /**
+   * The Pinceau theme theme object.
+   */
+  theme: PinceauTheme
+  /**
+   * Update the Pinceau theme reference.
+   */
+  updateTheme: (tokens?: any) => PinceauTheme
+  /**
+   * Pinceau utils object.
+   */
+  utils: PinceauUtils
+  /**
+   * Update Pinceau utils properties.
+   */
+  updateUtils: (utils?: PinceauUtils) => PinceauUtils
 }
 
 export interface PinceauConfigContext {
@@ -79,28 +99,30 @@ export interface PinceauConfigContext {
   registerConfigWatchers: () => void
 }
 
-/**
- * Complete Pinceau plugin context used at build time and in development.
- */
-export interface PinceauContext extends
-  PinceauVirtualContext,
-  PinceauBuildContext,
-  PinceauConfigContext,
-  PinceauVirtualContext {
-  $tokens: TokensFunction
+export interface PinceauVirtualContext {
+  /**
+   * Virtual outputs storage
+   */
+  outputs: VirtualOutputs
+  /**
+   * Register a new output in the virtual storage
+   */
+  registerOutput: (importPath: string, virtualPath: string, content: string) => void
+  /**
+   * Get an output by its id.
+   */
+  getOutput: (id: string) => any
+  /**
+   * Get an output id from its import path.
+   */
+  getOutputId: (id: string) => string | undefined
+  /**
+   * Update outputs in storage.
+   */
+  updateOutputs: (outputUpdate: VirtualOutputs) => any
 }
-
-/**
- * Supported virtual outputs ids
- */
-export type VirtualOutputsIds = 'css' | 'ts' | 'utils' | 'schema' | 'definitions' | 'hmr'
 
 /**
  * Virtual outputs storage model
  */
-export type VirtualOutputs = { [key in VirtualOutputsIds]?: string }
-
-/**
- * Supported Pinceau virtual import paths
- */
-export type VirtualImportsPaths = 'pinceau.css' | '#pinceau/theme' | '#pinceau/utils' | '#pinceau/schema' | '#pinceau/definitions' | '#pinceau/hmr'
+export type VirtualOutputs = { [key in string]: string }

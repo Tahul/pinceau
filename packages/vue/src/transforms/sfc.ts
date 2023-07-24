@@ -1,13 +1,13 @@
-import type { PinceauContext, PinceauTransformContext } from '@pinceau/shared'
-import { transforms as staticTransforms } from '@pinceau/css'
+import type { PinceauContext, PinceauSFCTransformContext } from '@pinceau/shared'
 import { message } from '@pinceau/shared'
+import { transforms as styleTransforms } from '@pinceau/style'
 import { transformAddPinceauClass } from './add-class'
 import { transformVariants } from './variants'
 
-const { transformCSS, transformCssFunction, transformDtHelper } = staticTransforms
+const { transformCssFunction, transformStyle, transformTokenHelper } = styleTransforms
 
 export function transformVueSFC(
-  transformContext: PinceauTransformContext,
+  transformContext: PinceauSFCTransformContext,
   pinceauContext: PinceauContext,
 ) {
   const sfc = transformContext.sfc
@@ -26,14 +26,14 @@ export function transformVueSFC(
  * Transform <template> blocks.
  */
 export function transformTemplate(
-  transformContext: PinceauTransformContext,
+  transformContext: PinceauSFCTransformContext,
   pinceauContext: PinceauContext,
 ) {
   // Check if runtime styles are enabled on this component
   const hasRuntimeStyles = Object.keys(transformContext.variants).length || Object.keys(transformContext.computedStyles).length
 
   // Transform `$dt()` from template
-  transformDtHelper(transformContext, pinceauContext, { wrapper: '\'' })
+  transformTokenHelper(transformContext.sfc.template, pinceauContext, '\'')
 
   // Add class if runtime styles are enabled
   if (pinceauContext.options.runtime && hasRuntimeStyles) { transformAddPinceauClass(transformContext) }
@@ -43,7 +43,7 @@ export function transformTemplate(
  * Transform all <style> blocks.
  */
 export function transformStyles(
-  transformContext: PinceauTransformContext,
+  transformContext: PinceauSFCTransformContext,
   pinceauContext: PinceauContext,
 ) {
   if (!transformContext?.sfc || !transformContext?.sfc?.scriptSetup) { return }
@@ -51,8 +51,15 @@ export function transformStyles(
   const styles = transformContext.sfc.styles
 
   for (const styleBlock of styles) {
-    if (styleBlock?.attrs?.lang === 'ts' || styleBlock?.lang === 'ts' || styleBlock?.attrs?.transformed) { transformCssFunction(transformContext, pinceauContext) }
-    transformCSS(transformContext, pinceauContext)
+    if (
+      styleBlock?.attrs?.lang === 'ts'
+      || styleBlock?.lang === 'ts'
+      || styleBlock?.attrs?.transformed
+    ) {
+      transformCssFunction(transformContext, pinceauContext)
+    }
+
+    transformStyle(styleBlock, pinceauContext)
   }
 }
 
@@ -60,7 +67,7 @@ export function transformStyles(
  * Transforms <script setup> blocks.
  */
 export function transformScriptSetup(
-  transformContext: PinceauTransformContext,
+  transformContext: PinceauSFCTransformContext,
   pinceauContext: PinceauContext,
 ) {
   const hasVariants = !!Object.keys(transformContext.variants).length
@@ -80,7 +87,7 @@ export function transformScriptSetup(
     if (hasComputedStyles) { transformComputedStyles(transformContext) }
 
     // Push last runtime context
-    if (hasVariants || hasComputedStyles) { transformFinishRuntimeSetup(transformContext, { hasVariants, hasComputedStyles }) }
+    if (hasVariants || hasComputedStyles) { transformFinishRuntimeSetup(transformContext) }
   }
   else if (hasVariants || hasComputedStyles) {
     // Warn on disabled runtime features used in components
@@ -88,7 +95,9 @@ export function transformScriptSetup(
   }
 }
 
-export function transformAddRuntimeImports(transformContext: PinceauTransformContext) {
+export function transformAddRuntimeImports(
+  transformContext: PinceauSFCTransformContext,
+) {
   if (!transformContext?.sfc || !transformContext?.sfc?.scriptSetup) { return }
 
   // Handle necessary Vue imports
@@ -113,7 +122,7 @@ export function transformAddRuntimeImports(transformContext: PinceauTransformCon
 /**
  * Adds computed styles code to <script setup>
  */
-export function transformComputedStyles(transformContext: PinceauTransformContext) {
+export function transformComputedStyles(transformContext: PinceauSFCTransformContext) {
   if (!transformContext?.sfc || !transformContext?.sfc?.scriptSetup) { return }
 
   Object
@@ -125,8 +134,13 @@ export function transformComputedStyles(transformContext: PinceauTransformContex
     })
 }
 
-export function transformFinishRuntimeSetup(transformContext: PinceauTransformContext, { hasVariants, hasComputedStyles }: Record<string, boolean>) {
+export function transformFinishRuntimeSetup(
+  transformContext: PinceauSFCTransformContext,
+) {
   if (!transformContext?.sfc || !transformContext?.sfc?.scriptSetup) { return }
+
+  const hasVariants = !!Object.keys(transformContext.variants).length
+  const hasComputedStyles = !!Object.keys(transformContext.computedStyles).length
 
   transformContext.magicString.prependLeft(
     transformContext.sfc.scriptSetup.loc.end.offset,

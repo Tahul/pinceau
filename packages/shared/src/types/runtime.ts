@@ -1,6 +1,6 @@
 import type { Theme } from './config'
 import type { ColorSchemeModes } from './css'
-import type { TokensFunction, TokensFunctionOptions } from './dt'
+import type { TokensFunction, TokensFunctionOptions } from './helper'
 import type { PinceauMediaQueries, PinceauTheme } from './theme'
 
 export interface PinceauRuntimeIds {

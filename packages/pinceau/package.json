@@ -19,9 +19,10 @@
   "dependencies": {
     "@pinceau/runtime": "workspace:*",
     "@pinceau/shared": "workspace:*",
-    "@pinceau/css": "workspace:*",
+    "@pinceau/style": "workspace:*",
     "@pinceau/theme": "workspace:*",
     "@pinceau/volar": "workspace:*",
-    "@pinceau/vue": "workspace:*"
+    "@pinceau/vue": "workspace:*",
+    "consola": "^3.2.3"
   }
 }

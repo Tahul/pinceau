@@ -29,8 +29,10 @@ export function usePinceauRuntimeSheet(
       {
         $tokens,
         options: {
-          colorSchemeMode,
-        },
+          theme: {
+            colorSchemeMode,
+          },
+        } as any,
         resolvedConfig: {
           utils,
         } as any,

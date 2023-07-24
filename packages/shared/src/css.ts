@@ -1,23 +1,23 @@
-import type { ColorSchemeModes, DesignToken, DesignTokens, PinceauContext, PinceauMediaQueries, PinceauOptions, PinceauTransformContext, RawTokenType, StringifyContext, TokensFunction } from './types'
+import type { ColorSchemeModes, DesignToken, DesignTokens, PinceauContext, PinceauMediaQueries, PinceauSFCTransformContext, RawTokenType, StringifyContext } from './types'
 import { pathToVarName } from './$token'
 import { DARK, INITIAL, LIGHT, referencesRegex } from './regexes'
 
 /**
- * Resolve a css function property to a stringifiable declaration.
+ * Resolve a CSS function argument to a stringifiable declaration.
  */
 export function resolveCssProperty(
   stringifyContext: StringifyContext,
-  transformContext: Partial<PinceauTransformContext>,
-  pinceauContext: Partial<PinceauContext> & { $tokens: TokensFunction; options: PinceauOptions },
+  pinceauContext: PinceauContext,
+  transformContext?: PinceauSFCTransformContext,
 ) {
   let { property, value } = stringifyContext
 
   // Resolve custom style directives
-  const directive = resolveCustomDirectives(stringifyContext, transformContext, pinceauContext)
+  const directive = resolveCustomDirectives(stringifyContext, pinceauContext)
   if (directive) { return directive }
 
   // Resolve custom properties
-  const utils = pinceauContext?.resolvedConfig?.utils
+  const utils = pinceauContext?.utils
   if (utils?.[property]) {
     // @ts-ignore - Custom property is a function, pass value and return result
     if (typeof utils[property] === 'function') { return utils[property](value) }
@@ -27,7 +27,7 @@ export function resolveCssProperty(
   }
 
   // Resolve final value
-  value = castValues(stringifyContext, transformContext, pinceauContext)
+  value = castValues(stringifyContext, pinceauContext)
 
   // Return proper declaration
   return {
@@ -40,14 +40,16 @@ export function resolveCssProperty(
  */
 export function castValues(
   stringifyContext: StringifyContext,
-  transformContext: Partial<PinceauTransformContext>,
-  pinceauContext: Partial<PinceauContext> & { $tokens: TokensFunction },
+  pinceauContext: PinceauContext,
+  transformContext?: PinceauSFCTransformContext,
 ) {
   let { value } = stringifyContext
+
   if (Array.isArray(value) || typeof value === 'string' || typeof value === 'number') {
-    if (Array.isArray(value)) { value = value.map(v => castValue({ ...stringifyContext, value: v }, transformContext, pinceauContext)).join(',') }
-    else { value = castValue(stringifyContext, transformContext, pinceauContext) }
+    if (Array.isArray(value)) { value = value.map(v => castValue({ ...stringifyContext, value: v }, pinceauContext, transformContext)).join(',') }
+    else { value = castValue(stringifyContext, pinceauContext) }
   }
+
   return value
 }
 
@@ -56,12 +58,12 @@ export function castValues(
  */
 export function castValue(
   stringifyContext: StringifyContext,
-  transformContext: Partial<PinceauTransformContext>,
-  pinceauContext: Partial<PinceauContext> & { $tokens: TokensFunction },
+  pinceauContext: PinceauContext,
+  transformContext?: PinceauSFCTransformContext,
 ) {
   let { value } = stringifyContext
   if (typeof value === 'number') { return value }
-  if (value.match(referencesRegex)) { value = resolveReferences(stringifyContext, transformContext, pinceauContext) }
+  if (value.match(referencesRegex)) { value = resolveReferences(stringifyContext, pinceauContext, transformContext) }
   if (value === '{}') { return '' }
   return value
 }
@@ -71,11 +73,13 @@ export function castValue(
  */
 export function resolveReferences(
   stringifyContext: StringifyContext,
-  transformContext: Partial<PinceauTransformContext>,
-  pinceauContext: Partial<PinceauContext> & { $tokens: TokensFunction },
+  pinceauContext: PinceauContext,
+  transformContext?: PinceauSFCTransformContext,
 ) {
   let { value } = stringifyContext
+
   if (!(typeof value === 'string')) { return value }
+
   value = value.replace(
     referencesRegex,
     (_, tokenPath) => {
@@ -94,6 +98,7 @@ export function resolveReferences(
       return tokenValue as string
     },
   )
+
   return value
 }
 
@@ -102,21 +107,23 @@ export function resolveReferences(
  */
 export function resolveCustomDirectives(
   stringifyContext: StringifyContext,
-  transformContext: Partial<PinceauTransformContext>,
-  pinceauContext: Partial<PinceauContext> & { $tokens: TokensFunction; options: PinceauOptions },
+  pinceauContext: PinceauContext,
+  transformContext?: PinceauSFCTransformContext,
 ) {
   const { property, value } = stringifyContext
 
+  const colorSchemeMode = pinceauContext?.options?.theme?.colorSchemeMode || 'media'
+
   if (property.startsWith('@')) {
     const resolveColorScheme = (scheme: string) => {
-      scheme = pinceauContext.options.colorSchemeMode === 'class'
+      scheme = colorSchemeMode === 'class'
         ? `:root.${scheme}`
         : `@media (prefers-color-scheme: ${scheme})`
 
       const isMedia = scheme.startsWith('@media')
 
       // Runtime styling needs to be wrapped in `@media` as it does not get processed through PostCSS
-      if (pinceauContext?.runtime) {
+      if (!pinceauContext?.viteServer) {
         return {
           '@media': {
             [scheme]: value,
@@ -135,14 +142,14 @@ export function resolveCustomDirectives(
 
     // @initial
     if (property === INITIAL) {
-      const token = pinceauContext.$tokens('media.initial' as any, { key: 'value', onNotFound: false, loc: transformContext.loc })
+      const token = pinceauContext.$tokens('media.initial' as any, { key: 'value', onNotFound: false, loc: transformContext?.loc })
       return {
         [`@media${token ? ` ${token}` : ''}`]: value,
       }
     }
 
     // Handle all user supplied @directives
-    const mediaQueries = pinceauContext.$tokens('media' as any, { key: undefined, loc: transformContext.loc })
+    const mediaQueries = pinceauContext.$tokens('media' as any, { key: undefined, loc: transformContext?.loc })
     if (mediaQueries) {
       const query = property.replace('@', '')
       if (mediaQueries[query]) {

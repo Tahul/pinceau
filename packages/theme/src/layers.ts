@@ -13,9 +13,7 @@ const extensions = ['.js', '.ts', '.mjs', '.cjs', '.json']
  * Resolves all `configLayers` from Pinceau options and returns a LoadConfigResult object.
  */
 export async function loadLayers(options: PinceauOptions): Promise<ResolvedConfig> {
-  const { cwd, configLayers, configFileName } = options
-
-  const sources = resolveConfigSources({ cwd, configLayers, configFileName })
+  const sources = resolveConfigSources(options)
 
   /**
    * loadConfig result
@@ -53,7 +51,7 @@ export async function loadLayers(options: PinceauOptions): Promise<ResolvedConfi
   }
 
   // Resolve schema if studio support is enabled
-  if (options.studio) { result.schema = await resolveUntypedSchema({ tokensConfig: result.tokens }) }
+  if (options.theme.studio) { result.schema = await resolveUntypedSchema({ tokensConfig: result.tokens }) }
 
   return result
 }
@@ -61,14 +59,17 @@ export async function loadLayers(options: PinceauOptions): Promise<ResolvedConfi
 /**
  * Resolve a config file content for the provided ConfigFileImport.
  */
-export function resolveConfigFile({ definitions }: PinceauOptions, configFile: ConfigFileImport): ResolvedConfigLayer {
+export function resolveConfigFile(
+  options: PinceauOptions,
+  configFile: ConfigFileImport,
+): ResolvedConfigLayer {
   const { tokens, content, path } = configFile
 
   const mediaQueriesKeys = resolveMediaQueriesKeys(tokens)
 
   // Try to resolve tokens definitions
   let resolvedDefinitions
-  if (definitions) {
+  if (options.theme.definitions) {
     try { resolvedDefinitions = resolveDefinitions(content, mediaQueriesKeys, path) }
     catch (e) { /* Mitigate definitions resolving errors */ }
   }
@@ -93,11 +94,7 @@ export function resolveConfigFile({ definitions }: PinceauOptions, configFile: C
  * Resolves one layer of configuration.
  */
 export async function resolveConfigLayer(
-  {
-    configFileName,
-    cwd,
-    definitions,
-  }: PinceauOptions,
+  options: PinceauOptions,
   layer: ConfigLayer,
 ): Promise<ResolvedConfigLayer> {
   const empty = (path?: string): ResolvedConfigLayer => ({ path: path || '', content: '', tokens: {}, definitions: {}, utils: {} })
@@ -105,7 +102,7 @@ export async function resolveConfigLayer(
   // Resolve config path from layer
   let path = ''
   if (typeof layer === 'string') { path = resolve(layer) }
-  else if (typeof layer === 'object') { path = resolve(layer?.cwd || cwd || '', layer?.configFileName || configFileName || '') }
+  else if (typeof layer === 'object') { path = resolve(layer?.cwd || options.cwd || '', layer?.configFileName || options.theme.configFileName || '') }
   else { return empty() }
 
   // Resolve filePath for that layer
@@ -123,10 +120,7 @@ export async function resolveConfigLayer(
   if (!filePath) { return empty() }
 
   try {
-    return resolveConfigFile(
-      { definitions },
-      await importConfigFile({ path: filePath, ext }),
-    )
+    return resolveConfigFile(options, await importConfigFile({ path: filePath, ext }))
   }
   catch (e) {
     message('CONFIG_RESOLVE_ERROR', [filePath, e])
@@ -137,14 +131,8 @@ export async function resolveConfigLayer(
 /**
  * Resolve a safe layers array from configLayers option.
  */
-export function resolveConfigSources(
-  {
-    cwd = process.cwd(),
-    configLayers = [],
-    configFileName = 'tokens.config',
-  }: PinceauOptions,
-) {
-  let sources: ConfigLayer[] = configLayers.reduce(
+export function resolveConfigSources(options: PinceauOptions) {
+  let sources: ConfigLayer[] = options.theme.configLayers.reduce(
     (acc: ConfigLayer[], layerOrPath: PinceauTheme | string | ConfigLayer) => {
       // Check if layer passed as-is
       if (typeof layerOrPath === 'object') {
@@ -156,7 +144,7 @@ export function resolveConfigSources(
       if (typeof layerOrPath === 'string') {
         acc.unshift({
           cwd: layerOrPath,
-          configFileName,
+          configFileName: options.theme.configFileName,
         })
         return acc
       }
@@ -167,10 +155,10 @@ export function resolveConfigSources(
   )
 
   // Add CWD as a source if not already in layers
-  if (cwd && !sources.some(source => source.cwd === cwd)) {
+  if (options.cwd && !sources.some(source => source.cwd === options.cwd)) {
     sources.push({
-      cwd,
-      configFileName,
+      cwd: options.cwd,
+      configFileName: options.theme.configFileName,
     })
   }
 

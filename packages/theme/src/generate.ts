@@ -19,7 +19,6 @@ export async function generateTheme(
   const files = [
     {
       destination: 'theme/index.css',
-      // Has to be named `css` to be recognized as CSS output
       format: 'css',
     },
     {
@@ -33,7 +32,7 @@ export async function generateTheme(
   ]
 
   // Support definitions.ts
-  if (options.definitions) {
+  if (options.theme.definitions) {
     files.push({
       destination: 'definitions.ts',
       format: 'pinceau/definitions',
@@ -41,7 +40,7 @@ export async function generateTheme(
   }
 
   // Support schema.ts
-  if (options.studio) {
+  if (options.theme.studio) {
     files.push({
       destination: 'schema.ts',
       format: 'pinceau/schema',
@@ -64,7 +63,7 @@ export async function generateTheme(
   let result: ThemeGenerationOutput = {
     tokens: {},
     outputs: {} as Record<string, any>,
-    buildDir: options.buildDir,
+    buildDir: options.theme.buildDir,
   }
 
   // Skip generation if no tokens provided
@@ -140,9 +139,8 @@ export async function generateTheme(
   styleDictionary.registerFormat({
     name: 'css',
     formatter({ dictionary, options }) {
-      const result = cssFull(dictionary, options, responsiveTokens, options.colorSchemeMode)
-      outputs.css = result
-      return result
+      outputs['pinceau.css'] = cssFull(dictionary, options, responsiveTokens, options.colorSchemeMode)
+      return outputs['pinceau.css']
     },
   })
 
@@ -150,8 +148,8 @@ export async function generateTheme(
   styleDictionary.registerFormat({
     name: 'pinceau/utils',
     formatter() {
-      outputs.utils = utilsFull(utils, options.utilsImports, definitions)
-      return outputs.utils
+      outputs['#pinceau/utils'] = utilsFull(utils, options.theme.utilsImports, definitions)
+      return outputs['#pinceau/utils']
     },
   })
 
@@ -159,8 +157,8 @@ export async function generateTheme(
   styleDictionary.registerFormat({
     name: 'pinceau/definitions',
     formatter() {
-      outputs.definitions = definitionsFull(definitions)
-      return outputs.definitions
+      outputs['#pinceau/definitions'] = definitionsFull(definitions)
+      return outputs['#pinceau/definitions']
     },
   })
 
@@ -168,8 +166,8 @@ export async function generateTheme(
   styleDictionary.registerFormat({
     name: 'pinceau/schema',
     formatter() {
-      outputs.schema = schemaFull(schema)
-      return outputs.schema
+      outputs['#pinceau/schema'] = schemaFull(schema)
+      return outputs['#pinceau/schema']
     },
   })
 
@@ -177,8 +175,8 @@ export async function generateTheme(
   styleDictionary.registerFormat({
     name: 'pinceau/typescript',
     formatter({ dictionary }) {
-      outputs.ts = tsFull(dictionary.tokens)
-      return outputs.ts
+      outputs['#pinceau/theme'] = tsFull(dictionary.tokens)
+      return outputs['#pinceau/theme']
     },
   })
 
@@ -199,7 +197,7 @@ export async function generateTheme(
       base: {
         silent,
         transformGroup: 'pinceau',
-        buildPath: options.buildDir,
+        buildPath: options.theme.buildDir,
         files,
         write,
       },
@@ -221,7 +219,7 @@ export async function generateTheme(
             resolve({
               tokens: flattenTokens(tokens),
               outputs,
-              buildDir: options.buildDir,
+              buildDir: options.theme.buildDir,
             })
           },
           undo: () => {},

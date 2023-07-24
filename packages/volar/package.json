@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "@pinceau/shared": "workspace:*",
-    "@pinceau/css": "workspace:*",
+    "@pinceau/style": "workspace:*",
     "@pinceau/vue": "workspace:*",
     "@volar/vue-language-core": "^1.6.5"
   }

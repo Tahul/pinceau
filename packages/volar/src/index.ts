@@ -2,7 +2,7 @@ import type { Sfc, VueLanguagePlugin } from '@volar/vue-language-core'
 import { FileCapabilities, FileRangeCapabilities } from '@volar/language-core'
 import { defu } from 'defu'
 import { expressionToAst, printAst } from '@pinceau/shared'
-import { transforms as staticTransforms } from '@pinceau/css'
+import { transforms as staticTransforms } from '@pinceau/style'
 import { transforms as vueTransforms } from '@pinceau/vue'
 import type { ASTNode } from 'ast-types'
 

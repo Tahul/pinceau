@@ -17,6 +17,10 @@
     "stub": "unbuild --stub"
   },
   "dependencies": {
-    "@pinceau/shared": "workspace:*"
+    "@pinceau/shared": "workspace:*",
+    "defu": "^6.1.2",
+    "nanoid": "^4.0.2",
+    "scule": "^1.0.0",
+    "unplugin": "^1.4.0"
   }
 }

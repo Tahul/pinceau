@@ -1,5 +1,5 @@
 import type { ASTNode } from 'ast-types'
-import type { PinceauTransformContext } from '@pinceau/shared'
+import type { PinceauSFCTransformContext } from '@pinceau/shared'
 import { astTypes, expressionToAst, parseAst, printAst, visitAst } from '@pinceau/shared'
 
 export interface PropOptions {
@@ -12,7 +12,7 @@ export interface PropOptions {
 /**
  * Takes variants object and turns it into a `const` inside `<script setup>`
  */
-export function transformVariants(transformContext: PinceauTransformContext, isTs?: boolean) {
+export function transformVariants(transformContext: PinceauSFCTransformContext, isTs?: boolean) {
   if (!transformContext?.sfc || !transformContext?.sfc?.scriptSetup) { return }
 
   const scriptSetupBlock = transformContext.sfc.scriptSetup
@@ -50,7 +50,7 @@ export function transformVariants(transformContext: PinceauTransformContext, isT
  *
  * Only work with `defineProps()`.
  */
-export function pushVariantsProps(transformContext: PinceauTransformContext, variantsProps: any, isTs: boolean) {
+export function pushVariantsProps(transformContext: PinceauSFCTransformContext, variantsProps: any, isTs: boolean) {
   let scriptAst = parseAst(transformContext.code)
 
   let propsAst = expressionToAst(JSON.stringify(variantsProps))
@@ -87,7 +87,7 @@ export function pushVariantsProps(transformContext: PinceauTransformContext, var
 /**
  * Resolve a Vue component props object from css() variant.
  */
-export function resolveVariantsProps(transformContext: PinceauTransformContext, isTs: boolean) {
+export function resolveVariantsProps(transformContext: PinceauSFCTransformContext, isTs: boolean) {
   const props: Record<string, PropOptions> = {}
 
   Object.entries(transformContext.variants).forEach(

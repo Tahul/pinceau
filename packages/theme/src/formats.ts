@@ -175,3 +175,10 @@ export function utilsFull(
 
   return result
 }
+
+/**
+ * HMR in development from '#pinceau/hmr'
+ */
+export function hmrFull() {
+  return 'import { updateStyle } from \'/@vite/client\'\nimport.meta.hot.on(\'pinceau:theme\', theme => theme?.css && updateStyle(\'pinceau.css\', theme.css))'
+}

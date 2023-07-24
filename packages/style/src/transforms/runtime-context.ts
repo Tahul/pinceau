@@ -1,10 +1,13 @@
 import type { ASTNode } from 'ast-types'
 import { hash } from 'ohash'
 import { camelCase, kebabCase } from 'scule'
-import type { PinceauTransformContext } from '@pinceau/shared'
+import type { PinceauSFCTransformContext } from '@pinceau/shared'
 import { astTypes, printAst, visitAst } from '@pinceau/shared'
 
-export function resolveRuntimeContext(cssFunctionAst: ASTNode, transformContext: PinceauTransformContext) {
+export function resolveRuntimeContext(
+  cssFunctionAst: ASTNode,
+  transformContext: PinceauSFCTransformContext,
+) {
   // Search for function properties in css() AST
   visitAst(
     cssFunctionAst,
@@ -17,7 +20,7 @@ export function resolveRuntimeContext(cssFunctionAst: ASTNode, transformContext:
           const valueType = path?.value?.value?.type
 
           // Store variable tokens in local map
-          if (key.startsWith('--') && !transformContext.localTokens[key]) { transformContext.localTokens[key] = path.value.value }
+          if (key.startsWith('--') && transformContext.localTokens && !transformContext.localTokens[key]) { transformContext.localTokens[key] = path.value.value }
 
           // Store computed styles in local map
           if (valueType === 'ArrowFunctionExpression' || valueType === 'FunctionExpression') {
@@ -25,7 +28,7 @@ export function resolveRuntimeContext(cssFunctionAst: ASTNode, transformContext:
             const id = `_${hash(path.value.loc.start).slice(0, 3)}_${computedStyleKey}`
 
             // Push property function to computedStyles
-            transformContext.computedStyles[id] = printAst(path.value.value.body).code
+            if (transformContext.computedStyles) { transformContext.computedStyles[id] = printAst(path.value.value.body).code }
 
             path.replace(
               astTypes.builders.objectProperty(

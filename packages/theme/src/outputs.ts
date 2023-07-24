@@ -4,25 +4,24 @@ import { join } from 'pathe'
 import type { PinceauOptions } from '@pinceau/shared'
 import { schemaFull, tsFull, utilsFull } from './formats'
 
+/**
+ * Prepares build outputs directory.
+ */
 export async function prepareBuildDir(
-  {
-    buildDir = join(process.cwd(), 'node_modules/.vite/pinceau'),
-    studio = false,
-  }: Partial<PinceauOptions>,
+  options: PinceauOptions,
 ) {
-  const themeDir = join(buildDir, 'theme')
+  const themeDir = join(options.theme.buildDir || '', 'theme')
+
   if (!existsSync(themeDir)) { await mkdir(themeDir, { recursive: true }) }
 
-  await stubOutputs({ buildDir, studio }, false)
-
-  return buildDir
+  await stubOutputs(options, false)
 }
 
+/**
+ * Stub the outputs in in case they are not yet built.
+ */
 export async function stubOutputs(
-  {
-    buildDir,
-    studio,
-  }: Partial<PinceauOptions> & { buildDir: string },
+  options: PinceauOptions,
   force = false,
 ) {
   const files = {
@@ -33,10 +32,10 @@ export async function stubOutputs(
   }
 
   // Support for configuration schema
-  if (studio) { files['schema.ts'] = schemaFull }
+  if (options.theme.studio) { files['schema.ts'] = schemaFull }
 
   for (const [file, stubbingFunction] of Object.entries(files)) {
-    const path = join(buildDir, file)
+    const path = join(options.theme.buildDir, file)
 
     if (force && existsSync(path)) { await rm(path) }
 
