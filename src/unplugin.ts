@@ -198,17 +198,35 @@ export default createUnplugin<PinceauOptions>((options) => {
 
       try {
         // Handle $dt in JS(X)/TS(X) files
-        if (JS_EXTENSIONS.includes(query.ext)) { return { code: transformDtHelper(code, ctx) } }
+        if (JS_EXTENSIONS.includes(query.ext)) {
+          const transformedCode = transformDtHelper(code, ctx)
+          magicString.overwrite(0, code.length, transformedCode)
+          const sourceMap = magicString.generateMap({ file: query.filename, includeContent: true })
+          sourceMap.file = query.filename
+          sourceMap.sources = [query.filename]
+
+          return { code: transformedCode, map: sourceMap }
+        }
 
         // Handle CSS files & <style> tags scoped queries
-        if ((query.styles && !query.vue) || query.type === 'style') { return { code: resolveStyleQuery(code, magicString, query, ctx, loc).code } }
+        if ((query.styles && !query.vue) || query.type === 'style') {
+          const transformedCode = resolveStyleQuery(code, magicString, query, ctx, loc).code
+          magicString.overwrite(0, code.length, transformedCode)
+          const sourceMap = magicString.generateMap({ file: query.filename, includeContent: true })
+          sourceMap.file = query.filename
+          sourceMap.sources = [query.filename]
+          return { code: transformedCode, map: sourceMap }
+        }
 
         // Transform Vue
         code = transformVueSFC(code, query, magicString, ctx).code
       }
       catch (e) {
         message('TRANSFORM_ERROR', [id, e])
-        return { code }
+        const sourceMap = magicString.generateMap()
+        sourceMap.file = query.filename
+        sourceMap.sources = [query.filename]
+        return { code, map: sourceMap }
       }
 
       return result()
