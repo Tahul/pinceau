@@ -1,6 +1,8 @@
-import { getPinceauContext } from '@pinceau/shared'
-import type { PinceauContext } from '@pinceau/shared'
+import { getPinceauContext, usePinceauTransformContext } from '@pinceau/core'
+import type { PinceauContext } from '@pinceau/core'
+import { transformTokenHelper } from '@pinceau/theme/transforms'
 import { createUnplugin } from 'unplugin'
+import { loadFile } from '../../vue/src/load'
 
 const PinceauStylePlugin = createUnplugin(() => {
   let ctx: PinceauContext
@@ -30,15 +32,19 @@ const PinceauStylePlugin = createUnplugin(() => {
     transform(code, id) {
       const query = ctx.transformed[id]
 
+      if (!query || query.sfc) { return }
+
+      const transformContext = usePinceauTransformContext(code, query, ctx)
+
+      transformTokenHelper(transformContext, ctx)
+
       console.log({
         plugin: 'style',
-        type: 'transform',
+        type: 'transformed',
         id,
-        code,
-        query,
       })
 
-      return code
+      return transformContext.result()
     },
 
     loadInclude(id) {
@@ -47,8 +53,24 @@ const PinceauStylePlugin = createUnplugin(() => {
       return !!query
     },
 
-    load(id): any {
+    load(id) {
       const query = ctx.loaded[id]
+
+      if (!query || query.sfc) { return }
+
+      const file = loadFile(query) || ''
+
+      const transformContext = usePinceauTransformContext(file, query, ctx)
+
+      console.log({
+        plugin: 'style',
+        type: 'loaded',
+        id,
+      })
+
+      transformTokenHelper(transformContext, ctx)
+
+      return transformContext.result()
     },
   }
 })

@@ -1,4 +1,4 @@
-import type { PinceauContext } from '@pinceau/shared'
+import type { PinceauContext } from '@pinceau/core'
 
 export function transformIndexHtmlHandler(html: string, ctx: PinceauContext) {
   // Vite replace Pinceau theme injection by actual content of `pinceau.css`

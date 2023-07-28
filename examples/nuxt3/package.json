@@ -8,7 +8,7 @@
   },
   "devDependencies": {
     "@pinceau/nuxt": "workspace:*",
-    "nuxt": "^3.6.3"
+    "nuxt": "^3.6.5"
   },
   "stackblitz": {
     "installDependencies": false,

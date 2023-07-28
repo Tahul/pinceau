@@ -18,11 +18,10 @@
   },
   "dependencies": {
     "@pinceau/runtime": "workspace:*",
-    "@pinceau/shared": "workspace:*",
+    "@pinceau/core": "workspace:*",
     "@pinceau/style": "workspace:*",
     "@pinceau/theme": "workspace:*",
     "@pinceau/volar": "workspace:*",
-    "@pinceau/vue": "workspace:*",
-    "consola": "^3.2.3"
+    "@pinceau/vue": "workspace:*"
   }
 }

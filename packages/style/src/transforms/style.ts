@@ -1,27 +1,11 @@
-import type { PinceauContext } from '@pinceau/shared'
-import { darkRegex, lightRegex, mqCssRegex } from '@pinceau/shared'
-import type MagicString from 'magic-string'
-import type { MagicBlock } from 'sfc-composer'
-import type { SFCBlock } from 'vue/compiler-sfc'
-import { transformTokenHelper } from './helper'
-
-/**
- * Helper grouping all resolvers applying to <style>
- */
-export function transformStyle(
-  ms: MagicString,
-  pinceauContext: PinceauContext,
-) {
-  transformTokenHelper(ms, pinceauContext)
-  transformMediaQueries(ms, pinceauContext)
-  transformColorScheme(ms, pinceauContext)
-}
+import type { PinceauContext, PinceauTransformContext } from '@pinceau/core'
+import { darkRegex, lightRegex, mqCssRegex } from '../regexes'
 
 /**
  * Transform media scheme into proper declaration
  */
 export function transformColorScheme(
-  ms: MagicString,
+  transformContext: PinceauTransformContext,
   pinceauContext: PinceauContext,
 ) {
   // Only supports `light` and `dark` schemes as they are native from browsers.
@@ -33,7 +17,7 @@ export function transformColorScheme(
   // Loop through supported color schemes
   Object.entries(schemesRegex).forEach(
     ([key, value]) => {
-      ms.toString().replace(
+      transformContext.ms.toString().replace(
         value,
         () => {
           let mq
@@ -50,14 +34,12 @@ export function transformColorScheme(
  * Resolve `@{media.xl}` declarations.
  */
 export function transformMediaQueries(
-  ms: MagicBlock<SFCBlock> | MagicString,
+  transformContext: PinceauTransformContext,
   pinceauContext: PinceauContext,
 ): string {
-  const loc = (ms as MagicBlock<SFCBlock>)?.loc
+  const mediaQueries = pinceauContext.$tokens('media', { key: undefined, loc: transformContext?.loc })
 
-  const mediaQueries = pinceauContext.$tokens('media', { key: undefined, loc })
-
-  return ms.toString().replace(
+  return transformContext.ms.toString().replace(
     mqCssRegex,
     (declaration, ...args) => {
       const mq = mediaQueries?.[args[0]]

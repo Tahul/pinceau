@@ -2,7 +2,10 @@ import { defineBuildConfig } from 'unbuild'
 
 export default defineBuildConfig({
   entries: [
-    'src/index',
+    {
+      input: 'src/index.ts',
+      name: 'index',
+    },
   ],
   failOnWarn: false,
   clean: true,
@@ -10,5 +13,12 @@ export default defineBuildConfig({
   rollup: {
     emitCJS: true,
   },
-  externals: [],
+  externals: [
+    '@pinceau/core',
+    '@pinceau/theme',
+    '@pinceau/style',
+    '@pinceau/runtime',
+    '@pinceau/vue',
+    'vite',
+  ],
 })

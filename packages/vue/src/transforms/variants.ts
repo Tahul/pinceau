@@ -1,6 +1,6 @@
 import type { ASTNode } from 'ast-types'
-import type { PinceauSFCTransformContext } from '@pinceau/shared'
-import { astTypes, expressionToAst, parseAst, printAst, visitAst } from '@pinceau/shared'
+import type { PinceauSFCTransformContext } from '@pinceau/core'
+import { astTypes, expressionToAst, parseAst, printAst, visitAst } from '@pinceau/core'
 
 export interface PropOptions {
   type?: any

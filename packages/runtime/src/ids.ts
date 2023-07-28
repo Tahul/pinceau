@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid'
-import type { PinceauRuntimeIds } from '@pinceau/shared'
+import type { PinceauRuntimeIds } from './types'
 
 export function usePinceauRuntimeIds(
   el: HTMLElement,

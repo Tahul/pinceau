@@ -1,6 +1,7 @@
 import process from 'node:process'
-import type { PinceauConfigContext, PinceauContext, PinceauOptions, ResolvedConfig } from '@pinceau/shared'
-import { outputFileNames } from '@pinceau/shared'
+import type { PinceauConfigContext, ResolvedConfig } from './types'
+import type { PinceauContext, PinceauOptions } from '@pinceau/core'
+import { outputFileNames } from '@pinceau/core'
 import { loadLayers } from './layers'
 import { generateTheme } from './generate'
 

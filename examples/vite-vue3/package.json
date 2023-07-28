@@ -4,23 +4,23 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "dev": "vite",
+    "dev": "vite --port=3000",
     "preview": "vite preview"
   },
   "dependencies": {
-    "vue": "^3.3.4"
-  },
-  "devDependencies": {
+    "vue": "^3.3.4",
     "pinceau": "workspace:*",
+    "@pinceau/core": "workspace:*",
     "@pinceau/runtime": "workspace:*",
-    "@pinceau/shared": "workspace:*",
     "@pinceau/style": "workspace:*",
     "@pinceau/theme": "workspace:*",
     "@pinceau/volar": "workspace:*",
-    "@pinceau/vue": "workspace:*",
+    "@pinceau/vue": "workspace:*"
+  },
+  "devDependencies": {
     "@vitejs/plugin-vue": "^4.2.3",
     "typescript": "^5.1.6",
-    "vite": "^4.4.4"
+    "vite": "^4.4.7"
   },
   "stackblitz": {
     "installDependencies": false,

@@ -1,5 +1,9 @@
-import type { PinceauRuntimePluginOptions } from '@pinceau/shared'
-import type { Plugin } from 'vue'
+import process from 'node:process'
+import type { PinceauRuntimePluginOptions, Variants } from '@pinceau/runtime'
+import { defaultRuntimeOptions, usePinceauCssProp, usePinceauRuntimeIds, usePinceauRuntimeSheet, usePinceauThemeSheet, usePinceauVariants } from '@pinceau/runtime'
+import { nanoid } from 'nanoid'
+import { computed, getCurrentInstance, ref } from 'vue'
+import type { ComputedRef, Plugin, Ref } from 'vue'
 
 export const PinceauPlugin: Plugin = {
   install(
@@ -14,7 +18,8 @@ export const PinceauPlugin: Plugin = {
     const themeSheet = usePinceauThemeSheet(theme, tokensHelperConfig, colorSchemeMode)
 
     // Runtime debug setup:
-    if (dev && (import.meta.hot || (process as any).server)) { import('./features/debug').then(({ usePinceauRuntimeDebug }) => usePinceauRuntimeDebug(tokensHelperConfig)) }
+    // TODO: Restore runtime debug
+    // if (dev && (import.meta.hot || (process as any).server)) { import('./features/debug').then(({ usePinceauRuntimeDebug }) => usePinceauRuntimeDebug(tokensHelperConfig)) }
 
     // Sets a unique id for this plugin instance, as Pinceau can be used in multiple apps at the same time.
     const multiAppId = multiApp ? nanoid(6) : undefined
@@ -53,7 +58,7 @@ export const PinceauPlugin: Plugin = {
       })
 
       // Component ids and classes with persisted uid
-      const ids = computed(() => usePinceauRuntimeIds(instance, classes, dev))
+      const ids = computed(() => usePinceauRuntimeIds(instance, classes))
 
       // Computed styles setup
       if (computedStyles && Object.keys(computedStyles).length > 0) { usePinceauComputedStyles(ids, computedStyles, runtimeSheet, loc) }

@@ -1,15 +1,13 @@
-import type { DtFunction, PinceauThemeSheet } from '@pinceau/shared'
 import type { ComputedRef } from 'vue'
+import type { PinceauThemeSheet } from '@pinceau/runtime'
 
-import PinceauVuePlugin from './plugin'
+export * from './context'
+export * from './load'
 
-export * as transforms from './transforms'
-
-export default PinceauVuePlugin
+export * from './types'
 
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
-    $dt: DtFunction
     $pinceau: ComputedRef<string>
     $pinceauTheme: PinceauThemeSheet
     $pinceauRuntime: any

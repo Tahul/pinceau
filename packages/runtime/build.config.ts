@@ -2,7 +2,14 @@ import { defineBuildConfig } from 'unbuild'
 
 export default defineBuildConfig({
   entries: [
-    'src/index',
+    {
+      input: 'src/index.ts',
+      name: 'index',
+    },
+    {
+      input: 'src/plugin.ts',
+      name: 'plugin',
+    },
   ],
   failOnWarn: false,
   clean: true,
@@ -11,9 +18,11 @@ export default defineBuildConfig({
     emitCJS: true,
   },
   externals: [
+    'unplugin',
     'vue',
     'scule',
     'defu',
     'nanoid',
+    '@pinceau/style',
   ],
 })

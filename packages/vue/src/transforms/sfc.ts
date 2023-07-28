@@ -1,10 +1,11 @@
-import type { PinceauContext, PinceauSFCTransformContext } from '@pinceau/shared'
-import { message } from '@pinceau/shared'
+import type { PinceauContext, PinceauSFCTransformContext } from '@pinceau/core'
+import { message } from '@pinceau/core'
 import { transforms as styleTransforms } from '@pinceau/style'
 import { transformAddPinceauClass } from './add-class'
 import { transformVariants } from './variants'
+import { transformStyle } from './style'
 
-const { transformCssFunction, transformStyle, transformTokenHelper } = styleTransforms
+const { transformCssFunction, transformTokenHelper } = styleTransforms
 
 export function transformVueSFC(
   transformContext: PinceauSFCTransformContext,
@@ -33,7 +34,7 @@ export function transformTemplate(
   const hasRuntimeStyles = Object.keys(transformContext.variants).length || Object.keys(transformContext.computedStyles).length
 
   // Transform `$dt()` from template
-  transformTokenHelper(transformContext.sfc.template, pinceauContext, '\'')
+  transformTokenHelper(transformContext, pinceauContext, '\'')
 
   // Add class if runtime styles are enabled
   if (pinceauContext.options.runtime && hasRuntimeStyles) { transformAddPinceauClass(transformContext) }
@@ -59,7 +60,7 @@ export function transformStyles(
       transformCssFunction(transformContext, pinceauContext)
     }
 
-    transformStyle(styleBlock, pinceauContext)
+    transformStyle(transformContext, pinceauContext)
   }
 }
 
@@ -74,7 +75,7 @@ export function transformScriptSetup(
   const hasComputedStyles = !!Object.keys(transformContext.computedStyles).length
 
   // Transform `$dt()` usage
-  // transformDtHelper(transformContext, pinceauContext, { wrapper: '`' })
+  transformTokenHelper(transformContext, pinceauContext, '`')
 
   if (pinceauContext.options.runtime) {
     // Inject runtime imports
@@ -122,7 +123,9 @@ export function transformAddRuntimeImports(
 /**
  * Adds computed styles code to <script setup>
  */
-export function transformComputedStyles(transformContext: PinceauSFCTransformContext) {
+export function transformComputedStyles(
+  transformContext: PinceauSFCTransformContext,
+) {
   if (!transformContext?.sfc || !transformContext?.sfc?.scriptSetup) { return }
 
   Object

@@ -1,7 +1,6 @@
-import { getPinceauContext } from '@pinceau/shared'
-import type { PinceauContext } from '@pinceau/shared'
+import { getPinceauContext } from '@pinceau/core'
+import type { PinceauContext } from '@pinceau/core'
 import { createUnplugin } from 'unplugin'
-import { loadComponentBlock } from './load'
 
 const PinceauVuePlugin = createUnplugin(() => {
   let ctx: PinceauContext
@@ -43,8 +42,6 @@ const PinceauVuePlugin = createUnplugin(() => {
         plugin: 'vue',
         type: 'transformed',
         id,
-        code,
-        query,
       })
 
       return code
@@ -60,12 +57,6 @@ const PinceauVuePlugin = createUnplugin(() => {
 
     load(id): any {
       const query = ctx.loaded[id]
-
-      if (!query) { return }
-
-      const code = loadComponentBlock(query)
-
-      return { code }
     },
   }
 })
@@ -160,7 +151,7 @@ export const PinceauVuePlugin = createUnplugin<PinceauOptions>(() => {
           }
         }
         catch (e) {
-          console.log({ query, component, e })
+
         }
       }
     },

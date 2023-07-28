@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { parse as sfcParse } from 'vue/compiler-sfc'
-import type { PinceauQuery } from '@pinceau/shared'
+import type { PinceauQuery } from '@pinceau/core'
 
 export function loadFile(query: PinceauQuery) {
   const { filename } = query
@@ -15,9 +15,7 @@ export function loadFile(query: PinceauQuery) {
 /**
  * Load a specific <style> block from a Vue SFC query.
  */
-export function loadComponentBlock(query: PinceauQuery): string | undefined {
-  const file = loadFile(query) || ''
-
+export function loadComponentBlock(file: string, query: PinceauQuery): string | undefined {
   const { descriptor } = sfcParse(file, { filename: query.filename })
 
   if (query.type === 'style') {

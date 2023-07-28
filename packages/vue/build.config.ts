@@ -2,7 +2,18 @@ import { defineBuildConfig } from 'unbuild'
 
 export default defineBuildConfig({
   entries: [
-    'src/index',
+    {
+      input: 'src/index.ts',
+      name: 'index',
+    },
+    {
+      input: 'src/plugin.ts',
+      name: 'plugin',
+    },
+    {
+      input: 'src/transforms.ts',
+      name: 'transforms',
+    },
   ],
   failOnWarn: false,
   clean: true,
@@ -11,6 +22,9 @@ export default defineBuildConfig({
     emitCJS: true,
   },
   externals: [
+    'vue/compiler-sfc',
+    'magic-string',
+    'sfc-composer',
     'vite',
     'vue',
     'unplugin',

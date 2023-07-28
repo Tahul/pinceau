@@ -6,7 +6,7 @@
     "stub": "unbuild --stub"
   },
   "dependencies": {
-    "@pinceau/shared": "workspace:*",
+    "@pinceau/core": "workspace:*",
     "@pinceau/style": "workspace:*",
     "@pinceau/vue": "workspace:*",
     "@volar/vue-language-core": "^1.6.5"

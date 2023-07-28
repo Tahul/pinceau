@@ -7,6 +7,16 @@
       "types": "./dist/index.d.ts",
       "require": "./dist/index.cjs",
       "import": "./dist/index.mjs"
+    },
+    "./plugin": {
+      "types": "./dist/plugin.d.ts",
+      "require": "./dist/plugin.cjs",
+      "import": "./dist/plugin.mjs"
+    },
+    "./transforms": {
+      "types": "./dist/transforms.d.ts",
+      "require": "./dist/transforms.cjs",
+      "import": "./dist/transforms.mjs"
     }
   },
   "main": "./dist/index.cjs",
@@ -17,12 +27,8 @@
     "stub": "unbuild --stub"
   },
   "dependencies": {
-    "@pinceau/shared": "workspace:*",
-    "ast-types": "0.16.1",
-    "recast": "0.23.3",
+    "@pinceau/core": "workspace:*",
     "style-dictionary-esm": "^1.3.7",
-    "pathe": "^1.1.1",
-    "unplugin": "^1.4.0",
     "untyped": "^1.3.2"
   }
 }

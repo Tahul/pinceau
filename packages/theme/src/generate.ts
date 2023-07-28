@@ -1,8 +1,10 @@
 import type { Core as Instance } from 'style-dictionary-esm'
 import StyleDictionary from 'style-dictionary-esm'
-import type { PinceauBuildContext, ResolvedConfig, ThemeGenerationOutput } from '@pinceau/shared'
-import { flattenTokens, message, normalizeTokens } from '@pinceau/shared'
-import { cssFull, definitionsFull, schemaFull, tsFull, utilsFull } from './formats'
+import type { PinceauBuildContext } from '@pinceau/core'
+import { message } from '@pinceau/core'
+import type { ResolvedConfig, ThemeGenerationOutput } from './types'
+import { flattenTokens, normalizeTokens } from './tokens'
+import { cssFull, definitionsFull, schemaFull, tsFull, utilsFull } from './outputs'
 
 export async function generateTheme(
   resolvedConfig: ResolvedConfig,

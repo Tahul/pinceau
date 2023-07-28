@@ -3,8 +3,10 @@ import { readFile } from 'node:fs/promises'
 import { resolveSchema as resolveUntypedSchema } from 'untyped'
 import createJITI from 'jiti'
 import { resolve } from 'pathe'
-import type { ConfigFileImport, ConfigLayer, PinceauOptions, PinceauTheme, ResolvedConfig, ResolvedConfigLayer } from '@pinceau/shared'
-import { merger, message, normalizeTokens } from '@pinceau/shared'
+import type { PinceauOptions } from '@pinceau/core'
+import { merger, message } from '@pinceau/core'
+import type { ConfigFileImport, ConfigLayer, PinceauTheme, ResolvedConfig, ResolvedConfigLayer } from './types'
+import { normalizeTokens } from './tokens'
 import { resolveDefinitions } from './definitions'
 
 const extensions = ['.js', '.ts', '.mjs', '.cjs', '.json']

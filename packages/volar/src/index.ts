@@ -1,13 +1,10 @@
 import type { Sfc, VueLanguagePlugin } from '@volar/vue-language-core'
 import { FileCapabilities, FileRangeCapabilities } from '@volar/language-core'
 import { defu } from 'defu'
-import { expressionToAst, printAst } from '@pinceau/shared'
-import { transforms as staticTransforms } from '@pinceau/style'
-import { transforms as vueTransforms } from '@pinceau/vue'
+import { expressionToAst, printAst } from '@pinceau/core'
+import { evalCssDeclaration, resolveCssCallees } from '@pinceau/style'
+import { castVariantsPropsAst, resolveVariantsProps } from '@pinceau/vue/transforms'
 import type { ASTNode } from 'ast-types'
-
-const { evalCssDeclaration, resolveCssCallees } = staticTransforms
-const { castVariantsPropsAst, resolveVariantsProps } = vueTransforms
 
 const plugin: VueLanguagePlugin = _ => ({
   version: 1,

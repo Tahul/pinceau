@@ -2,7 +2,10 @@ import { defineBuildConfig } from 'unbuild'
 
 export default defineBuildConfig({
   entries: [
-    'src/index',
+    {
+      input: 'src/index.ts',
+      name: 'index',
+    },
   ],
   failOnWarn: false,
   clean: true,
@@ -11,6 +14,7 @@ export default defineBuildConfig({
     emitCJS: true,
   },
   externals: [
+    'defu',
     '@pinceau/style',
     '@volar/vue-language-core',
     '@volar/language-core',

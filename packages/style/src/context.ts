@@ -1,22 +1,20 @@
 import MagicString from 'magic-string'
-import type { PinceauContext, PinceauQuery, PinceauTransformContext } from '@pinceau/shared'
+import type { PinceauQuery, PinceauTransformContext } from '@pinceau/core'
 
 export function usePinceauTransformContext(
-  source: string,
+  source: string | MagicString,
   query: PinceauQuery,
-  _pinceauContext: PinceauContext,
 ): PinceauTransformContext {
-  const ms = new MagicString(source, { filename: query.filename })
+  const ms = typeof source !== 'string' ? source : new MagicString(source, { filename: query.filename })
 
   const transformContext: PinceauTransformContext = {
     query,
-    get magicString() { return ms },
     get ms() { return ms },
 
     /**
      * Original code informations.
      */
-    loc: { start: { column: 0, line: 0, offset: 0 }, end: { column: 0, line: 0, offset: 0 }, source },
+    loc: { start: { column: 0, line: 0, offset: 0 }, end: { column: 0, line: 0, offset: 0 }, source: source.toString() },
 
     /**
      * Get the current code at this state of the transform.

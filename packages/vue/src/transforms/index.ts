@@ -1,5 +1,0 @@
-export * from './add-class'
-export * from './computed'
-export * from './lang-ts'
-export * from './sfc'
-export * from './variants'

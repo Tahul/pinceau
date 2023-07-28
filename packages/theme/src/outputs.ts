@@ -1,44 +1,141 @@
-import { existsSync } from 'node:fs'
-import { mkdir, rm, writeFile } from 'node:fs/promises'
-import { join } from 'pathe'
-import type { PinceauOptions } from '@pinceau/shared'
-import { schemaFull, tsFull, utilsFull } from './formats'
+import type { Dictionary, Options } from 'style-dictionary-esm'
+import StyleDictionary from 'style-dictionary-esm'
+import type { Schema } from 'untyped'
+import { flattenTokens, walkTokens } from '@pinceau/theme'
+import { objectPaths } from '@pinceau/core'
+import type { ColorSchemeModes, PinceauMediaQueries } from './types'
+import { enhanceTokenPaths, resolveThemeRule, stringifyUtils } from './helpers'
 
 /**
- * Prepares build outputs directory.
+ * import theme from '#pinceau/theme'
+ * import type { GeneratedPinceauTheme, GeneratedPinceauPaths } from '#pinceau/theme'
  */
-export async function prepareBuildDir(
-  options: PinceauOptions,
-) {
-  const themeDir = join(options.theme.buildDir || '', 'theme')
+export function tsFull(tokensObject: any) {
+  // Import config wrapper type
+  let result = ''
 
-  if (!existsSync(themeDir)) { await mkdir(themeDir, { recursive: true }) }
+  // Flatten tokens in full format too
+  const flattenedTokens = flattenTokens(tokensObject)
 
-  await stubOutputs(options, false)
+  if (Object.keys(flattenedTokens).length) { result += `export const theme = ${JSON.stringify(flattenedTokens, null, 2)} as const\n\n` }
+  else { result += 'export const theme = {}\n\n' }
+
+  // Theme type
+  result += 'export type GeneratedPinceauTheme = typeof theme\n\n'
+
+  // Tokens paths type
+  const tokensPaths = objectPaths(tokensObject)
+  if (tokensPaths.length) { result += `export ${enhanceTokenPaths(tokensPaths)}\n\n` }
+  else { result += 'export type GeneratedPinceauPaths = string\n\n' }
+
+  // Default export
+  result += 'export default theme'
+
+  return result
 }
 
 /**
- * Stub the outputs in in case they are not yet built.
+ * import 'pinceau.css'
  */
-export async function stubOutputs(
-  options: PinceauOptions,
-  force = false,
+export function cssFull(dictionary: Dictionary, _options: Options, _responsiveTokens: any, colorSchemeMode: ColorSchemeModes) {
+  const { formattedVariables } = StyleDictionary.formatHelpers
+
+  // Create :root tokens list
+  const tokens: any = {
+    initial: [],
+  }
+  walkTokens(
+    dictionary.tokens,
+    (token) => {
+      // Handle responsive tokens
+      if (typeof token?.value === 'object' && token?.value?.initial) {
+        Object.entries(token.value).forEach(([media, value]) => {
+          if (!tokens[media]) { tokens[media] = [] }
+
+          tokens[media].push({
+            ...token,
+            attributes: {
+              ...(token?.attributes || {}),
+              media,
+            },
+            value,
+          })
+        })
+
+        return token
+      }
+
+      // Handle regular tokens
+      tokens.initial.push(token)
+
+      return token
+    },
+  )
+
+  let css = ''
+
+  // Create all responsive tokens rules
+  Object.entries(tokens).forEach(
+    (pair) => {
+      const [key, value] = pair as [PinceauMediaQueries, string]
+
+      // Resolve tokens content
+      const formattedContent = formattedVariables({ format: 'css', dictionary: { ...dictionary, allTokens: value } as any, outputReferences: true, formatting: { lineSeparator: '', indentation: '', prefix: '' } as any })
+      css += resolveThemeRule(key, formattedContent, tokens, colorSchemeMode)
+    },
+  )
+
+  return css.replace(/(\n|\s\s)/g, '')
+}
+
+/**
+ * definitions.ts
+ */
+export function definitionsFull(definitions: any) {
+  return `export const definitions = ${JSON.stringify(definitions || {}, null, 2)} as const`
+}
+
+/**
+ * Nuxt Studio schema support
+ */
+export function schemaFull(schema: Schema) {
+  let result = `export const schema = ${JSON.stringify({ properties: schema?.properties?.tokensConfig || {}, default: (schema?.default as any)?.tokensConfig || {} }, null, 2)} as const\n\n`
+
+  result += 'export const GeneratedPinceauThemeSchema = typeof schema\n\n'
+
+  return result
+}
+
+/**
+ * import utils from '#pinceau/utils'
+ */
+export function utilsFull(
+  utils = {},
+  utilsImports: string[] = [],
+  definitions = {},
 ) {
-  const files = {
-    'theme/index.css': () => '/* This file is empty because no tokens has been provided or your configuration is broken. */',
-    'definitions.ts': () => 'export const definitions = {} as const',
-    'index.ts': tsFull,
-    'utils.ts': utilsFull,
-  }
+  let result = 'import { PinceauTheme, PropertyValue } from \'pinceau\'\n'
 
-  // Support for configuration schema
-  if (options.theme.studio) { files['schema.ts'] = schemaFull }
+  // Add utilsImports from config
+  result += utilsImports.filter(Boolean).join('\n')
 
-  for (const [file, stubbingFunction] of Object.entries(files)) {
-    const path = join(options.theme.buildDir, file)
+  // Stringify utils properties
+  result += `\n${stringifyUtils(utils, definitions)}`
 
-    if (force && existsSync(path)) { await rm(path) }
+  result += `export const utils = ${Object.keys(utils).length ? `{ ${Object.keys(utils).join(', ')} }` : '{}'}\n\n`
 
-    if (!existsSync(path)) { await writeFile(path, stubbingFunction ? await stubbingFunction({} as any) : '') }
-  }
+  // Type of utils
+  result += 'export type GeneratedPinceauUtils = typeof utils\n\n'
+
+  // Default export
+  result += 'export default utils'
+
+  return result
+}
+
+/**
+ * HMR in development from '#pinceau/hmr'
+ */
+export function hmrFull() {
+  return 'import { updateStyle } from \'/@vite/client\'\nimport.meta.hot.on(\'pinceau:theme\', theme => theme?.css && updateStyle(\'pinceau.css\', theme.css))'
 }

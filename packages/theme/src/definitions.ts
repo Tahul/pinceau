@@ -1,6 +1,6 @@
 import type { namedTypes } from 'ast-types'
 import type { NodePath } from 'ast-types/lib/node-path'
-import { defaultExport, parseAst, printAst, visitAst } from '@pinceau/shared'
+import { defaultExport, parseAst, printAst, visitAst } from '@pinceau/core'
 
 /**
  * Resolve tokens and utils definitions (uri, range, content)
@@ -47,7 +47,7 @@ export function resolveDefinitions(content: string, mediaQueriesKeys: string[], 
 /**
  * Check if a node is a key inside a responsive
  */
-function isResponsiveToken(node: any, mqKeys: string[]) {
+export function isResponsiveToken(node: any, mqKeys: string[]) {
   const properties = node?.value?.properties || []
   const propertiesKeys = properties.map(node => node?.key?.value?.toString() || node?.key?.name?.toString())
   if (propertiesKeys.includes('initial') && propertiesKeys.some(propKey => mqKeys.includes(propKey))) { return true }
@@ -56,7 +56,7 @@ function isResponsiveToken(node: any, mqKeys: string[]) {
 /**
  * Check if a token is a full format
  */
-function isTokenLike(node: NodePath<namedTypes.ObjectProperty>) {
+export function isTokenLike(node: NodePath<namedTypes.ObjectProperty>) {
   const properties = node?.value?.properties || []
   const propertiesKeys = properties.map(node => node?.key?.value?.toString() || node?.key?.name?.toString())
   if (propertiesKeys.includes('value')) { return true }
@@ -65,7 +65,7 @@ function isTokenLike(node: NodePath<namedTypes.ObjectProperty>) {
 /**
  * Get a token node from a path
  */
-function getTokenNode(node: NodePath<namedTypes.ObjectProperty>, mqKeys: string[]) {
+export function getTokenNode(node: NodePath<namedTypes.ObjectProperty>, mqKeys: string[]) {
   // Skip responsive tokens nested keys; return parent
   if (isResponsiveToken(node?.parent, mqKeys)) { return node?.parent }
 
@@ -84,7 +84,7 @@ function getTokenNode(node: NodePath<namedTypes.ObjectProperty>, mqKeys: string[
 /**
  * Walk back to root path of a node, resolving a token Node path.
  */
-function resolvePropertyKeyPath(node: NodePath<namedTypes.ObjectProperty>) {
+export function resolvePropertyKeyPath(node: NodePath<namedTypes.ObjectProperty>) {
   let currentPath = node
   const currentKeyPath: string[] = []
 

@@ -7,6 +7,11 @@
       "types": "./dist/index.d.ts",
       "require": "./dist/index.cjs",
       "import": "./dist/index.mjs"
+    },
+    "./plugin": {
+      "types": "./dist/plugin.d.ts",
+      "require": "./dist/plugin.cjs",
+      "import": "./dist/plugin.mjs"
     }
   },
   "main": "./dist/index.cjs",
@@ -16,11 +21,17 @@
     "build": "unbuild",
     "stub": "unbuild --stub"
   },
+  "peerDependencies": {
+    "@pinceau/theme": "workspace:*"
+  },
+  "peerDependenciesMeta": {
+    "@pinceau/theme": {
+      "optional": true
+    }
+  },
   "dependencies": {
-    "@pinceau/shared": "workspace:*",
-    "defu": "^6.1.2",
+    "@pinceau/core": "workspace:*",
     "nanoid": "^4.0.2",
-    "scule": "^1.0.0",
-    "unplugin": "^1.4.0"
+    "scule": "^1.0.0"
   }
 }

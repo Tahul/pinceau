@@ -1,6 +1,7 @@
 import type { PropType } from 'vue'
 import { inject } from 'vue'
-import type { CSSProperties, ComputedStyleProp, PinceauThemeSheet } from '@pinceau/shared'
+import type { CSSProperties, ComputedStyleProp } from '@pinceau/style'
+import type { PinceauThemeSheet } from './types'
 
 /**
  * Entrypoint for Pinceau runtime features.

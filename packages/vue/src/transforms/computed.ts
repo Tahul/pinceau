@@ -1,10 +1,13 @@
 import type { ASTNode } from 'ast-types'
 import { hash } from 'ohash'
 import { camelCase, kebabCase } from 'scule'
-import type { PinceauTransformContext } from '@pinceau/shared'
-import { astTypes, printAst, visitAst } from '@pinceau/shared'
+import type { PinceauSFCTransformContext } from '@pinceau/core'
+import { astTypes, printAst, visitAst } from '@pinceau/core'
 
-export function resolveRuntimeContents(cssFunctionAst: ASTNode, transformContext: PinceauTransformContext) {
+export function resolveRuntimeContents(
+  cssFunctionAst: ASTNode,
+  transformContext: PinceauSFCTransformContext,
+) {
   // Search for function properties in css() AST
   visitAst(
     cssFunctionAst,

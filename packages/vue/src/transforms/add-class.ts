@@ -1,6 +1,6 @@
 import type { ASTNode } from 'ast-types'
-import type { PinceauTransformContext } from '@pinceau/shared'
-import { astTypes, expressionToAst, printAst } from '@pinceau/shared'
+import type { PinceauSFCTransformContext } from '@pinceau/core'
+import { astTypes, expressionToAst, printAst } from '@pinceau/core'
 
 /**
  * Adds `$pinceau` to the root element class via transform
@@ -11,7 +11,9 @@ import { astTypes, expressionToAst, printAst } from '@pinceau/shared'
  * 4 - If no `:class` found, just push it at the end of the first tag
  * 5 - If $pinceau is already present somewhere in the template, just skip this transform
  */
-export function transformAddPinceauClass(transformContext: PinceauTransformContext) {
+export function transformAddPinceauClass(
+  transformContext: PinceauSFCTransformContext,
+) {
   const templateBlock = transformContext?.sfc?.template
 
   if (!templateBlock?.content) { return }

@@ -1,11 +1,15 @@
 <template>
-  <div style="color: var(--color-primary);">
+  <div
+    :style="{
+      backgroundColor: $dt('color.primary'),
+    }"
+  >
     Hello World
   </div>
 </template>
 
 <style>
-* {
-  background-color: $dt('color.black');
+div {
+  background-color: $dt('color.secondary');
 }
 </style>

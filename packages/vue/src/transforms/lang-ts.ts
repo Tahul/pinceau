@@ -1,4 +1,4 @@
-import type { PinceauQuery } from '@pinceau/shared'
+import type { PinceauQuery } from '@pinceau/core'
 
 /**
  * Transforms the `<style lang="ts">` attribute into `<style lang="postcss">`.

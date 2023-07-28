@@ -3,9 +3,10 @@ import process from 'node:process'
 import { join, resolve } from 'pathe'
 import { addPlugin, addPluginTemplate, addPrerenderRoutes, createResolver, defineNuxtModule, resolveAlias, resolveModule } from '@nuxt/kit'
 import createJITI from 'jiti'
-import type { ConfigLayer, PinceauUserOptions } from '@pinceau/shared'
-import { prepareBuildDir } from '@pinceau/theme'
-import { defaultOptions, normalizeOptions, walkTokens } from '@pinceau/shared'
+import type { PinceauUserOptions } from '@pinceau/core'
+import { prepareBuildDir, walkTokens } from '@pinceau/theme'
+import type { ConfigLayer } from '@pinceau/theme'
+import { defaultOptions, normalizeOptions } from '@pinceau/core'
 
 export interface ModuleHooks {
   'pinceau:options': (options: PinceauUserOptions) => void | Promise<void>

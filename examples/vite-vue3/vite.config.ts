@@ -6,6 +6,6 @@ import Pinceau from 'pinceau'
 export default defineConfig({
   plugins: [
     Vue(),
-    Pinceau(),
+    Pinceau({}),
   ],
 })

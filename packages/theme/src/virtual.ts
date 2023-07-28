@@ -1,5 +1,5 @@
-import type { PinceauContext } from '@pinceau/shared'
-import { hmrFull, tsFull, utilsFull } from './formats'
+import type { PinceauContext } from '@pinceau/core'
+import { hmrFull, tsFull, utilsFull } from './outputs'
 
 export function registerVirtualOutputs(ctx: PinceauContext) {
   const outputs = [

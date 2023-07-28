@@ -1,12 +1,14 @@
 import process from 'node:process'
-import type { PinceauRuntimePluginOptions } from '@pinceau/shared'
+import type { PinceauRuntimePluginOptions } from './types'
 
-export { usePinceauRuntimeSheet } from './features/stylesheet'
+export { usePinceauRuntimeSheet } from './stylesheet'
 export { usePinceauRuntimeIds } from './ids'
-export { usePinceauThemeSheet } from './features/theme'
-export { usePinceauComputedStyle } from './features/computedStyles'
-export { usePinceauVariants } from './features/variants'
-export { usePinceauCssProp } from './features/cssProp'
+export { usePinceauThemeSheet } from './theme'
+export { usePinceauComputedStyle } from './computedStyles'
+export { usePinceauVariants } from './variants'
+export { usePinceauCssProp } from './cssProp'
+
+export * from './types'
 
 export const defaultRuntimeOptions: PinceauRuntimePluginOptions = {
   theme: {},
