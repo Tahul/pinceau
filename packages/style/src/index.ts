@@ -1,11 +1,13 @@
-export * as transforms from './transforms'
+import type { PinceauCSSFunctionContext } from './types'
 
 export * from './types'
 
 export * from './ast'
-export * from './context'
-export * from './css'
 export * from './eval'
-export * from './regexes'
-export * from './runtime-context'
-export * from './stringify'
+export * from './css-function-context'
+
+declare module '@pinceau/core' {
+  interface PinceauTransformState {
+    cssFunctions?: { [key: number]: PinceauCSSFunctionContext }
+  }
+}

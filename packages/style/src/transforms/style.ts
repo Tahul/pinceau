@@ -1,5 +1,7 @@
 import type { PinceauContext, PinceauTransformContext } from '@pinceau/core'
-import { darkRegex, lightRegex, mqCssRegex } from '../regexes'
+
+const darkRegex = /(@dark\s{)/g
+const lightRegex = /(@light\s{)/g
 
 /**
  * Transform media scheme into proper declaration
@@ -37,10 +39,11 @@ export function transformMediaQueries(
   transformContext: PinceauTransformContext,
   pinceauContext: PinceauContext,
 ): string {
-  const mediaQueries = pinceauContext.$tokens('media', { key: undefined, loc: transformContext?.loc })
+  const mediaQueries = pinceauContext.$tokens('media')
 
   return transformContext.ms.toString().replace(
-    mqCssRegex,
+    // In CSS media query regex.
+    /@([^\s]+)\s{/g,
     (declaration, ...args) => {
       const mq = mediaQueries?.[args[0]]
       if (!mq) { return declaration }

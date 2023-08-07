@@ -4,3 +4,5 @@ export const schema = {
 } as const
 
 export const GeneratedPinceauThemeSchema = typeof schema
+
+export default schema

@@ -31,8 +31,4 @@ export type TokenHelperFunction = (
 /**
  * $tokens function
  */
-export type TokensFunction = (
-  path?: PinceauTokensPaths | (string & object),
-  options?: TokensFunctionOptions,
-  theme?: any
-) => DesignTokens | DesignToken | number | string | undefined
+export type TokensFunction = (token?: PinceauTokensPaths | (string & object)) => DesignTokens | DesignToken | undefined

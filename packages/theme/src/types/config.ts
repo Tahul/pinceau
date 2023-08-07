@@ -118,7 +118,7 @@ export interface PinceauConfigContext {
   /**
    * Is the loader currently loading configurations layers?
    */
-  ready: Promise<ResolvedConfig>
+  ready: Promise<any>
 
   /**
    * Update the current rootDir
@@ -128,10 +128,5 @@ export interface PinceauConfigContext {
   /**
    * Reload the configuration (with new options if provided)
    */
-  reloadConfig: (newOptions?: PinceauOptions) => Promise<ResolvedConfig>
-
-  /**
-   * Registers the initial configurations watchers.
-   */
-  registerConfigWatchers: () => void
+  buildTheme: (newOptions?: PinceauOptions) => Promise<ThemeGenerationOutput>
 }

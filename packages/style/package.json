@@ -1,7 +1,7 @@
 {
   "name": "@pinceau/style",
-  "version": "0.1.0",
   "type": "module",
+  "version": "0.1.0",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -27,8 +27,9 @@
     "stub": "unbuild --stub"
   },
   "dependencies": {
-    "@pinceau/theme": "workspace:*",
     "@pinceau/core": "workspace:*",
+    "@pinceau/theme": "workspace:*",
+    "@pinceau/stringify": "workspace:*",
     "acorn": "^8.10.0"
   }
 }

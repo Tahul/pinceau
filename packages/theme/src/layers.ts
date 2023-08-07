@@ -70,16 +70,16 @@ export function resolveConfigFile(
   const mediaQueriesKeys = resolveMediaQueriesKeys(tokens)
 
   // Try to resolve tokens definitions
-  let resolvedDefinitions
+  let definitions
   if (options.theme.definitions) {
-    try { resolvedDefinitions = resolveDefinitions(content, mediaQueriesKeys, path) }
+    try { definitions = resolveDefinitions(content, mediaQueriesKeys, path) }
     catch (e) { /* Mitigate definitions resolving errors */ }
   }
 
   // Try to resolved the schema
-  let resolvedUtils
+  let utils
   if (tokens.utils) {
-    resolvedUtils = tokens.utils
+    utils = { ...tokens.utils }
     delete tokens.utils
   }
 
@@ -87,8 +87,8 @@ export function resolveConfigFile(
     tokens: normalizeTokens(tokens, mediaQueriesKeys, false),
     path,
     content,
-    definitions: resolvedDefinitions,
-    utils: resolvedUtils,
+    definitions,
+    utils,
   }
 }
 

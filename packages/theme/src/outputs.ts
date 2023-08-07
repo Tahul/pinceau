@@ -1,14 +1,14 @@
 import type { Dictionary, Options } from 'style-dictionary-esm'
 import StyleDictionary from 'style-dictionary-esm'
 import type { Schema } from 'untyped'
-import { flattenTokens, walkTokens } from '@pinceau/theme'
 import { objectPaths } from '@pinceau/core'
+import { flattenTokens, walkTokens } from './tokens'
 import type { ColorSchemeModes, PinceauMediaQueries } from './types'
 import { enhanceTokenPaths, resolveThemeRule, stringifyUtils } from './helpers'
 
 /**
- * import theme from '#pinceau/theme'
- * import type { GeneratedPinceauTheme, GeneratedPinceauPaths } from '#pinceau/theme'
+ * import theme from '$pinceau/theme'
+ * import type { GeneratedPinceauTheme, GeneratedPinceauPaths } from '$pinceau/theme'
  */
 export function tsFull(tokensObject: any) {
   // Import config wrapper type
@@ -103,24 +103,24 @@ export function schemaFull(schema: Schema) {
 
   result += 'export const GeneratedPinceauThemeSchema = typeof schema\n\n'
 
+  result += 'export default schema'
+
   return result
 }
 
 /**
- * import utils from '#pinceau/utils'
+ * import utils from '$pinceau/utils'
  */
 export function utilsFull(
   utils = {},
   utilsImports: string[] = [],
   definitions = {},
 ) {
-  let result = 'import { PinceauTheme, PropertyValue } from \'pinceau\'\n'
-
   // Add utilsImports from config
-  result += utilsImports.filter(Boolean).join('\n')
+  let result = utilsImports.filter(Boolean).join('\n')
 
   // Stringify utils properties
-  result += `\n${stringifyUtils(utils, definitions)}`
+  result += `${result === '' ? '' : '\n'}${stringifyUtils(utils, definitions)}`
 
   result += `export const utils = ${Object.keys(utils).length ? `{ ${Object.keys(utils).join(', ')} }` : '{}'}\n\n`
 
@@ -134,8 +134,18 @@ export function utilsFull(
 }
 
 /**
- * HMR in development from '#pinceau/hmr'
+ * HMR in development from '$pinceau/hmr'
  */
-export function hmrFull() {
-  return 'import { updateStyle } from \'/@vite/client\'\nimport.meta.hot.on(\'pinceau:theme\', theme => theme?.css && updateStyle(\'pinceau.css\', theme.css))'
+export function hmrFull(viteImportPath = '/@vite/client') {
+  return `import { updateStyle } from \'${viteImportPath}\'\n
+
+if (import.meta.hot) {
+  import.meta.hot.on(
+    \'pinceau:theme\',
+    theme => {
+      console.log({ theme })
+      theme?.css && updateStyle(\'pinceau.css\', theme.css)
+    }
+  )
+}`
 }

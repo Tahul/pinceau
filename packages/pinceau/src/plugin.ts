@@ -11,14 +11,21 @@ export default (userOptions: PinceauUserOptions = {}): (Plugin[] | Plugin)[] => 
   const options = normalizeOptions(userOptions)
 
   const plugins: (Plugin[] | Plugin)[] = [
+    // Pinceau core context provider.
     PinceauCorePlugin.vite(options),
   ]
 
-  // PLugins do not need options as they are accessed through `getPinceauContext`.
+  /**
+   * PLugins do not need options as they are accessed through `getPinceauContext`.
+   */
+
+  // Core plugins
   if (userOptions.theme !== false) { plugins.push(PinceauThemePlugin.vite()) }
   if (userOptions.style !== false) { plugins.push(PinceauStylePLugin.vite()) }
-  if (userOptions.vue !== false) { plugins.push(PinceauVuePlugin.vite()) }
   if (userOptions.runtime !== false) { plugins.push(PinceauRuntimePlugin.vite()) }
+
+  // Framework integrations
+  if (userOptions.vue !== false) { plugins.push(PinceauVuePlugin.vite()) }
 
   return plugins
 }

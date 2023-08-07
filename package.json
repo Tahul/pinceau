@@ -1,8 +1,19 @@
 {
   "name": "@pinceau/monorepo",
+  "type": "module",
   "version": "1.0.0",
   "private": true,
+  "packageManager": "pnpm@8.6.0",
   "description": "Make your <script> lighter and your <style> smarter.",
+  "license": "MIT",
+  "homepage": "https://github.com/Tahul/pinceau#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tahul/pinceau.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Tahul/pinceau/issues"
+  },
   "keywords": [
     "css-in-js",
     "vue",
@@ -12,50 +23,30 @@
     "nuxt",
     "vite"
   ],
-  "homepage": "https://github.com/Tahul/pinceau#readme",
-  "bugs": {
-    "url": "https://github.com/Tahul/pinceau/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Tahul/pinceau.git"
-  },
-  "license": "MIT",
-  "type": "module",
   "scripts": {
     "build": "pnpm -r --filter=./packages/* run build && pnpm -r run build:post",
     "stub": "pnpm -r --filter=./packages/* run stub && pnpm -r run build:post",
-    "dev": "nodemon --exec 'pnpm --filter=./examples/vite-vue3 run dev' --watch 'packages' -e js,ts,vue",
-    "test": "pnpm -r --filter=./tests run test",
-    "docs": "nuxi dev docs"
+    "lint": "eslint --cache .",
+    "lint:fix": "eslint --cache . --fix",
+    "dev": "nodemon --exec 'pnpm --filter=./examples/vite-vue3 run dev' --watch 'packages' -e js,ts,vue --debug",
+    "dev:nuxt": "DEBUG=\"*\" pnpm -r --filter=./examples/nuxt3 run dev",
+    "docs": "nuxi dev docs",
+    "test": "pnpm lint && vitest run --coverage",
+    "test:ui": "vitest --ui",
+    "prepare": "pnpm stub"
   },
   "devDependencies": {
-    "unbuild": "^1.2.1",
-    "@antfu/eslint-config": "^0.39.8",
+    "@antfu/eslint-config": "^0.40.0",
     "@types/node": "^20.4.5",
-    "@vue/test-utils": "^2.4.1",
-    "eslint": "^8.45.0",
-    "jsdom": "^22.1.0",
+    "eslint": "^8.46.0",
     "nodemon": "^3.0.1",
-    "nuxt-vitest": "^0.10.2",
-    "playwright": "^1.36.2",
     "release-it": "^16.1.3",
-    "rollup": "^3.26.3",
+    "rollup": "^3.27.0",
     "tsup": "^7.1.0",
     "typescript": "^5.1.6",
-    "unenv": "^1.5.2",
-    "vite": "^4.4.7",
-    "vite-plugin-inspect": "^0.7.33",
-    "vitest": "^0.33.0",
-    "vue": "^3.3.4",
-    "vue-router": "^4.2.4",
-    "webpack": "^5.88.2",
-    "storybook": "7.1.1"
+    "unbuild": "^1.2.1",
+    "unenv": "^1.5.2"
   },
-  "resolutions": {
-    "pinceau": "workspace:*"
-  },
-  "packageManager": "pnpm@8.6.0",
   "pnpm": {
     "peerDependencyRules": {
       "allowedVersions": {
@@ -74,6 +65,9 @@
         "@vitejs/plugin-vue-jsx"
       ]
     }
+  },
+  "resolutions": {
+    "pinceau": "workspace:*"
   },
   "release-it": {
     "hooks": {

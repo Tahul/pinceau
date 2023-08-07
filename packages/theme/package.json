@@ -1,7 +1,7 @@
 {
   "name": "@pinceau/theme",
-  "version": "0.1.0",
   "type": "module",
+  "version": "0.1.0",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -28,7 +28,8 @@
   },
   "dependencies": {
     "@pinceau/core": "workspace:*",
+    "@unocss/reset": "^0.54.1",
     "style-dictionary-esm": "^1.3.7",
-    "untyped": "^1.3.2"
+    "untyped": "^1.4.0"
   }
 }

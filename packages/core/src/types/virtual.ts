@@ -4,6 +4,10 @@ export interface PinceauVirtualContext {
    */
   outputs: VirtualOutputs
   /**
+   *
+   */
+  writeOutput: (id: string, path: string) => void
+  /**
    * Register a new output in the virtual storage
    */
   registerOutput: (importPath: string, virtualPath: string, content: string) => void
@@ -24,4 +28,4 @@ export interface PinceauVirtualContext {
 /**
  * Virtual outputs storage model
  */
-export type VirtualOutputs = { [key in string]: string }
+export type VirtualOutputs<T = string> = { [key in string]: T }

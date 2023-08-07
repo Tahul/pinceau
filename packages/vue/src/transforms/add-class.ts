@@ -1,5 +1,5 @@
 import type { ASTNode } from 'ast-types'
-import type { PinceauSFCTransformContext } from '@pinceau/core'
+import type { PinceauTransformContext, PinceauTransformFunction } from '@pinceau/core'
 import { astTypes, expressionToAst, printAst } from '@pinceau/core'
 
 /**
@@ -11,17 +11,17 @@ import { astTypes, expressionToAst, printAst } from '@pinceau/core'
  * 4 - If no `:class` found, just push it at the end of the first tag
  * 5 - If $pinceau is already present somewhere in the template, just skip this transform
  */
-export function transformAddPinceauClass(
-  transformContext: PinceauSFCTransformContext,
-) {
-  const templateBlock = transformContext?.sfc?.template
+export const transformAddPinceauClass: PinceauTransformFunction = (
+  transformContext: PinceauTransformContext,
+) => {
+  const { target } = transformContext
 
-  if (!templateBlock?.content) { return }
+  const content = target.toString()
 
   // $pinceau class already here
-  if (templateBlock.content.includes('$pinceau')) { return templateBlock.content }
+  if (content.includes('$pinceau')) { return }
 
-  const firstTag = templateBlock.content.match(/<([a-zA-Z]+)([^>]+)*>/)
+  const firstTag = content.match(/<([a-zA-Z]+)([^>]+)*>/)
 
   let result = ''
 
@@ -64,8 +64,6 @@ export function transformAddPinceauClass(
       result = _source.replace('>', ' :class="[$pinceau]">')
     }
 
-    const startIndex = templateBlock.loc.start.offset + (firstTag?.index || 0)
-    transformContext.magicString.remove(startIndex, startIndex + firstTag[0].length)
-    transformContext.magicString.appendRight(startIndex, result)
+    target.overwrite((firstTag as any).index, (firstTag as any).index + firstTag[0].length, result)
   }
 }

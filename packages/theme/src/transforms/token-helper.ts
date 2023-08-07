@@ -1,4 +1,4 @@
-import type { PinceauContext, PinceauTransformContext } from '@pinceau/core'
+import type { PinceauTransformFunction } from '@pinceau/core'
 import { helperRegex } from '../regexes'
 
 /**
@@ -6,14 +6,18 @@ import { helperRegex } from '../regexes'
  *
  * Supports `wrapper` to be used in both `<style>` and `<script>` or `<template>` tags.
  */
-export function transformTokenHelper(
-  transformContext: PinceauTransformContext,
-  pinceauContext: PinceauContext,
+export const transformTokenHelper: PinceauTransformFunction = (
+  transformContext,
+  pinceauContext,
   wrapper: string = '',
-) {
+) => {
   const wrap = (content: string): string => `${wrapper || ''}${content}${wrapper || ''}`
 
-  transformContext.ms.toString().replace(
+  const target = transformContext.target
+
+  const $tokens = pinceauContext.$tokens
+
+  target.toString().replace(
     helperRegex('$dt'),
     (...args) => {
       const path = args?.[1]
@@ -24,11 +28,11 @@ export function transformTokenHelper(
 
       // Use $token and arg if exist
       if (arg) {
-        const themeToken = pinceauContext.$tokens(path, { key: arg || 'variable' })
-        if (themeToken) { token = wrap(themeToken as string) }
+        const themeToken = $tokens(path)
+        if (themeToken) { token = wrap(themeToken?.variable || path) }
       }
 
-      transformContext.ms.overwrite(offset, offset + arg.length, token)
+      target.overwrite(offset, offset + arg.length, token)
 
       return token
     },

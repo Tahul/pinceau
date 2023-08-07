@@ -1,0 +1,39 @@
+{
+  "name": "@pinceau/monorepo",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "pnpm@8.6.0",
+  "description": "Make your <script> lighter and your <style> smarter.",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "scripts": {
+    "test": "vitest --run",
+    "test:watch": "vitest",
+    "ui": "vitest --ui"
+  },
+  "dependencies": {
+    "@pinceau/core": "workspace:*",
+    "@pinceau/language-server": "workspace:*",
+    "@pinceau/runtime": "workspace:*",
+    "@pinceau/style": "workspace:*",
+    "@pinceau/theme": "workspace:*",
+    "@pinceau/volar": "workspace:*",
+    "@pinceau/vscode": "workspace:*",
+    "@pinceau/vue": "workspace:*",
+    "pinceau": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.80.0",
+    "@vitest/coverage-v8": "^0.34.0",
+    "@vscode/test-electron": "^2.3.4",
+    "@vscode/vsce": "^2.20.0",
+    "jsdom": "^22.1.0",
+    "vitest": "^0.34.0",
+    "vscode-languageclient": "^8.1.0",
+    "vscode-languageserver": "^8.1.0",
+    "vscode-languageserver-textdocument": "^1.0.8",
+    "vscode-uri": "^3.0.7"
+  }
+}

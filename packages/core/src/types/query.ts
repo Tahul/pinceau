@@ -10,10 +10,12 @@ export interface PinceauQuery {
   raw?: boolean
 
   // Vue Query parameters
-  vue?: boolean
+  vueQuery?: boolean
   type?: 'script' | 'template' | 'style' | 'custom'
   index?: number
+  setup?: boolean
   scoped?: string
+  transformed?: boolean
 
   // File language
   lang?: string
@@ -25,5 +27,5 @@ export interface PinceauQuery {
   transformable?: boolean
 
   // Is target a SFC component?
-  sfc?: boolean
+  sfc?: 'vue' | false
 }

@@ -1,3 +1,4 @@
+import { writeFileSync } from 'node:fs'
 import type { PinceauVirtualContext, VirtualOutputs } from './types'
 
 export function usePinceauVirtualStore(): PinceauVirtualContext {
@@ -8,6 +9,7 @@ export function usePinceauVirtualStore(): PinceauVirtualContext {
     importPath: string,
     virtualPath: string,
     content: string,
+    write: boolean = false,
   ) {
     pathMap[virtualPath] = importPath
     outputs[importPath] = content
@@ -16,7 +18,9 @@ export function usePinceauVirtualStore(): PinceauVirtualContext {
   /**
    * Get outputs from the virtual storage
    */
-  function getOutput(id: string) { return outputs[id] }
+  function getOutput(id: string) {
+    return outputs[id]
+  }
 
   /**
    * Resolves the virtual module id from an import like `pinceau.css` or `pinceau.ts`
@@ -25,8 +29,17 @@ export function usePinceauVirtualStore(): PinceauVirtualContext {
    */
   function getOutputId(id: string) {
     for (const [virtualPath, importPath] of Object.entries(pathMap)) {
-      if (virtualPath.includes(id)) { return importPath }
+      if (virtualPath === id || importPath === id) {
+        return importPath
+      }
     }
+  }
+
+  /**
+   * Write a virtual output.
+   */
+  function writeOutput(id: string, path: string) {
+    if (outputs[id]) { writeFileSync(path, outputs[id]) }
   }
 
   return {
@@ -35,6 +48,7 @@ export function usePinceauVirtualStore(): PinceauVirtualContext {
     registerOutput,
     getOutput,
     getOutputId,
+    writeOutput,
     updateOutputs: (outputUpdate: Partial<VirtualOutputs>) => Object.assign(outputs, outputUpdate),
   }
 }

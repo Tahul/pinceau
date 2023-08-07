@@ -1,41 +1,27 @@
 import type MagicString from 'magic-string'
-import type { SourceMapCompact } from 'unplugin'
-import type { SourceMapInput } from 'rollup'
-import type { MagicVueSFC } from 'sfc-composer'
-import type { PinceauQuery } from '@pinceau/core'
+import type { MagicBlock, MagicSFC, SourceLocation } from 'sfc-composer'
+import type { PinceauQuery } from './query'
+import type { PinceauTransformResult, PinceauTransforms } from './transforms'
 
-/**
- * From @vue/compiler-core
- */
-export interface SourceLocation {
-  start: Position
-  end: Position
-  source: string
+export interface PinceauTransformState {
+  [key: string]: any
 }
-export interface Position {
-  offset: number
-  line: number
-  column: number
-}
-export type TransformResult = string | { code: string; map?: SourceMapInput | SourceMapCompact | null } | null | undefined
 
 /**
  * Transform context available on any type of files.
  */
 export interface PinceauTransformContext {
-  ms: MagicString
-  code: string
+  loc: SourceLocation
   query: PinceauQuery
-  result: () => TransformResult
-  loc?: SourceLocation
-}
+  ms: MagicString
+  target: MagicBlock
+  code: string
+  state: PinceauTransformState
+  transforms: PinceauTransforms
+  registerTransforms: (transform: Partial<PinceauTransforms>) => void
+  transform: () => void
+  result: () => PinceauTransformResult
 
-/**
- * Used when the component available if the file is a SFC.
- */
-export interface PinceauSFCTransformContext extends PinceauTransformContext {
-  sfc: MagicVueSFC
-  computedStyles: Record<string, any>
-  localTokens: Record<string, any>
-  variants: Record<string, any>
+  // Optional
+  sfc?: MagicSFC
 }

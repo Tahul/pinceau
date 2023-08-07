@@ -8,17 +8,13 @@ export interface PinceauRuntimePluginOptions {
    */
   theme?: any
   /**
-   * Utils functions coming from `#pinceau/utils` import.
+   * Utils functions coming from `$pinceau/utils` imports.
    */
   utils?: any
   /**
    * Toggles the multi-app mode.
    */
   multiApp: false
-  /**
-   * Toggles development mode for runtime plugin.
-   */
-  dev: boolean
   /**
    * Tokens resolver options.
    */

@@ -8,9 +8,9 @@ export * from './tokens'
 
 /**
  * Supported color scheme modes.
- * 
+ *
  * `media` will use `@media (prefers-color-scheme dark) { ... }`
- * 
+ *
  * `class` will use `:root.dark { ... }`
  */
 export type ColorSchemeModes = 'media' | 'class'

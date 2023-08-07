@@ -2,7 +2,7 @@ import type { Sfc, VueLanguagePlugin } from '@volar/vue-language-core'
 import { FileCapabilities, FileRangeCapabilities } from '@volar/language-core'
 import { defu } from 'defu'
 import { expressionToAst, printAst } from '@pinceau/core'
-import { evalCssDeclaration, resolveCssCallees } from '@pinceau/style'
+import { evalCssDeclaration, resolveCSSCallees } from '@pinceau/style'
 import { castVariantsPropsAst, resolveVariantsProps } from '@pinceau/vue/transforms'
 import type { ASTNode } from 'ast-types'
 
@@ -86,7 +86,7 @@ function resolveVariantsContent(sfc: Sfc) {
     try {
       // Check if <style> tag is `lang="ts"`
       if (style.lang === 'ts') {
-        resolveCssCallees(
+        resolveCSSCallees(
           style.content,
           (styleAst) => {
             const cssContent = evalCssDeclaration(styleAst as any as ASTNode)

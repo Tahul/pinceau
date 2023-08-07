@@ -28,7 +28,7 @@ export default defineBuildConfig({
     'untyped',
     'pathe',
     'jiti',
-    '#pinceau',
+    '$pinceau',
     'vite',
     'unplugin',
   ],

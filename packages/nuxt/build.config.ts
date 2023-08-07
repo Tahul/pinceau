@@ -2,7 +2,10 @@ import { defineBuildConfig } from 'unbuild'
 
 export default defineBuildConfig({
   entries: [
-    'src/index.ts',
+    {
+      input: 'src/module.ts',
+      name: 'index',
+    },
   ],
   failOnWarn: false,
   clean: true,
@@ -18,5 +21,10 @@ export default defineBuildConfig({
     'defu',
     '@volar',
     'pathe',
+    'pinceau',
+    '@pinceau/core',
+    '@pinceau/theme',
+    '#internal',
+    '#internal/nitro',
   ],
 })

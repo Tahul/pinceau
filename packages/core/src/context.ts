@@ -1,9 +1,8 @@
 import type { ViteDevServer } from 'vite'
 import type { PinceauTheme, PinceauUtils } from '@pinceau/theme'
 import { parsePinceauQuery } from './query'
-import { message } from './debug'
 import { usePinceauVirtualStore } from './virtual'
-import type { PinceauBuildContext, PinceauContext, PinceauOptions, PinceauQuery } from './types'
+import type { PinceauBuildContext, PinceauContext, PinceauOptions, PinceauQuery, PinceauTransformer } from './types'
 import { createTokensHelper } from './token-helper'
 
 /**
@@ -25,16 +24,14 @@ export function getPinceauContext(server: ViteDevServer) {
  */
 export function usePinceauContext(options: PinceauOptions): PinceauContext {
   /**
+   * Available custom parsers for SFC formats support.
+   */
+  const transformers: { [key: string]: PinceauTransformer } = {}
+
+  /**
    * Track list of module queries that got through any kind of Pinceau transforms.
    */
   const transformed: { [key: string]: PinceauQuery } = {}
-
-  /**
-   * Track list of module queries that got loaded through Pinceau.
-   *
-   * Usually it will be SFC blocks queries.
-   */
-  const loaded: { [key: string]: PinceauQuery } = {}
 
   /**
    * Current reference of built theme.
@@ -82,6 +79,8 @@ export function usePinceauContext(options: PinceauOptions): PinceauContext {
    * Build-time context.
    */
   const buildContext: PinceauBuildContext = {
+    transformers,
+    registerTransformer(key: string, transformer: PinceauTransformer) { transformers[key] = transformer },
     options,
     get theme() { return theme },
     updateTheme(_theme: any) {
@@ -93,11 +92,6 @@ export function usePinceauContext(options: PinceauOptions): PinceauContext {
       if (_utils) { utils = _utils }
       return utils
     },
-    get viteServer() { return viteServer },
-    updateViteServer: (server: ViteDevServer) => {
-      viteServer = server
-      return viteServer
-    },
     get transformed() { return transformed },
     isTransformable(id: string): PinceauQuery | void {
       const included = isIncluded(id)
@@ -107,28 +101,16 @@ export function usePinceauContext(options: PinceauOptions): PinceauContext {
       if (!transformed[id] && query) { transformed[id] = query }
       return transformed
     },
-    get loaded() { return loaded },
-    isLoadable(id: string): PinceauQuery | void {
-      const included = isIncluded(id)
-      if (included) { return parsePinceauQuery(id) }
-    },
-    addLoaded: (id: string, query?: PinceauQuery) => {
-      if (!loaded[id] && query) { loaded[id] = query }
-      return loaded
-    },
   }
 
   /**
    * Main build-time $tokens helper.
    */
-  const $tokens = createTokensHelper(
-    buildContext.theme,
-    {
-      onNotFound(path, options) {
-        message('TOKEN_NOT_FOUND', [path, options])
-      },
+  const $tokens = createTokensHelper(buildContext.theme, {
+    cb(ctx) {
+      if (!ctx?.token) { console.log('token not found!', ctx.token) }
     },
-  )
+  })
 
   return {
     $tokens,

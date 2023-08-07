@@ -1,11 +1,32 @@
 import { getPinceauContext, usePinceauTransformContext } from '@pinceau/core'
-import type { PinceauContext } from '@pinceau/core'
-import { transformTokenHelper } from '@pinceau/theme/transforms'
+import type { PinceauContext, PinceauTransforms } from '@pinceau/core'
 import { createUnplugin } from 'unplugin'
-import { loadFile } from '../../vue/src/load'
+import { transformCSSFunctions } from './transforms'
 
 const PinceauStylePlugin = createUnplugin(() => {
   let ctx: PinceauContext
+
+  const transforms: PinceauTransforms = {
+    scripts: [
+      // TODO: Handle `const cssContext = css({ ... })`
+      transformCSSFunctions,
+    ],
+    styles: [
+      (transformCtx, pinceauCtx) => {
+        // Pick only:
+        // - `<style lang="ts">` blocks that has been transformed to `<style lang="postcss" transformed=true">`
+        // - `<style lang="ts">` blocks that has not been transformed in previous steps.
+        if (
+          (transformCtx.query?.transformed || transformCtx.target?.attrs?.transformed)
+          || (transformCtx.query?.type === 'style' && transformCtx.query?.lang === 'ts')
+        ) {
+          transformCSSFunctions(transformCtx, pinceauCtx, true)
+        }
+      },
+    ],
+    templates: [],
+    customs: [],
+  }
 
   return {
     name: 'pinceau:style-plugin',
@@ -20,55 +41,17 @@ const PinceauStylePlugin = createUnplugin(() => {
 
     transformInclude(id) {
       const query = ctx.transformed[id]
-
-      if (query) {
-        if (ctx.options.vue && query.vue) { return }
-        return true
-      }
-
-      return false
+      return !!query
     },
 
     transform(code, id) {
       const query = ctx.transformed[id]
 
-      if (!query || query.sfc) { return }
-
       const transformContext = usePinceauTransformContext(code, query, ctx)
 
-      transformTokenHelper(transformContext, ctx)
+      transformContext.registerTransforms(transforms)
 
-      console.log({
-        plugin: 'style',
-        type: 'transformed',
-        id,
-      })
-
-      return transformContext.result()
-    },
-
-    loadInclude(id) {
-      const query = ctx.loaded[id]
-
-      return !!query
-    },
-
-    load(id) {
-      const query = ctx.loaded[id]
-
-      if (!query || query.sfc) { return }
-
-      const file = loadFile(query) || ''
-
-      const transformContext = usePinceauTransformContext(file, query, ctx)
-
-      console.log({
-        plugin: 'style',
-        type: 'loaded',
-        id,
-      })
-
-      transformTokenHelper(transformContext, ctx)
+      transformContext.transform()
 
       return transformContext.result()
     },

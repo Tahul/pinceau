@@ -1,4 +1,3 @@
-import process from 'node:process'
 import type { PinceauRuntimePluginOptions } from './types'
 
 export { usePinceauRuntimeSheet } from './stylesheet'
@@ -16,5 +15,4 @@ export const defaultRuntimeOptions: PinceauRuntimePluginOptions = {
   tokensHelperConfig: {},
   multiApp: false,
   colorSchemeMode: 'media',
-  dev: process.env.NODE_ENV !== 'production',
 }

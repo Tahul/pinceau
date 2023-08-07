@@ -5,6 +5,7 @@ import type { PinceauOptions } from './types'
 import { updateDebugContext } from './debug'
 import { registerPostCSSPlugins } from './postcss'
 import { usePinceauContext } from './context'
+import { loadFile } from './load'
 
 const PinceauCorePlugin = createUnplugin<PinceauOptions>((options) => {
   // Setup debug context context.
@@ -24,7 +25,7 @@ const PinceauCorePlugin = createUnplugin<PinceauOptions>((options) => {
   const ctx = usePinceauContext(options)
 
   return {
-    name: 'pinceau:core',
+    name: 'pinceau:core-plugin',
 
     enforce: 'pre',
 
@@ -35,10 +36,33 @@ const PinceauCorePlugin = createUnplugin<PinceauOptions>((options) => {
       async configureServer(server) {
         // PinceauContext setup
         ctx.options.dev = true
-        ctx.updateViteServer(server)
 
         // PinceauContext injection
         ;(server as any)._pinceauContext = ctx
+      },
+      handleHotUpdate(hmrContext) {
+        const defaultRead = hmrContext.read
+
+        // Enforce load transformers even on HMR.
+        hmrContext.read = async function () {
+          let code = await defaultRead()
+
+          const query = ctx.transformed[hmrContext.file]
+
+          if (query) {
+            // Find format transformer
+            const transformer = ctx.transformers[query.ext]
+
+            // Apply load transformers
+            if (transformer && transformer?.loadTransformers?.length) {
+              for (const transform of transformer.loadTransformers) {
+                code = transform(code, query)
+              }
+            }
+          }
+
+          return code
+        }
       },
     },
 
@@ -50,17 +74,9 @@ const PinceauCorePlugin = createUnplugin<PinceauOptions>((options) => {
      * Global transform include check; Pinceau plugins will access this via `ctx.transformed`
      */
     transformInclude(id) {
-      const query = ctx.isTransformable(id)
+      const query = ctx.transformed[id]
 
-      let toRet
-
-      // Allow transformable files
-      if (query && query?.transformable) { toRet = true }
-
-      // Push included file into context
-      if (toRet && query) { ctx.addTransformed(id, query) }
-
-      return toRet
+      return !!query
     },
 
     transform(code) {
@@ -71,22 +87,46 @@ const PinceauCorePlugin = createUnplugin<PinceauOptions>((options) => {
      * Global load include check; Pinceau plugins will access this via `ctx.loaded`
      */
     loadInclude(id) {
-      const query = ctx.isLoadable(id)
+      const query = ctx.isTransformable(id)
 
-      let toRet
-
-      // Allow transformable files
-      if (query && query?.transformable) { toRet = true }
+      // ALlow virtual outputs by default
+      if (ctx.getOutput(id)) { return true }
 
       // Push included file into context
-      if (toRet && query) { ctx.addLoaded(id, query) }
+      if (query && query?.transformable) { ctx.addTransformed(id, query) }
 
-      return toRet
+      return !!query
     },
 
     load(id) {
+      // Load virtual outputs
       const output = ctx.getOutput(id)
       if (output) { return output }
+
+      // Load transform pipeline
+      const query = ctx.transformed[id]
+      if (!query) { return }
+
+      // Load file
+      let code = loadFile(query)
+      if (!code) { return }
+
+      // Find format transformer
+      const transformer = ctx.transformers[query.ext]
+      if (!transformer) { return code }
+
+      // Apply load transformers
+      if (transformer?.loadTransformers?.length) {
+        for (const transform of transformer.loadTransformers) {
+          code = transform(code, query)
+        }
+      }
+
+      // Try to find block via transformer loader
+      const block = ctx.transformers[query.ext].loadBlock(code, query)
+
+      // Return scoped contents
+      return block || code
     },
   }
 })

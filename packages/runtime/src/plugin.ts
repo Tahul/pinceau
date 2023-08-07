@@ -6,7 +6,7 @@ const PinceauRuntimePlugin = createUnplugin(() => {
   let ctx: PinceauContext
 
   return {
-    name: 'pinceau:style-plugin',
+    name: 'pinceau:runtime-plugin',
 
     enforce: 'pre',
 
@@ -19,28 +19,13 @@ const PinceauRuntimePlugin = createUnplugin(() => {
     transformInclude(id) {
       const query = ctx.transformed[id]
 
-      if (query) {
-        if (ctx.options.vue && query.vue) { return }
-        return true
-      }
-
-      return false
+      return !!query
     },
 
     transform(code, id) {
       const query = ctx.transformed[id]
 
       return code
-    },
-
-    loadInclude(id) {
-      const query = ctx.loaded[id]
-
-      return !!query
-    },
-
-    load(id): any {
-      const query = ctx.loaded[id]
     },
   }
 })

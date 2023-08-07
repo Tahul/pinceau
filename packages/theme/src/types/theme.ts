@@ -1,5 +1,5 @@
-import type { GeneratedPinceauPaths, GeneratedPinceauTheme } from '#pinceau/theme'
-import type { GeneratedPinceauUtils } from '#pinceau/utils'
+import type { GeneratedPinceauPaths, GeneratedPinceauTheme } from '$pinceau/theme'
+import type { GeneratedPinceauUtils } from '$pinceau/utils'
 
 export type PinceauTheme = GeneratedPinceauTheme
 

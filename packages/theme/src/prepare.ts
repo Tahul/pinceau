@@ -10,7 +10,7 @@ import { schemaFull, tsFull, utilsFull } from './outputs'
 export async function prepareBuildDir(
   options: PinceauOptions,
 ) {
-  const themeDir = join(options.theme.buildDir || '', 'theme')
+  const themeDir = options.theme.buildDir
 
   if (!existsSync(themeDir)) { await mkdir(themeDir, { recursive: true }) }
 
@@ -25,9 +25,9 @@ export async function stubOutputs(
   force = false,
 ) {
   const files = {
-    'theme/index.css': () => '/* This file is empty because no tokens has been provided or your configuration is broken. */',
-    'definitions.ts': () => 'export const definitions = {} as const',
-    'index.ts': tsFull,
+    'pinceau.css': () => '/* This file is empty because no tokens has been provided or your configuration is broken. */',
+    'definitions.ts': () => 'export const definitions = {} as const\nexport default definitions\n',
+    'theme.ts': tsFull,
     'utils.ts': utilsFull,
   }
 
@@ -39,6 +39,6 @@ export async function stubOutputs(
 
     if (force && existsSync(path)) { await rm(path) }
 
-    if (!existsSync(path)) { await writeFile(path, stubbingFunction ? await stubbingFunction({} as any) : '') }
+    if (!existsSync(path)) { await writeFile(path, stubbingFunction ? stubbingFunction({} as any) : '') }
   }
 }

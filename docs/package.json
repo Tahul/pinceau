@@ -7,7 +7,7 @@
     "_prepare": "nuxi prepare"
   },
   "devDependencies": {
-    "@nuxt-themes/docus": "^1.14.3",
+    "@nuxt-themes/docus": "^1.14.4",
     "@types/node": "^20.4.5",
     "@vueuse/motion": "^2.0.0"
   }

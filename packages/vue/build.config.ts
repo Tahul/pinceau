@@ -14,6 +14,10 @@ export default defineBuildConfig({
       input: 'src/transforms.ts',
       name: 'transforms',
     },
+    {
+      input: 'src/runtime.ts',
+      name: 'runtime',
+    },
   ],
   failOnWarn: false,
   clean: true,
@@ -33,5 +37,7 @@ export default defineBuildConfig({
     'scule',
     '@vue',
     '@volar',
+    '$pinceau',
+    'pathe',
   ],
 })

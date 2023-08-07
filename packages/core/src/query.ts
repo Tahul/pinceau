@@ -3,8 +3,8 @@ import type { PinceauQuery } from './types'
 
 // Supported extensions for transforms ($dt or complete Vue SFCs)
 export const PINCEAU_STYLES_EXTENSIONS = ['css', 'sass', 'scss', 'postcss', 'less', 'styl', 'stylus']
-export const PINCEAU_JS_EXTENSIONS = ['js', 'jsx', 'mjs', 'ts', 'tsx', 'jsx', 'tsx', 'js', 'ts']
-export const PINCEAU_SUPPORTED_EXTENSIONS = [...PINCEAU_STYLES_EXTENSIONS, ...PINCEAU_JS_EXTENSIONS, 'vue']
+export const PINCEAU_SCRIPTS_EXTENSIONS = ['jsx', 'mjs', 'tsx', 'js', 'ts', 'cjs']
+export const PINCEAU_SUPPORTED_EXTENSIONS = [...PINCEAU_STYLES_EXTENSIONS, ...PINCEAU_SCRIPTS_EXTENSIONS, 'vue']
 
 /**
  * Vue SFC Query, forked from the below:
@@ -20,29 +20,27 @@ export function parsePinceauQuery(id: string): PinceauQuery {
   const [filename, rawQuery] = id.split('?', 2)
   const params = new URLSearchParams(rawQuery)
   const ret = { filename, id } as PinceauQuery
-  const langPart = Object.keys(Object.fromEntries(params)).find(key => /lang\./i.test(key))
 
   // Extraneous parameters
   ret.global = params.has('global')
   ret.src = params.has('src')
   ret.raw = params.has('raw')
-  ret.ext = path.extname(id).slice(1)
+  ret.ext = path.extname(filename).slice(1)
 
   // Target Vue query parameters
-  ret.vue = params.has('vue') || id.endsWith('.vue')
+  ret.vueQuery = params.has('vue')
   if (params.has('type')) { ret.type = params.get('type') as PinceauQuery['type'] }
+  if (params.has('lang.ts')) { ret.lang = 'ts' }
   if (params.has('index')) { ret.index = Number(params.get('index')) }
   if (params.has('scoped')) { ret.scoped = String(params.get('scoped')) }
+  if (params.has('setup')) { ret.setup = params.get('setup') === 'true' }
+  if (params.has('transformed')) { ret.transformed = params.get('transformed') === 'true' }
 
   // Target language
   if (params.has('lang')) { ret.lang = params.get('lang') as PinceauQuery['lang'] }
-  if (!ret.lang && langPart) {
-    const [, lang] = langPart.split('.')
-    ret.lang = lang
-  }
 
   // Is target file a SFC?
-  ret.sfc = ret.vue
+  if (ret.ext === 'vue' && !ret.type && !ret.index) { ret.sfc = 'vue' }
 
   // Is target style?
   if (PINCEAU_STYLES_EXTENSIONS.includes(ret.ext)) { ret.styles = true }

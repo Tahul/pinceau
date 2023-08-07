@@ -1,7 +1,7 @@
 import type { ColorSchemeModes, PinceauMediaQueries, PinceauTheme, Theme, TokensFunctionOptions } from '@pinceau/theme'
 import { normalizeTokens, resolveThemeRule, walkTokens } from '@pinceau/theme'
 import { createTokensHelper, get, pathToVarName, set } from '@pinceau/core'
-import { resolveReferences } from '@pinceau/style'
+import { resolveReferences } from '@pinceau/stringify'
 
 export function usePinceauThemeSheet(
   initialTheme: any,
@@ -165,7 +165,6 @@ export function usePinceauThemeSheet(
     // Resolve value if it contains references
     const resolvedValue = resolveReferences(
       { value } as any,
-      {} as any,
       { $tokens } as any,
     )
 

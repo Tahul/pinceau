@@ -40,7 +40,9 @@ export const defaultStyleOptions: PinceauStyleOptions = {
 }
 
 export const defaultRuntimeOptions: PinceauRuntimeOptions = {
-  /* */
+  computedStyles: true,
+  cssProp: true,
+  variants: true,
 }
 
 export const defaultVueOptions: PinceauVueOptions = {

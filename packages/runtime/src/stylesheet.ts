@@ -1,4 +1,4 @@
-import { stringify as pinceauStringify, resolveCssProperty } from '@pinceau/style'
+import { stringify as pinceauStringify, resolveCssProperty } from '@pinceau/stringify'
 import type { ColorSchemeModes, PinceauUtils, TokensFunction } from '@pinceau/theme'
 import type { CachedCSSRule, PinceauRuntimeSheet, PinceauUidTypes } from './types'
 
@@ -26,17 +26,6 @@ export function usePinceauRuntimeSheet(
       {
         loc,
         localTokens: {},
-      } as any,
-      {
-        $tokens,
-        options: {
-          theme: {
-            colorSchemeMode,
-          },
-        },
-        resolvedConfig: {
-          utils,
-        },
       } as any,
     ),
   )
@@ -69,7 +58,7 @@ export function usePinceauRuntimeSheet(
       }
 
       // Get hydratable stylesheet
-      hydratableSheet = doc.querySelector(`style#pinceau-runtime-hydratable${appId ? `-${appId}` : ''}`) as HTMLStyleElement
+      hydratableSheet = doc.querySelector(`style#pinceau-runtime${appId ? `-${appId}` : ''}`) as HTMLStyleElement
     }
 
     sheet

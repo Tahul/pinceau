@@ -82,19 +82,6 @@ export function normalizeTokens(
 /**
  * Flatten tokens object for runtime usage.
  */
-export function flattenTokens(data: any, toValue = false, raw = true) {
-  return walkTokens(data, (value) => {
-    // Get slim token value object
-    const toRet = toValue
-      ? value?.value
-      : {
-          value: value?.value,
-          variable: value?.attributes?.variable,
-        }
-
-    // Support writing raw value
-    if (!toValue && raw && value?.original?.value) { toRet.raw = value.original.value }
-
-    return toRet
-  })
+export function flattenTokens(data: any) {
+  return walkTokens(data, value => ({ value: value?.value, variable: value?.attributes?.variable }))
 }
