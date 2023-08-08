@@ -1,3 +1,4 @@
+import process from 'node:process'
 import type { ViteDevServer } from 'vite'
 import type { LoadConfigResult, PinceauConfigContext, PinceauOptions, PinceauTheme } from '../types'
 import { outputFileNames } from '../utils/regexes'

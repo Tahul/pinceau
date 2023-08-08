@@ -179,7 +179,7 @@ export function usePinceauThemeSheet(
   /**
    * Returns a writeable computed that will reactively update a token value accross all references when updated.
    */
-  function reactiveToken(path: PinceauTokensPaths | ({} & string)) {
+  function reactiveToken(path: PinceauTokensPaths | (object & string)) {
     return computed(
       {
         get() {

@@ -1,3 +1,4 @@
+import process from 'node:process'
 import { nextTick } from 'vue'
 import type { TokensFunctionOptions } from '../../types'
 
