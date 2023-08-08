@@ -82,6 +82,7 @@ const module: any = defineNuxtModule<PinceauOptions>({
       if (options?.outputDir) {
         tsConfig.compilerOptions.paths['#pinceau/utils'] = [`${resolve(options.outputDir, 'utils.ts')}`]
         tsConfig.compilerOptions.paths['#pinceau/theme'] = [`${resolve(options.outputDir, 'index.ts')}`]
+        tsConfig.compilerOptions.paths['pinceau.css'] = [`${resolve(options.outputDir), 'theme/theme.css'}`]
         if (options?.studio) { tsConfig.compilerOptions.paths['#pinceau/schema'] = [`${resolve(options.outputDir, 'schema.ts')}`] }
         if (options?.definitions) { tsConfig.compilerOptions.paths['#pinceau/definitions'] = [`${resolve(options.outputDir, 'definitions.ts')}`] }
       }
