@@ -61,7 +61,7 @@ export default createUnplugin<PinceauOptions>((options) => {
   const { stopPerfTimer } = useDebugPerformance('Setup Unplugin', options?.debug)
   updateDebugContext({
     debugLevel: options?.dev ? options.debug : false,
-    logger: consola.withScope(' 🖌 '),
+    logger: consola.withTag(' 🖌 '),
     // chalk.bgBlue.blue
     tag: value => chalk.bgBlue.blue(value),
     // chalk.blue

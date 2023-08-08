@@ -1,4 +1,3 @@
-import process from 'node:process'
 import type { ComputedRef, Plugin, Ref } from 'vue'
 import { computed, getCurrentInstance, ref } from 'vue'
 import { nanoid } from 'nanoid'
@@ -16,6 +15,7 @@ const defaultRuntimeOptions: PinceauRuntimePluginOptions = {
   tokensHelperConfig: {},
   multiApp: false,
   colorSchemeMode: 'media',
+  // eslint-disable-next-line n/prefer-global/process
   dev: process.env.NODE_ENV !== 'production',
 }
 
@@ -31,7 +31,8 @@ export const plugin: Plugin = {
     // Resolve theme sheet
     const themeSheet = usePinceauThemeSheet(theme, tokensHelperConfig, colorSchemeMode)
 
-    // Runtime debug setup:
+    // @ts-ignore - Runtime debug
+    // eslint-disable-next-line n/prefer-global/process
     if (dev && (import.meta.hot || (process as any).server)) { import('./features/debug').then(({ usePinceauRuntimeDebug }) => usePinceauRuntimeDebug(tokensHelperConfig)) }
 
     // Sets a unique id for this plugin instance, as Pinceau can be used in multiple apps at the same time.
@@ -56,6 +57,8 @@ export const plugin: Plugin = {
       // Component LOC for debug in development
       // Only LOC variable passing should stay in bundle
       let loc: any
+      // @ts-ignore - Runtime debug
+      // eslint-disable-next-line n/prefer-global/process
       if (dev && (import.meta.hot || (process as any).server)) {
         // @ts-ignore
         const { __file: file, __name: name } = instance.vnode.type
