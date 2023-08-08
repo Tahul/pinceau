@@ -35,6 +35,7 @@ export function transformScheme(code = '', scheme: 'light' | 'dark') {
  * Resolve `@{media.xl}` declarations.
  */
 export function transformMediaQueries(code = '', ctx: PinceauContext, loc?: any): string {
+  // @ts-ignore
   const mediaQueries = ctx.$tokens('media', { key: undefined, loc })
 
   code = code.replace(
