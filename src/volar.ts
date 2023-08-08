@@ -72,7 +72,7 @@ const plugin: VueLanguagePlugin = _ => ({
       ])
     }
     else if (variantsContent) {
-      embeddedFile.content.push(variantsContent)
+      embeddedFile.content.unshift(variantsContent)
     }
   },
 })

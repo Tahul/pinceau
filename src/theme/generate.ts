@@ -54,6 +54,9 @@ export async function generateTheme(
     })
   }
 
+  // Enforce `media` key in tokens.
+  if (!tokens.media) { tokens.media = {} }
+
   // Transforms used
   const transforms = [
     'size/px',

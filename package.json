@@ -33,7 +33,7 @@
       "require": "./dist/index.cjs"
     },
     "./types": {
-      "types": "./dist/index.d.d.ts",
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.d.ts",
       "require": "./dist/index.d.ts"
     },

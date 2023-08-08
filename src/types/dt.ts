@@ -24,7 +24,7 @@ export interface TokensFunctionOptions {
  * $dt function
  */
 export type DtFunction = (
-  path: PinceauTokensPaths | (string & object),
+  path: PinceauTokensPaths | (string & {}),
   key?: 'variable' | 'value'
 ) => string
 
@@ -32,7 +32,7 @@ export type DtFunction = (
  * $tokens function
  */
 export type TokensFunction = (
-  path?: PinceauTokensPaths | (string & object),
+  path?: PinceauTokensPaths | (string & {}),
   options?: TokensFunctionOptions,
   theme?: any
 ) => DesignTokens | DesignToken | number | string
