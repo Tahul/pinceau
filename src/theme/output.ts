@@ -1,4 +1,5 @@
 import { existsSync } from 'node:fs'
+import process from 'node:process'
 import { mkdir, rm, writeFile } from 'node:fs/promises'
 import { join } from 'pathe'
 import type { PinceauOptions } from '../types'

@@ -29,38 +29,38 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "require": "./dist/index.cjs",
-      "import": "./dist/index.mjs"
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
     },
     "./types": {
       "types": "./dist/index.d.d.ts",
-      "require": "./dist/index.d.ts",
-      "import": "./dist/index.d.ts"
+      "import": "./dist/index.d.ts",
+      "require": "./dist/index.d.ts"
     },
     "./vite": {
       "types": "./dist/vite.d.ts",
-      "require": "./dist/vite.cjs",
-      "import": "./dist/vite.mjs"
+      "import": "./dist/vite.mjs",
+      "require": "./dist/vite.cjs"
     },
     "./nuxt": {
       "types": "./dist/nuxt.d.ts",
-      "require": "./dist/nuxt.cjs",
-      "import": "./dist/nuxt.mjs"
+      "import": "./dist/nuxt.mjs",
+      "require": "./dist/nuxt.cjs"
     },
     "./runtime": {
       "types": "./dist/runtime.d.ts",
-      "require": "./dist/runtime.cjs",
-      "import": "./dist/runtime.mjs"
+      "import": "./dist/runtime.mjs",
+      "require": "./dist/runtime.cjs"
     },
     "./nitro": {
       "types": "./dist/nitro.d.ts",
-      "require": "./dist/nitro.cjs",
-      "import": "./dist/nitro.mjs"
+      "import": "./dist/nitro.mjs",
+      "require": "./dist/nitro.cjs"
     },
     "./utils": {
       "types": "./dist/utils.d.ts",
-      "require": "./dist/utils.cjs",
-      "import": "./dist/utils.mjs"
+      "import": "./dist/utils.mjs",
+      "require": "./dist/utils.cjs"
     },
     "./volar": "./dist/volar.cjs",
     "./browser": "./dist/browser/index.js",
@@ -108,73 +108,75 @@
     "prepare": "pnpm -C playground run prepare && npm -C docs run prepare"
   },
   "dependencies": {
-    "@unocss/reset": "^0.53.4",
+    "@unocss/reset": "^0.54.2",
     "@volar/vue-language-core": "^1.6.5",
-    "acorn": "^8.9.0",
+    "acorn": "^8.10.0",
     "chroma-js": "^2.4.2",
-    "consola": "^3.2.2",
+    "consola": "^3.2.3",
     "csstype": "^3.1.2",
     "defu": "^6.1.2",
-    "magic-string": "^0.30.0",
+    "magic-string": "^0.30.2",
     "nanoid": "^4.0.2",
     "ohash": "^1.1.2",
     "pathe": "^1.1.1",
-    "postcss-custom-properties": "13.2.0",
+    "postcss-custom-properties": "13.3.0",
     "postcss-dark-theme-class": "0.7.3",
     "postcss-nested": "^6.0.1",
-    "recast": "^0.23.2",
+    "recast": "^0.23.3",
     "scule": "^1.0.0",
     "style-dictionary-esm": "^1.3.7",
     "unbuild": "^1.2.1",
-    "unplugin": "^1.3.1"
+    "unplugin": "^1.4.0"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^0.39.5",
-    "@nuxt/kit": "^3.6.1",
-    "@nuxt/test-utils": "^3.6.1",
-    "@nuxthq/studio": "^0.13.2",
+    "@antfu/eslint-config": "^0.40.2",
+    "@nuxt/kit": "^3.6.5",
+    "@nuxt/test-utils": "^3.6.5",
+    "@nuxthq/studio": "^0.13.4",
     "@nuxtjs/color-mode": "^3.3.0",
     "@types/chroma-js": "^2.4.0",
-    "@types/node": "^20.3.2",
-    "@vue/test-utils": "^2.4.0",
+    "@types/node": "^20.4.8",
+    "@vue/test-utils": "^2.4.1",
     "buffer": "^6.0.3",
-    "eslint": "^8.43.0",
-    "esno": "^0.16.3",
-    "fast-glob": "^3.2.12",
+    "eslint": "^8.46.0",
+    "esno": "^0.17.0",
+    "fast-glob": "^3.3.1",
     "js-confetti": "^0.11.0",
     "jsdom": "^22.1.0",
-    "nitropack": "2.5.1",
-    "nodemon": "^2.0.22",
-    "nuxi": "3.6.1",
-    "nuxt": "3.6.1",
+    "nitropack": "2.5.2",
+    "nodemon": "^3.0.1",
+    "nuxi": "3.6.5",
+    "nuxt": "3.6.5",
     "nuxt-component-meta": "^0.5.3",
-    "nuxt-vitest": "^0.8.5",
-    "playwright": "^1.35.1",
-    "release-it": "^15.11.0",
+    "nuxt-vitest": "^0.10.2",
+    "playwright": "^1.36.2",
+    "release-it": "^16.1.3",
     "rimraf": "^5.0.1",
-    "rollup": "^3.25.3",
-    "tsup": "^7.1.0",
-    "typescript": "^5.1.5",
-    "unenv": "^1.5.1",
-    "vite": "^4.3.9",
-    "vite-plugin-inspect": "^0.7.29",
-    "vitest": "^0.32.2",
+    "rollup": "^3.27.2",
+    "tsup": "^7.2.0",
+    "typescript": "^5.1.6",
+    "unenv": "^1.7.0",
+    "vite": "^4.4.9",
+    "vite-plugin-inspect": "^0.7.35",
+    "vitest": "^0.34.1",
     "vue": "^3.3.4",
-    "webpack": "^5.88.0"
+    "webpack": "^5.88.2"
   },
   "pnpm": {
     "peerDependencyRules": {
       "allowedVersions": {
         "axios": "0.25.0",
         "vue": "^3.2.45",
-        "vite": "^4.0.0"
+        "vite": "^4.0.0",
+        "vitest": "^0.34.1"
       },
       "ignoreMissing": [
         "postcss",
         "postcss-*",
         "@algolia/client-search",
         "nuxt",
-        "vue"
+        "vue",
+        "vitest"
       ]
     },
     "overrides": {

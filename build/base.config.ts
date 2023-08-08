@@ -38,6 +38,7 @@ export default defineBuildConfig({
     'vue',
     '@vue',
     'vue/compiler-sfc',
+    '@vue/compiler-sfc',
     'style-dictionary-esm',
     'jiti',
     'tinycolor2',
@@ -63,5 +64,6 @@ export default defineBuildConfig({
     'muggle-string',
     '@babel/types',
     'ast-types',
+    'rollup',
   ],
 })

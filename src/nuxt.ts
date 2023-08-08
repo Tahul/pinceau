@@ -1,3 +1,4 @@
+import process from 'node:process'
 import { existsSync } from 'node:fs'
 import { join, resolve } from 'pathe'
 import { addPlugin, addPluginTemplate, createResolver, defineNuxtModule, resolveAlias, resolveModule } from '@nuxt/kit'

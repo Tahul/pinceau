@@ -1,3 +1,4 @@
+import process from 'node:process'
 import { createUnplugin } from 'unplugin'
 import MagicString from 'magic-string'
 import { join } from 'pathe'

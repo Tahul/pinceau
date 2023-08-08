@@ -1,4 +1,5 @@
 import { existsSync } from 'node:fs'
+import process from 'node:process'
 import { readFile } from 'node:fs/promises'
 import createJITI from 'jiti'
 import { resolve } from 'pathe'

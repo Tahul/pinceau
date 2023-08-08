@@ -1,3 +1,4 @@
+import process from 'node:process'
 import type { ComputedRef, Plugin, Ref } from 'vue'
 import { computed, getCurrentInstance, ref } from 'vue'
 import { nanoid } from 'nanoid'
