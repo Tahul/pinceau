@@ -17,6 +17,11 @@
       "types": "./dist/transforms.d.ts",
       "require": "./dist/transforms.cjs",
       "import": "./dist/transforms.mjs"
+    },
+    "./utils": {
+      "types": "./dist/utils.d.ts",
+      "require": "./dist/utils.cjs",
+      "import": "./dist/utils.mjs"
     }
   },
   "main": "./dist/index.cjs",

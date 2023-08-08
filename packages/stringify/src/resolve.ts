@@ -1,5 +1,5 @@
 import type { PinceauContext } from '@pinceau/core'
-import { pathToVarName, referencesRegex } from '@pinceau/core'
+import { pathToVarName, referencesRegex } from '@pinceau/core/runtime'
 import type { StringifyContext } from './types'
 
 const darkToken = '@dark'

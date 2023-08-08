@@ -1,4 +1,4 @@
-import { printAst } from '@pinceau/core'
+import { printAst } from '@pinceau/core/utils'
 import type { CompletionItem, TextDocumentPositionParams } from 'vscode-languageserver'
 import { CompletionItemKind } from 'vscode-languageserver'
 import type { PinceauExtension } from '..'

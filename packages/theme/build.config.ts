@@ -14,6 +14,14 @@ export default defineBuildConfig({
       input: 'src/transforms.ts',
       name: 'transforms',
     },
+    {
+      input: 'src/runtime.ts',
+      name: 'runtime',
+    },
+    {
+      input: 'src/utils.ts',
+      name: 'utils',
+    },
   ],
   failOnWarn: false,
   clean: true,

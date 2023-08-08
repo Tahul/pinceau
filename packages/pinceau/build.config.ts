@@ -6,6 +6,10 @@ export default defineBuildConfig({
       input: 'src/index.ts',
       name: 'index',
     },
+    {
+      input: 'src/plugin.ts',
+      name: 'plugin',
+    },
   ],
   failOnWarn: false,
   clean: true,

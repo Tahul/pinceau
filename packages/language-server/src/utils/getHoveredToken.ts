@@ -1,5 +1,5 @@
 import type { Position, TextDocument } from 'vscode-languageserver-textdocument'
-import { helperRegex } from '@pinceau/theme'
+import { helperRegex } from '@pinceau/theme/utils'
 import { getCurrentLine } from './getCurrentLine'
 
 export function getHoveredToken(doc: TextDocument, position: Position): { token: string; range: { start: number; end: number } } | undefined {

@@ -2,10 +2,10 @@ import { createUnplugin } from 'unplugin'
 import chalk from 'chalk'
 import { consola } from 'consola'
 import type { PinceauOptions } from './types'
-import { updateDebugContext } from './debug'
-import { registerPostCSSPlugins } from './postcss'
-import { usePinceauContext } from './context'
-import { loadFile } from './load'
+import { updateDebugContext } from './utils/debug'
+import { registerPostCSSPlugins } from './utils/postcss'
+import { usePinceauContext } from './utils/context'
+import { loadFile } from './utils/load'
 
 const PinceauCorePlugin = createUnplugin<PinceauOptions>((options) => {
   // Setup debug context context.

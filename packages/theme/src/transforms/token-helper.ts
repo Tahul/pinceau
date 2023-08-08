@@ -1,5 +1,5 @@
 import type { PinceauTransformFunction } from '@pinceau/core'
-import { helperRegex } from '../regexes'
+import { helperRegex } from '../utils/regexes'
 
 /**
  * Resolve `$dt()` calls.

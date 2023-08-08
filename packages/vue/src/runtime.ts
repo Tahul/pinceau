@@ -1,6 +1,8 @@
 import { getCurrentInstance } from 'vue'
 import type { Variants } from '@pinceau/runtime'
 
+export { useThemeSheet, useRuntimeSheet } from '@pinceau/runtime'
+
 export function useVariants(variants: Variants) {
   const component = getCurrentInstance()
 
@@ -18,8 +20,4 @@ export function useComputedStyle(variable: string, computedStyleFunc: () => stri
     variable,
     computedStyleFunc,
   })
-}
-
-export function useStylesheet(id: string) {
-  console.log({ id })
 }

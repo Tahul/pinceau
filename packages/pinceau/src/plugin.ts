@@ -1,6 +1,6 @@
 import type { PinceauUserOptions } from '@pinceau/core'
 import PinceauCorePlugin from '@pinceau/core/plugin'
-import { normalizeOptions } from '@pinceau/core'
+import { normalizeOptions } from '@pinceau/core/utils'
 import PinceauThemePlugin from '@pinceau/theme/plugin'
 import PinceauStylePLugin from '@pinceau/style/plugin'
 import PinceauVuePlugin from '@pinceau/vue/plugin'

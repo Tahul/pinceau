@@ -17,18 +17,32 @@
       "types": "./dist/transforms.d.ts",
       "require": "./dist/transforms.cjs",
       "import": "./dist/transforms.mjs"
+    },
+    "./runtime": {
+      "types": "./dist/runtime.d.ts",
+      "require": "./runtime.cjs",
+      "import": "./dist/runtime.mjs"
+    },
+    "./utils": {
+      "types": "./dist/utils.d.ts",
+      "require": "./dist/utils.cjs",
+      "import": "./dist/utils.mjs"
     }
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "runtime.cjs"
+  ],
   "scripts": {
     "build": "unbuild",
     "stub": "unbuild --stub"
   },
   "dependencies": {
     "@pinceau/core": "workspace:*",
-    "@unocss/reset": "^0.54.1",
+    "@unocss/reset": "^0.54.2",
     "style-dictionary-esm": "^1.3.7",
     "untyped": "^1.4.0"
   }

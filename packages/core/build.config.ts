@@ -10,6 +10,14 @@ export default defineBuildConfig({
       input: 'src/plugin.ts',
       name: 'plugin',
     },
+    {
+      input: 'src/runtime.ts',
+      name: 'runtime',
+    },
+    {
+      input: 'src/utils.ts',
+      name: 'utils',
+    },
   ],
   failOnWarn: false,
   clean: true,

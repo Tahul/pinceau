@@ -1,18 +1,14 @@
 import type { PinceauRuntimePluginOptions } from './types'
 
-export { usePinceauRuntimeSheet } from './stylesheet'
-export { usePinceauRuntimeIds } from './ids'
-export { usePinceauThemeSheet } from './theme'
-export { usePinceauComputedStyle } from './computedStyles'
-export { usePinceauVariants } from './variants'
-export { usePinceauCssProp } from './cssProp'
+export { useRuntimeSheet } from './runtime-sheet'
+export { getRuntimeIds } from './ids'
+export { useThemeSheet } from './theme-sheet'
 
 export * from './types'
 
 export const defaultRuntimeOptions: PinceauRuntimePluginOptions = {
   theme: {},
   utils: {},
-  tokensHelperConfig: {},
-  multiApp: false,
+  appId: false,
   colorSchemeMode: 'media',
 }

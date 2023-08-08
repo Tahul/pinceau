@@ -1,4 +1,4 @@
-import { getPinceauContext, usePinceauTransformContext } from '@pinceau/core'
+import { getPinceauContext, usePinceauTransformContext } from '@pinceau/core/utils'
 import type { PinceauContext, PinceauTransforms } from '@pinceau/core'
 import { createUnplugin } from 'unplugin'
 import { transformCSSFunctions } from './transforms'

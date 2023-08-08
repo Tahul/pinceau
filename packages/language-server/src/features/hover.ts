@@ -1,4 +1,4 @@
-import { printAst } from '@pinceau/core'
+import { printAst } from '@pinceau/core/utils'
 import type { PinceauExtension } from '../index'
 import { stringifiedValue } from '../utils/tokens'
 

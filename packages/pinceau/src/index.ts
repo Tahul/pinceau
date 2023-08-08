@@ -1,3 +1,3 @@
-import PinceauPlugin from './plugin'
+export { version } from '../package.json'
 
-export default PinceauPlugin
+export * from './define-theme'

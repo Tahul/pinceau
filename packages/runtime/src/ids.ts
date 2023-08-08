@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid'
 import type { PinceauRuntimeIds } from './types'
 
-export function usePinceauRuntimeIds(
+export function getRuntimeIds(
   el: HTMLElement,
   scopeId?: boolean,
 ): PinceauRuntimeIds {

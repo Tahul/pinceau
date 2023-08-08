@@ -7,11 +7,20 @@
       "types": "./dist/index.d.ts",
       "require": "./dist/index.cjs",
       "import": "./dist/index.mjs"
+    },
+    "./plugin": {
+      "types": "./plugin.d.ts",
+      "require": "./dist/plugin.cjs",
+      "import": "./dist/plugin.mjs"
     }
   },
   "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "module": "./dist/index.mjs",
+  "files": [
+    "dist",
+    "plugin.d.ts"
+  ],
   "scripts": {
     "build": "unbuild",
     "stub": "unbuild --stub"

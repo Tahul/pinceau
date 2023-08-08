@@ -3,19 +3,26 @@ import type { PinceauContext } from '@pinceau/core'
 export function createVuePlugin(ctx: PinceauContext) {
   const runtimeOptions = { ...ctx.options.runtime, colorSchemeMode: ctx.options.theme?.colorSchemeMode, dev: ctx.options.dev }
 
-  return `import { useStylesheet } from '$pinceau/runtime'
+  return `import { 
+  ${ctx.options.theme ? 'useThemeSheet' : ''},
+  ${ctx.options.runtime ? 'useRuntimeSheet' : ''} 
+} from '@pinceau/runtime'
 
 export const PinceauVueOptions = ${JSON.stringify(runtimeOptions || {})}
 
 export const PinceauVue = {
-  install(app) {
-    const themeSheet = useStylesheet('#pinceau-theme')
-    const runtimeSheet = useStylesheet('#pinceau-runtime')
+  install(app, options = {}) {
+    const _options = { ...PinceauVueOptions, ...options }
 
-    // Inject/provide for composables access
+    ${ctx.options.theme ? 'const themeSheet = useThemeSheet(_options)' : ''}
     ${ctx.options.theme ? 'app.provide(\'pinceauThemeSheet\', themeSheet)' : ''}
+
+    ${ctx.options.runtime ? `const runtimeSheet = useRuntimeSheet(${ctx.options.theme ? '{ themeSheet, ..._options }' : '_options'})` : ''}
     ${ctx.options.runtime ? 'app.provide(\'pinceauRuntimeSheet\', runtimeSheet)' : ''}
-    ${runtimeOptions?.ssr ? 'app.config.globalProperties.$pinceauSsr = { get: () => runtimeSheet.toString() }' : ''}
+
+    console.log({ themeSheet, runtimeSheet })
+
+    ${ctx.options.runtime && runtimeOptions?.ssr ? 'app.config.globalProperties.$pinceauSsr = { get: () => runtimeSheet.toString() }' : ''}
   }
 }`
 }

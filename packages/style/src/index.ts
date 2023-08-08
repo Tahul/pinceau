@@ -2,9 +2,7 @@ import type { PinceauCSSFunctionContext } from './types'
 
 export * from './types'
 
-export * from './ast'
-export * from './eval'
-export * from './css-function-context'
+export { version } from '../package.json'
 
 declare module '@pinceau/core' {
   interface PinceauTransformState {

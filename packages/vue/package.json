@@ -20,13 +20,17 @@
     },
     "./runtime": {
       "types": "./dist/runtime.d.ts",
-      "require": "./dist/runtime.cjs",
+      "require": "./runtime.cjs",
       "import": "./dist/runtime.mjs"
     }
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "runtime.cjs"
+  ],
   "scripts": {
     "build": "unbuild",
     "stub": "unbuild --stub"

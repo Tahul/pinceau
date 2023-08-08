@@ -15,6 +15,7 @@ export default defineBuildConfig({
   },
   externals: [
     '@pinceau/core',
+    '@pinceau/core/runtime',
     '@pinceau/theme',
     '@pinceau/style',
     '@pinceau/runtime',

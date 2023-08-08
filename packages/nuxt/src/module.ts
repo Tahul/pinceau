@@ -4,10 +4,11 @@ import { join, resolve } from 'pathe'
 import { addPlugin, addPluginTemplate, addPrerenderRoutes, createResolver, defineNuxtModule, resolveModule } from '@nuxt/kit'
 import createJITI from 'jiti'
 import type { PinceauUserOptions } from '@pinceau/core'
-import { prepareBuildDir, walkTokens } from '@pinceau/theme'
+import { prepareBuildDir } from '@pinceau/theme/utils'
+import { walkTokens } from '@pinceau/theme/runtime'
 import type { ConfigLayer } from '@pinceau/theme'
-import { defaultOptions, normalizeOptions, referencesRegex } from '@pinceau/core'
-import Pinceau from 'pinceau'
+import { defaultOptions, normalizeOptions, referencesRegex } from '@pinceau/core/utils'
+import Pinceau from 'pinceau/plugin'
 
 export interface ModuleHooks {
   'pinceau:options': (options: PinceauUserOptions) => void | Promise<void>
@@ -39,10 +40,6 @@ const module: any = defineNuxtModule<PinceauUserOptions>({
     // Local module resolver
     const modulePath = createResolver(import.meta.url)
     const resolveLocalModule = (path: string) => resolveModule(path, { paths: modulePath.resolve('./') })
-
-    // Transpile pinceau
-    nuxt.options.build.transpile = nuxt.options.build.transpile || []
-    nuxt.options.build.transpile.push('pinceau')
 
     // Set `cwd` from Nuxt rootDir
     options.cwd = nuxt.options.rootDir
@@ -178,20 +175,20 @@ const module: any = defineNuxtModule<PinceauUserOptions>({
             'import { dirname, join } from \'pathe\'',
             'import { useRuntimeConfig } from \'#imports\'',
             '// Built targets',
-            'import { plugin, options as pluginOptions } from \'#build/pinceau/vue-plugin\'',
+            'import { PinceauVue, PinceauVueOptions } from \'#build/pinceau/vue-plugin\'',
             'import utils from \'#build/pinceau/utils\'',
             'import theme from \'#build/pinceau/theme\'',
             '',
             '// Plugin setup',
             `export default defineNuxtPlugin(async (nuxtApp) => {
-              nuxtApp.vueApp.use(plugin, { ...pluginOptions, theme, utils })
+              nuxtApp.vueApp.use(PinceauVue, { ...PinceauVueOptions, theme, utils })
 
               // Handle server-side styling
               nuxtApp.hook('app:rendered', async (app) => {
                 app.ssrContext.event.pinceauContent = app.ssrContext.event.pinceauContent || {}
                 const css = app.ssrContext.nuxt.vueApp.config.globalProperties.$pinceauSsr.get()
                 app.ssrContext.event.pinceauContent.runtime = css
-                app.ssrContext.event.pinceauContent.options = pluginOptions
+                app.ssrContext.event.pinceauContent.options = PinceauVueOptions
               })
             })`,
           )
@@ -215,9 +212,9 @@ const module: any = defineNuxtModule<PinceauUserOptions>({
 
         if (options.runtime) {
           lines.push(
-            'import { plugin } from \'#build/pinceau/vue-plugin\'',
+            'import { PinceauVue, PinceauVueOptions } from \'#build/pinceau/vue-plugin\'',
             'import utils from \'#build/pinceau/utils\'',
-            `export default defineNuxtPlugin(async (nuxtApp) => nuxtApp.vueApp.use(plugin, { colorSchemeMode: '${options.theme.colorSchemeMode}', utils }))`,
+            'export default defineNuxtPlugin(async (nuxtApp) => nuxtApp.vueApp.use(PinceauVue, { ...PinceauVueOptions, utils }))',
           )
         }
 

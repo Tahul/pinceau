@@ -14,7 +14,6 @@
     "@pinceau/runtime": "workspace:*",
     "@pinceau/vue": "workspace:*",
     "@pinceau/stringify": "workspace:*",
-    "recast": "^0.23.3",
     "pinceau": "workspace:*"
   },
   "devDependencies": {

@@ -18,5 +18,8 @@
   },
   "dependencies": {
     "scule": "^1.0.0"
+  },
+  "devDependencies": {
+    "@pinceau/core": "workspace:*"
   }
 }

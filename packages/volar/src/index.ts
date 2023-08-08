@@ -1,8 +1,8 @@
 import type { Sfc, VueLanguagePlugin } from '@volar/vue-language-core'
 import { FileCapabilities, FileRangeCapabilities } from '@volar/language-core'
 import { defu } from 'defu'
-import { expressionToAst, printAst } from '@pinceau/core'
-import { evalCssDeclaration, resolveCSSCallees } from '@pinceau/style'
+import { expressionToAst, printAst } from '@pinceau/core/utils'
+import { evalCssDeclaration, resolveCSSCallees } from '@pinceau/style/utils'
 import { castVariantsPropsAst, resolveVariantsProps } from '@pinceau/vue/transforms'
 import type { ASTNode } from 'ast-types'
 

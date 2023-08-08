@@ -1,4 +1,4 @@
-import type { ColorSchemeModes, TokensFunctionOptions } from '@pinceau/theme'
+import type { ColorSchemeModes } from '@pinceau/theme'
 
 export interface PinceauRuntimePluginOptions {
   /**
@@ -12,13 +12,11 @@ export interface PinceauRuntimePluginOptions {
    */
   utils?: any
   /**
-   * Toggles the multi-app mode.
+   * App id used to identify this app if multiple Pinceau instances runs at the same time.
+   *
+   * Setting it to a string enables the multi-app feature.
    */
-  multiApp: false
-  /**
-   * Tokens resolver options.
-   */
-  tokensHelperConfig: TokensFunctionOptions
+  appId: string | false
   /**
    * Color scheme mode to be used by runtime plugin.
    */

@@ -1,11 +1,14 @@
-import { getPinceauContext, outputFileNames, usePinceauTransformContext } from '@pinceau/core'
+import { createRequire } from 'node:module'
+import { getPinceauContext, outputFileNames, usePinceauTransformContext } from '@pinceau/core/utils'
 import type { PinceauContext, PinceauTransforms } from '@pinceau/core'
 import { createUnplugin } from 'unplugin'
 import type { PinceauConfigContext } from './types'
-import { transformIndexHtml } from './html'
-import { usePinceauConfigContext } from './context'
-import { registerVirtualOutputs } from './virtual'
+import { transformIndexHtml } from './utils/html'
+import { usePinceauConfigContext } from './utils/context'
+import { registerVirtualOutputs } from './utils/virtual'
 import { transformTokenHelper } from './transforms'
+
+const _require = createRequire(import.meta.url)
 
 const PinceauThemePlugin = createUnplugin(() => {
   let ctx: PinceauContext
@@ -48,7 +51,7 @@ const PinceauThemePlugin = createUnplugin(() => {
 
       transformIndexHtml: {
         order: 'post',
-        handler: async html => await transformIndexHtml(html, ctx),
+        handler: async html => await transformIndexHtml(html, ctx, _require.resolve),
       },
 
       async handleHotUpdate(hmrContext) {

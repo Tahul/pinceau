@@ -1,6 +1,6 @@
 import type { ASTNode } from 'ast-types'
 import type { PinceauTransformContext, PinceauTransformFunction } from '@pinceau/core'
-import { astTypes, expressionToAst, printAst } from '@pinceau/core'
+import { astTypes, expressionToAst, printAst } from '@pinceau/core/utils'
 
 /**
  * Adds `$pinceau` to the root element class via transform

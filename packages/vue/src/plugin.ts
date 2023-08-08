@@ -1,4 +1,4 @@
-import { getPinceauContext, usePinceauTransformContext } from '@pinceau/core'
+import { getPinceauContext, usePinceauTransformContext } from '@pinceau/core/utils'
 import type { PinceauContext, PinceauTransformContext, PinceauTransforms } from '@pinceau/core'
 import { createUnplugin } from 'unplugin'
 import { MagicVueSFC } from 'sfc-composer'

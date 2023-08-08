@@ -1,7 +1,7 @@
 import type { PinceauTransformFunction } from '@pinceau/core'
 import type { PinceauCSSFunctionContext } from '../types'
-import { resolveCSSCallees } from '../ast'
-import { resolveCSSFunctionContext } from '../css-function-context'
+import { resolveCSSCallees } from '../utils/ast'
+import { resolveCSSFunctionContext } from '../utils/css-function-context'
 
 export const transformCSSFunctions: PinceauTransformFunction = (
   transformContext,

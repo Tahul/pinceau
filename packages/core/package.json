@@ -12,6 +12,16 @@
       "types": "./dist/plugin.d.ts",
       "require": "./dist/plugin.cjs",
       "import": "./dist/plugin.mjs"
+    },
+    "./runtime": {
+      "types": "./dist/runtime.d.ts",
+      "require": "./dist/runtime.cjs",
+      "import": "./dist/runtime.mjs"
+    },
+    "./utils": {
+      "types": "./dist/utils.d.ts",
+      "require": "./dist/utils.cjs",
+      "import": "./dist/utils.mjs"
     }
   },
   "main": "./dist/index.cjs",
@@ -62,6 +72,6 @@
     "unplugin": "^1.4.0"
   },
   "devDependencies": {
-    "vite": "^4.4.8"
+    "vite": "^4.4.9"
   }
 }

@@ -1,5 +1,5 @@
 import { createUnplugin } from 'unplugin'
-import { getPinceauContext } from '@pinceau/core'
+import { getPinceauContext } from '@pinceau/core/utils'
 import type { PinceauContext } from '@pinceau/core'
 
 const PinceauRuntimePlugin = createUnplugin(() => {

@@ -1,8 +1,6 @@
 import process from 'node:process'
-import type { TokensFunctionOptions } from '@pinceau/theme'
 
 export function usePinceauRuntimeDebug(
-  tokensHelperConfig: TokensFunctionOptions,
   ticker: (cb: () => void) => void,
 ) {
   let nextTickGroup: string[] = []
@@ -50,6 +48,4 @@ export function usePinceauRuntimeDebug(
       nextTickCalled = false
     })
   }
-
-  tokensHelperConfig.onNotFound = TOKEN_NOT_FOUND_MESSAGE
 }
