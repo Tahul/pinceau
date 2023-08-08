@@ -1,4 +1,3 @@
-import process from 'node:process'
 import { nextTick } from 'vue'
 import type { TokensFunctionOptions } from '../../types'
 
@@ -24,14 +23,22 @@ export function usePinceauRuntimeDebug(tokensHelperConfig: TokensFunctionOptions
     if (!nextTickCalled) {
       nextTick(() => {
         const title = '🖌️ Pinceau `runtime` encountered some errors!'
+        // @ts-ignore - Runtime debug
         if (import.meta.hot) { console.groupCollapsed(title) }
         else { console.log(title) }
         nextTickGroup.forEach((m) => {
+          // @ts-ignore - Runtime debug
+          // eslint-disable-next-line n/prefer-global/process
           if (!import.meta.hot && process.server) { console.log('\n') }
           console.log(m)
+
+          // @ts-ignore - Runtime debug
+          // eslint-disable-next-line n/prefer-global/process
           if (!import.meta.hot && process.server) { console.log('\n') }
         })
         console.log('‼️ This warning will be hidden from production and can be disabled using `dev: false` option.')
+
+        // @ts-ignore - Runtime debug
         if (import.meta.hot) { console.groupEnd() }
       })
       nextTickCalled = true
@@ -39,7 +46,9 @@ export function usePinceauRuntimeDebug(tokensHelperConfig: TokensFunctionOptions
   }
 
   // Reset on HMR
+  // @ts-ignore - Runtime debug
   if (import.meta.hot) {
+    // @ts-ignore - Runtime debug
     import.meta.hot.on('vite:afterUpdate', () => {
       nextTickGroup = []
       nextTickCalled = false
