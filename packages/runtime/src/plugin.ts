@@ -1,8 +1,9 @@
 import { createUnplugin } from 'unplugin'
+import type { UnpluginInstance } from 'unplugin'
 import { getPinceauContext } from '@pinceau/core/utils'
 import type { PinceauContext } from '@pinceau/core'
 
-const PinceauRuntimePlugin = createUnplugin(() => {
+const PinceauRuntimePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
   let ctx: PinceauContext
 
   return {
@@ -11,21 +12,9 @@ const PinceauRuntimePlugin = createUnplugin(() => {
     enforce: 'pre',
 
     vite: {
-      async configureServer(server) {
-        ctx = getPinceauContext(server)
+      async configResolved(config) {
+        ctx = getPinceauContext(config)
       },
-    },
-
-    transformInclude(id) {
-      const query = ctx.transformed[id]
-
-      return !!query
-    },
-
-    transform(code, id) {
-      const query = ctx.transformed[id]
-
-      return code
     },
   }
 })

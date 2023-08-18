@@ -1,32 +1,11 @@
-import { getPinceauContext, usePinceauTransformContext } from '@pinceau/core/utils'
-import type { PinceauContext, PinceauTransforms } from '@pinceau/core'
+import { getPinceauContext, transform, transformInclude } from '@pinceau/core/utils'
+import type { PinceauContext } from '@pinceau/core'
 import { createUnplugin } from 'unplugin'
-import { transformCSSFunctions } from './transforms'
+import type { UnpluginInstance } from 'unplugin'
+import { suite } from './transforms/suite'
 
-const PinceauStylePlugin = createUnplugin(() => {
+const PinceauStylePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
   let ctx: PinceauContext
-
-  const transforms: PinceauTransforms = {
-    scripts: [
-      // TODO: Handle `const cssContext = css({ ... })`
-      transformCSSFunctions,
-    ],
-    styles: [
-      (transformCtx, pinceauCtx) => {
-        // Pick only:
-        // - `<style lang="ts">` blocks that has been transformed to `<style lang="postcss" transformed=true">`
-        // - `<style lang="ts">` blocks that has not been transformed in previous steps.
-        if (
-          (transformCtx.query?.transformed || transformCtx.target?.attrs?.transformed)
-          || (transformCtx.query?.type === 'style' && transformCtx.query?.lang === 'ts')
-        ) {
-          transformCSSFunctions(transformCtx, pinceauCtx, true)
-        }
-      },
-    ],
-    templates: [],
-    customs: [],
-  }
 
   return {
     name: 'pinceau:style-plugin',
@@ -34,27 +13,14 @@ const PinceauStylePlugin = createUnplugin(() => {
     enforce: 'pre',
 
     vite: {
-      async configureServer(server) {
-        ctx = getPinceauContext(server)
+      async configResolved(config) {
+        ctx = getPinceauContext(config)
       },
     },
 
-    transformInclude(id) {
-      const query = ctx.transformed[id]
-      return !!query
-    },
+    transformInclude: id => transformInclude(id, ctx),
 
-    transform(code, id) {
-      const query = ctx.transformed[id]
-
-      const transformContext = usePinceauTransformContext(code, query, ctx)
-
-      transformContext.registerTransforms(transforms)
-
-      transformContext.transform()
-
-      return transformContext.result()
-    },
+    transform: (code, id) => transform(code, id, suite, ctx),
   }
 })
 

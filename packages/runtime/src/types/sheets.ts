@@ -19,9 +19,9 @@ export interface PinceauRuntimeSheet {
  * usePinceauThemeSheet exposed interface.
  */
 export interface PinceauThemeSheet {
+  theme: PinceauTheme
   $tokens: TokensFunction
   updateToken: (path: string | string[], value: any, mq: PinceauMediaQueries) => void
   updateTheme: (value: Theme<PinceauTheme>) => void
   resolveStylesheet: () => void
-  theme: Theme<PinceauTheme>
 }

@@ -5,16 +5,17 @@ import type { NodePath } from 'ast-types/lib/node-path'
 /**
  * Find all calls of css() and call a callback on each.
  */
-export function resolveCSSCallees(code: string, cb: (ast: NodePath<namedTypes.CallExpression, any>, index: number) => void): any {
+export function resolveCSSCallees(code: string) {
   const ast = parseAst(code)
 
-  let count = 0
+  const paths: NodePath<namedTypes.CallExpression>[] = []
 
   visitAst(ast, {
     visitCallExpression(path) {
-      if (path.value.callee.name === 'css') { cb(path, count) }
-      count++
+      if (path.value.callee.name === 'css') { paths.push(path) }
       return this.traverse(path)
     },
   })
+
+  return paths
 }

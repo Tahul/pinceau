@@ -1,5 +1,9 @@
+import type { DesignTokens, ThemeTokens } from '../types'
+
 /**
  * Walk through tokens definition an call callback on each design token.
+ *
+ * To work properly, tokens must first be normalized with normalizeTokens.
  */
 export function walkTokens(
   obj: any,
@@ -9,7 +13,7 @@ export function walkTokens(
   let result: Record<string, any> = {}
 
   if (obj.value) {
-    result = cb(obj, result, paths)
+    result = cb(obj, result, paths) || obj.value
   }
   else {
     for (const k in obj) {
@@ -30,7 +34,7 @@ export function normalizeTokens(
   mqKeys: string[],
   removeSchemaKeys = false,
 ) {
-  let result: Record<string, any> = {}
+  let result: DesignTokens = {}
 
   if (obj.value) {
     result = obj
@@ -65,7 +69,7 @@ export function normalizeTokens(
         const keys = Object.keys(obj[k])
         if (
           keys.includes('initial')
-          && keys.some(key => mqKeys.includes(key))
+          && keys.some(key => key !== 'initial' && mqKeys.includes(key))
         ) {
           result[k] = { value: obj[k] }
           continue
@@ -82,6 +86,6 @@ export function normalizeTokens(
 /**
  * Flatten tokens object for runtime usage.
  */
-export function flattenTokens(data: any) {
+export function flattenTokens(data: any): ThemeTokens {
   return walkTokens(data, value => ({ value: value?.value, variable: value?.attributes?.variable }))
 }

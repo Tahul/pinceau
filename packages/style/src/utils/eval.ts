@@ -4,7 +4,7 @@ import type { ASTNode } from 'ast-types'
 /**
  * Resolve computed styles found in css() declaration.
  */
-export function evalCssDeclaration(cssAst: ASTNode) {
+export function evalCSSDeclaration(cssAst: ASTNode) {
   try {
     // eslint-disable-next-line no-eval
     const _eval = eval

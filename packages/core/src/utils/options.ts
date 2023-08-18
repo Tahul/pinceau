@@ -1,81 +1,83 @@
 import process from 'node:process'
-import { join } from 'pathe'
 import type { PinceauThemeOptions } from '@pinceau/theme'
 import type { PinceauStyleOptions } from '@pinceau/style'
 import type { PinceauRuntimeOptions } from '@pinceau/runtime'
 import type { PinceauVueOptions } from '@pinceau/vue'
-import { merger } from './merger'
 import type { PinceauOptions, PinceauUserOptions } from '../types'
+import { merger } from './merger'
 
-export const outputFileNames = [
-  '/__pinceau_css.css',
-  '/__pinceau_ts.ts',
-  '/__pinceau_utils.ts',
-  '/__pinceau_definitions.ts',
-  '/__pinceau_schema.ts',
-  '/__pinceau_hmr.ts',
-]
+export function getDefaultOptions() {
+  const theme: PinceauThemeOptions = {
+    layers: [],
+    configFileName: 'theme.config',
+    configExtensions: ['.js', '.ts', '.mjs', '.cjs', '.json'],
+    configResolved: [],
+    configBuilt: [],
+    outputFormats: [],
+    tokensTransforms: [],
+    buildDir: undefined,
+    preflight: true,
+    followSymbolicLinks: true,
+    colorSchemeMode: 'media',
+    componentMeta: false,
+    definitions: true,
+    schema: true,
+    imports: true,
+  }
 
-export const defaultThemeOptions: PinceauThemeOptions = {
-  configFileName: 'tokens.config',
-  configLayers: [],
-  configResolved: (_) => {},
-  configBuilt: (_) => {},
-  buildDir: join(process.cwd(), 'node_modules/.vite/pinceau/'),
-  preflight: true,
-  followSymbolicLinks: true,
-  colorSchemeMode: 'media',
-  componentMeta: false,
-  definitions: true,
-  studio: false,
-  utilsImports: [],
-}
+  const style: PinceauStyleOptions = {
+    includes: [],
+    excludes: ['**/node_modules/**'],
+  }
 
-export const defaultStyleOptions: PinceauStyleOptions = {
-  includes: [],
-  excludes: [
-    'node_modules',
-    ...outputFileNames,
-  ],
-}
+  const runtime: PinceauRuntimeOptions = {
+    computedStyles: true,
+    cssProp: true,
+    variants: true,
+    ssr: true,
+    appId: false,
+  }
 
-export const defaultRuntimeOptions: PinceauRuntimeOptions = {
-  computedStyles: true,
-  cssProp: true,
-  variants: true,
-  ssr: true,
-  appId: false,
-}
-
-export const defaultVueOptions: PinceauVueOptions = {
+  const vue: PinceauVueOptions = {
   /* */
-}
+  }
 
-export const defaultOptions: PinceauUserOptions = {
-  cwd: process.cwd(),
-  debug: false,
-  dev: process.env.NODE_ENV !== 'production',
-  theme: true,
-  style: true,
-  runtime: true,
-  vue: true,
+  const base: PinceauUserOptions = {
+    cwd: undefined,
+    debug: false,
+    dev: process.env.NODE_ENV !== 'production',
+    theme: true,
+    style: true,
+    runtime: true,
+    vue: true,
+  }
+
+  return {
+    theme,
+    style,
+    runtime,
+    vue,
+    base,
+  }
 }
 
 export function normalizeOptions(options?: PinceauUserOptions): PinceauOptions {
-  options = merger(options || {}, defaultOptions)
+  const defaults = getDefaultOptions()
+
+  options = merger(options || {}, defaults.base)
 
   if (options.theme === true || typeof options.theme === 'object') {
-    options.theme = merger(typeof options.theme === 'object' ? options.theme : {}, defaultThemeOptions)
+    options.theme = merger(typeof options.theme === 'object' ? options.theme : {}, defaults.theme) as PinceauThemeOptions
   }
   if (options.style === true || typeof options.style === 'object') {
-    options.style = merger(typeof options.style === 'object' ? options.style : {}, defaultStyleOptions)
+    options.style = merger(typeof options.style === 'object' ? options.style : {}, defaults.style) as PinceauStyleOptions
   }
   if (options.runtime === true || typeof options.runtime === 'object') {
-    options.runtime = merger(typeof options.runtime === 'object' ? options.runtime : {}, defaultRuntimeOptions)
+    options.runtime = merger(typeof options.runtime === 'object' ? options.runtime : {}, defaults.runtime) as PinceauRuntimeOptions
   }
   if (options.vue === true || typeof options.vue === 'object') {
-    options.vue = merger(typeof options.vue === 'object' ? options.vue : {}, defaultVueOptions)
+    options.vue = merger(typeof options.vue === 'object' ? options.vue : {}, defaults.vue) as PinceauVueOptions
   }
 
-  return options as PinceauOptions
+  return Object.assign({}, options) as PinceauOptions
 }

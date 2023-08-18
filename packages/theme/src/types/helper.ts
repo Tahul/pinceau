@@ -1,15 +1,17 @@
 import type { PinceauTokensPaths } from './theme'
-import type { DesignToken, DesignTokens } from './tokens'
+import type { DesignToken, DesignTokens, TokenKey } from './tokens'
 
 /**
  * $dt function
  */
 export type TokenHelperFunction = (
-  path: PinceauTokensPaths | (string & object),
+  path: PinceauTokensPaths | (string & {}),
   key?: 'variable' | 'value'
 ) => string
 
 /**
  * $tokens function
  */
-export type TokensFunction = (token?: PinceauTokensPaths | (string & object)) => DesignTokens | DesignToken | undefined
+export type TokensFunction = (
+  token?: PinceauTokensPaths | (string & {})
+) => { [key: string]: TokenKey | DesignTokens } | DesignToken | undefined

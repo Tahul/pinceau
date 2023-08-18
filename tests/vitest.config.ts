@@ -1,8 +1,5 @@
-import Vue from '@vitejs/plugin-vue'
-import { splitVendorChunkPlugin } from 'vite'
-import { join, resolve } from 'pathe'
+import { resolve } from 'pathe'
 import { defineConfig } from 'vitest/config'
-import Pinceau from 'pinceau'
 
 export default defineConfig({
   logLevel: 'info',
@@ -19,6 +16,7 @@ export default defineConfig({
       '@pinceau/theme': resolve(__dirname, '../packages/theme/src/index.ts'),
       '@pinceau/theme/plugin': resolve(__dirname, '../packages/theme/src/plugin.ts'),
       '@pinceau/theme/transforms': resolve(__dirname, '../packages/theme/src/transforms.ts'),
+      '@pinceau/theme/utils': resolve(__dirname, '../packages/theme/src/utils.ts'),
 
       // @pinceau/runtime
       '@pinceau/runtime': resolve(__dirname, '../packages/runtime/src/index.ts'),
@@ -46,27 +44,14 @@ export default defineConfig({
     globals: true,
     watch: true,
     environment: 'jsdom',
+    include: ['tests/**/*'],
+    coverage: {
+      enabled: true,
+      reporter: ['text', 'json', 'html'],
+      clean: true,
+      all: true
+    },
   },
-  plugins: [
-    splitVendorChunkPlugin(),
-    Vue({
-      reactivityTransform: true,
-    }),
-    Pinceau({
-      theme: {
-        configLayers: [
-          {
-            configFileName: 'tokens.config',
-            cwd: resolve(__dirname, './fixtures'),
-          },
-        ],
-        configResolved(config) {
-          console.log({ config })
-        },
-        buildDir: join(__dirname, './fixtures/theme/'),
-      },
-    }),
-  ],
   css: {
     modules: {
       localsConvention: 'camelCaseOnly',

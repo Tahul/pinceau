@@ -1,5 +1,5 @@
-import type { DefineConfigType, PinceauTheme } from '@pinceau/theme'
+import type { PinceauTheme, Theme } from '@pinceau/theme'
 
-export function defineTheme<T extends PinceauTheme>(config: DefineConfigType<T>) {
+export function defineTheme(config: Theme<PinceauTheme>) {
   return config
 }

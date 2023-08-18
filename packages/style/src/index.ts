@@ -6,6 +6,6 @@ export { version } from '../package.json'
 
 declare module '@pinceau/core' {
   interface PinceauTransformState {
-    cssFunctions?: { [key: number]: PinceauCSSFunctionContext }
+    cssFunctions?: PinceauCSSFunctionContext[]
   }
 }

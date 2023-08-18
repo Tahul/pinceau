@@ -62,7 +62,7 @@ export function resolveReferences(
 
   value = value.replace(referencesRegex, (_, tokenPath) => {
     const token = pinceauContext.$tokens(tokenPath)
-    return `var(${token?.variable || pathToVarName(tokenPath)})`
+    return (token?.variable ? token.variable : `var(${pathToVarName(tokenPath)})`) as string
   })
 
   return value

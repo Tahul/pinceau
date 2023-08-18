@@ -1,7 +1,9 @@
 import type MagicString from 'magic-string'
 import type { MagicBlock, MagicSFC, SourceLocation } from 'sfc-composer'
+import type { Thenable, TransformResult } from 'unplugin'
 import type { PinceauQuery } from './query'
 import type { PinceauTransformResult, PinceauTransforms } from './transforms'
+import type { PinceauContext } from './core-context'
 
 export interface PinceauTransformState {
   [key: string]: any
@@ -25,3 +27,8 @@ export interface PinceauTransformContext {
   // Optional
   sfc?: MagicSFC
 }
+
+/**
+ * Pinceau transform function, same as Unplugin transform but includes PinceauContext as an argument.
+ */
+export type PinceauUnpluginTransform = (code: string, id: string, suite: PinceauTransforms, ctx: PinceauContext) => Thenable<TransformResult>

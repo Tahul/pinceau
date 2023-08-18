@@ -1,0 +1,35 @@
+{
+  "name": "@pinceau/palette",
+  "type": "module",
+  "version": "0.1.0",
+  "exports": {
+    ".": {
+      "types": "./theme.config.ts",
+      "require": "./theme.config.ts",
+      "import": "./theme.config.ts"
+    }
+  },
+  "main": "./theme.config.ts",
+  "types": "./theme.config.ts",
+  "module": "./theme.config.ts",
+  "files": [
+    "theme.config.ts"
+  ],
+  "scripts": {
+    "build": "vite build && rm -rf dist",
+    "stub": "vite build && rm -rf dist"
+  },
+  "peerDependencies": {
+    "pinceau": "workspace:*"
+  },
+  "peerDependenciesMeta": {
+    "pinceau": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "pinceau": "workspace:*",
+    "unbuild": "^1.2.1",
+    "vite": "^4.4.9"
+  }
+}

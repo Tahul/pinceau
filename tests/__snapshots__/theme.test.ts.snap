@@ -1,0 +1,139 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`@pinceau/theme > formats/ > css.ts > build format 1`] = `
+{
+  "buildDir": undefined,
+  "outputs": {
+    "pinceau.css": "@media { :root {--pinceau-mq: initial; --primary: red; } }",
+  },
+  "theme": {
+    "color": {
+      "primary": {
+        "value": "red",
+        "variable": undefined,
+      },
+    },
+  },
+}
+`;
+
+exports[`@pinceau/theme > formats/ > definitions.ts > build format 1`] = `
+{
+  "buildDir": undefined,
+  "outputs": {
+    "$pinceau/definitions": "export const definitions = {} as const",
+  },
+  "theme": {
+    "color": {
+      "primary": {
+        "value": "red",
+        "variable": undefined,
+      },
+    },
+  },
+}
+`;
+
+exports[`@pinceau/theme > formats/ > hmr.ts > build format 1`] = `
+{
+  "buildDir": undefined,
+  "outputs": {
+    "$pinceau/hmr": "import { updateStyle } from '/@vite/client'
+
+
+if (import.meta.hot) {
+  import.meta.hot.on(
+    'pinceau:theme',
+    theme => {
+      console.log({ theme })
+      theme?.css && updateStyle('pinceau.css', theme.css)
+    }
+  )
+}",
+  },
+  "theme": {
+    "color": {
+      "primary": {
+        "value": "red",
+        "variable": undefined,
+      },
+    },
+  },
+}
+`;
+
+exports[`@pinceau/theme > formats/ > schema.ts > build format 1`] = `
+{
+  "buildDir": undefined,
+  "outputs": {
+    "$pinceau/schema": "export const schema = {
+  \\"properties\\": {},
+  \\"default\\": {}
+} as const
+
+export const GeneratedPinceauThemeSchema = typeof schema
+
+export default schema",
+  },
+  "theme": {
+    "color": {
+      "primary": {
+        "value": "red",
+        "variable": undefined,
+      },
+    },
+  },
+}
+`;
+
+exports[`@pinceau/theme > formats/ > typescript.ts > build format 1`] = `
+{
+  "buildDir": undefined,
+  "outputs": {
+    "$pinceau/theme": "export const theme = {
+  \\"color\\": {
+    \\"primary\\": {
+      \\"value\\": \\"red\\"
+    }
+  }
+} as const
+
+export type GeneratedPinceauTheme = typeof theme
+
+export type GeneratedPinceauMediaQueries = \\"dark\\" | \\"light\\" | \\"initial\\";
+
+export type GeneratedPinceauPaths = \\"color.primary\\";
+
+export default theme",
+  },
+  "theme": {
+    "color": {
+      "primary": {
+        "value": "red",
+        "variable": undefined,
+      },
+    },
+  },
+}
+`;
+
+exports[`@pinceau/theme > formats/ > utils.ts > build format 1`] = `
+{
+  "buildDir": undefined,
+  "outputs": {
+    "$pinceau/utils": "export const utils = {}
+
+export type GeneratedPinceauUtils = typeof utils
+
+export default utils",
+  },
+  "theme": {
+    "color": {
+      "primary": {
+        "value": "red",
+        "variable": undefined,
+      },
+    },
+  },
+}
+`;

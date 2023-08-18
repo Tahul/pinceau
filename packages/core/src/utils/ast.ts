@@ -1,31 +1,29 @@
 import * as recast from 'recast'
-import type { Options } from 'recast'
-import { defu } from 'defu'
+import type { Options as RecastOptions } from 'recast'
 import { parse as tsParse } from 'recast/parsers/typescript.js'
 import type { File } from '@babel/types'
-import type { ASTNode } from 'ast-types'
+import type { namedTypes } from 'ast-types'
+import { NodePath } from 'ast-types/lib/node-path'
 
 /**
  * Parse AST with TypeScript parser.
  */
-export function parseAst(source: string, options?: Partial<Options>) {
-  return recast.parse(source, defu({ parser: { parse: tsParse } }, options))
+export function parseAst(source: string, options?: Partial<RecastOptions>): File {
+  return recast.parse(source, { ...options, parser: { parse: tsParse, ...(options?.parser || {}) } })
 }
 
 /**
- * Cast a `props.type` string into an AST declaration.
+ * Cast any JS string into an AST declaration.
  */
-export function expressionToAst(type: string, leftSide = 'const toAst = ', kind: 'js' | 'ts' = 'js') {
+export function expressionToAst(type: string, leftSide = 'const toAst = ') {
   const parsed = recast.parse(`${leftSide}${type}`, { parser: { parse: tsParse } })
-  return kind === 'js'
-    ? parsed.program.body[0].declarations[0].init
-    : parsed.program.body[0].typeAnnotation
+  return parsed.program.body[0].declarations[0].init
 }
 
 /**
  * Gets the default export from an AST node.
  */
-export function defaultExport(node: File): ASTNode {
+export function findDefaultExport(node: File): NodePath<namedTypes.ExportDefaultDeclaration> {
   return (node.program.body.find(n => n.type === 'ExportDefaultDeclaration') as any)?.declaration
 }
 
@@ -34,8 +32,8 @@ export function defaultExport(node: File): ASTNode {
  *
  * Might be useful in case Pinceau changes of AST parser.
  */
-const visitAst = recast.visit
-const printAst = recast.print
-const astTypes = recast.types
 
-export { visitAst, printAst, astTypes }
+/* c8 ignore start */
+export const visitAst = recast.visit
+export const printAst = recast.print
+export const astTypes = recast.types

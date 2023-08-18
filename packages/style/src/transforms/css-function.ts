@@ -10,28 +10,25 @@ export const transformCSSFunctions: PinceauTransformFunction = (
 ) => {
   const { target } = transformContext
 
-  const cssFunctions: { [key: number]: PinceauCSSFunctionContext } = {}
+  if (!transformContext.state.cssFunctions) { transformContext.state.cssFunctions = [] }
 
-  resolveCSSCallees(
-    target.toString(),
-    (node, index) => {
-      // Resolve runtime styling context from AST of css() call
-      const cssFunctionContext = resolveCSSFunctionContext(transformContext, pinceauContext, node, index)
+  const callees = resolveCSSCallees(target.toString())
 
-      if (!cssFunctionContext) { return }
+  for (let i = 0; i < callees.length; i++) {
+    const callee = callees[i]
 
-      cssFunctions[index] = cssFunctionContext
+    // Resolve runtime styling context from AST of css() call
+    const cssFunctionContext = resolveCSSFunctionContext(transformContext, pinceauContext, callee, i)
 
-      // Rewrite source with result
-      target.overwrite(
-        node.value.start,
-        node.value.end,
-        write ? cssFunctionContext.css : '',
-      )
-    },
-  )
+    if (!cssFunctionContext) { return }
 
-  if (!transformContext.state.cssFunctions) { transformContext.state.cssFunctions = {} }
+    transformContext.state.cssFunctions.push(cssFunctionContext)
 
-  transformContext.state.cssFunctions = { ...transformContext.state.cssFunctions, ...cssFunctions }
+    // Rewrite source with result
+    target.overwrite(
+      callee.value.start,
+      callee.value.end,
+      write ? cssFunctionContext.css : '',
+    )
+  }
 }

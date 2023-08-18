@@ -3,7 +3,7 @@ import type { SourceMapInput } from 'rollup'
 import type { MagicSFC } from 'sfc-composer'
 import type { PinceauQuery } from './query'
 import type { PinceauTransformContext } from './transform-context'
-import type { PinceauContext } from './context'
+import type { PinceauContext } from './core-context'
 
 export type PinceauTransformResult = string | { code: string; map?: SourceMapInput | SourceMapCompact | null } | null | undefined
 
@@ -25,8 +25,9 @@ export type PinceauTransformFunction<T = object> = (
 ) => void | T
 
 export interface PinceauTransforms {
-  templates: PinceauTransformFunction[]
-  scripts: PinceauTransformFunction[]
-  styles: PinceauTransformFunction[]
-  customs: PinceauTransformFunction[]
+  globals?: PinceauTransformFunction[]
+  templates?: PinceauTransformFunction[]
+  scripts?: PinceauTransformFunction[]
+  styles?: PinceauTransformFunction[]
+  customs?: PinceauTransformFunction[]
 }

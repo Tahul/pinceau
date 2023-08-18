@@ -1,37 +1,20 @@
+/* c8 ignore start */
 import { createRequire } from 'node:module'
-import { getPinceauContext, outputFileNames, usePinceauTransformContext } from '@pinceau/core/utils'
-import type { PinceauContext, PinceauTransforms } from '@pinceau/core'
+import { getPinceauContext, transform, transformInclude } from '@pinceau/core/utils'
+import type { PinceauContext } from '@pinceau/core'
 import { createUnplugin } from 'unplugin'
+import type { UnpluginInstance } from 'unplugin'
 import type { PinceauConfigContext } from './types'
 import { transformIndexHtml } from './utils/html'
-import { usePinceauConfigContext } from './utils/context'
-import { registerVirtualOutputs } from './utils/virtual'
-import { transformTokenHelper } from './transforms'
+import { usePinceauConfigContext } from './utils/config-context'
+import { suite } from './transforms/suite'
+import { setupThemeFormats } from './utils/setup'
 
 const _require = createRequire(import.meta.url)
 
-const PinceauThemePlugin = createUnplugin(() => {
+const PinceauThemePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
   let ctx: PinceauContext
   let configCtx: PinceauConfigContext
-
-  const transforms: PinceauTransforms = {
-    templates: [
-      (transformContext, pinceauContext) => {
-        transformTokenHelper(transformContext, pinceauContext, '`')
-      },
-    ],
-    scripts: [
-      (transformContext, pinceauContext) => {
-        transformTokenHelper(transformContext, pinceauContext, '`')
-      },
-    ],
-    styles: [
-      (transformContext, pinceauContext) => {
-        transformTokenHelper(transformContext, pinceauContext, '')
-      },
-    ],
-    customs: [],
-  }
 
   return {
     name: 'pinceau:theme-plugin',
@@ -39,28 +22,32 @@ const PinceauThemePlugin = createUnplugin(() => {
     enforce: 'pre',
 
     vite: {
-      async configureServer(server) {
-        ctx = getPinceauContext(server)
+      api: {
+        getPinceauConfigContext: () => configCtx,
+      },
 
-        registerVirtualOutputs(ctx)
+      async configResolved(config) {
+        ctx = getPinceauContext(config)
+
+        setupThemeFormats(ctx)
 
         configCtx = usePinceauConfigContext(ctx)
 
-        await configCtx.ready
+        await configCtx.buildTheme()
       },
 
       transformIndexHtml: {
         order: 'post',
-        handler: async html => await transformIndexHtml(html, ctx, _require.resolve),
+        handler: async html => transformIndexHtml(html, ctx, _require.resolve),
       },
 
       async handleHotUpdate(hmrContext) {
         // Handle theme sources HMR
         if (configCtx.sources.find(source => source === hmrContext.file)) {
-          const builtTheme = await configCtx.buildTheme()
+          const { theme, outputs } = await configCtx.buildTheme()
 
           // Virtual imports ids
-          const ids = [...outputFileNames]
+          const ids = [...Object.keys(ctx.outputs)]
 
           // Use transformed files as well
           Object.entries(ctx.transformed).forEach(([path, value]) => value && !ids.includes(path) && ids.push(path))
@@ -77,30 +64,17 @@ const PinceauThemePlugin = createUnplugin(() => {
             type: 'custom',
             event: 'pinceau:theme',
             data: {
-              css: builtTheme.outputs['pinceau.css'],
-              theme: builtTheme.tokens,
+              css: outputs['pinceau.css'],
+              theme,
             },
           })
         }
       },
     },
 
-    transformInclude(id) {
-      const query = ctx.transformed[id]
-      return !!query
-    },
+    transformInclude: id => transformInclude(id, ctx),
 
-    transform(code, id) {
-      const query = ctx.transformed[id]
-
-      const transformContext = usePinceauTransformContext(code, query, ctx)
-
-      transformContext.registerTransforms(transforms)
-
-      transformContext.transform()
-
-      return transformContext.result()
-    },
+    transform: (code, id) => transform(code, id, suite, ctx),
   }
 })
 

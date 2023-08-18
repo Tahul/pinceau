@@ -6,17 +6,12 @@ export type RawTokenType = string | number
 /**
  * A token that uses media queries as keys and value as value for this breakpoint.
  */
-export type ResponsiveToken<T = RawTokenType> = { initial: T } & { [key in PinceauMediaQueries]?: T }
-
-/**
- * A token key value pair in the configurations.
- */
-export type TokenKey<T extends RawTokenType = RawTokenType> = DesignToken<T> | ResponsiveToken<T> | T
+export type ResponsiveToken<T = RawTokenType> = { initial: T | RawTokenType } & { [key in PinceauMediaQueries]?: T | RawTokenType }
 
 /**
  * A Design Token object for Pinceau.
  */
-export interface DesignToken<T = RawTokenType> {
+export interface DesignToken<T extends RawTokenType | ResponsiveToken = RawTokenType | ResponsiveToken> {
   /**
    * The raw value of the token.
    */
@@ -46,8 +41,13 @@ export interface DesignToken<T = RawTokenType> {
 }
 
 /**
+ * A token key value pair in the configurations.
+ */
+export type TokenKey = DesignToken | RawTokenType | ResponsiveToken
+
+/**
  * Simple recursive tokens object
  */
 export interface DesignTokens {
-  [key: string]: TokenKey | DesignTokens
+  [key: string]: DesignTokens | DesignToken
 }

@@ -1,3 +1,4 @@
+/* c8 disable start */
 import type { PinceauOptions } from '../types'
 
 type DebugLevel = PinceauOptions['debug']
@@ -69,7 +70,7 @@ const messages = {
     error?.message && errorMessage(error.message)
   },
   CONFIG_BUILD_ERROR: (_debugLevel, error) => {
-    c().logger.error('Pinceau could not build your design tokens configuration!\n')
+    c().logger.error('Pinceau could not build your theme configuration!\n')
     c().logger.log(error)
   },
   SELECTOR_CONFLICT: (_debugLevel, selector) => {

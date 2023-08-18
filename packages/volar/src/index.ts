@@ -2,7 +2,7 @@ import type { Sfc, VueLanguagePlugin } from '@volar/vue-language-core'
 import { FileCapabilities, FileRangeCapabilities } from '@volar/language-core'
 import { defu } from 'defu'
 import { expressionToAst, printAst } from '@pinceau/core/utils'
-import { evalCssDeclaration, resolveCSSCallees } from '@pinceau/style/utils'
+import { evalCSSDeclaration, resolveCSSCallees } from '@pinceau/style/utils'
 import { castVariantsPropsAst, resolveVariantsProps } from '@pinceau/vue/transforms'
 import type { ASTNode } from 'ast-types'
 
@@ -41,7 +41,7 @@ const plugin: VueLanguagePlugin = _ => ({
 
     if (isCssInTsFile) {
       // Push imports
-      embeddedFile.content.unshift('\nimport type { PinceauMediaQueries, CSSFunctionType } from \'pinceau\'')
+      embeddedFile.content.unshift('\nimport type { CSS } from \'pinceau\'')
 
       // Add variants above <script setup> content
       if (variantsContent) { embeddedFile.content.push(variantsContent) }
@@ -51,9 +51,7 @@ const plugin: VueLanguagePlugin = _ => ({
 
       // Setup `css()` context
       const context = [
-        '\ntype OmittedKeysPinceau = \'onVnodeBeforeMount\' | \'onVnodeBeforeUnmount\' | \'onVnodeBeforeUpdate\' | \'onVnodeMounted\' | \'onVnodeUnmounted\' | \'onVnodeUpdated\' | \'key\' | \'ref\' | \'ref_for\' | \'ref_key\' | \'style\' | \'class\'\n',
-        `\ntype PinceauProps = Omit<InstanceType<typeof import('${fileName}').default>['$props'], OmittedKeysPinceau>\n`,
-        '\nfunction css (declaration: CSSFunctionType<PinceauProps>) { return { declaration } }\n',
+        '\nfunction css <T>(declaration: CSS<T>) { return declaration as Readonly<T> }\n',
       ]
       embeddedFile.content.push(...context)
 
@@ -86,13 +84,12 @@ function resolveVariantsContent(sfc: Sfc) {
     try {
       // Check if <style> tag is `lang="ts"`
       if (style.lang === 'ts') {
-        resolveCSSCallees(
-          style.content,
-          (styleAst) => {
-            const cssContent = evalCssDeclaration(styleAst as any as ASTNode)
-            if (cssContent?.variants) { variants = defu(variants, cssContent?.variants) }
-          },
-        )
+        const callees = resolveCSSCallees(style.content)
+
+        for (let i = 0; i <= callees.length; i++) {
+          const cssContent = evalCSSDeclaration(callees[i] as any as ASTNode)
+          if (cssContent?.variants) { variants = defu(variants, cssContent?.variants) }
+        }
       }
     }
     catch (e) {

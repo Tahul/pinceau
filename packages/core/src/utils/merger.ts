@@ -5,7 +5,7 @@ import { createDefu } from 'defu'
  */
 export const merger = createDefu((obj, key, value) => {
   if (Array.isArray(obj[key]) && Array.isArray(value)) {
-    (obj as any)[key] = Array.from(new Set([...obj[key], ...value]))
+    (obj as any)[key] = value // Array.from(new Set([...obj[key], ...value]))
     return true
   }
 })

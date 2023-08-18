@@ -1,12 +1,12 @@
 import { camelCase, kebabCase } from 'scule'
 import type { PinceauContext, PinceauTransformContext, PinceauTransformFunction } from '@pinceau/core'
 import { astTypes, printAst, visitAst } from '@pinceau/core/utils'
-import type { namedTypes } from 'ast-types'
+import type { ASTNode, namedTypes } from 'ast-types'
 import type { NodePath } from 'ast-types/lib/node-path'
 import { createSourceLocationFromOffsets } from 'sfc-composer'
 import { resolveCssProperty, stringify } from '@pinceau/stringify'
-import { evalCssDeclaration } from './eval'
 import type { PinceauCSSFunctionContext } from '../types/css-function'
+import { evalCSSDeclaration } from './eval'
 
 /**
  * Resolve transform context runtime features from `css()` function.
@@ -20,7 +20,7 @@ export const resolveCSSFunctionContext: PinceauTransformFunction<PinceauCSSFunct
   index: number = 0,
 ): PinceauCSSFunctionContext => {
   // Grab `*` in `css(*)`
-  const argument = ast.value.arguments[0]
+  const argument = ast.value.arguments[0] as NodePath<namedTypes.ObjectExpression>
 
   const localTokens: PinceauCSSFunctionContext['localTokens'] = {}
   const variants: PinceauCSSFunctionContext['variants'] = {}
@@ -30,8 +30,8 @@ export const resolveCSSFunctionContext: PinceauTransformFunction<PinceauCSSFunct
   const loc = createSourceLocationFromOffsets(transformContext.target.toString(), ast.value.start, ast.value.end)
 
   // Search for function properties in css() AST
-  ast = visitAst(
-    argument,
+  visitAst(
+    argument as any as ASTNode,
     {
       visitObjectProperty(path) {
         if (path.value) {
@@ -74,7 +74,7 @@ export const resolveCSSFunctionContext: PinceauTransformFunction<PinceauCSSFunct
   )
 
   // Handle variants and remove them from declaration
-  const declaration = evalCssDeclaration(ast as any)
+  const declaration = evalCSSDeclaration(argument as any)
   if (declaration && declaration?.variants) {
     Object.assign(variants, { ...declaration.variants })
     delete declaration.variants
@@ -90,10 +90,10 @@ export const resolveCSSFunctionContext: PinceauTransformFunction<PinceauCSSFunct
   )
 
   return {
-    ast,
-    declaration,
+    ast: argument,
     loc,
     css,
+    declaration,
     variants,
     computedStyles,
     localTokens,

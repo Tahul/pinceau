@@ -23,7 +23,7 @@ export function registerCompletion(
 
     // Create completion symbols
     const items: CompletionItem[] = []
-    if (isTokenFunctionCall || ((doc.uri.includes('tokens.config.ts') || isOffsetOnStyleTsTag) && isInStringExpression)) {
+    if (isTokenFunctionCall || ((doc.uri.includes('theme.config.ts') || isOffsetOnStyleTsTag) && isInStringExpression)) {
       Object.entries(tokensData?.localTokens || {}).forEach(
         ([key, localToken]: [string, any]) => {
           const path = key.replace(/^--/, '').split('-').join('.')

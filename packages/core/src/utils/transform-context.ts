@@ -16,10 +16,17 @@ export function usePinceauTransformContext(
     scripts: [],
     styles: [],
     templates: [],
+    globals: [],
   }
 
   // Current block target (when running on parsed SFC)
   let currentTarget: MagicBlock | undefined
+
+  // Current compiler result
+  let sfcCompilerResult: any
+
+  // Local state in case there is no global state available for this file
+  let localState: PinceauTransformState = {}
 
   const transformContext: PinceauTransformContext = {
 
@@ -37,6 +44,7 @@ export function usePinceauTransformContext(
      * Transform state resolved.
      */
     get state() {
+      if (!pinceauContext.transformed[this.query.filename]) { return localState }
       if (!pinceauContext.transformed[this.query.filename]?.state) { pinceauContext.transformed[this.query.filename].state = {} }
       return pinceauContext.transformed[this.query.filename].state as PinceauTransformState
     },
@@ -87,18 +95,16 @@ export function usePinceauTransformContext(
     get sfc() {
       if (!query.sfc) { return }
 
+      if (sfcCompilerResult) { return sfcCompilerResult }
+
       // Grab parser from SFC resolved type
       const parser = pinceauContext?.transformers?.[query.ext]
       if (!parser) { return }
 
       // Return a MagicSFC using the apropriate parser
-      try {
-        const sfcCompilerResult = new parser.MagicSFC(ms, { parser: parser.parser, parserOptions: parser?.parserOptions })
-        return sfcCompilerResult
-      }
-      catch (e) {
-        console.log({ e })
-      }
+      sfcCompilerResult = new parser.MagicSFC(ms, { parser: parser.parser, parserOptions: parser?.parserOptions })
+
+      return sfcCompilerResult
     },
 
     transform() {
@@ -109,6 +115,9 @@ export function usePinceauTransformContext(
           transformFn?.(this, pinceauContext)
         }
       }
+
+      // Apply globals transforms
+      if (transforms?.globals?.length) { applyTransforms(transforms.globals) }
 
       // Apply SFC transforms
       if (query.sfc && this.sfc) {
@@ -128,10 +137,10 @@ export function usePinceauTransformContext(
         return
       }
 
-      if (query.type === 'style') { applyTransforms(transforms.styles) }
-      if (query.type === 'template') { applyTransforms(transforms.templates) }
-      if (query.type === 'script') { applyTransforms(transforms.scripts) }
-      if (query.type === 'custom') { applyTransforms(transforms.customs) }
+      if (transforms?.styles?.length && query.type === 'style') { applyTransforms(transforms.styles) }
+      if (transforms?.templates?.length && query.type === 'template') { applyTransforms(transforms.templates) }
+      if (transforms?.scripts?.length && query.type === 'script') { applyTransforms(transforms.scripts) }
+      if (transforms?.customs?.length && query.type === 'custom') { applyTransforms(transforms.customs) }
     },
 
     /**

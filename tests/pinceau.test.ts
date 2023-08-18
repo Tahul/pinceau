@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import PinceauPlugin from 'pinceau'
+import PinceauPlugin from 'pinceau/plugin'
 import PinceauCore from '@pinceau/core/plugin'
 import PinceauTheme from '@pinceau/theme/plugin'
 import PinceauStyle from '@pinceau/style/plugin'

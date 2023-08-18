@@ -20,7 +20,7 @@ export type SupportedProperties = keyof NativeProperties | keyof DefaultThemeMap
 /**
  * CSS properties suggested values resolver.
  */
-export type PropertyValue<T extends (keyof NativeProperties | keyof DefaultThemeMap | string)> =
+export type PropertyValue<T extends (keyof NativeProperties | keyof DefaultThemeMap | string | number)> =
   // Check if current property is a native CSS key
   T extends keyof NativeProperties ?
     // Check if that key is handled in the ThemeMap

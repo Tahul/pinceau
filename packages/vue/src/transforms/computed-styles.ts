@@ -9,9 +9,7 @@ export const transformComputedStyles: PinceauTransformFunction = (
 ) => {
   const { target } = transformContext
 
-  const isTs = target.lang === 'ts' || target.attrs.lang === 'ts'
-
-  for (const [_, cssFunction] of Object.entries(transformContext?.state?.cssFunctions || {})) {
+  for (const cssFunction of transformContext?.state?.cssFunctions || []) {
     if (!cssFunction?.computedStyles) { continue }
 
     cssFunction

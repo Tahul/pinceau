@@ -22,6 +22,11 @@
       "types": "./dist/runtime.d.ts",
       "require": "./runtime.cjs",
       "import": "./dist/runtime.mjs"
+    },
+    "./utils": {
+      "types": "./dist/utils.d.ts",
+      "require": "./dist/utils.cjs",
+      "import": "./dist/utils.mjs"
     }
   },
   "main": "./dist/index.cjs",

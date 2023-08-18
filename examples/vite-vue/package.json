@@ -1,0 +1,31 @@
+{
+  "name": "vite-vue",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite --port=3000",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@pinceau/core": "workspace:*",
+    "@pinceau/runtime": "workspace:*",
+    "@pinceau/style": "workspace:*",
+    "@pinceau/theme": "workspace:*",
+    "@pinceau/volar": "workspace:*",
+    "@pinceau/vue": "workspace:*",
+    "pinceau": "workspace:*",
+    "vue": "^3.3.4",
+    "vue-router": "^4.2.4"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.3.1",
+    "typescript": "^5.1.6",
+    "vite": "^4.4.9",
+    "vite-plugin-inspect": "^0.7.38"
+  },
+  "stackblitz": {
+    "installDependencies": false,
+    "startCommand": "node .stackblitz.js && npm install && npm run dev"
+  }
+}

@@ -94,7 +94,7 @@ export function useThemeSheet({ colorSchemeMode, theme: initialTheme = {} }: Pin
     const mqKeys = Array.from(new Set(['dark', 'light', ...Object.keys((value as any)?.media || {}), ...Object.keys(theme?.media || {})]))
 
     // Turn partial configuration object into a valid design tokens configuration object
-    const config = normalizeTokens(value || {}, mqKeys, true)
+    const config = normalizeTokens(value, mqKeys, true)
 
     // Walk tokens inside partial theme object and assign them to local stylesheet
     walkTokens(config, (token, _, paths) => updateToken(paths, token))

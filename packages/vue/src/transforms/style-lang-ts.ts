@@ -1,5 +1,3 @@
-import type { PinceauQuery } from '@pinceau/core'
-
 /**
  * Transforms the `<style lang="ts">` attribute into `<style lang="postcss">`.
  *
@@ -7,7 +5,7 @@ import type { PinceauQuery } from '@pinceau/core'
  *
  * This is used from `loadFile` and `loadBlock` from Vue Pinceau transformer.
  */
-export function transformStyleTs(code: string = '', query?: PinceauQuery) {
+export function transformStyleTs(code: string = '') {
   const styleTagRe = /<style\b(.*?)\blang=['"][tj]sx?['"](.*?)>/g
   if (code.match(styleTagRe)) { code = code.replace(styleTagRe, '<style$1lang="postcss" transformed$2>') }
   return code

@@ -66,7 +66,7 @@ Example: [`playground/_vite.config.ts`](./playground/_vite.config.ts)
 <summary>Create your theme</summary><br>
 
 ```ts
-// tokens.config.ts
+// theme.config.ts
 import { defineTheme } from 'pinceau'
 
 export default defineTheme({
@@ -110,7 +110,7 @@ export default defineTheme({
 })
 ```
 
-Example: [`playground/theme/tokens.config.ts`](./playground/theme/tokens.config.ts)
+Example: [`playground/theme/theme.config.ts`](./playground/theme/theme.config.ts)
 
 </details>
 

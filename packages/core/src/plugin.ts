@@ -1,13 +1,14 @@
+import type { UnpluginInstance } from 'unplugin'
 import { createUnplugin } from 'unplugin'
 import chalk from 'chalk'
 import { consola } from 'consola'
-import type { PinceauOptions } from './types'
+import type { PinceauUserOptions } from './types'
 import { updateDebugContext } from './utils/debug'
 import { registerPostCSSPlugins } from './utils/postcss'
-import { usePinceauContext } from './utils/context'
-import { loadFile } from './utils/load'
+import { usePinceauContext } from './utils/core-context'
+import { load, loadInclude } from './utils/unplugin'
 
-const PinceauCorePlugin = createUnplugin<PinceauOptions>((options) => {
+const PinceauCorePlugin: UnpluginInstance<PinceauUserOptions> = createUnplugin((options) => {
   // Setup debug context context.
   updateDebugContext({
     debugLevel: options?.dev ? options.debug : false,
@@ -33,12 +34,15 @@ const PinceauCorePlugin = createUnplugin<PinceauOptions>((options) => {
       config(config) {
         registerPostCSSPlugins(config, ctx.options)
       },
-      async configureServer(server) {
-        // PinceauContext setup
+      configResolved(config) {
+        if (!ctx.options.cwd) { ctx.options.cwd = config.root }
+      },
+      api: {
+        getPinceauContext: () => ctx,
+      },
+      async configureServer() {
+        // As server exists, we most likely are in development mode.
         ctx.options.dev = true
-
-        // PinceauContext injection
-        ;(server as any)._pinceauContext = ctx
       },
       handleHotUpdate(hmrContext) {
         const defaultRead = hmrContext.read
@@ -49,85 +53,24 @@ const PinceauCorePlugin = createUnplugin<PinceauOptions>((options) => {
 
           const query = ctx.transformed[hmrContext.file]
 
-          if (query) {
-            // Find format transformer
-            const transformer = ctx.transformers[query.ext]
-
-            // Apply load transformers
-            if (transformer && transformer?.loadTransformers?.length) {
-              for (const transform of transformer.loadTransformers) {
-                code = transform(code, query)
-              }
-            }
-          }
+          if (query) { code = ctx.applyTransformers(query, code) }
 
           return code
         }
       },
     },
 
-    resolveId(id) {
-      return ctx.getOutputId(id)
-    },
+    resolveId: id => ctx.getOutputId(id),
 
     /**
-     * Global transform include check; Pinceau plugins will access this via `ctx.transformed`
+     * Global load include check; Pinceau plugins will access this via `ctx.transformed`
      */
-    transformInclude(id) {
-      const query = ctx.transformed[id]
-
-      return !!query
-    },
-
-    transform(code) {
-      return code
-    },
+    loadInclude: id => loadInclude(id, ctx),
 
     /**
-     * Global load include check; Pinceau plugins will access this via `ctx.loaded`
+     * Global load block; handles virtual storage assets and load transfomers and block loaders.
      */
-    loadInclude(id) {
-      const query = ctx.isTransformable(id)
-
-      // ALlow virtual outputs by default
-      if (ctx.getOutput(id)) { return true }
-
-      // Push included file into context
-      if (query && query?.transformable) { ctx.addTransformed(id, query) }
-
-      return !!query
-    },
-
-    load(id) {
-      // Load virtual outputs
-      const output = ctx.getOutput(id)
-      if (output) { return output }
-
-      // Load transform pipeline
-      const query = ctx.transformed[id]
-      if (!query) { return }
-
-      // Load file
-      let code = loadFile(query)
-      if (!code) { return }
-
-      // Find format transformer
-      const transformer = ctx.transformers[query.ext]
-      if (!transformer) { return code }
-
-      // Apply load transformers
-      if (transformer?.loadTransformers?.length) {
-        for (const transform of transformer.loadTransformers) {
-          code = transform(code, query)
-        }
-      }
-
-      // Try to find block via transformer loader
-      const block = ctx.transformers[query.ext].loadBlock(code, query)
-
-      // Return scoped contents
-      return block || code
-    },
+    load: id => load(id, ctx),
   }
 })
 

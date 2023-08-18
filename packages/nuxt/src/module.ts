@@ -4,10 +4,9 @@ import { join, resolve } from 'pathe'
 import { addPlugin, addPluginTemplate, addPrerenderRoutes, createResolver, defineNuxtModule, resolveModule } from '@nuxt/kit'
 import createJITI from 'jiti'
 import type { PinceauUserOptions } from '@pinceau/core'
-import { prepareBuildDir } from '@pinceau/theme/utils'
 import { walkTokens } from '@pinceau/theme/runtime'
 import type { ConfigLayer } from '@pinceau/theme'
-import { defaultOptions, normalizeOptions, referencesRegex } from '@pinceau/core/utils'
+import { normalizeOptions, referencesRegex } from '@pinceau/core/utils'
 import Pinceau from 'pinceau/plugin'
 
 export interface ModuleHooks {
@@ -20,19 +19,18 @@ const module: any = defineNuxtModule<PinceauUserOptions>({
     name: '@pinceau/nuxt',
     configKey: 'pinceau',
   },
-  defaults: nuxt => ({
-    ...defaultOptions,
-  }),
+  defaults: _ => ({}),
   async setup(_options, nuxt) {
     // Normalize options as soon as module gets loaded.
     const options = normalizeOptions(_options)
 
     // Set theme buildDir from Nuxt context
-    options.theme.buildDir = join(nuxt.options.buildDir, 'pinceau/')
+    options.theme.buildDir = resolve(nuxt.options.buildDir, 'pinceau')
     const buildDir: string = options.theme.buildDir
 
     // Exclude `.nuxt`
-    options.style.excludes.push('.nuxt')
+    options.style.excludes.push('**/node_modules/**/*')
+    options.style.excludes.push('**/.nuxt/**')
 
     // Set `dev`
     options.dev = typeof nuxt.options?.dev !== 'undefined' ? nuxt.options.dev : process.env.NODE_ENV !== 'production'
@@ -57,7 +55,7 @@ const module: any = defineNuxtModule<PinceauUserOptions>({
             // Grab built tokens and resolve all tokens paths
             if (existsSync(join(buildDir, 'index.ts'))) {
               const _tokens = createJITI(buildDir)(join(buildDir, 'index.ts')).default
-              walkTokens(_tokens?.theme || _tokens, (_, __, paths) => cachedTokens.push(paths.join('.')))
+              walkTokens(_tokens?.theme || _tokens, (_, __, paths) => { cachedTokens.push(paths.join('.')) })
             }
 
             // Parse tokens in component code
@@ -90,22 +88,20 @@ const module: any = defineNuxtModule<PinceauUserOptions>({
         tsConfig.compilerOptions.paths['pinceau.css'] = [`${resolve(options.theme.buildDir, 'theme.css')}`]
         tsConfig.compilerOptions.paths['$pinceau/utils'] = [`${resolve(options.theme.buildDir, 'utils.ts')}`]
         tsConfig.compilerOptions.paths['$pinceau/theme'] = [`${resolve(options.theme.buildDir, 'theme.ts')}`]
+        tsConfig.compilerOptions.paths['$pinceau/runtime'] = [`${resolve(options.theme.buildDir, 'runtime.ts')}`]
         tsConfig.compilerOptions.paths['$pinceau/vue-plugin'] = [`${resolve(options.theme.buildDir, 'vue-plugin.ts')}`]
-        if (options.theme.studio) { tsConfig.compilerOptions.paths['$pinceau/schema'] = [`${resolve(options.theme.buildDir, 'schema.ts')}`] }
+        if (options.theme.schema) { tsConfig.compilerOptions.paths['$pinceau/schema'] = [`${resolve(options.theme.buildDir, 'schema.ts')}`] }
         if (options.theme.definitions) { tsConfig.compilerOptions.paths['$pinceau/definitions'] = [`${resolve(options.theme.buildDir, 'definitions.ts')}`] }
       }
 
       // Push Pinceau reference
+      opts.references = opts.references || []
       opts.references.push({ path: 'pinceau' })
-      opts.references.push({ path: 'pinceau/runtime' })
 
       // Add Volar plugin
       tsConfig.vueCompilerOptions = tsConfig.vueCompilerOptions || {}
       tsConfig.vueCompilerOptions.plugins = tsConfig.vueCompilerOptions.plugins || []
-      tsConfig.vueCompilerOptions.plugins.push('pinceau/volar')
-
-      // Prepares the output dir
-      await prepareBuildDir(options)
+      tsConfig.vueCompilerOptions.plugins.push('@pinceau/volar')
     })
 
     // Setup Nitro plugin
@@ -135,12 +131,12 @@ const module: any = defineNuxtModule<PinceauUserOptions>({
 
     // Support for `extends` feature
     // Will scan each layer for a config file
-    options.theme.configLayers = [
-      ...(options?.theme?.configLayers || []),
+    options.theme.layers = [
+      ...(options?.theme?.layers || []),
       ...nuxt.options._layers.reduce(
         (acc: ConfigLayer[], layer: any) => {
-          if (typeof layer === 'string') { acc.push({ cwd: layer, configFileName: options.theme.configFileName }) }
-          if (layer?.cwd) { acc.push({ cwd: layer?.cwd, configFileName: options.theme.configFileName }) }
+          if (typeof layer === 'string') { acc.push({ path: layer, configFileName: options.theme.configFileName }) }
+          if (layer?.path) { acc.push({ path: layer?.path, configFileName: options.theme.configFileName }) }
           return acc
         },
         [],
@@ -152,11 +148,11 @@ const module: any = defineNuxtModule<PinceauUserOptions>({
     await nuxt.callHook('pinceau:options', options)
 
     // Pinceau runtime config (to be used with Nuxt Studio integration)
-    nuxt.options.runtimeConfig.pinceau = { studio: options.theme.studio, outputDir: options.theme.buildDir }
+    nuxt.options.runtimeConfig.pinceau = { schema: options.theme.schema, outputDir: options.theme.buildDir }
 
     // Setup Nuxt Studio support
-    if (options.theme.studio) {
-      addPlugin(resolveLocalModule('../server/schema.server'))
+    if (options.theme.schema) {
+      addPlugin(resolveLocalModule('../server/pinceau-schema.server.mjs'))
       addPrerenderRoutes('/__pinceau_tokens_config.json')
       addPrerenderRoutes('/__pinceau_tokens_schema.json')
     }

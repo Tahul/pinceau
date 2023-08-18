@@ -31,7 +31,10 @@ export default defineBuildConfig({
   },
   externals: [
     'ast-types',
+    '@babel/types',
+    '@pinceau',
     '@pinceau/style',
+    '@pinceau/core',
     'style-dictionary-esm',
     'untyped',
     'pathe',

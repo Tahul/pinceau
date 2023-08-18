@@ -1,59 +1,61 @@
-import type { Variants } from '@pinceau/runtime'
 import type { DefaultThemeMap, PinceauMediaQueries, PinceauUtils } from '@pinceau/theme'
-import type * as Utils from './format-utils'
+import type { WrapUnion } from '@pinceau/style'
 import type { NativeProperties, PseudosProperties } from './properties'
 import type { PropertyValue, UsableTokens } from './resolvers'
 
-export type ComputedStyleProp<T extends string> = T | { [key in PinceauMediaQueries]?: T }
+export type ComputedStyleProp<T> = T | { [key in PinceauMediaQueries]?: T }
 
-export type ComputedStyleDefinition<T extends string, ComponentProps = object> = (props: ComponentProps) => PropertyValue<T> | { [key in PinceauMediaQueries]?: PropertyValue<T> }
+export type ComputedStyleDefinition<T extends string | number> = () => PropertyValue<T> | T | { [key in PinceauMediaQueries]?: T | PropertyValue<T> }
 
-export type MappedProperty<K extends string, ComponentProps = object> = K | PropertyValue<K> | ComputedStyleDefinition<K, ComponentProps>
+export type MappedProperty<K extends string | number> = K | PropertyValue<K> | ComputedStyleDefinition<K>
 
-export type CSSProperties<
-  ComponentProps = object,
-  UtilsProperties = PinceauUtils,
-> =
-    // Theme-based tokens
-    {
-      [K in keyof DefaultThemeMap]?: MappedProperty<K, ComponentProps> | object
-    }
-    &
-    // Native properties tokens
-    {
-      [K in keyof NativeProperties]?: MappedProperty<K, ComponentProps> | object
-    }
-    &
-    {
-      [K in keyof PseudosProperties]?: CSSProperties<ComponentProps> | object
-    }
-    &
-    // Custom properties
-    {
-      [K in keyof UtilsProperties]?: UsableTokens | ComputedStyleDefinition<UsableTokens, ComponentProps> | object
-    }
-    &
-    {
-      [K in string]?: CSSProperties<ComponentProps> | MappedProperty<K, ComponentProps> | object
-    }
+type MQs = WrapUnion<PinceauMediaQueries, '@', ''>
 
-export type CSSFunctionType<
-  ComponentProps = object,
-  MediaQueries extends string = Utils.WrapUnion<PinceauMediaQueries, '@', ''>,
-  UtilsProperties = PinceauUtils,
-> =
+export type RawCSS =
   {
-    variants?: Variants
+    [K in keyof PseudosProperties]?: CSSProperties
   }
   &
   {
-    [K in keyof UtilsProperties]?: K extends string ? MappedProperty<K, ComponentProps> : never | ComputedStyleDefinition<UsableTokens, ComponentProps>
+    [K in keyof PinceauUtils]?: UsableTokens | ComputedStyleDefinition<K>
   }
   &
   {
-    [K in MediaQueries]?: CSSProperties<ComponentProps> | object
+    [K in keyof NativeProperties]?: MappedProperty<K>
   }
   &
   {
-    [K in string]: CSSProperties<ComponentProps> | MappedProperty<K, ComponentProps> | object
+    [K in keyof DefaultThemeMap]?: MappedProperty<K>
   }
+  &
+  {
+    [K in MQs]?: { [key: string]: CSSProperties }
+  }
+
+export type CSSProperties<Source = {}> =
+  RawCSS
+  &
+  {
+    [K in keyof Source]?: K extends MQs ? { [MQ in keyof Source[K]]: CSSProperties<Source[K][MQ]> } :
+      K extends keyof PseudosProperties ? CSSProperties<Source[K]> :
+        K extends keyof PinceauUtils ? Parameters<PinceauUtils[K]>[0] | ComputedStyleDefinition<Parameters<PinceauUtils[K]>[0]> :
+          K extends keyof NativeProperties ? MappedProperty<K> :
+            K extends keyof DefaultThemeMap ? MappedProperty<K> :
+              K extends string ? CSSProperties<Source[K]> :
+                CSSProperties<Source[K]>
+  }
+
+/**
+ * This type proxifies the Source object and tries to provide context to both keys and values from generated built outputs.
+ */
+export type CSS<Source = {}> = {
+  [K in keyof Source | MQs | keyof PinceauUtils]?:
+  (
+    K extends MQs ? (K extends keyof Source ? { [MQ in keyof Source[K]]: CSSProperties<Source[K][MQ]> } : never) :
+      K extends keyof PinceauUtils ? (Parameters<PinceauUtils[K]>[0] extends undefined ? string | number | boolean : Parameters<PinceauUtils[K]>[0] | ComputedStyleDefinition<Parameters<PinceauUtils[K]>[0]>) :
+        K extends keyof Source ? CSSProperties<Source[K]> | Source[K] : never
+  )
+}
+
+/** Local testing purposes; this ain't exposed nor used anywhere */
+function css<T>(declaration: CSS<T>) { return declaration as Readonly<T> }

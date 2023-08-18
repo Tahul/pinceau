@@ -1,6 +1,6 @@
 import type { PinceauContext } from '@pinceau/core'
 
-export async function transformIndexHtml(html: string, ctx: PinceauContext, resolveModule: RequireResolve) {
+export function transformIndexHtml(html: string, ctx: PinceauContext, resolveModule: RequireResolve) {
   const options = ctx.options
 
   // Vite replace Pinceau theme injection by actual content of `pinceau.css`

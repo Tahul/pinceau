@@ -1,3 +1,5 @@
+export type PinceauQueryBlockType = 'script' | 'template' | 'style' | 'custom' | 'global'
+
 export interface PinceauQuery {
   // Extracted data
   id: string
@@ -11,7 +13,7 @@ export interface PinceauQuery {
 
   // Vue Query parameters
   vueQuery?: boolean
-  type?: 'script' | 'template' | 'style' | 'custom'
+  type?: PinceauQueryBlockType
   index?: number
   setup?: boolean
   scoped?: string
@@ -19,9 +21,6 @@ export interface PinceauQuery {
 
   // File language
   lang?: string
-
-  // Is target style?
-  styles?: boolean
 
   // Is target transformable?
   transformable?: boolean

@@ -3,7 +3,7 @@
     "baseUrl": ".",
     "target": "es2018",
     "module": "esnext",
-    "lib": ["esnext"],
+    "lib": ["esnext", "dom"],
     "moduleResolution": "node",
     "esModuleInterop": true,
     "strict": true,
@@ -43,16 +43,18 @@
       "@pinceau/vue/plugin": ["./packages/vue/src/plugin.ts"],
       "@pinceau/vue/transforms": ["./packages/vue/src/transforms.ts"],
       "@pinceau/vue/runtime": ["./packages/vue/src/runtime.ts"],
+      "@pinceau/vue/utils": ["./packages/vue/src/utils.ts"],
       "@pinceau/volar": ["./packages/volar/src/index.ts"],
       "@pinceau/vscode": ["./packages/vscode/src/index.ts"],
       "@pinceau/language-server": ["./packages/language-server/src/index.ts"],
+      "@pinceau/palette": ["./packages/palette/theme.config.ts"],
       // Aliases
-      "$pinceau/theme": ["./packages/data/theme.ts"],
-      "$pinceau/utils": ["./packages/data/utils.ts"],
-      "$pinceau/schema": ["./packages/data/schema.ts"],
-      "$pinceau/runtime": ["./packages/data/runtime.ts"],
-      "$pinceau/vue-plugin": ["./packages/data/vue-plugin.ts"],
-      "pinceau.css": ["./packages/data/theme/theme.css"]
+      "$pinceau/theme": ["./packages/palette/output/theme.ts"],
+      "$pinceau/utils": ["./packages/palette/output/utils.ts"],
+      "$pinceau/schema": ["./packages/palette/output/schema.ts"],
+      "$pinceau/runtime": ["./packages/palette/output/runtime.ts"],
+      "$pinceau/vue-plugin": ["./packages/palette/output/vue-plugin.ts"],
+      "pinceau.css": ["./packages/palette/output/pinceau.css"]
     }
   },
   "exclude": [
@@ -60,7 +62,6 @@
     "**/node_modules/**",
     "**/playground/**",
     "**/examples/**",
-    "**/fixtures/**",
-    "**/tests/**"
+    "**/fixtures/**"
   ]
 }

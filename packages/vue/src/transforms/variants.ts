@@ -20,7 +20,7 @@ export const transformVariants: PinceauTransformFunction = (
 
   const isTs = target.lang === 'ts' || target.attrs.lang === 'ts'
 
-  for (const [_, cssFunction] of Object.entries(transformContext?.state?.cssFunctions || {})) {
+  for (const cssFunction of transformContext?.state?.cssFunctions || []) {
     if (!cssFunction.variants) { continue }
 
     const variantsProps = resolveVariantsProps(transformContext, isTs)

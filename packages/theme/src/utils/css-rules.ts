@@ -3,7 +3,7 @@ import type { ColorSchemeModes, PinceauMediaQueries } from '../types'
 /**
  * Resolve a responsive selector for a set media query, a color scheme mode and a theme.
  */
-export function resolveResponsiveSelector(
+export function resolveMediaSelector(
   {
     mq,
     colorSchemeMode,
@@ -14,29 +14,27 @@ export function resolveResponsiveSelector(
     theme: Record<string, any>
   },
 ) {
-  let responsiveSelector = ''
+  let selector = ''
   if (mq === 'dark' || mq === 'light') {
-    if (colorSchemeMode === 'class') { responsiveSelector = `:root.${mq}` }
-    else { responsiveSelector = `(prefers-color-scheme: ${mq})` }
+    if (colorSchemeMode === 'class') { selector = `:root.${mq}` }
+    else { selector = `(prefers-color-scheme: ${mq})` }
   }
   else if (mq !== 'initial' && theme) {
     const queryToken = theme?.media?.[mq]
-    if (queryToken) { responsiveSelector = queryToken.value }
+    if (queryToken) { selector = queryToken.value }
   }
-  return responsiveSelector
+  return selector
 }
 
 /**
  * Get a rule prefix from a responsive selector.
  */
-export function resolveReponsiveSelectorPrefix(
-  responsiveSelector: string,
-) {
+export function resolveReponsiveSelectorPrefix(selector: string) {
   let prefix: string
-  if (!responsiveSelector) { prefix = '@media { :root {' }
-  else if (responsiveSelector.startsWith('.')) { prefix = `@media { :root${responsiveSelector} {` }
-  else if (responsiveSelector.startsWith(':root')) { prefix = `@media { ${responsiveSelector} {` }
-  else { prefix = `@media ${responsiveSelector} { :root {` }
+  if (!selector) { prefix = '@media { :root {' }
+  else if (selector.startsWith('.')) { prefix = `@media { :root${selector} {` }
+  else if (selector.startsWith(':root')) { prefix = `@media { ${selector} {` }
+  else { prefix = `@media ${selector} { :root {` }
   return prefix
 }
 
@@ -56,7 +54,7 @@ export function createThemeRule(
     theme: Record<string, any>
   },
 ) {
-  const responsiveSelector = resolveResponsiveSelector({ mq, colorSchemeMode, theme })
+  const responsiveSelector = resolveMediaSelector({ mq, colorSchemeMode, theme })
 
   const prefix = resolveReponsiveSelectorPrefix(responsiveSelector)
 

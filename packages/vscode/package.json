@@ -154,7 +154,7 @@
   },
   "devDependencies": {
     "@pinceau/language-server": "workspace:*",
-    "@types/node": "^20.4.8",
+    "@types/node": "^20.5.0",
     "@types/vscode": "^1.81.0",
     "@vscode/test-electron": "^2.3.4",
     "@vscode/vsce": "^2.20.1",

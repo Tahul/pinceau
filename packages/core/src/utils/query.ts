@@ -1,10 +1,12 @@
 import * as path from 'pathe'
-import type { PinceauQuery } from '../types'
+import type { PinceauQuery, PinceauQueryBlockType } from '../types'
 
 // Supported extensions for transforms ($dt or complete Vue SFCs)
 export const PINCEAU_STYLES_EXTENSIONS = ['css', 'sass', 'scss', 'postcss', 'less', 'styl', 'stylus']
-export const PINCEAU_SCRIPTS_EXTENSIONS = ['jsx', 'mjs', 'tsx', 'js', 'ts', 'cjs']
-export const PINCEAU_SUPPORTED_EXTENSIONS = [...PINCEAU_STYLES_EXTENSIONS, ...PINCEAU_SCRIPTS_EXTENSIONS, 'vue']
+export const PINCEAU_SCRIPTS_EXTENSIONS = ['jsx', 'tsx', 'js', 'ts', 'mjs', 'cjs']
+export const PINCEAU_TEMPLATE_EXTENSIONS = ['html']
+export const PINCEAU_SFC_EXTENSIONS = ['vue']
+export const PINCEAU_SUPPORTED_EXTENSIONS = [...PINCEAU_STYLES_EXTENSIONS, ...PINCEAU_SCRIPTS_EXTENSIONS, ...PINCEAU_TEMPLATE_EXTENSIONS, 'vue']
 
 /**
  * Vue SFC Query, forked from the below:
@@ -19,32 +21,42 @@ export function parsePinceauQuery(id: string): PinceauQuery {
   // Extracted data
   const [filename, rawQuery] = id.split('?', 2)
   const params = new URLSearchParams(rawQuery)
-  const ret = { filename, id } as PinceauQuery
+  const ret: PinceauQuery = {
+    id,
+    filename,
+    ext: path.extname(filename).slice(1),
 
-  // Extraneous parameters
-  ret.global = params.has('global')
-  ret.src = params.has('src')
-  ret.raw = params.has('raw')
-  ret.ext = path.extname(filename).slice(1)
+    src: params.has('src') || undefined,
+    raw: params.has('raw') || undefined,
+    global: params.has('global') || undefined,
 
-  // Target Vue query parameters
-  ret.vueQuery = params.has('vue')
-  if (params.has('type')) { ret.type = params.get('type') as PinceauQuery['type'] }
-  if (params.has('lang.ts')) { ret.lang = 'ts' }
-  if (params.has('index')) { ret.index = Number(params.get('index')) }
-  if (params.has('scoped')) { ret.scoped = String(params.get('scoped')) }
-  if (params.has('setup')) { ret.setup = params.get('setup') === 'true' }
-  if (params.has('transformed')) { ret.transformed = params.get('transformed') === 'true' }
+    type: params.get('type') as PinceauQueryBlockType || undefined,
+    index: params.has('index') ? Number(params.get('index')) : undefined,
+    scoped: params.has('scoped') ? String(params.get('scoped')) : undefined,
+    lang: params.get('lang') as PinceauQuery['lang'] || (params.has('lang.ts') ? 'ts' : undefined),
+    setup: params.get('setup') === 'true' || undefined,
+    transformed: params.get('transformed') === 'true' || undefined,
 
-  // Target language
-  if (params.has('lang')) { ret.lang = params.get('lang') as PinceauQuery['lang'] }
+    vueQuery: params.has('vue') || undefined,
+
+    sfc: undefined,
+    transformable: undefined,
+  }
 
   // Is target file a SFC?
   if (ret.ext === 'vue' && !ret.type && !ret.index) { ret.sfc = 'vue' }
 
   // Is target style?
-  if (PINCEAU_STYLES_EXTENSIONS.includes(ret.ext)) { ret.styles = true }
-  if (ret.lang && PINCEAU_STYLES_EXTENSIONS.includes(ret.lang)) { ret.styles = true }
+  if (PINCEAU_STYLES_EXTENSIONS.includes(ret.ext)) { ret.type = 'style' }
+  if (ret.lang && PINCEAU_STYLES_EXTENSIONS.includes(ret.lang)) { ret.type = 'style' }
+
+  // Is target script?
+  if (PINCEAU_SCRIPTS_EXTENSIONS.includes(ret.ext)) { ret.type = 'script' }
+  if (ret.lang && PINCEAU_SCRIPTS_EXTENSIONS.includes(ret.lang)) { ret.type = 'script' }
+
+  // Is target template?
+  if (PINCEAU_TEMPLATE_EXTENSIONS.includes(ret.ext)) { ret.type = 'template' }
+  if (ret.lang && PINCEAU_TEMPLATE_EXTENSIONS.includes(ret.lang)) { ret.type = 'template' }
 
   // Is target tranformable?
   if (PINCEAU_SUPPORTED_EXTENSIONS.includes(ret.ext)) { ret.transformable = true }

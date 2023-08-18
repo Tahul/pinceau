@@ -1,217 +1,105 @@
-import type { Core as Instance } from 'style-dictionary-esm'
+import type { File, Core as Instance, Named, Transform } from 'style-dictionary-esm'
 import StyleDictionary from 'style-dictionary-esm'
-import type { PinceauBuildContext } from '@pinceau/core'
 import { message } from '@pinceau/core/utils'
-import type { ResolvedConfig, ThemeGenerationOutput } from '../types'
-import { flattenTokens, normalizeTokens } from './tokens'
-import { cssFull, definitionsFull, schemaFull, tsFull, utilsFull } from './outputs'
+import type { PinceauContext } from '@pinceau/core'
+import type { DesignTokens, PinceauTheme, PinceauThemeFormat, Theme, ThemeGenerationOutput, ThemeLoadingOutput } from '../types'
+import { flattenTokens } from './tokens'
 
 export async function generateTheme(
-  resolvedConfig: ResolvedConfig,
-  buildContext: PinceauBuildContext,
-  silent = true,
-  write = true,
+  loadedTheme: ThemeLoadingOutput,
+  ctx: PinceauContext,
 ): Promise<ThemeGenerationOutput> {
-  const { tokens, definitions, utils, schema } = resolvedConfig
-  const { options } = buildContext
-
+  // Create Style Dictionary local instance
   let styleDictionary: Instance = StyleDictionary
 
-  // Files created by Pinceau
-  const files = [
-    {
-      destination: 'theme.css',
-      format: 'css',
-    },
-    {
-      destination: 'theme.ts',
-      format: 'pinceau/typescript',
-    },
-    {
-      destination: 'utils.ts',
-      format: 'pinceau/utils',
-    },
-  ]
+  // Get context
+  const { theme } = loadedTheme
+  const { options } = ctx
+  let { buildDir } = options.theme
 
-  // Support definitions.ts
-  if (options.theme.definitions) {
-    files.push({
-      destination: 'definitions.ts',
-      format: 'pinceau/definitions',
-    })
-  }
-
-  // Support schema.ts
-  if (options.theme.studio) {
-    files.push({
-      destination: 'schema.ts',
-      format: 'pinceau/schema',
-    })
-  }
+  // Enforce ending slash for buildDir
+  if (buildDir && !buildDir.endsWith('/')) { buildDir += '/' }
 
   // Transforms used
-  const transforms = [
-    'size/px',
-    'color/hex',
-    'pinceau/name',
-    'pinceau/variable',
-    'pinceau/responsiveTokens',
-  ]
+  const usedTransforms = ['size/px', 'color/hex']
 
-  // Tokens outputs as in-memory objects
+  // Files created by Pinceau
+  const files: File[] = []
+
+  // Tokens outputs to be pased
   const outputs: ThemeGenerationOutput['outputs'] = {}
 
   // Generation result for virtual storage
   let result: ThemeGenerationOutput = {
-    tokens: {},
-    outputs: {} as Record<string, any>,
-    buildDir: options.theme.buildDir,
+    buildDir,
+    theme: {} as Theme<PinceauTheme>,
+    outputs: {},
   }
-
-  // Skip generation if no tokens provided
-  if (!tokens || typeof tokens !== 'object' || !Object.keys(tokens).length) { return result }
-
-  // Responsive tokens
-  const mqKeys = ['dark', 'light', ...Object.keys(tokens?.media || {})]
-  const responsiveTokens = {}
 
   // Cleanup default fileHeader
   styleDictionary.fileHeader = {}
 
-  // Add `variable` key to attributes
-  styleDictionary.registerTransform({
-    name: 'pinceau/variable',
-    type: 'attribute',
-    matcher: () => true,
-    transformer(token) {
-      return { variable: `var(--${token.name})` }
-    },
-  })
+  // Register all transforms
+  const transforms: Named<Transform>[] = ctx.options.theme.tokensTransforms
+  for (const transform of transforms) {
+    styleDictionary.registerTransform(transform)
+    usedTransforms.push(transform.name)
+  }
 
-  // Replace dashed by dotted
-  styleDictionary.registerTransform({
-    name: 'pinceau/name',
-    type: 'name',
-    matcher: () => true,
-    transformer(token) {
-      if (token?.path?.join('').includes('-')) { message('WRONG_TOKEN_NAMING', [token]) }
-      return token?.path?.join('-')
-    },
-  })
+  // Registers PinceauThemeFormats
+  const formats: PinceauThemeFormat[] = ctx.options.theme.outputFormats
+  for (const format of formats) {
+    // Register format in Style Dictionary
+    styleDictionary.registerFormat({
+      name: format.importPath,
+      formatter(args) {
+        const result = format.formatter({ ...args, loadedTheme, ctx, instance: styleDictionary })
+        outputs[format.importPath] = result
+        return result
+      },
+    })
 
-  // Locally resolves responsive tokens from dictionnary
-  styleDictionary.registerTransform({
-    name: 'pinceau/responsiveTokens',
-    type: 'value',
-    transitive: true,
-    matcher: (token) => {
-      // Handle responsive tokens
-      const keys = typeof token.value === 'object' ? Object.keys(token.value) : []
+    // Register formats in file targets
+    files.push({
+      format: format.importPath,
+      destination: format.destination,
+    })
 
-      // Mark as responsive token if `initial` is present and at least one other MQ property.
-      // It has to be this way, so another object with only `initial` as key won't be marked as a responsive token.
-      if (keys && keys.includes('initial') && keys.some(key => mqKeys.includes(key))) { return true }
-
-      return false
-    },
-    transformer: (token) => {
-      // Loop on token `value` keys
-      Object.entries(token.value).forEach(
-        ([key, value]) => {
-          // Skip initial as it'll be casted as token value by this transformer
-          if (key === 'initial') { return }
-
-          // Initialize responsive tokens declaration for this query
-          if (!responsiveTokens[key]) { responsiveTokens[key] = [] }
-
-          // Recompose a token from responsive value and existing token
-          const responsiveToken = { ...token, value }
-
-          // Push token to responsive tokens
-          responsiveTokens[key].push(responsiveToken)
-        },
-      )
-
-      // Cast token to its initial value
-      return token.value
-    },
-  })
-
-  // index.css
-  styleDictionary.registerFormat({
-    name: 'css',
-    formatter({ dictionary, options }) {
-      outputs['pinceau.css'] = cssFull(dictionary, options, responsiveTokens, options.colorSchemeMode)
-      return outputs['pinceau.css']
-    },
-  })
-
-  // utils.ts
-  styleDictionary.registerFormat({
-    name: 'pinceau/utils',
-    formatter() {
-      outputs['$pinceau/utils'] = utilsFull(utils, options.theme.utilsImports, definitions)
-      return outputs['$pinceau/utils']
-    },
-  })
-
-  // definitions.ts
-  styleDictionary.registerFormat({
-    name: 'pinceau/definitions',
-    formatter() {
-      outputs['$pinceau/definitions'] = definitionsFull(definitions)
-      return outputs['$pinceau/definitions']
-    },
-  })
-
-  // schema.ts
-  styleDictionary.registerFormat({
-    name: 'pinceau/schema',
-    formatter() {
-      outputs['$pinceau/schema'] = schemaFull(schema)
-      return outputs['$pinceau/schema']
-    },
-  })
-
-  // index.ts
-  styleDictionary.registerFormat({
-    name: 'pinceau/typescript',
-    formatter({ dictionary }) {
-      outputs['$pinceau/theme'] = tsFull(dictionary.tokens)
-      return outputs['$pinceau/theme']
-    },
-  })
+    // Register new output in PinceauContext if not already present
+    if (!ctx.getOutputId(format.virtualPath)) { ctx.registerOutput(format.importPath, format.virtualPath) }
+  }
 
   // Transform group used accross all tokens formats
   styleDictionary.registerTransformGroup({
     name: 'pinceau',
-    transforms,
+    transforms: usedTransforms,
   })
 
   styleDictionary = styleDictionary.extend({
-    tokens: normalizeTokens(tokens, mqKeys, true),
+    tokens: theme as DesignTokens,
     platforms: {
       prepare: {
-        silent,
+        silent: true,
         transformGroup: 'pinceau',
       },
 
       base: {
-        silent,
+        silent: true,
         transformGroup: 'pinceau',
-        buildPath: options.theme.buildDir,
+        buildPath: buildDir,
         files,
-        write,
+        write: !!buildDir,
       },
 
       done: {
-        silent,
+        silent: true,
         transformGroup: 'pinceau',
         actions: ['done'],
       },
     },
   })
 
+  // Build theme
   try {
     result = await new Promise<ThemeGenerationOutput>(
       (resolve) => {
@@ -219,9 +107,9 @@ export async function generateTheme(
           name: 'done',
           do: ({ tokens }) => {
             resolve({
-              tokens: flattenTokens(tokens),
+              buildDir,
+              theme: flattenTokens(tokens) as Theme<PinceauTheme>,
               outputs,
-              buildDir: options.theme.buildDir,
             })
           },
           undo: () => {},
