@@ -9,6 +9,7 @@ export default defineConfig({
     Vue(),
     Pinceau({
       debug: 2,
+      dev: false,
       theme: {
         buildDir: path.join(__dirname, './output/'),
       },
