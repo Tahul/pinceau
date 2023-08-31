@@ -1,10 +1,13 @@
 import type { PinceauTransforms } from '@pinceau/core'
-import { transformCSSFunctions } from './css-function'
+import { transformStyleFunctions } from './style-functions'
+import { transformStyledProps } from './styled-props'
 
 export const suite: PinceauTransforms = {
+  templates: [
+    transformStyledProps,
+  ],
   scripts: [
-    // TODO: Handle `const cssContext = css({ ... })`
-    transformCSSFunctions,
+    transformStyleFunctions,
   ],
   styles: [
     (transformCtx, pinceauCtx) => {
@@ -15,7 +18,7 @@ export const suite: PinceauTransforms = {
         (transformCtx.query.transformed || transformCtx.target?.attrs?.transformed)
           || (transformCtx.query.type === 'style' && transformCtx.query.lang === 'ts')
       ) {
-        transformCSSFunctions(transformCtx, pinceauCtx, true)
+        transformStyleFunctions(transformCtx, pinceauCtx)
       }
     },
   ],

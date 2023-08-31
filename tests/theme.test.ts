@@ -36,13 +36,12 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vites
 import type { File } from '@babel/types'
 import { tokensPaths } from '@pinceau/core/runtime'
 import { createThemeRule, normalizeTokens, resolveMediaSelector, resolveReponsiveSelectorPrefix, walkTokens } from '@pinceau/theme/runtime'
-import { transformColorScheme, transformMediaQueries, transformTokenHelper } from '@pinceau/theme/transforms'
+import { transformColorScheme, transformMediaQueries, transformThemeHelper } from '@pinceau/theme/transforms'
 import { pinceauNameTransformer, pinceauVariableTransformer } from 'packages/theme/src/utils/tokens-transformers'
 import { PinceauVueTransformer } from '@pinceau/vue/utils'
 import themeConfigContent from './fixtures/theme.config.ts?raw'
 import themeConfig from './fixtures/theme.config'
-import { findNode, paletteLayer, resolveFixtures, testFileLayer, testLayer } from './utils'
-import { resolveTmp } from './utils'
+import { findNode, paletteLayer, resolveFixtures, resolveTmp, testFileLayer, testLayer } from './utils'
 
 describe('@pinceau/theme', () => {
   describe('utils/config-context.ts', () => {
@@ -394,7 +393,7 @@ describe('@pinceau/theme', () => {
 
       const result = resolveInlineLayer(layer, options)
 
-      expect(result.utils.my).toStrictEqual('(value) => {\n'
+      expect(result.utils.my.ts).toStrictEqual('(value) => {\n'
         + '            return {\n'
         + '              marginTop: value,\n'
         + '              marginBottom: value\n'
@@ -440,7 +439,7 @@ describe('@pinceau/theme', () => {
     })
 
     it('resolve utils from a config file AST', async () => {
-      const utils = resolveConfigUtils(configAst)
+      const utils = resolveConfigUtils(configAst, themeConfig)
 
       expect(Object.keys(utils).length).toBe(Object.keys((themeConfig as any).utils).length)
     })
@@ -490,32 +489,33 @@ describe('@pinceau/theme', () => {
 
     it('resolveReponsiveSelectorPrefix() - returns a default prefix for an empty selector', () => {
       const result = resolveReponsiveSelectorPrefix('')
-      expect(result).toBe('@media { :root {')
+      expect(result).toBe('@media {\n  :root {')
     })
 
     it('resolveReponsiveSelectorPrefix() - returns a class based prefix for a class selector', () => {
       const result = resolveReponsiveSelectorPrefix('.dark')
-      expect(result).toBe('@media { :root.dark {')
+      expect(result).toBe('@media {\n  :root.dark {')
     })
 
     it('resolveReponsiveSelectorPrefix() - returns a root prefix for a root selector', () => {
       const result = resolveReponsiveSelectorPrefix(':root.dark')
-      expect(result).toBe('@media { :root.dark {')
+      expect(result).toBe('@media {\n  :root.dark {')
     })
 
     it('resolveReponsiveSelectorPrefix() - returns a general prefix for other selectors', () => {
       const result = resolveReponsiveSelectorPrefix('(prefers-color-scheme: dark)')
-      expect(result).toBe('@media (prefers-color-scheme: dark) { :root {')
+      expect(result).toBe('@media (prefers-color-scheme: dark) {\n  :root {')
     })
 
     it('createThemeRule() - returns a properly formatted theme rule', () => {
       const themeRule = createThemeRule({
-        content: 'background-color: red;',
+        content: '    background-color: red;',
         mq: 'dark',
         colorSchemeMode: 'class',
         theme: {},
+        indentation: '  ',
       })
-      expect(themeRule).toBe('@media { :root.dark {--pinceau-mq: dark; background-color: red; } }\n')
+      expect(themeRule).toBe('\n@media {\n  :root.dark {\n    --pinceau-mq: dark;\n    background-color: red;\n  }\n}\n')
     })
   })
 
@@ -547,7 +547,7 @@ describe('@pinceau/theme', () => {
     it('generate theme output (write)', async () => {
       ctx.options.theme.layers = [testFileLayer]
 
-      ctx.options.theme.buildDir = resolveTmp('../generate-output/')
+      ctx.options.theme.buildDir = resolveTmp('./generate-output/')
 
       const output = await loadLayers(ctx.options)
 
@@ -571,6 +571,7 @@ describe('@pinceau/theme', () => {
       files.forEach((path) => {
         try {
           fs.rmSync(path)
+          fs.rmdirSync(resolveTmp('./generate-output/'))
         }
         catch (_) {
           //
@@ -589,6 +590,7 @@ describe('@pinceau/theme', () => {
         theme: {
           preflight: false,
         },
+        runtime: false,
       })
 
       ctx.getOutputId = vi.fn().mockReturnValue('mockedOutputId')
@@ -598,18 +600,9 @@ describe('@pinceau/theme', () => {
 
     it('replaces <pinceau /> with the correct tags', async () => {
       const inputHtml = '<pinceau />'
-      const expectedHtml = '\n<style type="text/css" id="pinceau-theme">mockedOutputContent</style>\n'
+      const expectedHtml = '<style type="text/css" id="pinceau-theme">mockedOutputContent</style>'
 
       const result = transformIndexHtml(inputHtml, ctx as any, resolveModule as any)
-      expect(result).toBe(expectedHtml)
-    })
-
-    it('replaces <style id="pinceau-theme"></style> with the correct tags', async () => {
-      const inputHtml = '<style id="pinceau-theme"></style>'
-      const expectedHtml = '\n<style type="text/css" id="pinceau-theme">mockedOutputContent</style>\n'
-
-      const result = transformIndexHtml(inputHtml, ctx as any, resolveModule as any)
-
       expect(result).toBe(expectedHtml)
     })
 
@@ -617,7 +610,7 @@ describe('@pinceau/theme', () => {
       ctx.options.dev = true
 
       const inputHtml = '<pinceau />'
-      const expectedHtml = '\n<style type="text/css" id="pinceau-theme" data-vite-dev-id="mockedOutputId">mockedOutputContent</style>\n<script type="module" data-vite-dev-id="$pinceau/hmr" src="/__pinceau_hmr.ts"></script>'
+      const expectedHtml = '<style type="text/css" id="pinceau-theme" data-vite-dev-id="mockedOutputId">mockedOutputContent</style>\n<script type="module" data-vite-dev-id="$pinceau/hmr" src="/__pinceau_hmr.js"></script>'
 
       const result = transformIndexHtml(inputHtml, ctx as any, resolveModule as any)
 
@@ -629,7 +622,7 @@ describe('@pinceau/theme', () => {
       resolveModule.mockReturnValueOnce('@unocss/reset/tailwind.css')
 
       const inputHtml = '<pinceau />'
-      const expectedHtml = '<link rel="stylesheet" type="text/css" href="@unocss/reset/tailwind.css" />\n<style type="text/css" id="pinceau-theme">mockedOutputContent</style>\n'
+      const expectedHtml = '<link rel="stylesheet" type="text/css" href="@unocss/reset/tailwind.css" />\n<style type="text/css" id="pinceau-theme">mockedOutputContent</style>'
 
       const result = transformIndexHtml(inputHtml, ctx as any, resolveModule as any)
 
@@ -781,7 +774,7 @@ describe('@pinceau/theme', () => {
     })
 
     it('transforms the result based on callback logic', () => {
-      const callback = (obj, result, paths) => {
+      const callback = (obj) => {
         if (typeof obj.value === 'object') {
           return {
             value: Object.entries(obj.value).reduce(
@@ -834,15 +827,6 @@ describe('@pinceau/theme', () => {
         transformer: vi.fn(),
       } as any
 
-      // Mock data
-      const formats = {
-        sampleFormatKey: sampleFormat,
-      }
-
-      const tokensTransforms = {
-        sampleTransformKey: sampleTransform,
-      }
-
       it('registers new formats and transforms', () => {
         const ctx = usePinceauContext({
           theme: {
@@ -881,6 +865,7 @@ describe('@pinceau/theme', () => {
 
     beforeEach(() => {
       pinceauContext = usePinceauContext({
+        dev: false,
         theme: {
           layers: [testLayer],
         },
@@ -963,7 +948,7 @@ describe('@pinceau/theme', () => {
   })
 
   describe('transforms/', () => {
-    const typescriptQuery = parsePinceauQuery(resolveFixtures('./components/tokens-helper.ts'))
+    const typescriptQuery = parsePinceauQuery(resolveFixtures('./components/theme-helper.ts'))
     const vueQuery = parsePinceauQuery(resolveFixtures('./components/TestBase.vue'))
     const styleQuery = parsePinceauQuery(resolveFixtures('./style.css'))
     let pinceauContext: PinceauContext
@@ -1092,7 +1077,7 @@ describe('@pinceau/theme', () => {
 
       expect(transformContext.result()).toBeUndefined()
     })
-    it('transformTokenHelper() - can transform token helper in style files', () => {
+    it('transformThemeHelper() - can transform token helper in style files', () => {
       const transformContext = usePinceauTransformContext(
         'div { background-color: $theme(\'color.white\'); }',
         styleQuery,
@@ -1100,14 +1085,14 @@ describe('@pinceau/theme', () => {
       )
 
       transformContext.registerTransforms({
-        styles: [transformTokenHelper],
+        styles: [transformThemeHelper],
       })
 
       transformContext.transform()
 
       expect((transformContext.result() as any).code).toStrictEqual('div { background-color: var(--color-white); }')
     })
-    it('transformTokenHelper() - can transform token helper in typescript files', () => {
+    it('transformThemeHelper() - can transform token helper in typescript files', () => {
       const transformContext = usePinceauTransformContext(
         'const test = $theme(\'color.white\')',
         typescriptQuery,
@@ -1119,7 +1104,7 @@ describe('@pinceau/theme', () => {
           (transformContext, pinceauContext) => {
             // Wrapper has to be added per-scope, so we can ensure we don't break native syntaxes.
             // Default wrapper is empty string, style contexts do not have to provide any wrapper.
-            transformTokenHelper(transformContext, pinceauContext, '`')
+            transformThemeHelper(transformContext, pinceauContext, '`')
           },
         ],
       })
@@ -1128,7 +1113,7 @@ describe('@pinceau/theme', () => {
 
       expect((transformContext.result() as any).code).toStrictEqual('const test = `var(--color-white)`')
     })
-    it('transformTokenHelper() - can transform token helper in vue files', () => {
+    it('transformThemeHelper() - can transform token helper in vue files', () => {
       const transformContext = usePinceauTransformContext(
         '<template><div :style="{ color: $theme(\'color.white\') }">Hello World</div></template>\n'
         + '<style>div { background-color: $theme(\'color.black\'); }</style>\n'
@@ -1140,15 +1125,15 @@ describe('@pinceau/theme', () => {
       transformContext.registerTransforms({
         scripts: [
           (transformContext, pinceauContext) => {
-            transformTokenHelper(transformContext, pinceauContext, '`')
+            transformThemeHelper(transformContext, pinceauContext, '`')
           },
         ],
         templates: [
           (transformContext, pinceauContext) => {
-            transformTokenHelper(transformContext, pinceauContext, '`')
+            transformThemeHelper(transformContext, pinceauContext, '`')
           },
         ],
-        styles: [transformTokenHelper],
+        styles: [transformThemeHelper],
       })
 
       transformContext.transform()
@@ -1159,7 +1144,7 @@ describe('@pinceau/theme', () => {
         + '<script setup>const test = `var(--color-white)`</script>\n',
       )
     })
-    it('transformTokenHelper() - log on unknown token but transform anyway', () => {
+    it('transformThemeHelper() - log on unknown token but transform anyway', () => {
       vi.spyOn(console, 'log').mockImplementationOnce(() => { })
 
       const transformContext = usePinceauTransformContext(
@@ -1169,7 +1154,7 @@ describe('@pinceau/theme', () => {
       )
 
       transformContext.registerTransforms({
-        styles: [transformTokenHelper],
+        styles: [transformThemeHelper],
       })
 
       transformContext.transform()

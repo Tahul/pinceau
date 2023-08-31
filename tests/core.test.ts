@@ -4,7 +4,9 @@ import { resolveConfig } from 'vite'
 import {
   PINCEAU_STYLES_EXTENSIONS,
   PINCEAU_SUPPORTED_EXTENSIONS,
+  evalDeclaration,
   expressionToAst,
+  findCallees,
   findDefaultExport,
   getDefaultOptions,
   getPinceauContext,
@@ -24,9 +26,10 @@ import {
   usePinceauVirtualContext,
 } from '@pinceau/core/utils'
 import Pinceau from 'pinceau/plugin'
-import { createTokensHelper, get, referencesRegex, set, tokensPaths } from '@pinceau/core/runtime'
+import { createThemeHelper, get, referencesRegex, set, tokensPaths } from '@pinceau/core/runtime'
 import type { PinceauContext, PinceauQuery, PinceauTransformContext, PinceauTransforms, PinceauVirtualContext } from '@pinceau/core'
 import { PinceauVueTransformer } from 'packages/vue/src/utils/transformer'
+import type { CSSFunctionArg } from '@pinceau/style'
 import { resolveFixtures, resolveTmp } from './utils'
 
 const defaults = getDefaultOptions()
@@ -46,12 +49,28 @@ describe('@pinceau/core', () => {
     })
     it('transform any expression to ast', () => {
       // eslint-disable-next-line no-template-curly-in-string
-      const ast = expressionToAst('props => `{color.${props.color}}`')
+      const ast = expressionToAst('props => `$color.${props.color}`')
       expect(ast).toHaveProperty('type', 'ArrowFunctionExpression')
+    })
+    it('should find css() calls from an AST', () => {
+      const ast = parseAst('css({ div: { color: \'red\' } })')
+      expect(findCallees(ast, 'css').length).toEqual(1)
+    })
+    it('should resolve all css() calls from an ast', () => {
+      const ast = parseAst('css({ div: { color: \'red\' } })\ncss({ div: { color: \'yellow\' } })\ncss({ div: { color: \'green\' } })')
+      expect(findCallees(ast, 'css').length).toEqual(3)
+    })
+    it('should find styled() calls from an AST', () => {
+      const ast = parseAst('styled({ color: \'red\' })')
+      expect(findCallees(ast, 'styled').length).toEqual(1)
+    })
+    it('should resolve all styled() calls from an ast', () => {
+      const ast = parseAst('styled({ color: \'red\' })\nstyled({ color: \'yellow\' })\nstyled({ color: \'green\' })')
+      expect(findCallees(ast, 'styled').length).toEqual(3)
     })
   })
 
-  describe('utils/context.ts', () => {
+  describe('utils/core-context.ts', () => {
     const options = normalizeOptions()
 
     let context: PinceauContext
@@ -298,6 +317,16 @@ describe('@pinceau/core', () => {
     })
   })
 
+  describe('utils/eval.ts', () => {
+    it('should eval css declaration', () => {
+      const css = parseAst('css({ div: { color: \'red\', backgroundColor: \'blue\', \'&:hover\': { color: \'green\' } } })')
+      const callees = findCallees(css, 'css')
+      const ast = callees[0].value.arguments[0] as CSSFunctionArg
+      const declaration = evalDeclaration(ast)
+      expect(declaration).toStrictEqual({ div: { 'color': 'red', 'backgroundColor': 'blue', '&:hover': { color: 'green' } } })
+    })
+  })
+
   describe('utils/filter.ts', () => {
     it('include path if not in excludes or includes', () => {
       const options: any = { style: { excludes: [], includes: [] } }
@@ -516,39 +545,39 @@ describe('@pinceau/core', () => {
 
   describe('utils/regexes.ts', () => {
     it('match single token within a string', () => {
-      const str = 'backgroundColor: {color.primary.100}'
+      const str = 'background-color: $color.primary.100'
       const matches = Array.from(str.matchAll(referencesRegex))
       expect(matches).toHaveLength(1)
-      expect(matches[0][0]).toBe('{color.primary.100}')
+      expect(matches[0][0]).toBe('$color.primary.100')
     })
     it('match multiple tokens within a string', () => {
-      const str = 'background: linear-gradient({color.primary.100}, {color.secondary.200})'
+      const str = 'background: linear-gradient($color.primary.100, $color.secondary.200)'
       const matches = Array.from(str.matchAll(referencesRegex))
       expect(matches).toHaveLength(2)
-      expect(matches[0][0]).toBe('{color.primary.100}')
-      expect(matches[1][0]).toBe('{color.secondary.200}')
+      expect(matches[0][0]).toBe('$color.primary.100')
+      expect(matches[1][0]).toBe('$color.secondary.200')
     })
-    it('not match unclosed tokens', () => {
-      const str = 'backgroundColor: {color.primary.100'
+    it('match root tokens', () => {
+      const str = 'backgroundColor: $color'
       const matches = Array.from(str.matchAll(referencesRegex))
-      expect(matches).toHaveLength(0)
+      expect(matches[0][0]).toBe('$color')
     })
     it('not match tokens without content', () => {
-      const str = 'backgroundColor: {}'
+      const str = 'backgroundColor: $'
       const matches = Array.from(str.matchAll(referencesRegex))
       expect(matches).toHaveLength(0)
     })
     it('match tokens with diverse content', () => {
-      const str = 'padding: {spacing.4} {spacing.medium} {10px}'
+      const str = 'padding: $spacing.4 $spacing.medium $10px'
       const matches = Array.from(str.matchAll(referencesRegex))
       expect(matches).toHaveLength(3)
-      expect(matches[0][0]).toBe('{spacing.4}')
-      expect(matches[1][0]).toBe('{spacing.medium}')
-      expect(matches[2][0]).toBe('{10px}')
+      expect(matches[0][0]).toBe('$spacing.4')
+      expect(matches[1][0]).toBe('$spacing.medium')
+      expect(matches[2][0]).toBe('$10px')
     })
   })
 
-  describe('utils/token-helper.ts', () => {
+  describe('utils/theme-helper.ts', () => {
     const theme = {
       colors: {
         primary: {
@@ -580,7 +609,7 @@ describe('@pinceau/core', () => {
       },
     }
 
-    const tokensHelper = createTokensHelper(theme)
+    const tokensHelper = createThemeHelper(theme)
 
     it('retrieve token objects by their path', () => {
       expect(tokensHelper('colors.primary.light')).to.deep.equal(theme.colors.primary.light)
@@ -593,7 +622,7 @@ describe('@pinceau/core', () => {
       expect(tokensHelper('colors.tertiary.light')).to.be.undefined
     })
     it('handle callbacks', () => {
-      const callbackTheme = createTokensHelper(theme, {
+      const callbackTheme = createThemeHelper(theme, {
         cb: ({ query, token }) => {
           expect(query).to.equal('colors.primary.light')
           expect(token).to.deep.equal(theme.colors.primary.light)
@@ -621,7 +650,7 @@ describe('@pinceau/core', () => {
         someBool: { value: true },
       }
 
-      const helperWithValues = createTokensHelper(themeWithValues)
+      const helperWithValues = createThemeHelper(themeWithValues)
       expect(helperWithValues('someNumber')).to.deep.equal({ value: 123 })
       expect(helperWithValues('someBool')).to.deep.equal({ value: true })
     })
@@ -634,7 +663,7 @@ describe('@pinceau/core', () => {
         },
       }
 
-      const tokensHelper = createTokensHelper(ctx.theme)
+      const tokensHelper = createThemeHelper(ctx.theme)
 
       // Modify the theme after creating the helper
       _theme.colors.primary.light = { value: '#FFFFFF' }
@@ -642,19 +671,19 @@ describe('@pinceau/core', () => {
       expect(tokensHelper('colors.primary.light')).to.deep.equal({ value: '#FFFFFF' })
     })
     it('handle cases where theme is not provided', () => {
-      const noThemeHelper = createTokensHelper()
+      const noThemeHelper = createThemeHelper()
       expect(noThemeHelper('colors.primary.light')).to.be.undefined
     })
     it('handle cases where theme is null or undefined', () => {
-      const nullThemeHelper = createTokensHelper(null)
-      const undefinedThemeHelper = createTokensHelper(undefined)
+      const nullThemeHelper = createThemeHelper(null)
+      const undefinedThemeHelper = createThemeHelper(undefined)
       expect(nullThemeHelper('colors.primary.light')).to.be.undefined
       expect(undefinedThemeHelper('colors.primary.light')).to.be.undefined
     })
   })
 
   describe('utils/transform-context.ts', () => {
-    const componentPath = resolveFixtures('./components/tokens-helper.ts')
+    const componentPath = resolveFixtures('./components/theme-helper.ts')
     let code: string
     let pinceauContext: PinceauContext
     let transformContext: PinceauTransformContext

@@ -23,7 +23,7 @@ describe.concurrent(
 
       const css = await getGlobContent(root, 'dist/**/*.css')
 
-      expect(css).toContain('--color-green-100')
+      expect(css).toContain('--color-green-1')
     }, { timeout: 10000 })
 
     it('examples/vite-lib', async () => {
@@ -44,7 +44,7 @@ describe.concurrent(
 
       expect(css).toBeDefined()
       expect(js).toBeDefined()
-      expect(css).contains('--color-blue-100')
+      expect(css).contains('--color-blue-1')
       expect(js).contains('--color-white')
     }, { timeout: 10000 })
   },
@@ -65,7 +65,7 @@ describe('nuxt', async () => {
     const css = await getGlobContent(rootDir, '.nuxt/**/dist/client/**/*.css')
 
     expect(test).toBeDefined()
-    expect(css).contains('--color-blue-100')
+    expect(css).contains('--color-blue-1')
     expect(css).contains('--color-white')
   }, { timeout: 10000 })
 })

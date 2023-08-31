@@ -1,4 +1,4 @@
-export const utils = {}
+export const utils = {} as const
 
 export type GeneratedPinceauUtils = typeof utils
 

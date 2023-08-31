@@ -1,4 +1,4 @@
-import type { PinceauTheme, PinceauUtils, Theme, TokensFunction } from '@pinceau/theme'
+import type { PinceauTheme, PinceauUtils, Theme, ThemeFunction } from '@pinceau/theme'
 import type { PinceauVirtualContext } from './virtual-context'
 import type { PinceauOptions } from './options'
 import type { PinceauQuery } from './query'
@@ -11,10 +11,14 @@ import type { PinceauTransformState } from './transform-context'
 export interface PinceauContext extends
   PinceauVirtualContext,
   PinceauBuildContext {
-  $tokens: TokensFunction
+  $theme: ThemeFunction
 }
 
 export interface PinceauBuildContext {
+  /**
+   * Any kind of dev server like ViteDevServer.
+   */
+  devServer: any
   /**
    * Pinceau user options passed from Vite plugin options or Nuxt config key.
    */
@@ -22,7 +26,7 @@ export interface PinceauBuildContext {
   /**
    * A list of transformed files
    */
-  transformed: { [key: string]: PinceauQuery & { state?: PinceauTransformState } }
+  transformed: { [key: string]: PinceauQuery & { state?: PinceauTransformState; previosuState?: PinceauTransformState } }
   /**
    * Is a module transformable
    */

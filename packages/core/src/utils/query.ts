@@ -30,6 +30,7 @@ export function parsePinceauQuery(id: string): PinceauQuery {
     raw: params.has('raw') || undefined,
     global: params.has('global') || undefined,
 
+    vueQuery: params.has('vue') || undefined,
     type: params.get('type') as PinceauQueryBlockType || undefined,
     index: params.has('index') ? Number(params.get('index')) : undefined,
     scoped: params.has('scoped') ? String(params.get('scoped')) : undefined,
@@ -37,7 +38,7 @@ export function parsePinceauQuery(id: string): PinceauQuery {
     setup: params.get('setup') === 'true' || undefined,
     transformed: params.get('transformed') === 'true' || undefined,
 
-    vueQuery: params.has('vue') || undefined,
+    styleFunction: params.has('pinceau-style-function') ? String(params.get('pinceau-style-function')) : undefined,
 
     sfc: undefined,
     transformable: undefined,

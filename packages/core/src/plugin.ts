@@ -40,9 +40,10 @@ const PinceauCorePlugin: UnpluginInstance<PinceauUserOptions> = createUnplugin((
       api: {
         getPinceauContext: () => ctx,
       },
-      async configureServer() {
+      configureServer(server) {
         // As server exists, we most likely are in development mode.
         ctx.options.dev = true
+        ctx.devServer = server
       },
       handleHotUpdate(hmrContext) {
         const defaultRead = hmrContext.read

@@ -1,10 +1,1 @@
-export const referencesRegex = new RegExp(
-  '\\'
-  + '{'
-  + '([^'
-  + '}'
-  + ']+)'
-  + '\\'
-  + '}',
-  'g',
-)
+export const referencesRegex = /\$([a-z0-9][a-z0-9_.]*)\b/gi

@@ -1,9 +1,9 @@
 import type { ResolvedConfig } from 'vite'
 import type { PinceauTheme, PinceauUtils } from '@pinceau/theme'
-import type { PinceauBuildContext, PinceauContext, PinceauFilterFunction, PinceauOptions, PinceauQuery, PinceauTransformer, PinceauUserOptions } from '../types'
+import type { PinceauBuildContext, PinceauContext, PinceauFilterFunction, PinceauOptions, PinceauQuery, PinceauTransformState, PinceauTransformer, PinceauUserOptions } from '../types'
 import { parsePinceauQuery } from './query'
 import { usePinceauVirtualContext } from './virtual-context'
-import { createTokensHelper } from './tokens-helper'
+import { createThemeHelper } from './theme-helper'
 import { isPathIncluded } from './filter'
 import { normalizeOptions } from './options'
 
@@ -46,12 +46,17 @@ export function usePinceauContext(userOptions?: PinceauUserOptions): PinceauCont
   /**
    * Track list of module queries that got through any kind of Pinceau transforms.
    */
-  const transformed: { [key: string]: PinceauQuery } = {}
+  const transformed: { [key: string]: PinceauQuery & { state?: PinceauTransformState; previousState?: PinceauTransformState } } = {}
 
   /**
    * Filters applied via `isTransformable` checking if a module query should pass through Pinceau transforms.
    */
   const filters: PinceauFilterFunction[] = []
+
+  /**
+   * Current dev server.
+   */
+  let devServer: any
 
   /**
    * Current reference of built theme.
@@ -67,6 +72,7 @@ export function usePinceauContext(userOptions?: PinceauUserOptions): PinceauCont
    * Build-time context.
    */
   const buildContext: PinceauBuildContext = {
+    get devServer() { return devServer },
     transformers,
     registerTransformer(key: string, transformer: PinceauTransformer) { transformers[key] = transformer },
     applyTransformers(query: PinceauQuery, code: string) {
@@ -77,7 +83,7 @@ export function usePinceauContext(userOptions?: PinceauUserOptions): PinceauCont
       // Apply load transformers
       if (transformer?.loadTransformers?.length) {
         for (const transform of transformer.loadTransformers) {
-          code = transform(code, query)
+          code = transform(code, query, this as Partial<PinceauContext>)
         }
       }
 
@@ -103,6 +109,11 @@ export function usePinceauContext(userOptions?: PinceauUserOptions): PinceauCont
 
       const query = parsePinceauQuery(id)
 
+      if (query.filename === id && transformed?.[id]?.state) {
+        transformed[id].previousState = transformed[id].state
+        transformed[id].state = {}
+      }
+
       if (this.filters.length) {
         return this.filters.some(filter => !filter(query))
           ? query
@@ -119,10 +130,10 @@ export function usePinceauContext(userOptions?: PinceauUserOptions): PinceauCont
 
   return {
     /**
-     * Main build-time $tokens helper.
+     * Main build-time $theme helper.
      */
-    get $tokens() {
-      return createTokensHelper(
+    get $theme() {
+      return createThemeHelper(
         theme,
         {
           cb(ctx) {

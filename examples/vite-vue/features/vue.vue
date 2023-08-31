@@ -8,7 +8,7 @@ const props = defineProps<{
   color?: string
 }>()
 
-const backgroundColor = $theme('color.blue.100')
+const backgroundColor = $theme('color.blue.1')
 </script>
 
 <template>

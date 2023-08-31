@@ -19,6 +19,9 @@ export interface PinceauQuery {
   scoped?: string
   transformed?: boolean
 
+  // Is target direct css function?
+  styleFunction?: string
+
   // File language
   lang?: string
 

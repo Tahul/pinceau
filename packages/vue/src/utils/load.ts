@@ -1,34 +1,33 @@
-import type { SFCBlock } from 'vue/compiler-sfc'
 import { parse as sfcParse } from 'vue/compiler-sfc'
-import type { PinceauQuery } from '@pinceau/core'
+import type { PinceauContext, PinceauQuery } from '@pinceau/core'
 
 /**
  * Load a specific <style> block from a Vue SFC query.
  */
-export function loadComponentBlock(file: string, query: PinceauQuery): string | undefined {
+export function loadComponentBlock(
+  file: string,
+  query: PinceauQuery,
+  pinceauContext: PinceauContext,
+): string | undefined {
   const { descriptor } = sfcParse(file, { filename: query.filename })
 
-  let block: SFCBlock | undefined
+  if (typeof query.styleFunction === 'string') {
+    return pinceauContext?.transformed?.[query.filename]?.state?.styleFunctions?.[query.styleFunction]?.css
+  }
 
   if (query.type === 'style') {
-    const style = descriptor?.styles?.[query.index!]
-    if (style) { block = style }
+    return descriptor?.styles?.[query.index!]?.content
   }
 
   if (query.type === 'template') {
-    const template = descriptor?.template
-    if (template) { block = template }
+    return descriptor?.template?.content
   }
 
   if (query.type === 'script' && !query.setup) {
-    const script = descriptor?.script
-    if (script) { block = script }
+    return descriptor?.script?.content
   }
 
   if (query.type === 'script' && query.setup) {
-    const scriptSetup = descriptor?.scriptSetup
-    if (scriptSetup) { block = scriptSetup }
+    return descriptor?.scriptSetup?.content
   }
-
-  return block?.content
 }

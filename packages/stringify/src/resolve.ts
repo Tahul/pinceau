@@ -2,9 +2,9 @@ import type { PinceauContext } from '@pinceau/core'
 import { pathToVarName, referencesRegex } from '@pinceau/core/runtime'
 import type { StringifyContext } from './types'
 
-const darkToken = '@dark'
-const lightToken = '@light'
-const initialToken = '@initial'
+const darkToken = '$dark'
+const lightToken = '$light'
+const initialToken = '$initial'
 
 /**
  * Resolve a CSS function argument to a stringifiable declaration.
@@ -61,7 +61,7 @@ export function resolveReferences(
   if (typeof value !== 'string') { return value }
 
   value = value.replace(referencesRegex, (_, tokenPath) => {
-    const token = pinceauContext.$tokens(tokenPath)
+    const token = pinceauContext.$theme(tokenPath)
     return (token?.variable ? token.variable : `var(${pathToVarName(tokenPath)})`) as string
   })
 
@@ -77,7 +77,7 @@ export function resolveCustomDirectives(
 ) {
   const mode = pinceauContext?.options?.theme?.colorSchemeMode || 'media'
 
-  if (property.startsWith('@')) {
+  if (property.startsWith('$')) {
     const resolveColorScheme = (scheme: string) => {
       scheme = mode === 'class'
         ? `:root.${scheme}`
@@ -98,9 +98,9 @@ export function resolveCustomDirectives(
     if (property === initialToken) { return { '@media': value } }
 
     // Handle all user supplied @directives
-    const mediaQueries = pinceauContext.$tokens('media' as any)
+    const mediaQueries = pinceauContext.$theme('media' as any)
     if (mediaQueries) {
-      const query = property.replace('@', '')
+      const query = property.replace('$', '')
       if (mediaQueries[query]) {
         return {
           [`@media ${mediaQueries[query].value}`]: value,

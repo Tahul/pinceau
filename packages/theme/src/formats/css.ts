@@ -14,25 +14,25 @@ export const cssFormat: PinceauThemeFormat = {
     const { formattedVariables } = StyleDictionary.formatHelpers
 
     // Create :root tokens list
-    const tokens: { [key in PinceauMediaQueries]?: DesignToken[] } & { initial: DesignToken[] } = {
+    const mediaQueries: { [key in PinceauMediaQueries]?: DesignToken[] } & { initial: DesignToken[] } = {
       initial: [],
     }
 
     walkTokens(
       dictionary.tokens,
       (token) => {
-      // Handle responsive tokens
+        // Handle responsive tokens
         if (typeof token?.value === 'object' && token?.value?.initial) {
-          Object.entries(token.value).forEach(([media, value]) => {
-            if (!tokens[media]) { tokens[media] = [] }
+          Object.entries(token.value).forEach(([query, value]) => {
+            if (!mediaQueries[query]) { mediaQueries[query] = [] }
+
+            // Set `media` scope for property formatter
+            if (!token.attributes) { token.attributes = {} }
+            token.attributes.media = query
 
             // Recompose token
-            tokens[media].push({
+            mediaQueries[query].push({
               ...token,
-              attributes: {
-                ...(token?.attributes || {}),
-                media,
-              },
               value,
             })
           })
@@ -41,7 +41,7 @@ export const cssFormat: PinceauThemeFormat = {
         }
 
         // Handle regular tokens
-        tokens.initial.push(token)
+        mediaQueries.initial.push(token)
 
         return token
       },
@@ -51,20 +51,22 @@ export const cssFormat: PinceauThemeFormat = {
     let css = ''
 
     // Create all responsive tokens rules
-    Object.entries(tokens).forEach(
+    Object.entries(mediaQueries).forEach(
       ([key, value]) => {
       // Resolve tokens content
         const content = formattedVariables({
           format: 'css',
           dictionary: { ...dictionary, allTokens: value } as any,
           outputReferences: true,
-          formatting: { lineSeparator: '', indentation: '', prefix: '' } as any,
+          formatting: ctx.options.dev
+            ? { separator: '\n', indentation: '    ', prefix: '--', commentStyle: 'long' }
+            : { separator: '\n', indentation: '    ', prefix: '--', commentStyle: 'long' },
         })
 
-        css += createThemeRule({ mq: key as PinceauMediaQueries, content, theme: tokens, colorSchemeMode })
+        css += createThemeRule({ mq: key as PinceauMediaQueries, content, theme: dictionary.tokens, colorSchemeMode })
       },
     )
 
-    return css.replace(/(\n|\s\s)/g, '')
+    return ctx.options.dev ? css : css.replace(/(\n|\s\s)/g, '')
   },
 }

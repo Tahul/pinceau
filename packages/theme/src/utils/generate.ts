@@ -1,6 +1,6 @@
 import type { File, Core as Instance, Named, Transform } from 'style-dictionary-esm'
 import StyleDictionary from 'style-dictionary-esm'
-import { message } from '@pinceau/core/utils'
+import { message, referencesRegex } from '@pinceau/core/utils'
 import type { PinceauContext } from '@pinceau/core'
 import type { DesignTokens, PinceauTheme, PinceauThemeFormat, Theme, ThemeGenerationOutput, ThemeLoadingOutput } from '../types'
 import { flattenTokens } from './tokens'
@@ -78,22 +78,20 @@ export async function generateTheme(
   styleDictionary = styleDictionary.extend({
     tokens: theme as DesignTokens,
     platforms: {
-      prepare: {
-        silent: true,
-        transformGroup: 'pinceau',
-      },
-
       base: {
         silent: true,
         transformGroup: 'pinceau',
         buildPath: buildDir,
         files,
         write: !!buildDir,
-      },
-
-      done: {
-        silent: true,
-        transformGroup: 'pinceau',
+        options: {
+          outputReferences: true,
+        },
+        referencesOptions: {
+          regex: referencesRegex,
+          openingChar: '$',
+          closingChar: '\b',
+        },
         actions: ['done'],
       },
     },

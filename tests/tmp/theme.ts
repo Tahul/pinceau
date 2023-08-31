@@ -11,6 +11,6 @@ export type GeneratedPinceauTheme = typeof theme
 
 export type GeneratedPinceauMediaQueries = "dark" | "light" | "initial";
 
-export type GeneratedPinceauPaths = "color.primary";
+export type GeneratedPinceauThemePaths = "color.primary";
 
 export default theme

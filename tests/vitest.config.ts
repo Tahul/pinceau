@@ -48,8 +48,9 @@ export default defineConfig({
     coverage: {
       enabled: true,
       reporter: ['text', 'json', 'html'],
+      exclude: ['../examples/**/*', '../node_modules/**/*'],
       clean: true,
-      all: true
+      all: true,
     },
   },
   css: {

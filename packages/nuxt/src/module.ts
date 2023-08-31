@@ -88,14 +88,15 @@ const module: any = defineNuxtModule<PinceauUserOptions>({
         tsConfig.compilerOptions.paths['pinceau.css'] = [`${resolve(options.theme.buildDir, 'theme.css')}`]
         tsConfig.compilerOptions.paths['$pinceau/utils'] = [`${resolve(options.theme.buildDir, 'utils.ts')}`]
         tsConfig.compilerOptions.paths['$pinceau/theme'] = [`${resolve(options.theme.buildDir, 'theme.ts')}`]
-        tsConfig.compilerOptions.paths['$pinceau/runtime'] = [`${resolve(options.theme.buildDir, 'runtime.ts')}`]
         tsConfig.compilerOptions.paths['$pinceau/vue-plugin'] = [`${resolve(options.theme.buildDir, 'vue-plugin.ts')}`]
+        tsConfig.compilerOptions.paths.$pinceau = [`${resolve(options.theme.buildDir, 'runtime.ts')}`]
         if (options.theme.schema) { tsConfig.compilerOptions.paths['$pinceau/schema'] = [`${resolve(options.theme.buildDir, 'schema.ts')}`] }
         if (options.theme.definitions) { tsConfig.compilerOptions.paths['$pinceau/definitions'] = [`${resolve(options.theme.buildDir, 'definitions.ts')}`] }
       }
 
       // Push Pinceau reference
       opts.references = opts.references || []
+      opts.references.push({ path: '$pinceau' })
       opts.references.push({ path: 'pinceau' })
 
       // Add Volar plugin
@@ -181,10 +182,9 @@ const module: any = defineNuxtModule<PinceauUserOptions>({
 
               // Handle server-side styling
               nuxtApp.hook('app:rendered', async (app) => {
-                app.ssrContext.event.pinceauContent = app.ssrContext.event.pinceauContent || {}
-                const css = app.ssrContext.nuxt.vueApp.config.globalProperties.$pinceauSsr.get()
-                app.ssrContext.event.pinceauContent.runtime = css
-                app.ssrContext.event.pinceauContent.options = PinceauVueOptions
+                app.ssrContext.event.$pinceauSSR = app.ssrContext.event.$pinceauSSR || {}
+                app.ssrContext.event.$pinceauSSR.css = app.ssrContext.nuxt.vueApp.config.globalProperties.$pinceauSSR.toString()
+                app.ssrContext.event.$pinceauSSR.options = PinceauVueOptions
               })
             })`,
           )
@@ -213,8 +213,6 @@ const module: any = defineNuxtModule<PinceauUserOptions>({
             'export default defineNuxtPlugin(async (nuxtApp) => nuxtApp.vueApp.use(PinceauVue, { ...PinceauVueOptions, utils }))',
           )
         }
-
-        // if (options.dev) { lines.unshift('import \'$pinceau/hmr\'') }
 
         return lines.join('\n')
       },

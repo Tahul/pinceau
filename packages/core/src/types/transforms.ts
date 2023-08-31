@@ -1,17 +1,25 @@
 import type { SourceMapCompact } from 'unplugin'
 import type { SourceMapInput } from 'rollup'
-import type { MagicSFC } from 'sfc-composer'
+import type { MagicSFC, SourceLocation } from 'sfc-composer'
 import type { PinceauQuery } from './query'
 import type { PinceauTransformContext } from './transform-context'
 import type { PinceauContext } from './core-context'
 
-export type PinceauTransformResult = string | { code: string; map?: SourceMapInput | SourceMapCompact | null } | null | undefined
+export type PinceauTransformResult = { code: string; map?: SourceMapInput | SourceMapCompact | null } | undefined
+
+export interface PropMatch {
+  loc: SourceLocation
+  type: 'raw' | 'bind'
+  content: string
+  [key: string]: any
+}
 
 export interface PinceauTransformer {
   MagicSFC: typeof MagicSFC
   parser: (...args: any[]) => any
-  loadBlock: (file: string, query: PinceauQuery) => string | undefined
-  loadTransformers?: ((code: string, query: PinceauQuery) => string)[]
+  loadBlock: (file: string, query: PinceauQuery, ctx: PinceauContext) => string | undefined
+  loadTransformers?: ((code: string, query: PinceauQuery, ctx: Partial<PinceauContext>) => string)[]
+  extractProp?: (transformContext: PinceauTransformContext, prop: string) => PropMatch[]
   parserOptions?: any
 }
 

@@ -15,6 +15,12 @@ const PinceauStylePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
     vite: {
       async configResolved(config) {
         ctx = getPinceauContext(config)
+
+        ctx.registerOutput(
+          '$pinceau/css-functions',
+          '/__pinceau_css_functions.css',
+          '/* test */',
+        )
       },
     },
 

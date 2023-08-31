@@ -11,7 +11,7 @@ export function transformIndexHtml(html: string, ctx: PinceauContext, resolveMod
   // Enables HMR in development
   if (options.dev) {
     devId = ` data-vite-dev-id="${ctx.getOutputId('pinceau.css')}"`
-    hmrScript = '<script type="module" data-vite-dev-id="$pinceau/hmr" src="/__pinceau_hmr.ts"></script>'
+    hmrScript = '<script type="module" data-vite-dev-id="$pinceau/hmr" src="/__pinceau_hmr.js"></script>'
   }
 
   if (options.theme.preflight) {
@@ -20,13 +20,15 @@ export function transformIndexHtml(html: string, ctx: PinceauContext, resolveMod
 
   const preflight = preflightPath ? `<link rel="stylesheet" type="text/css" href="${preflightPath}" />` : ''
 
-  const tags = `${preflight}\n<style type="text/css" id="pinceau-theme"${devId}>${ctx.getOutput('pinceau.css')}</style>\n${hmrScript}`
+  const tags = {
+    preflight,
+    theme: `<style type="text/css" id="pinceau-theme"${devId}>${ctx.getOutput('pinceau.css')}</style>`,
+    runtime: ctx.options.runtime ? '<style id="pinceau-runtime"></style>' : undefined,
+    hmrScript,
+  }
 
   // Support `<pinceau />`
-  html = html.replace('<pinceau />', tags)
-
-  // Support `<style id="pinceau-theme"></style>` (Slidev / index.html merging frameworks)
-  html = html.replace('<style id="pinceau-theme"></style>', tags)
+  html = html.replace('<pinceau />', Object.values(tags).filter(Boolean).join('\n'))
 
   return html
 }

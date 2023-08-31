@@ -33,8 +33,9 @@
   },
   "dependencies": {
     "@pinceau/core": "workspace:*",
-    "@pinceau/theme": "workspace:*",
     "@pinceau/stringify": "workspace:*",
-    "acorn": "^8.10.0"
+    "@pinceau/theme": "workspace:*",
+    "acorn": "^8.10.0",
+    "ultrahtml": "^1.3.0"
   }
 }

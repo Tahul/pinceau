@@ -12,16 +12,17 @@ import { routes } from '../main'
   </ul>
 </template>
 
-<style lang="postcss" scoped>
-ul {
-  list-style-type: circle;
-  display: flex;
-  flex-direction: column;
-  gap: $theme('space.2');
-}
-
-a {
-  text-transform: capitalize;
-  text-decoration: underline;
-}
+<style scoped lang="ts">
+css({
+  ul: {
+    listStyleType: 'count',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '$space.2',
+  },
+  a: {
+    textTransform: 'capitalize',
+    textDecoration: 'underline',
+  }
+})
 </style>

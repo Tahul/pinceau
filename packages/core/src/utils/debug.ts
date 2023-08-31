@@ -76,7 +76,7 @@ const messages = {
   SELECTOR_CONFLICT: (_debugLevel, selector) => {
     c().logger.warn('Pinceau detected a conflicting selector:')
     c().logger.log(`❓ ${selector}\n`)
-    c().logger.log('If you want to combine `@dark` or `@light` with `html` selector, consider using `html.dark` or `html.light`.\n')
+    c().logger.log('If you want to combine `$dark` or `$light` with `html` selector, consider using `html.dark` or `html.light`.\n')
   },
   UTIL_NAME_CONFLICT: (_debugLevel, name) => {
     c().logger.warn('Pinceau detected a conflicting util name:')

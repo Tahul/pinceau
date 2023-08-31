@@ -1,7 +1,7 @@
 <template>
   <div
     :style="{
-      backgroundColor: $dt(''),
+      backgroundColor: $theme('color.blue.100'),
       padding: '',
     }"
   >

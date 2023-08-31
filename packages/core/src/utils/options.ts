@@ -32,7 +32,6 @@ export function getDefaultOptions() {
 
   const runtime: PinceauRuntimeOptions = {
     computedStyles: true,
-    cssProp: true,
     variants: true,
     ssr: true,
     appId: false,

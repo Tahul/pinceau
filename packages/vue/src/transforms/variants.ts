@@ -14,13 +14,12 @@ export interface PropOptions {
  */
 export const transformVariants: PinceauTransformFunction = (
   transformContext,
-  pinceauContext,
 ) => {
   const { target } = transformContext
 
-  const isTs = target.lang === 'ts' || target.attrs.lang === 'ts'
+  const isTs = target?.lang === 'ts' || target?.attrs?.lang === 'ts'
 
-  for (const cssFunction of transformContext?.state?.cssFunctions || []) {
+  for (const [_, cssFunction] of Object.entries(transformContext?.state?.styleFunctions || {})) {
     if (!cssFunction.variants) { continue }
 
     const variantsProps = resolveVariantsProps(transformContext, isTs)
@@ -76,8 +75,10 @@ export function pushVariantsProps(
 /**
  * Resolve a Vue component props object from css() variant.
  */
-export function resolveVariantsProps(transformContext,
-  isTs: boolean) {
+export function resolveVariantsProps(
+  transformContext: PinceauTransformContext,
+  isTs: boolean,
+) {
   const props: Record<string, PropOptions> = {}
 
   Object.entries(transformContext?.state?.variants || {}).forEach(
@@ -88,12 +89,12 @@ export function resolveVariantsProps(transformContext,
 
       const isBooleanVariant = Object.keys(variant).some(key => (key === 'true' || key === 'false'))
       if (isBooleanVariant) {
-        prop.type = isTs ? ' [Boolean, Object] as import(\'vue\').PropType<boolean | { [key in import(\'@pinceau/theme\').PinceauMediaQueries]?: boolean }>' : ' [Boolean, Object]'
+        prop.type = isTs ? ' [Boolean, Object] as import(\'vue\').PropType<boolean | { [key in PinceauMediaQueries]?: boolean }>' : ' [Boolean, Object]'
         prop.default = false
       }
       else {
         const possibleValues = `\'${Object.keys(variant).filter(key => key !== 'options').join('\' | \'')}\'`
-        prop.type = isTs ? ` [String, Object] as import(\'vue\').PropType<${possibleValues} | { [key in import(\'@pinceau/theme\').PinceauMediaQueries]?: ${possibleValues} }>` : ' [String, Object]'
+        prop.type = isTs ? ` [String, Object] as import(\'vue\').PropType<${possibleValues} | { [key in PinceauMediaQueries]?: ${possibleValues} }>` : ' [String, Object]'
         prop.default = undefined
       }
 

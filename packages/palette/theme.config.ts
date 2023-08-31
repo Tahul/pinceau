@@ -1,4 +1,3 @@
-import type { PinceauTheme } from '@pinceau/theme'
 import { defineTheme } from 'pinceau'
 
 export default defineTheme({
@@ -540,50 +539,50 @@ export default defineTheme({
     loose: '2',
   },
   text: {
-    '$schema': {
+    $schema: {
       title: 'Your project text scales.',
       tags: [
         '@tokenType size',
         '@icon material-symbols:format-size-rounded',
       ],
     },
-    'xs': {
+    1: {
       fontSize: '$fontSize.xs',
       lineHeight: '$lead.4',
     },
-    'sm': {
+    2: {
       fontSize: '$fontSize.sm',
       lineHeight: '$lead.5',
     },
-    'base': {
+    3: {
       fontSize: '$fontSize.base',
       lineHeight: '$lead.6',
     },
-    'lg': {
+    4: {
       fontSize: '$fontSize.lg',
       lineHeight: '$lead.7',
     },
-    'xl': {
+    5: {
       fontSize: '$fontSize.xl',
       lineHeight: '$lead.7',
     },
-    '2xl': {
+    6: {
       fontSize: '$fontSize.2xl',
       lineHeight: '$lead.8',
     },
-    '3xl': {
+    7: {
       fontSize: '$fontSize.3xl',
       lineHeight: '$lead.9',
     },
-    '4xl': {
+    8: {
       fontSize: '$fontSize.4xl',
       lineHeight: '$lead.10',
     },
-    '5xl': {
+    9: {
       fontSize: '$fontSize.5xl',
       lineHeight: '$lead.none',
     },
-    '6xl': {
+    10: {
       fontSize: '$fontSize.6xl',
       lineHeight: '$lead.none',
     },

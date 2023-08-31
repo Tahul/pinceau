@@ -1,7 +1,13 @@
 import type { PinceauContext } from '@pinceau/core'
 
 export function createVuePlugin(ctx: PinceauContext) {
-  const runtimeOptions = { ...ctx.options.runtime, colorSchemeMode: ctx.options.theme?.colorSchemeMode, dev: ctx.options.dev }
+  const runtimeOptions = {
+    dev: ctx.options.dev,
+    colorSchemeMode: ctx.options.theme?.colorSchemeMode,
+    hasRuntime: !!ctx.options.runtime,
+    hasTheme: !!ctx.options.theme,
+    ...ctx.options.runtime,
+  }
 
   return `import { 
   ${ctx.options.theme ? 'useThemeSheet' : ''},
@@ -22,7 +28,7 @@ export const PinceauVue = {
 
     // console.log({ themeSheet, runtimeSheet })
 
-    ${ctx.options.runtime && runtimeOptions?.ssr ? 'app.config.globalProperties.$pinceauSsr = { get: () => runtimeSheet.toString() }' : ''}
+    ${ctx.options.runtime && runtimeOptions?.ssr ? 'app.config.globalProperties.$pinceauSSR = { toString: () => runtimeSheet.toString() }' : ''}
   }
 }`
 }

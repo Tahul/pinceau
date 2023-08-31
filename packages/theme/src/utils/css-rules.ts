@@ -29,12 +29,12 @@ export function resolveMediaSelector(
 /**
  * Get a rule prefix from a responsive selector.
  */
-export function resolveReponsiveSelectorPrefix(selector: string) {
+export function resolveReponsiveSelectorPrefix(selector?: string) {
   let prefix: string
-  if (!selector) { prefix = '@media { :root {' }
-  else if (selector.startsWith('.')) { prefix = `@media { :root${selector} {` }
-  else if (selector.startsWith(':root')) { prefix = `@media { ${selector} {` }
-  else { prefix = `@media ${selector} { :root {` }
+  if (!selector) { prefix = '@media {\n  :root {' }
+  else if (selector.startsWith('.')) { prefix = `@media {\n  :root${selector} {` }
+  else if (selector.startsWith(':root')) { prefix = `@media {\n  ${selector} {` }
+  else { prefix = `@media ${selector} {\n  :root {` }
   return prefix
 }
 
@@ -47,16 +47,18 @@ export function createThemeRule(
     mq,
     colorSchemeMode,
     theme,
+    indentation = '  ',
   }: {
     content: string
     mq: PinceauMediaQueries
     colorSchemeMode: ColorSchemeModes
-    theme: Record<string, any>
+    theme: any
+    indentation?: string
   },
 ) {
   const responsiveSelector = resolveMediaSelector({ mq, colorSchemeMode, theme })
 
   const prefix = resolveReponsiveSelectorPrefix(responsiveSelector)
 
-  return `${`${prefix}--pinceau-mq: ${String(mq)}; ${content}`} } }\n`
+  return `${`\n${prefix}\n${indentation + indentation}--pinceau-mq: ${String(mq)};\n${content}`}\n${indentation}}\n}\n`
 }

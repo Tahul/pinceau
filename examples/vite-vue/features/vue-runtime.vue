@@ -1,20 +1,12 @@
-<script setup lang="ts">
-// ...
-</script>
-
 <template>
-  <div class="vue-runtime">
+  <div :styled="{ backgroundColor: '$color.blue.5' }" :class="['vue-runtime']">
     Hello Vue Runtime
   </div>
 </template>
 
 <style lang="ts">
 css({
-  '.vue-runtime': {
-    backgroundColor: props => props.backgroundColor,
-    color: props => props.color,
-  },
-  'variants': {
+  variants: {
     size: {
       sm: {
         padding: 1,
@@ -33,6 +25,6 @@ css({
         margin: 7,
       },
     },
-  },
+  }
 })
 </style>

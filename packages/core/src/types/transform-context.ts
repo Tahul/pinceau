@@ -1,10 +1,15 @@
 import type MagicString from 'magic-string'
 import type { MagicBlock, MagicSFC, SourceLocation } from 'sfc-composer'
 import type { Thenable, TransformResult } from 'unplugin'
-import type { PinceauQuery } from './query'
+import type { PinceauQuery, PinceauQueryBlockType } from './query'
 import type { PinceauTransformResult, PinceauTransforms } from './transforms'
 import type { PinceauContext } from './core-context'
 
+/**
+ * Base state for Pinceau transforms targets.
+ *
+ * This can be extended by plugins like @pinceau/vue or @pinceau/style.
+ */
 export interface PinceauTransformState {
   [key: string]: any
 }
@@ -16,7 +21,7 @@ export interface PinceauTransformContext {
   loc: SourceLocation
   query: PinceauQuery
   ms: MagicString
-  target: MagicBlock
+  target: MagicBlock<{ type: PinceauQueryBlockType; attrs?: { [key: string]: string }; [key: string]: any }>
   code: string
   state: PinceauTransformState
   transforms: PinceauTransforms

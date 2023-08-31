@@ -20,7 +20,7 @@ export function load(id: string, ctx: PinceauContext) {
 
   // Try to find block via transformer loader
   let block: string | undefined
-  if (ctx.transformers[query.ext]) { block = ctx.transformers[query.ext].loadBlock(code, query) }
+  if (ctx.transformers[query.ext]) { block = ctx.transformers[query.ext].loadBlock(code, query, ctx) }
 
   // Return scoped contents
   return block || code

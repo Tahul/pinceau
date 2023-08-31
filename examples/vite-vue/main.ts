@@ -3,6 +3,8 @@ import * as VueRouter from 'vue-router'
 import App from './app.vue'
 import Navigation from './components/Navigation.vue'
 import { PinceauVue } from '$pinceau/vue-plugin'
+import utils from '$pinceau/utils'
+import theme from '$pinceau/theme'
 import './style.css'
 
 export const routes = [
@@ -22,6 +24,8 @@ const router = VueRouter.createRouter({
   history: VueRouter.createWebHistory(),
   routes, // short for `routes: routes`
 })
+
+console.log({ theme,utils })
 
 const app = createApp(App)
 

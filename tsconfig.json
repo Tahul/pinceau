@@ -51,17 +51,20 @@
       // Aliases
       "$pinceau/theme": ["./packages/palette/output/theme.ts"],
       "$pinceau/utils": ["./packages/palette/output/utils.ts"],
-      "$pinceau/schema": ["./packages/palette/output/schema.ts"],
-      "$pinceau/runtime": ["./packages/palette/output/runtime.ts"],
-      "$pinceau/vue-plugin": ["./packages/palette/output/vue-plugin.ts"],
+      "$pinceau/schema": ["./packages/palette/output/schema.js"],
+      "$pinceau/vue-plugin": ["./packages/palette/output/vue-plugin.js"],
+      "$pinceau": ["./packages/palette/output/runtime.js"],
       "pinceau.css": ["./packages/palette/output/pinceau.css"]
     }
   },
   "exclude": [
     "**/dist/**",
     "**/node_modules/**",
-    "**/playground/**",
-    "**/examples/**",
-    "**/fixtures/**"
-  ]
+    "**/output/**"
+  ],
+  "vueCompilerOptions": {
+    "plugins": [
+      "./packages/volar/dist/index.cjs"
+    ]
+  }
 }

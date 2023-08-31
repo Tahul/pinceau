@@ -1,23 +1,23 @@
-import type { PinceauTheme, TokensFunction } from '@pinceau/theme'
+import type { DesignToken, DesignTokens, PinceauTheme, PinceauThemePaths, ThemeFunction } from '@pinceau/theme'
 import { get } from './data'
 
 /**
- * Creates the $token helper usable both at build or runtime.
+ * Creates the $theme helper usable both at build or runtime.
  */
-export function createTokensHelper(
+export function createThemeHelper(
   theme: any = {},
   options?: {
-    cb?: (ctx: { query: string; token?: ReturnType<TokensFunction>; theme: PinceauTheme }) => void
+    cb?: (ctx: { query: string; token?: DesignTokens | DesignToken; theme: PinceauTheme }) => void
   },
-): TokensFunction {
-  return (token) => {
+): ThemeFunction {
+  return (token?: PinceauThemePaths | (string & {})) => {
     const _theme = theme?.value || theme
 
     if (!_theme) { return }
 
-    if (!token) { return _theme }
+    if (!token) { return _theme as DesignTokens }
 
-    const _token = get(_theme, token)
+    const _token: DesignTokens | DesignToken | undefined = get(_theme, token)
 
     if (options?.cb) { options.cb({ query: token, token: _token, theme: _theme }) }
 

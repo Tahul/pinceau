@@ -38,7 +38,7 @@ export function setupTokensHelpers(
         transformData = cachedTransform
       }
       else {
-        // transformCssFunction('---', styleBlock.content, transformData.variants, transformData.computedStyles, transformData.localTokens, { $tokens: () => undefined, utils: {} })
+        // transformCssFunction('---', styleBlock.content, transformData.variants, transformData.computedStyles, transformData.localTokens, { $theme: () => undefined, utils: {} })
 
         // Tag localTokens with <style> source
         transformData.localTokens = Object.entries(transformData.localTokens as any).reduce((acc, [key, value]: [string, any]) => ({

@@ -1,9 +1,9 @@
-import { TokensFunction } from './types'
+import type { ThemeFunction } from './types'
 
 export * from './types'
 
 export { version } from '../package.json'
 
 declare global {
-  const $theme: TokensFunction
+  export const $theme: ThemeFunction
 }

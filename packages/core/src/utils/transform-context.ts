@@ -1,7 +1,7 @@
 import MagicString from 'magic-string'
 import type { MagicBlock } from 'sfc-composer'
 import { createSourceLocation, proxyBlock } from 'sfc-composer'
-import type { PinceauContext, PinceauQuery, PinceauTransformContext, PinceauTransformFunction, PinceauTransformState, PinceauTransforms } from '../types'
+import type { PinceauContext, PinceauQuery, PinceauQueryBlockType, PinceauTransformContext, PinceauTransformFunction, PinceauTransformState, PinceauTransforms } from '../types'
 
 export function usePinceauTransformContext(
   source: string | MagicString,
@@ -20,13 +20,13 @@ export function usePinceauTransformContext(
   }
 
   // Current block target (when running on parsed SFC)
-  let currentTarget: MagicBlock | undefined
+  let currentTarget: MagicBlock<{ type: PinceauQueryBlockType }> | undefined
 
   // Current compiler result
   let sfcCompilerResult: any
 
   // Local state in case there is no global state available for this file
-  let localState: PinceauTransformState = {}
+  const localState: PinceauTransformState = {}
 
   const transformContext: PinceauTransformContext = {
 
@@ -57,15 +57,14 @@ export function usePinceauTransformContext(
     /**
      * Return current transform target out of query parameters.
      */
-    get target() {
+    get target(): MagicBlock<{ type: PinceauQueryBlockType }> {
       if (currentTarget) { return currentTarget }
 
       return proxyBlock(
         this.ms,
         {
-          lang: this.query.lang,
-          type: this.query.type,
-          loc: this.loc,
+          index: this.query.index,
+          type: this.query.type || 'script',
         },
       )
     },
@@ -126,7 +125,15 @@ export function usePinceauTransformContext(
         for (const blockType of blockTypes) {
           const blocks = this.sfc?.[blockType] || []
 
-          for (const block of blocks) {
+          for (let i = 0; i < blocks.length; i++) {
+            const block = blocks[i]
+
+            // Add `type` key to block; remove `s` coming from MagicSFC blocktypes
+            block.type = blockType.slice(0, -1) as PinceauQueryBlockType
+
+            // Add `index` to block for scope tracking
+            block.index = i
+
             currentTarget = block
             applyTransforms(transforms[blockType])
           }

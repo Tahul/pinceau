@@ -59,7 +59,7 @@ export async function resolveFileLayer(
   // Try to resolved the schema
   let utils: ResolvedConfigLayer['utils'] = {}
   if (config.utils) {
-    try { utils = resolveConfigUtils(configAst) }
+    try { utils = resolveConfigUtils(configAst, config) }
     catch (e) { /* Mitigate utils resolving errors */ }
     finally {
       // @ts-ignore - Generated type will be read-only

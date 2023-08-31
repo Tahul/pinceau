@@ -1,5 +1,5 @@
 @lg {
   .test {
-    background-color: $theme('color.blue.100');
+    background-color: $theme('color.blue.1');
   }
 }

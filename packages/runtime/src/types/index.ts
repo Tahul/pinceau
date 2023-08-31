@@ -14,17 +14,10 @@ export interface PinceauRuntimeOptions {
    */
   computedStyles: boolean
   /**
-   * Toggles cssProp feature.
-   */
-  cssProp: boolean
-  /**
    * SSR support for server-side generated styles.
    */
   ssr: boolean
 }
 
-export * from './ids'
-export * from './options'
-export * from './rules'
+export * from './plugin'
 export * from './sheets'
-export * from './variants'

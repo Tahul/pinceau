@@ -13,7 +13,7 @@ export const test = 'hello world'
 <style lang="ts">
 css({
   '.test-style': {
-    fontSize: 16
+    fontSize: 32
   }
 })
 </style>

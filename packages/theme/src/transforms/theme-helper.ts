@@ -2,18 +2,16 @@ import type { PinceauTransformFunction } from '@pinceau/core'
 import { helperRegex } from '../utils/helper-regex'
 
 /**
- * Resolve `$dt()` calls.
+ * Resolve `$theme()` calls.
  *
  * Supports `wrapper` to be used in both `<style>` and `<script>` or `<template>` tags.
  */
-export const transformTokenHelper: PinceauTransformFunction = (
+export const transformThemeHelper: PinceauTransformFunction = (
   transformContext,
   pinceauContext,
   wrapper: string = '',
 ) => {
   const wrap = (content: string): string => `${wrapper || ''}${content}${wrapper || ''}`
-
-  const $tokens = pinceauContext.$tokens
 
   transformContext.target.toString().replace(
     helperRegex('$theme'),
@@ -27,7 +25,7 @@ export const transformTokenHelper: PinceauTransformFunction = (
 
       // Use $token and arg if exist
       if (arg) {
-        const themeToken = $tokens(path)
+        const themeToken = pinceauContext.$theme(path)
         if (themeToken) { token = wrap(themeToken?.variable || path) }
       }
 

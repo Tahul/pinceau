@@ -3,11 +3,16 @@
 </template>
 
 <script setup lang="ts">
-defineProps({
+const props = defineProps({
   fontSize: {
     type: Number,
     required: false,
     default: 16
+  },
+  backgroundColor: {
+    type: String,
+    required: false,
+    default: 'white'
   }
 })
 </script>
@@ -19,7 +24,8 @@ export const test = 'hello world'
 <style lang="ts">
 css({
   '.test-computed-style': {
-    fontSize: props => props.fontSize
+    fontSize: () => props.fontSize,
+    backgroundColor: () => props.backgroundColor
   }
 })
 </style>

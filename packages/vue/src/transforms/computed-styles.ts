@@ -5,11 +5,12 @@ import type { PinceauTransformFunction } from '@pinceau/core'
  */
 export const transformComputedStyles: PinceauTransformFunction = (
   transformContext,
-  pinceauContext,
 ) => {
   const { target } = transformContext
 
-  for (const cssFunction of transformContext?.state?.cssFunctions || []) {
+  if (!target.setup) { return }
+
+  for (const [_, cssFunction] of Object.entries(transformContext?.state?.styleFunctions || {})) {
     if (!cssFunction?.computedStyles) { continue }
 
     cssFunction

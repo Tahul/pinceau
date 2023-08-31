@@ -7,7 +7,7 @@ export function transformMediaQueries(
   transformContext: PinceauTransformContext,
   pinceauContext: PinceauContext,
 ) {
-  const mediaQueries = pinceauContext.$tokens('media')
+  const mediaQueries = pinceauContext.$theme('media')
 
   transformContext.target.toString().replace(
     // In CSS media query regex.
