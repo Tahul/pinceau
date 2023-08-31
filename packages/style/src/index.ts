@@ -1,6 +1,5 @@
 import type {
   CSS,
-  CSSProperties,
   PinceauStyleFunctionContext,
   RawCSS,
   ResponsiveProp as _ResponsiveProp,

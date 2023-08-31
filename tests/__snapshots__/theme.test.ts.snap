@@ -21,7 +21,7 @@ exports[`@pinceau/theme > formats/ > definitions.ts > build format 1`] = `
 {
   "buildDir": undefined,
   "outputs": {
-    "$pinceau/definitions": "export const definitions = {} as const",
+    "$pinceau/definitions": "export const definitions = {}",
   },
   "theme": {
     "color": {
@@ -39,7 +39,6 @@ exports[`@pinceau/theme > formats/ > hmr.ts > build format 1`] = `
   "buildDir": undefined,
   "outputs": {
     "$pinceau/hmr": "import { updateStyle } from '/@vite/client'
-
 
 if (import.meta.hot) {
   // Theme updates
@@ -83,6 +82,37 @@ if (import.meta.hot) {
 }
 `;
 
+exports[`@pinceau/theme > formats/ > javascript.ts > build format 1`] = `
+{
+  "buildDir": undefined,
+  "outputs": {
+    "$pinceau/theme-types": "export const theme = {
+  \\"color\\": {
+    \\"primary\\": {
+      \\"value\\": \\"red\\"
+    }
+  }
+} as const
+
+export type GeneratedPinceauTheme = typeof theme
+
+export type GeneratedPinceauMediaQueries = \\"dark\\" | \\"light\\" | \\"initial\\";
+
+export type GeneratedPinceauThemePaths = \\"color.primary\\";
+
+export default theme",
+  },
+  "theme": {
+    "color": {
+      "primary": {
+        "value": "red",
+        "variable": undefined,
+      },
+    },
+  },
+}
+`;
+
 exports[`@pinceau/theme > formats/ > schema.ts > build format 1`] = `
 {
   "buildDir": undefined,
@@ -90,9 +120,7 @@ exports[`@pinceau/theme > formats/ > schema.ts > build format 1`] = `
     "$pinceau/schema": "export const schema = {
   \\"properties\\": {},
   \\"default\\": {}
-} as const
-
-export const GeneratedPinceauThemeSchema = typeof schema
+}
 
 export default schema",
   },
@@ -111,7 +139,7 @@ exports[`@pinceau/theme > formats/ > typescript.ts > build format 1`] = `
 {
   "buildDir": undefined,
   "outputs": {
-    "$pinceau/theme": "export const theme = {
+    "$pinceau/theme-ts": "export const theme = {
   \\"color\\": {
     \\"primary\\": {
       \\"value\\": \\"red\\"
@@ -142,9 +170,7 @@ exports[`@pinceau/theme > formats/ > utils.ts > build format 1`] = `
 {
   "buildDir": undefined,
   "outputs": {
-    "$pinceau/utils": "export const utils = {} as const
-
-export type GeneratedPinceauUtils = typeof utils
+    "$pinceau/utils": "export const utils = {}
 
 export default utils",
   },

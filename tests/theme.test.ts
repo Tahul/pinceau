@@ -276,7 +276,7 @@ describe('@pinceau/theme', () => {
       expect(layer.content).toContain('black')
       expect(layer.content).toContain('responsiveColor')
       expect(layer.content).toContain('responsiveFullColor')
-      expect(layer.imports.length).toBe(2)
+      expect(layer.imports.length).toBe(0)
     })
     it('importConfigFile() - import a configuration file and its content', async () => {
       const file = await importConfigFile(resolveFixtures('./theme.config.ts'), '.ts')
@@ -312,7 +312,7 @@ describe('@pinceau/theme', () => {
 
       const imports = resolveConfigImports(configAst)
 
-      expect(imports.length).toBe((count || []).length)
+      expect(imports.length).toBe((count || []).length - 2)
     })
   })
 
@@ -393,7 +393,7 @@ describe('@pinceau/theme', () => {
 
       const result = resolveInlineLayer(layer, options)
 
-      expect(result.utils.my.ts).toStrictEqual('(value) => {\n'
+      expect(result.utils.my.js).toStrictEqual('(value) => {\n'
         + '            return {\n'
         + '              marginTop: value,\n'
         + '              marginBottom: value\n'
@@ -560,13 +560,17 @@ describe('@pinceau/theme', () => {
       expect(themeOutput.outputs).toHaveProperty('pinceau.css')
       expect(fileNames).toContain('theme.css')
       expect(themeOutput.outputs).toHaveProperty('$pinceau/theme')
+      expect(themeOutput.outputs).toHaveProperty('$pinceau/theme-types')
       expect(fileNames).toContain('theme.ts')
+      expect(fileNames).toContain('theme.js')
       expect(themeOutput.outputs).toHaveProperty('$pinceau/utils')
+      expect(themeOutput.outputs).toHaveProperty('$pinceau/utils-types')
       expect(fileNames).toContain('utils.ts')
+      expect(fileNames).toContain('utils.js')
       expect(themeOutput.outputs).toHaveProperty('$pinceau/definitions')
-      expect(fileNames).toContain('definitions.ts')
+      expect(fileNames).toContain('definitions.js')
       expect(themeOutput.outputs).toHaveProperty('$pinceau/schema')
-      expect(fileNames).toContain('schema.ts')
+      expect(fileNames).toContain('schema.js')
 
       files.forEach((path) => {
         try {
@@ -922,7 +926,7 @@ describe('@pinceau/theme', () => {
       })
     })
 
-    describe('typescript.ts', () => {
+    describe('javascript.ts', () => {
       beforeEach(() => {
         pinceauContext.options.theme.outputFormats.push(typescriptFormat)
       })

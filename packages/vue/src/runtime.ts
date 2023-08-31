@@ -20,7 +20,9 @@ export function useVariants(variants: Variants) {
 
   Object.entries(variants).forEach(
     ([key, variant]) => {
-      if (!props.value?.[key]) {}
+      if (!props.value?.[key]) {
+        console.log('?')
+      }
     },
   )
 }

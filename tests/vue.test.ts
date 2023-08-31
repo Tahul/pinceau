@@ -150,8 +150,8 @@ console.log('hello world')
       registerVirtualOutputs(pinceauContext)
 
       expect(fs.writeFileSync).toHaveBeenCalledTimes(2)
-      expect(pinceauContext.getOutputId('/__pinceau_runtime.ts')).toBe('$pinceau')
-      expect(pinceauContext.getOutputId('/__pinceau_vue_plugin.ts')).toBe('$pinceau/vue-plugin')
+      expect(pinceauContext.getOutputId('/__pinceau_runtime.js')).toBe('$pinceau')
+      expect(pinceauContext.getOutputId('/__pinceau_vue_plugin.js')).toBe('$pinceau/vue-plugin')
     })
   })
 

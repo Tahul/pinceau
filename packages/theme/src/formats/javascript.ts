@@ -30,7 +30,7 @@ export const javascriptFormat: PinceauThemeFormat = {
 export const typescriptFormat: PinceauThemeFormat = {
   destination: 'theme.ts',
   virtualPath: '/__pinceau_theme_ts.ts',
-  importPath: '$pinceau/theme-ts',
+  importPath: '$pinceau/theme-types',
   formatter({ dictionary }) {
     const { tokens } = dictionary
 

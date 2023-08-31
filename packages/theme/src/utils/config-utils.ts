@@ -1,5 +1,5 @@
 import type { File } from '@babel/types'
-import { astTypes, findDefaultExport, printAst, visitAst } from '@pinceau/core/utils'
+import { findDefaultExport, printAst, visitAst } from '@pinceau/core/utils'
 import type { NodePath } from 'ast-types/lib/node-path'
 import type { namedTypes } from 'ast-types'
 import type { ConfigLayer } from '../types'
