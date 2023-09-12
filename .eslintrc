@@ -17,7 +17,9 @@
     "@typescript-eslint/prefer-ts-expect-error": "off",
     "no-console":"off",
     "@typescript-eslint/ban-types": "off",
-    "vue/one-component-per-file": "off"
+    "vue/one-component-per-file": "off",
+    "jsdoc/require-param": "off",
+    "jsdoc/require-returns": "off"
   },
   "overrides": [
     {

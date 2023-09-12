@@ -9,7 +9,7 @@ const PINCEAU_CLASS_NAME = '$pcClass'
  *
  * - Grab all the `<template>` child nodes
  * - Search for root <tags> in the <template> content
- * * Then, for each thags:
+ * -  Then, for each thags:
  * - Find the `:class` attribute if it exists
  * - Parse `:class` content with recast and inject `$pinceau`
  * - If no `:class` found, just push it at the end of the first tag

@@ -46,7 +46,7 @@
     "jiti": "npm:@pinceau/jiti@latest"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^0.41.0",
+    "@antfu/eslint-config": "^0.41.2",
     "@pinceau/core": "workspace:*",
     "@pinceau/language-server": "workspace:*",
     "@pinceau/nuxt": "workspace:*",

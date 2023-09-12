@@ -105,8 +105,8 @@ export function setupTokensHelpers(
   }
 
   /**
- * Get all the tokens from the document and call a callback on it.
- */
+   * Get all the tokens from the document and call a callback on it.
+   */
   function getDocumentTokens(
     doc: TextDocument,
     tokensData?: DocumentTokensData,
@@ -157,10 +157,10 @@ export function setupTokensHelpers(
   }
 
   /**
- * Get the closest token starting from a cursor position.
- *
- * Useful for hover/definition.
- */
+   * Get the closest token starting from a cursor position.
+   *
+   * Useful for hover/definition.
+   */
   function getClosestToken(
     doc: TextDocument,
     position: Position,

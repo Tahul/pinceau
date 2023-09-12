@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import process from 'node:process'
 import { join, resolve } from 'pathe'
-import { addPlugin, addPluginTemplate, addPrerenderRoutes, createResolver, defineNuxtModule, resolveModule } from '@nuxt/kit'
+import { addPluginTemplate, addPrerenderRoutes, createResolver, defineNuxtModule, resolveModule } from '@nuxt/kit'
 import createJITI from 'jiti'
 import type { PinceauUserOptions } from '@pinceau/core'
 import { walkTokens } from '@pinceau/theme/runtime'

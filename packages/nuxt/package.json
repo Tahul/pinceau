@@ -36,7 +36,7 @@
     "@nuxthq/studio": "^0.14.1",
     "@nuxtjs/color-mode": "^3.3.0",
     "nitropack": "2.6.3",
-    "nuxi": "3.8.2",
+    "nuxi": "3.8.3",
     "nuxt": "3.7.1",
     "nuxt-component-meta": "^0.5.3"
   }
