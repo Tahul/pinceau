@@ -4,7 +4,7 @@ import { createUnplugin } from 'unplugin'
 import type { UnpluginInstance } from 'unplugin'
 import { suite } from './transforms/suite'
 
-const PinceauStylePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
+export const PinceauStylePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
   let ctx: PinceauContext
 
   return {
@@ -29,5 +29,3 @@ const PinceauStylePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
     transform: (code, id) => transform(code, id, suite, ctx),
   }
 })
-
-export default PinceauStylePlugin

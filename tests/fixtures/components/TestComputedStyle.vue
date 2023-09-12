@@ -1,5 +1,12 @@
 <template>
-  <div class="test-computed-style">Computed Style component</div>
+  <div 
+    class="test-computed-style"
+    :styled="{
+      fontSize: () => props.fontSize + 2,
+    }"
+  >
+    Computed Style component
+  </div>
 </template>
 
 <script setup lang="ts">

@@ -4,7 +4,7 @@ import type { UnpluginInstance } from 'unplugin'
 // import { getPinceauContext } from '@pinceau/core/utils'
 // import type { PinceauContext } from '@pinceau/core'
 
-const PinceauRuntimePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
+export const PinceauRuntimePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
   // let ctx: PinceauContext
 
   return {
@@ -19,5 +19,3 @@ const PinceauRuntimePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
     },
   }
 })
-
-export default PinceauRuntimePlugin

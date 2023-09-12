@@ -13,7 +13,6 @@ export const routes = [
   { path: '/runtime', component: () => import('./features/runtime.vue') },
   { path: '/theme', component: () => import('./features/theme.vue') },
   { path: '/vue', component: () => import('./features/vue.vue') },
-  { path: '/vue-runtime', component: () => import('./features/vue-runtime.vue') },
 ]
 
 // 3. Create the router instance and pass the `routes` option
@@ -24,8 +23,6 @@ const router = VueRouter.createRouter({
   history: VueRouter.createWebHistory(),
   routes, // short for `routes: routes`
 })
-
-console.log({ theme,utils })
 
 const app = createApp(App)
 

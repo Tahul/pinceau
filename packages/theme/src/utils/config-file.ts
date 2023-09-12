@@ -1,5 +1,5 @@
 import { readFile } from 'node:fs/promises'
-import { existsSync } from 'node:fs'
+import fs from 'node:fs'
 import type { PinceauOptions } from '@pinceau/core'
 import { message, parseAst } from '@pinceau/core/utils'
 import createJITI from 'jiti'
@@ -122,7 +122,7 @@ export function resolveConfigPath(layer: ConfigLayer, options: PinceauOptions) {
   // Find extension
   let ext: string | undefined
   for (const _ext of options.theme.configExtensions) {
-    if (existsSync(path + _ext)) {
+    if (fs.existsSync(path + _ext)) {
       path = path + _ext
       ext = _ext
       break

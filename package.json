@@ -1,19 +1,8 @@
 {
   "name": "@pinceau/monorepo",
-  "type": "module",
   "version": "1.0.0",
   "private": true,
-  "packageManager": "pnpm@8.6.0",
   "description": "Make your <script> lighter and your <style> smarter.",
-  "license": "MIT",
-  "homepage": "https://github.com/Tahul/pinceau#readme",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Tahul/pinceau.git"
-  },
-  "bugs": {
-    "url": "https://github.com/Tahul/pinceau/issues"
-  },
   "keywords": [
     "css-in-js",
     "vue",
@@ -23,53 +12,70 @@
     "nuxt",
     "vite"
   ],
+  "homepage": "https://github.com/Tahul/pinceau#readme",
+  "bugs": {
+    "url": "https://github.com/Tahul/pinceau/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tahul/pinceau.git"
+  },
+  "license": "MIT",
+  "type": "module",
   "scripts": {
     "build": "pnpm -r --filter=./packages/* run build && pnpm -r run build:post",
-    "stub": "pnpm -r --filter=./packages/* run stub && pnpm -r run build:post",
-    "palette": "pnpm -r --filter=./packages/palette run stub",
-    "lint": "eslint --cache .",
-    "lint:fix": "eslint --cache . --fix",
+    "clean:snapshots": "rm -rf ./tests/__snapshots__",
     "dev:lib": "nodemon --exec 'pnpm --filter=./examples/vite-lib run dev' --watch 'packages' -e js,ts,vue",
-    "dev:vue": "nodemon --exec 'pnpm --filter=./examples/vite-vue run dev' --watch 'packages' -e js,ts,vue",
-    "dev:vue:debug": "DEBUG=\"*\" pnpm dev:vue",
     "dev:nuxt": "pnpm -r --filter=./examples/nuxt run dev",
     "dev:nuxt:debug": "DEBUG=\"*\" pnpm dev:nuxt",
+    "dev:vue": "nodemon --exec 'pnpm --filter=./examples/vite-vue run dev' --watch 'packages' -e js,ts,vue",
+    "dev:vue:debug": "DEBUG=\"*\" pnpm dev:vue",
     "docs": "nuxi dev docs",
-    "test": "pnpm lint && vitest run --coverage",
-    "test:ui": "vitest --ui --coverage --open=false",
-    "clean:snapshots": "rm -rf ./tests/__snapshots__",
-    "prepare": "pnpm stub"
+    "lint": "eslint --cache .",
+    "lint:fix": "eslint --cache . --fix",
+    "palette": "pnpm -r --filter=./packages/palette run stub",
+    "prepare": "pnpm stub",
+    "stub": "pnpm -r --filter=./packages/* run stub && pnpm -r run build:post",
+    "test": "pnpm lint && pnpm -r --filter=./tests run test",
+    "test:run": "pnpm -r --filter=./tests run test",
+    "test:ui": "pnpm -r --filter=./tests run test:ui",
+    "test:fixtures": "pnpm -r --filter=./tests run test:fixtures"
+  },
+  "resolutions": {
+    "pinceau": "workspace:*",
+    "jiti": "npm:@pinceau/jiti@latest"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.41.0",
-    "@types/node": "^20.5.7",
-    "eslint": "^8.48.0",
-    "nodemon": "^3.0.1",
-    "release-it": "^16.1.5",
-    "rollup": "^3.28.1",
-    "tsup": "^7.2.0",
-    "typescript": "^5.2.0",
-    "unbuild": "^2.0.0",
-    "unenv": "^1.7.4",
     "@pinceau/core": "workspace:*",
     "@pinceau/language-server": "workspace:*",
     "@pinceau/nuxt": "workspace:*",
-    "pinceau": "worksapce:*",
     "@pinceau/runtime": "workspace:*",
     "@pinceau/stringify": "workspace:*",
     "@pinceau/style": "workspace:*",
     "@pinceau/theme": "workspace:*",
-    "@pinceau/vue": "workspace:*",
+    "@pinceau/volar": "workspace:*",
     "@pinceau/vscode": "workspace:*",
-    "@pinceau/volar": "workspace:*"
+    "@pinceau/vue": "workspace:*",
+    "@types/node": "^20.6.0",
+    "eslint": "^8.49.0",
+    "nodemon": "^3.0.1",
+    "pinceau": "workspace:*",
+    "release-it": "^16.1.5",
+    "rollup": "^3.29.1",
+    "tsup": "^7.2.0",
+    "typescript": "^5.2.2",
+    "unbuild": "npm:@pinceau/unbuild@latest",
+    "unenv": "^1.7.4"
   },
+  "packageManager": "pnpm@8.6.0",
   "pnpm": {
     "peerDependencyRules": {
       "allowedVersions": {
         "axios": "0.25.0",
-        "vue": "^3.3.4",
         "vite": "^4.4.7",
-        "vitest": "^0.33.0"
+        "vitest": "^0.33.0",
+        "vue": "^3.3.4"
       },
       "ignoreMissing": [
         "postcss",
@@ -82,10 +88,14 @@
       ]
     }
   },
-  "resolutions": {
-    "pinceau": "workspace:*"
-  },
   "release-it": {
+    "git": {
+      "commitMessage": "chore(release): release v${version}"
+    },
+    "github": {
+      "release": true,
+      "releaseName": "v${version}"
+    },
     "hooks": {
       "before:init": [
         "pnpm build"
@@ -93,13 +103,6 @@
     },
     "npm": {
       "access": "public"
-    },
-    "git": {
-      "commitMessage": "chore(release): release v${version}"
-    },
-    "github": {
-      "release": true,
-      "releaseName": "v${version}"
     }
   }
 }

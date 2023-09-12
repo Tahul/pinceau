@@ -15,10 +15,13 @@ import { routes } from '../main'
 <style scoped lang="ts">
 css({
   ul: {
+    width: '100%',
     listStyleType: 'count',
     display: 'flex',
-    flexDirection: 'column',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
     gap: '$space.2',
+    marginBottom: '2rem',
   },
   a: {
     textTransform: 'capitalize',

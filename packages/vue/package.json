@@ -43,7 +43,6 @@
   "dependencies": {
     "@pinceau/core": "workspace:*",
     "@pinceau/runtime": "workspace:*",
-    "@pinceau/style": "workspace:*",
-    "nanoid": "^4.0.2"
+    "@pinceau/style": "workspace:*"
   }
 }

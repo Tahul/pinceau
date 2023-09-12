@@ -30,6 +30,7 @@ export default defineBuildConfig({
     emitCJS: true,
   },
   externals: [
+    '@pinceau/theme',
     'vue/compiler-sfc',
     'magic-string',
     'sfc-composer',

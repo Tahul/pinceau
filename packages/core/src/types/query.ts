@@ -17,6 +17,8 @@ export interface PinceauQuery {
   index?: number
   setup?: boolean
   scoped?: string
+
+  // Has this block been processed through Pinceau
   transformed?: boolean
 
   // Is target direct css function?

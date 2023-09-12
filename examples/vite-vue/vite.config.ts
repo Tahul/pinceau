@@ -2,7 +2,7 @@ import { createResolver } from '@nuxt/kit'
 import { defineConfig } from 'vite'
 import Vue from '@vitejs/plugin-vue'
 import Inspect from 'vite-plugin-inspect'
-import Pinceau from 'pinceau/plugin'
+import { Pinceau } from 'pinceau/plugin'
 
 const resolve = (p: string) => createResolver(import.meta.url).resolve(p)
 

@@ -10,7 +10,7 @@ export type ThemeProperties<K extends keyof DefaultThemeMap> = Utils.WrapUnion<U
 /**
  * Take a key and gives a list of tokens under that key in configuration.
  */
-export type ThemeTokens<K extends PinceauThemePaths | (string & {})> = Utils.WrapUnion<Utils.FilterStartingWith<PinceauThemePaths, K>, '$', ''>
+export type ThemeTokens<K extends PinceauThemePaths | (string & {})> = Utils.WrapUnion<Utils.FilterStartingWith<PinceauThemePaths, K>, '', ''>
 
 /**
  * Supported properties in `css()` function

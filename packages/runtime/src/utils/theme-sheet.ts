@@ -12,8 +12,6 @@ export const defaultThemeSheetOptions: PinceauThemeSheetOptions = {
 export function useThemeSheet(options?: PinceauThemeSheetOptions): PinceauThemeSheet {
   options = { ...defaultThemeSheetOptions, ...(options || {}) }
 
-  console.time('useThemeSheet')
-
   const sheet = useStyleSheet('pinceau-theme', IS_BROWSER ? document : undefined)
 
   // Resolved theme object from the stylesheet.
@@ -22,17 +20,10 @@ export function useThemeSheet(options?: PinceauThemeSheetOptions): PinceauThemeS
   // Local cache for each mq CSSRules.
   let cache: { [key: string]: CSSMediaRule } = {}
 
-  // Local theme helper
-  const $theme = createThemeHelper(theme)
-
   /**
    * Hydrate theme object from a CSSRuleList object coming from the theme stylesheet.
    */
-  function hydrateThemeSheet(
-    cssRules: CSSRuleList = sheet?.cssRules || {},
-  ) {
-    console.time('hydrateThemeSheet')
-
+  function hydrate(cssRules: CSSRuleList = sheet?.cssRules || {}) {
     // Reset cache on hydration
     cache = {}
 
@@ -45,7 +36,7 @@ export function useThemeSheet(options?: PinceauThemeSheetOptions): PinceauThemeS
           if (rule?.type !== 4 && !rule?.cssText?.includes('--pinceau-mq')) { return false }
 
           // Get current theme from parsed cssRules
-          let currentTheme = 'initial'
+          let currentTheme = '$initial'
 
           // Regex-based hydration
           rule.cssText
@@ -70,8 +61,8 @@ export function useThemeSheet(options?: PinceauThemeSheetOptions): PinceauThemeS
             })
         },
       )
-    console.timeEnd('hydrateThemeSheet')
   }
+  if (options?.hydrate) { hydrate() }
 
   /**
    * Return a token value from a path and a new value
@@ -80,29 +71,30 @@ export function useThemeSheet(options?: PinceauThemeSheetOptions): PinceauThemeS
     path: string | string[],
     value: any,
     variable: string,
-    mq = 'initial',
+    mq = '$initial',
   ) {
     const setValue = { value, variable: `var(${variable})` }
 
     const existingValue = get(theme, path) as DesignToken | undefined
 
-    if (existingValue && !variable.startsWith('--media')) {
+    // Media queries do not support responsive tokens, stop here
+    if (variable.startsWith('--media')) { return setValue }
+
+    // Support responsive tokens
+    if (existingValue || mq !== '$initial') {
       if (typeof existingValue?.value === 'object') { setValue.value = { ...existingValue, [mq]: value } }
-      else { setValue.value = { initial: existingValue.value, [mq]: value } }
+      else { setValue.value = { $initial: existingValue?.value, [mq]: value } }
     }
 
     return setValue
   }
 
-  if (options?.hydrate) { hydrateThemeSheet() }
-
-  console.timeEnd('useThemeSheet')
-
   return {
     sheet,
     theme,
-    $theme,
+    get $theme() { return createThemeHelper(theme) },
     cache,
-    hydrate: hydrateThemeSheet,
+    hydrate,
+    formatToken,
   }
 }

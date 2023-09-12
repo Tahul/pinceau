@@ -38,5 +38,6 @@ export default defineBuildConfig({
     'ast-types',
     'acorn',
     'scule',
+    'nanoid',
   ],
 })

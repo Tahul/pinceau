@@ -1,4 +1,4 @@
-import { existsSync } from 'node:fs'
+import fs from 'node:fs'
 import process from 'node:process'
 import { join, resolve } from 'pathe'
 import { addPlugin, addPluginTemplate, addPrerenderRoutes, createResolver, defineNuxtModule, resolveModule } from '@nuxt/kit'
@@ -7,7 +7,7 @@ import type { PinceauUserOptions } from '@pinceau/core'
 import { walkTokens } from '@pinceau/theme/runtime'
 import type { ConfigLayer } from '@pinceau/theme'
 import { normalizeOptions, referencesRegex } from '@pinceau/core/utils'
-import Pinceau from 'pinceau/plugin'
+import { Pinceau } from 'pinceau/plugin'
 
 export interface ModuleHooks {
   'pinceau:options': (options: PinceauUserOptions) => void | Promise<void>
@@ -53,7 +53,7 @@ const module: any = defineNuxtModule<PinceauUserOptions>({
             const resolvedTokens: string[] = []
 
             // Grab built tokens and resolve all tokens paths
-            if (existsSync(join(buildDir, 'index.ts'))) {
+            if (fs.existsSync(join(buildDir, 'index.ts'))) {
               const _tokens = createJITI(buildDir)(join(buildDir, 'index.ts')).default
               walkTokens(_tokens?.theme || _tokens, (_, __, paths) => { cachedTokens.push(paths.join('.')) })
             }
@@ -153,7 +153,34 @@ const module: any = defineNuxtModule<PinceauUserOptions>({
 
     // Setup Nuxt Studio support
     if (options.theme.schema) {
-      addPlugin(resolveLocalModule('../server/pinceau-schema.server.mjs'))
+      addPluginTemplate({
+        filename: 'pinceau-nuxt-schema-plugin.server.mjs',
+        mode: 'server',
+        getContents() {
+          const lines: string[] = []
+
+          lines.push(
+            'import { defineNuxtPlugin, useRequestEvent } from \'#imports\'',
+            'import theme from \'#build/pinceau/theme\'',
+            'import schema from \'#build/pinceau/schema\'',
+            'export default defineNuxtPlugin(() => {',
+            '  const event = useRequestEvent()',
+            '  if (event.path === \'/__pinceau_tokens_config.json\') {',
+            '    event.node.res.setHeader(\'Content-Type\', \'application/json\')',
+            '    event.node.res.statusCode = 200',
+            '    event.node.res.end(JSON.stringify(theme, null, 2))',
+            '  }',
+            '  if (event.path === \'/__pinceau_tokens_schema.json\') {',
+            '    event.node.res.setHeader(\'Content-Type\', \'application/json\')',
+            '    event.node.res.statusCode = 200',
+            '    event.node.res.end(JSON.stringify(schema, null, 2))',
+            '  }',
+            '})',
+          )
+
+          return lines.join('\n')
+        },
+      })
       addPrerenderRoutes('/__pinceau_tokens_config.json')
       addPrerenderRoutes('/__pinceau_tokens_schema.json')
     }
@@ -173,6 +200,7 @@ const module: any = defineNuxtModule<PinceauUserOptions>({
             'import { useRuntimeConfig } from \'#imports\'',
             '// Built targets',
             'import { PinceauVue, PinceauVueOptions } from \'#build/pinceau/vue-plugin\'',
+            '// Server-side makes direct imports to built utils and theme',
             'import utils from \'#build/pinceau/utils\'',
             'import theme from \'#build/pinceau/theme\'',
             '',
@@ -180,7 +208,7 @@ const module: any = defineNuxtModule<PinceauUserOptions>({
             `export default defineNuxtPlugin(async (nuxtApp) => {
               nuxtApp.vueApp.use(PinceauVue, { ...PinceauVueOptions, theme, utils })
 
-              // Handle server-side styling
+              // Handle SSR
               nuxtApp.hook('app:rendered', async (app) => {
                 app.ssrContext.event.$pinceauSSR = app.ssrContext.event.$pinceauSSR || {}
                 app.ssrContext.event.$pinceauSSR.css = app.ssrContext.nuxt.vueApp.config.globalProperties.$pinceauSSR.toString()

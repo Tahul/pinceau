@@ -50,7 +50,7 @@ export const typescriptFormat: PinceauThemeFormat = {
     const mqKeys = resolveMediaQueriesKeys(flattenedTokens)
     const mqId = 'GeneratedPinceauMediaQueries'
     if (mqKeys.length) { result += `export ${arrayToUnionType(mqId, mqKeys)}\n\n` }
-    else { result += `export type ${mqId} = \'initial\' | \'dark\' | \'light\'\n\n` }
+    else { result += `export type ${mqId} = \'$initial\' | \'$dark\' | \'$light\'\n\n` }
 
     // Tokens paths type
     const paths = tokensPaths(tokens, mqKeys).map(([keyPath]) => keyPath)
@@ -74,7 +74,7 @@ function arrayToUnionType(
 ) {
   const tokensLiteralNodes: any[] = []
 
-  value.forEach(keyPath => tokensLiteralNodes.push(astTypes.builders.tsLiteralType(astTypes.builders.stringLiteral(keyPath))))
+  value.forEach(keyPath => tokensLiteralNodes.push(astTypes.builders.tsLiteralType(astTypes.builders.stringLiteral(`${keyPath.startsWith('$') ? keyPath : `$${keyPath}`}`))))
 
   const ast = astTypes.builders.tsTypeAliasDeclaration(
     astTypes.builders.identifier(identifier),

@@ -5,6 +5,7 @@ import type { PathMatch, PropMatch } from '@pinceau/core'
 import type { elements } from '../utils/html-elements'
 import type { CSS } from './css'
 import type { ComputedStyleContext } from './computed-styles'
+import type { Variants } from './variants'
 
 export type CSSFunctionArg = NodePath<namedTypes.ObjectExpression> & ASTNode & { loc: namedTypes.SourceLocation }
 
@@ -22,7 +23,7 @@ export interface PinceauStyleFunctionContext {
   // Compiled
   className?: string
   css: string
-  variants: { [key: string]: any }
+  variants: Variants<any>
   localTokens: { [key: string]: NodePath<namedTypes.ObjectProperty | namedTypes.StringLiteral | namedTypes.NumericLiteral | namedTypes.FunctionExpression | namedTypes.ArrowFunctionExpression> & ASTNode }
   computedStyles: ComputedStyleContext[]
 }

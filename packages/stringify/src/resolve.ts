@@ -1,30 +1,37 @@
-import type { PinceauContext } from '@pinceau/core'
 import { pathToVarName, referencesRegex } from '@pinceau/core/runtime'
+import type { ColorSchemeModes, PinceauUtils, ThemeFunction } from '@pinceau/theme'
 import type { StringifyContext } from './types'
 
 const darkToken = '$dark'
 const lightToken = '$light'
 const initialToken = '$initial'
 
+export interface CSSResolverContext {
+  stringifyContext: StringifyContext
+  localTokens?: string[]
+  $theme?: ThemeFunction
+  utils?: PinceauUtils
+  colorSchemeMode?: ColorSchemeModes
+}
+
 /**
  * Resolve a CSS function argument to a stringifiable declaration.
  */
-export function resolveCssProperty(
-  stringifyContext: StringifyContext,
-  pinceauContext: PinceauContext,
-) {
+export function resolveCssProperty(ctx: CSSResolverContext) {
+  const { stringifyContext } = ctx
+
   let { property, value } = stringifyContext
 
   // Resolve custom style directives
-  const directive = resolveCustomDirectives(stringifyContext, pinceauContext)
+  const directive = resolveCustomDirectives(ctx)
   if (directive) { return directive }
 
   // Resolve custom properties
-  const utilProperty = resolveUtilsProperties(stringifyContext, pinceauContext)
+  const utilProperty = resolveUtilsProperties(ctx)
   if (utilProperty) { return utilProperty }
 
   // Resolve final value
-  value = resolveValue(value, pinceauContext)
+  value = resolveValue(ctx)
 
   // Return proper declaration
   return {
@@ -35,18 +42,24 @@ export function resolveCssProperty(
 /**
  * Cast a value to a valid CSS unit.
  */
-export function resolveValue(
-  value: string | number | string[] | number[] | (string | number)[],
-  pinceauContext: PinceauContext,
-) {
-  // Handle array values
+export function resolveValue(ctx: CSSResolverContext) {
+  const { stringifyContext } = ctx
+
+  const { value } = stringifyContext
+
+  // Recurse through array values
   if (Array.isArray(value)) {
-    value = value.map((v: string | number) => resolveValue(v, pinceauContext))
-    return value
+    return value.map(
+      (v: string | number) => resolveValue({
+        ...ctx,
+        stringifyContext: { ...stringifyContext, value: v },
+      }),
+    )
   }
 
-  if (typeof value === 'string') { value = resolveReferences(value, pinceauContext) }
-  if (typeof value === 'number') { value = `${value}px` }
+  // String / number values
+  if (typeof value === 'string') { return resolveReferences(ctx) }
+  if (typeof value === 'number') { return `${value}px` }
 
   return value
 }
@@ -54,28 +67,38 @@ export function resolveValue(
 /**
  * Resolve token references
  */
-export function resolveReferences(
-  value: string,
-  pinceauContext: PinceauContext,
-) {
-  if (typeof value !== 'string') { return value }
+export function resolveReferences(ctx: CSSResolverContext) {
+  const { stringifyContext, $theme, localTokens } = ctx
 
-  value = value.replace(referencesRegex, (_, tokenPath) => {
-    const token = pinceauContext.$theme(tokenPath)
-    return (token?.variable ? token.variable : `var(${pathToVarName(tokenPath)})`) as string
-  })
+  if (typeof stringifyContext.value !== 'string') { return stringifyContext.value }
 
-  return value
+  stringifyContext.value = stringifyContext.value.replace(
+    referencesRegex,
+    (_, tokenPath) => {
+      const varName = pathToVarName(tokenPath)
+
+      // Handle localTokens
+      if (localTokens?.includes(varName)) { return `var(${varName})` }
+
+      // Handle themeTokens or fallback
+      const token = $theme?.(tokenPath)
+
+      return (token?.variable ? token.variable : `var(${varName})`) as string
+    },
+  )
+
+  return stringifyContext.value
 }
 
 /**
  * Resolve custom directives (@mq, @dark).
  */
-export function resolveCustomDirectives(
-  { property, value }: StringifyContext,
-  pinceauContext: PinceauContext,
-) {
-  const mode = pinceauContext?.options?.theme?.colorSchemeMode || 'media'
+export function resolveCustomDirectives(ctx: CSSResolverContext) {
+  const { stringifyContext, $theme, colorSchemeMode } = ctx
+
+  const { property, value } = stringifyContext
+
+  const mode = colorSchemeMode || 'media'
 
   if (property.startsWith('$')) {
     const resolveColorScheme = (scheme: string) => {
@@ -97,13 +120,16 @@ export function resolveCustomDirectives(
     // @initial
     if (property === initialToken) { return { '@media': value } }
 
-    // Handle all user supplied @directives
-    const mediaQueries = pinceauContext.$theme('media' as any)
-    if (mediaQueries) {
-      const query = property.replace('$', '')
-      if (mediaQueries[query]) {
-        return {
-          [`@media ${mediaQueries[query].value}`]: value,
+    // Support custom theme queries
+    if ($theme) {
+      // Handle all user supplied @directives
+      const mediaQueries = $theme('media' as any)
+      if (mediaQueries) {
+        const query = property.replace('$', '')
+        if (mediaQueries[query]) {
+          return {
+            [`@media ${mediaQueries[query].value}`]: value,
+          }
         }
       }
     }
@@ -117,11 +143,10 @@ export function resolveCustomDirectives(
 /**
  * Resolve utils properties coming from `utils` key of theme configuration.
  */
-export function resolveUtilsProperties(
-  { property, value }: StringifyContext,
-  pinceauContext: PinceauContext,
-) {
-  const utils = pinceauContext?.utils
+export function resolveUtilsProperties(ctx: CSSResolverContext) {
+  const { utils, stringifyContext } = ctx
+
+  const { property, value } = stringifyContext
 
   if (utils?.[property]) {
     // @ts-ignore - Custom property is a function, pass value and return result

@@ -12,4 +12,4 @@ export interface ComputedStyleContext {
   compiled: string
 }
 
-export type ComputedStyleDefinition<T extends string | number> = () => PropertyValue<T> | T | { [key in PinceauMediaQueries]?: T | PropertyValue<T> }
+export type ComputedStyleDefinition<T extends string | number = string | number> = () => PropertyValue<T> | T | { [key in PinceauMediaQueries]?: T | PropertyValue<T> } | undefined

@@ -2,6 +2,8 @@ import type { ASTNode } from 'ast-types'
 import type { PinceauTransformContext, PinceauTransformFunction } from '@pinceau/core'
 import { astTypes, expressionToAst, printAst } from '@pinceau/core/utils'
 
+const PINCEAU_CLASS_NAME = '$pcClass'
+
 /**
  * Adds `$pinceau` to the root element class via transform
  *
@@ -21,7 +23,7 @@ export const transformAddPinceauClass: PinceauTransformFunction = (
   const content = target.toString()
 
   // $pinceau class already here
-  if (content.includes('$pinceau')) { return }
+  if (content.includes(PINCEAU_CLASS_NAME)) { return }
 
   // Grab first node location offset, the `ast` key from Vue parser includes the `<template>` tag in location
   // As this transform willy be applied on top of `target`, that offset needs to be dropped from source location.
@@ -43,17 +45,17 @@ export const transformAddPinceauClass: PinceauTransformFunction = (
         const existingAttr: ASTNode = source.match(/:class="([^"]+)"/) as any
         if (existingAttr) {
           let attrAst = expressionToAst(existingAttr[1])
-          const newAttrAst = astTypes.builders.identifier('$pinceau')
+          const newAttrAst = astTypes.builders.identifier(PINCEAU_CLASS_NAME)
           switch (attrAst.type) {
             case 'ArrayExpression':
-              attrAst.elements.push(newAttrAst)
+              attrAst.elements.unshift(newAttrAst)
               break
             case 'StringLiteral':
             case 'Literal':
             case 'ObjectExpression':
               attrAst = astTypes.builders.arrayExpression([
-                attrAst,
                 newAttrAst,
+                attrAst,
               ])
               break
           }
@@ -63,11 +65,11 @@ export const transformAddPinceauClass: PinceauTransformFunction = (
       }
       else if (source.includes('/>')) {
       // Self closing tag
-        result = source.replace('/>', ' :class="[$pinceau]" />')
+        result = source.replace('/>', ` :class="[${PINCEAU_CLASS_NAME}]" />`)
       }
       else {
       // Regular tag
-        result = source.replace('>', ' :class="[$pinceau]">')
+        result = source.replace('>', ` :class="[${PINCEAU_CLASS_NAME}]">`)
       }
 
       target.overwrite(

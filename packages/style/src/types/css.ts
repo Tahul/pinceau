@@ -1,6 +1,5 @@
 import type { DefaultThemeMap, PinceauMediaQueries, PinceauUtils } from '@pinceau/theme'
 import type { DataType as CSSDataType } from 'csstype'
-import type { WrapUnion } from '@pinceau/style'
 import type { NativeProperties, PseudosProperties } from './properties'
 import type { PropertyValue } from './resolvers'
 import type { ComputedStyleDefinition } from './computed-styles'
@@ -8,14 +7,12 @@ import type { Variants } from './variants'
 
 export type MappedProperty<K extends string | number> = Exclude<
   // Source
-  PropertyValue<K> | ComputedStyleDefinition<K> | (string & {}) | (number & {}),
+  PropertyValue<K> | ComputedStyleDefinition<K | number> | (string & {}) | (number & {}),
   // Filtered value types
   CSSDataType.DeprecatedSystemColor
 >
 
-export type WrappedMQs = WrapUnion<PinceauMediaQueries, '$', ''>
-
-export type ResponsiveProp<T> = T | { [key in WrappedMQs]?: T }
+export type ResponsiveProp<T> = T | { [key in PinceauMediaQueries]?: T }
 
 export type RawCSS =
   (
@@ -36,7 +33,7 @@ export type RawCSS =
     }
     &
     {
-      [K in WrappedMQs]?: { [key: string]: CSSProperties }
+      [K in PinceauMediaQueries]?: { [key: string]: CSSProperties }
     }
   )
   |
@@ -48,7 +45,7 @@ export type CSSProperties<Source = {}> =
   RawCSS
   &
   {
-    [K in keyof Source]?: K extends WrappedMQs ? { [MQ in keyof Source[K]]: CSSProperties<Source[K][MQ]> } :
+    [K in keyof Source]?: K extends PinceauMediaQueries ? { [MQ in keyof Source[K]]: CSSProperties<Source[K][MQ]> } :
       K extends keyof PseudosProperties ? CSSProperties<Source[K]> :
         K extends keyof PinceauUtils ? Parameters<PinceauUtils[K]>[0] | ComputedStyleDefinition<Parameters<PinceauUtils[K]>[0]> :
           K extends keyof NativeProperties ? MappedProperty<K> :
@@ -72,9 +69,9 @@ export type CSS<
     |
     // Autocomplete from theme and native properties
     {
-      [K in keyof Source | WrappedMQs | keyof PinceauUtils]?:
+      [K in keyof Source | PinceauMediaQueries | keyof PinceauUtils]?:
       (
-        K extends WrappedMQs ? (K extends keyof Source ? { [MQ in keyof Source[K]]: CSSProperties<Source[K][MQ]> } : never) :
+        K extends PinceauMediaQueries ? (K extends keyof Source ? { [MQ in keyof Source[K]]: CSSProperties<Source[K][MQ]> } : never) :
           K extends keyof PinceauUtils ? (Parameters<PinceauUtils[K]>[0] extends undefined ? string | number | boolean : Parameters<PinceauUtils[K]>[0] | ComputedStyleDefinition<Parameters<PinceauUtils[K]>[0]>) :
             K extends 'variants' ? Variants<Source[K]> :
               K extends keyof Source ? CSSProperties<Source[K]> | Source[K] : never

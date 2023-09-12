@@ -1,10 +1,10 @@
 <script setup lang="ts">
-withDefaults(
+const props = withDefaults(
   defineProps<{
-    color?: StyleProp<keyof PinceauTheme['color']>
+    color?: keyof PinceauTheme['color']
   }>(),
   {
-    color: 'blue'
+    color: 'green'
   }
 )
 </script>
@@ -23,31 +23,30 @@ withDefaults(
 <style scoped lang="ts">
 css({
   '.my-button': {
-    '--button-primary': (props) => `$color.${props.color}.600`,
-    '--button-secondary': (props) => `$color.${props.color}.500`,
+    '--button-bg': () => `$color.${props.color}.5`,
+    '--button-border': () => `$color.${props.color}.6`,
+    '--button-active': () => `$color.${props.color}.4`,
+    transition: 'all 333ms ease-out',
     display: 'inline-block',
-    borderRadius: '$radii.xl',
-    transition: '$transition.all',
+    borderRadius: '$radii.xs',
     color: '$color.white',
-    boxShadow: `0 5px 0 $button.primary, 0 12px 16px $color.dimmed`,
+    backgroundColor: '$button.bg',
     span: {
+      boxShadow: 'inset 0 0 0 2px $button.border, 0 1px 2px $color.black',
       display: 'inline-block',
       fontFamily: '$font.sans',
-      borderRadius: '$radii.lg',
+      borderRadius: '$radii.xs',
       fontSize: '$fontSize.xl',
-      lineHeight: '$lead.none',
-      transition: '$transition.all',
-      backgroundColor: '$button.primary',
-      boxShadow: 'inset 0 -1px 1px $color.dark',
+      lineHeight: '0',
     },
     '&:hover': {
       span: {
-        backgroundColor: `$button.secondary`,
+        backgroundColor: `$button.border`,
       }
     },
     '&:active': {
       span: {
-        transform: 'translateY($space.4)'
+        boxShadow: 'inset 0 0 0 2px $button.active',
       }
     }
   },
@@ -55,26 +54,26 @@ css({
     size: {
       sm: {
         span: {
-          padding: '$space.6 $space.12',
+          padding: '$space.3 $space.6',
         },
       },
       md: {
         span: {
-          padding: '$space.12 $space.16'
+          padding: '$space.4 $space.8'
         },
       },
       lg: {
         span: {
-          padding: '$space.16 $space.24'
+          padding: '$space.6 $space.12'
         },
       },
       xl: {
         span: {
-          padding: '$space.32 $space.48'
+          padding: '$space.8 $space.16'
         },
       },
       options: {
-        default: 'sm',
+        default: 'md',
       },
     },
   },

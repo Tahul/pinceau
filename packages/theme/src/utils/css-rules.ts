@@ -15,11 +15,11 @@ export function resolveMediaSelector(
   },
 ) {
   let selector = ''
-  if (mq === 'dark' || mq === 'light') {
-    if (colorSchemeMode === 'class') { selector = `:root.${mq}` }
-    else { selector = `(prefers-color-scheme: ${mq})` }
+  if (mq === '$dark' || mq === '$light') {
+    if (colorSchemeMode === 'class') { selector = `:root.${mq.substring(1)}` }
+    else { selector = `(prefers-color-scheme: ${mq.substring(1)})` }
   }
-  else if (mq !== 'initial' && theme) {
+  else if (mq !== '$initial' && theme) {
     const queryToken = theme?.media?.[mq]
     if (queryToken) { selector = queryToken.value }
   }

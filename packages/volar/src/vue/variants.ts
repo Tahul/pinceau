@@ -13,7 +13,7 @@ export function pushVariantsProps(embeddedFile: VueEmbeddedFile, sfc: Sfc) {
   const variants = resolveVariantsContent(sfc)
 
   // Resolve variants props
-  const variantProps = resolveVariantsProps({ state: { variants } } as any, true)
+  const variantProps = resolveVariantsProps(variants, true)
   if (variantProps && Object.keys(variantProps).length) {
     try {
       variantsAst = expressionToAst(JSON.stringify(variantProps))

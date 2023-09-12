@@ -1,7 +1,6 @@
 packages:
   - playground
   - docs
+  - tests
   - 'packages/*'
   - 'examples/*'
-  - 'tests/fixtures/*'
-  - tests/

@@ -4,6 +4,6 @@
 
 <style scoped lang="postcss">
 div {
-  background-color: $theme('color.violet.1');
+  background-color: $theme('color.violet.9');
 }
 </style>

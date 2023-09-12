@@ -4,7 +4,7 @@ exports[`@pinceau/theme > formats/ > css.ts > build format 1`] = `
 {
   "buildDir": undefined,
   "outputs": {
-    "pinceau.css": "@media {:root {--pinceau-mq: initial;--primary: red;}}",
+    "pinceau.css": "@media {:root {--pinceau-mq: $initial;--primary: red;}}",
   },
   "theme": {
     "color": {
@@ -53,8 +53,6 @@ if (import.meta.hot) {
   import.meta.hot.on(
     'pinceau:style-function',
     ({ filename, id, css }) => {
-      console.log({ filename, id, css })
-
       // Find the target node
       const node = document.querySelector(\`style[data-vite-dev-id*=\\"pinceau-style-function\\"][data-vite-dev-id*=\\"\${id}\\"]\`)
       if (!node) return
@@ -62,8 +60,6 @@ if (import.meta.hot) {
       // Find the target node data-vite-dev-id
       const nodeId = node?.attributes?.['data-vite-dev-id']?.value
       if (!nodeId) return
-
-      console.log({ node, nodeId })
 
       // Update that node style
       updateStyle(nodeId, css)
@@ -96,9 +92,9 @@ exports[`@pinceau/theme > formats/ > javascript.ts > build format 1`] = `
 
 export type GeneratedPinceauTheme = typeof theme
 
-export type GeneratedPinceauMediaQueries = \\"dark\\" | \\"light\\" | \\"initial\\";
+export type GeneratedPinceauMediaQueries = \\"$dark\\" | \\"$light\\" | \\"$initial\\";
 
-export type GeneratedPinceauThemePaths = \\"color.primary\\";
+export type GeneratedPinceauThemePaths = \\"$color.primary\\";
 
 export default theme",
   },
@@ -123,37 +119,6 @@ exports[`@pinceau/theme > formats/ > schema.ts > build format 1`] = `
 }
 
 export default schema",
-  },
-  "theme": {
-    "color": {
-      "primary": {
-        "value": "red",
-        "variable": undefined,
-      },
-    },
-  },
-}
-`;
-
-exports[`@pinceau/theme > formats/ > typescript.ts > build format 1`] = `
-{
-  "buildDir": undefined,
-  "outputs": {
-    "$pinceau/theme-ts": "export const theme = {
-  \\"color\\": {
-    \\"primary\\": {
-      \\"value\\": \\"red\\"
-    }
-  }
-} as const
-
-export type GeneratedPinceauTheme = typeof theme
-
-export type GeneratedPinceauMediaQueries = \\"dark\\" | \\"light\\" | \\"initial\\";
-
-export type GeneratedPinceauThemePaths = \\"color.primary\\";
-
-export default theme",
   },
   "theme": {
     "color": {

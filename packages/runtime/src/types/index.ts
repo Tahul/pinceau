@@ -16,7 +16,16 @@ export interface PinceauRuntimeOptions {
   /**
    * SSR support for server-side generated styles.
    */
-  ssr: boolean
+  ssr?: {
+    /**
+     * Should the `theme` sheet be SSRed.
+     */
+    theme?: boolean
+    /**
+     * Should the `runtime` sheet be SSRed.
+     */
+    runtime?: boolean
+  }
 }
 
 export * from './plugin'

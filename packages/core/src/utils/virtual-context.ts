@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, writeFileSync } from 'node:fs'
+import fs from 'node:fs'
 import { dirname } from 'pathe'
 import type { PinceauVirtualContext, VirtualOutputs } from '../types'
 
@@ -41,8 +41,8 @@ export function usePinceauVirtualContext(): PinceauVirtualContext {
   function writeOutput(id: string, path: string) {
     // Create target directory if it doesn't already exist.
     const targetDir = dirname(path)
-    if (!existsSync(targetDir)) { mkdirSync(targetDir, { recursive: true }) }
-    if (outputs[id]) { writeFileSync(path, outputs[id]) }
+    if (!fs.existsSync(targetDir)) { fs.mkdirSync(targetDir, { recursive: true }) }
+    if (outputs[id]) { fs.writeFileSync(path, outputs[id]) }
   }
 
   return {

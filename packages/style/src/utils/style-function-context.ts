@@ -3,7 +3,7 @@ import type { PathMatch, PinceauContext, PinceauTransformContext, PinceauTransfo
 import { astTypes, evalDeclaration, printAst, visitAst } from '@pinceau/core/utils'
 import { createSourceLocationFromOffsets } from 'sfc-composer'
 import { resolveCssProperty, stringify } from '@pinceau/stringify'
-import { nanoid } from 'nanoid'
+import { toHash } from '@pinceau/core/runtime'
 import type { PinceauStyleFunctionContext } from '../types/style-functions'
 import type { CSSFunctionSource } from '../types/ast'
 import { createUniqueClass } from './create-class'
@@ -52,13 +52,16 @@ export const resolveStyleFunctionContext: PinceauTransformFunction<PinceauStyleF
 
           // Store computed styles in state
           if (valueType === 'ArrowFunctionExpression' || valueType === 'FunctionExpression') {
-            // Local UID is used to avoid collision of names if there is plenty of computed styles in the same component.
-            // As collision rate in this kind of context is extremely improbable, the UID is very short.
-            const uid = nanoid(3).toLowerCase()
+            // Create a unique id from the ComputedStyle LOC.
+            const hash = toHash({
+              start: path.value.loc.start,
+              end: path.value.loc.end,
+              filename: transformContext.query.filename,
+            })
 
             // Create computed styles identifiers
             const computedStyleKey = camelCase((key).replace(/--/g, '__'))
-            const id = `pcs_${uid}_${computedStyleKey}`
+            const id = `pcs_${hash}_${computedStyleKey}`
             const variable = `--${kebabCase(id)}`
 
             // Push property function to computedStyles
@@ -98,8 +101,13 @@ export const resolveStyleFunctionContext: PinceauTransformFunction<PinceauStyleF
     // Scope `declaration` in `className` when using `styled`
     type === 'styled' && className ? { [`.${className}`]: declaration } : declaration,
     stringifyContext => resolveCssProperty(
-      stringifyContext,
-      pinceauContext,
+      {
+        localTokens: Object.keys(localTokens),
+        stringifyContext,
+        $theme: pinceauContext.$theme,
+        colorSchemeMode: pinceauContext.options.theme.colorSchemeMode,
+        utils: pinceauContext.utils,
+      },
     ),
   )
 
@@ -120,7 +128,6 @@ export const resolveStyleFunctionContext: PinceauTransformFunction<PinceauStyleF
     arg,
     loc,
     pointer,
-
     className,
     css,
     declaration,

@@ -135,7 +135,7 @@ export default class PinceauTokensManager {
       content || {},
       (token, _, paths) => {
         const name = paths.join('.')
-        const value = token.value?.initial || token?.value
+        const value = token.value?.$initial || token?.value
         if (isColor(value)) { token.color = colorToVSCode(value) }
         this.tokensCache.set(filePath, name, { ...token, name })
       },

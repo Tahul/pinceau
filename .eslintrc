@@ -16,7 +16,8 @@
     "max-statements-per-line": "off",
     "@typescript-eslint/prefer-ts-expect-error": "off",
     "no-console":"off",
-    "@typescript-eslint/ban-types": "off"
+    "@typescript-eslint/ban-types": "off",
+    "vue/one-component-per-file": "off"
   },
   "overrides": [
     {

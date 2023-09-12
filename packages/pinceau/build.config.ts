@@ -18,6 +18,9 @@ export default defineBuildConfig({
     emitCJS: true,
   },
   externals: [
+    '$pinceau',
+    '$pinceau/theme',
+    '$pinceau/utils',
     '@pinceau/core',
     '@pinceau/theme',
     '@pinceau/style',

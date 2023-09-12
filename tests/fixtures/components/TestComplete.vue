@@ -1,16 +1,15 @@
 <script setup lang="ts">
-import { computedStyle, cssProp } from '$pinceau'
+import { responsiveProp } from '@pinceau/vue/runtime'
 import { PinceauTheme } from '@pinceau/theme'
 
-defineProps({
-    color: computedStyle<keyof PinceauTheme['color']>('red'),
-    css: cssProp,
+const props = defineProps({
+    color: responsiveProp<keyof PinceauTheme['color']>('red'),
 })
 </script>
 
 <template>
   <button class="my-button">
-    <span v-if="!$slots?.default">Hello Amsterdam 👋</span>
+    <span v-if="!$slots?.default">Hello Tests 👋</span>
     <span v-else>
       <slot />
     </span>
@@ -20,8 +19,8 @@ defineProps({
 <style scoped lang="ts">
 css({
     '.my-button': {
-        '--button-primary': (props) => `$color.${props.color}.6`,
-        '--button-secondary': (props) => `$color.${props.color}.5`,
+        '--button-primary': () => `$color.${props.color}.6`,
+        '--button-secondary': () => `$color.${props.color}.5`,
         display: 'inline-block',
         borderRadius: '$radii.xl',
         transition: '$transition.all',

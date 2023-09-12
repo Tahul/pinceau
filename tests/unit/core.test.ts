@@ -8,6 +8,7 @@ import {
   expressionToAst,
   findCallees,
   findDefaultExport,
+  getCharAfterLastImport,
   getDefaultOptions,
   getPinceauContext,
   isPathIncluded,
@@ -25,12 +26,12 @@ import {
   usePinceauTransformContext,
   usePinceauVirtualContext,
 } from '@pinceau/core/utils'
-import Pinceau from 'pinceau/plugin'
+import { Pinceau } from 'pinceau/plugin'
 import { createThemeHelper, get, referencesRegex, set, tokensPaths } from '@pinceau/core/runtime'
 import type { PinceauContext, PinceauQuery, PinceauTransformContext, PinceauTransforms, PinceauVirtualContext } from '@pinceau/core'
-import { PinceauVueTransformer } from 'packages/vue/src/utils/transformer'
+import { PinceauVueTransformer } from '@pinceau/vue/utils'
 import type { CSSFunctionArg } from '@pinceau/style'
-import { resolveFixtures, resolveTmp } from './utils'
+import { resolveFixtures, resolveTmp } from '../utils'
 
 const defaults = getDefaultOptions()
 
@@ -67,6 +68,15 @@ describe('@pinceau/core', () => {
     it('should resolve all styled() calls from an ast', () => {
       const ast = parseAst('styled({ color: \'red\' })\nstyled({ color: \'yellow\' })\nstyled({ color: \'green\' })')
       expect(findCallees(ast, 'styled').length).toEqual(3)
+    })
+    it('should return the correct character position after the last import statement in an AST with one import statement', () => {
+      const ast = parseAst(`
+        import module from 'module';
+      `)
+
+      const result = getCharAfterLastImport(ast)
+
+      expect(result).toBe(36)
     })
   })
 
@@ -149,7 +159,7 @@ describe('@pinceau/core', () => {
       context.addTransformed(componentPath, query)
       const code = load(componentPath, context)
       // Target fixture do have `<style lang="css">`; PinceauVueTransformer should turn this into a PostCSS block
-      expect(code).toContain('<style lang="postcss" transformed>')
+      expect(code).toContain('<style lang="postcss" pctransformed>')
     })
     it('registers a new module query filter', () => {
       const filterFn = () => true
@@ -293,25 +303,26 @@ describe('@pinceau/core', () => {
         color: {
           responsiveColor: {
             value: {
-              initial: 'red',
-              dark: 'blue',
+              $initial: 'red',
+              $dark: 'blue',
             },
           },
           responsiveColorFlat: {
-            initial: 'red',
-            dark: 'blue',
+            $initial: 'red',
+            $dark: 'blue',
           },
         },
       }
-      const result = tokensPaths(obj, ['dark'])
+      const result = tokensPaths(obj, ['$dark'])
+
       expect(result).toStrictEqual([
         ['color.responsiveColor', {
-          initial: 'red',
-          dark: 'blue',
+          $initial: 'red',
+          $dark: 'blue',
         }],
         ['color.responsiveColorFlat', {
-          initial: 'red',
-          dark: 'blue',
+          $initial: 'red',
+          $dark: 'blue',
         }],
       ])
     })

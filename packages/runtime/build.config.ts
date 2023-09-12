@@ -22,7 +22,6 @@ export default defineBuildConfig({
     'vue',
     'scule',
     'defu',
-    'nanoid',
     '@pinceau/style',
   ],
 })

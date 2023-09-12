@@ -8,7 +8,7 @@ import { registerPostCSSPlugins } from './utils/postcss'
 import { usePinceauContext } from './utils/core-context'
 import { load, loadInclude } from './utils/unplugin'
 
-const PinceauCorePlugin: UnpluginInstance<PinceauUserOptions> = createUnplugin((options) => {
+export const PinceauCorePlugin: UnpluginInstance<PinceauUserOptions> = createUnplugin((options) => {
   // Setup debug context context.
   updateDebugContext({
     debugLevel: options?.dev ? options.debug : false,
@@ -58,6 +58,27 @@ const PinceauCorePlugin: UnpluginInstance<PinceauUserOptions> = createUnplugin((
 
           return code
         }
+
+        // Enforce HMR js-update event when changing the content of a transformed block.
+        const transformedContent = hmrContext.modules.filter(mod => mod?.id?.includes('pctransformed'))
+        if (transformedContent) {
+          transformedContent.forEach((node) => {
+            const componentPath = node.url.split('?')[0]
+
+            hmrContext.server.ws.send({
+              type: 'update',
+              updates: [
+                {
+                  type: 'js-update',
+                  timestamp: Date.now() + 2,
+                  acceptedPath: componentPath,
+                  path: componentPath,
+                  explicitImportRequired: false,
+                },
+              ],
+            })
+          })
+        }
       },
     },
 
@@ -74,5 +95,3 @@ const PinceauCorePlugin: UnpluginInstance<PinceauUserOptions> = createUnplugin((
     load: id => load(id, ctx),
   }
 })
-
-export default PinceauCorePlugin

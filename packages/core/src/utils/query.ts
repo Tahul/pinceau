@@ -36,7 +36,7 @@ export function parsePinceauQuery(id: string): PinceauQuery {
     scoped: params.has('scoped') ? String(params.get('scoped')) : undefined,
     lang: params.get('lang') as PinceauQuery['lang'] || (params.has('lang.ts') ? 'ts' : undefined),
     setup: params.get('setup') === 'true' || undefined,
-    transformed: params.get('transformed') === 'true' || undefined,
+    transformed: params.get('pctransformed') === 'true' || undefined,
 
     styleFunction: params.has('pinceau-style-function') ? String(params.get('pinceau-style-function')) : undefined,
 

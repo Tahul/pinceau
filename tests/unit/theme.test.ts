@@ -16,6 +16,8 @@ import {
   isSafeConstName,
   isTokenNode,
   loadLayers,
+  pinceauNameTransformer,
+  pinceauVariableTransformer,
   resolveConfigDefinitions,
   resolveConfigImports,
   resolveConfigPath,
@@ -29,19 +31,17 @@ import {
   setupThemeFormats,
   transformIndexHtml,
   typescriptFormat,
-  usePinceauConfigContext,
-  utilsFormat,
+  usePinceauConfigContext, utilsFormat,
 } from '@pinceau/theme/utils'
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { File } from '@babel/types'
 import { tokensPaths } from '@pinceau/core/runtime'
 import { createThemeRule, normalizeTokens, resolveMediaSelector, resolveReponsiveSelectorPrefix, walkTokens } from '@pinceau/theme/runtime'
 import { transformColorScheme, transformMediaQueries, transformThemeHelper } from '@pinceau/theme/transforms'
-import { pinceauNameTransformer, pinceauVariableTransformer } from 'packages/theme/src/utils/tokens-transformers'
 import { PinceauVueTransformer } from '@pinceau/vue/utils'
-import themeConfigContent from './fixtures/theme.config.ts?raw'
-import themeConfig from './fixtures/theme.config'
-import { findNode, paletteLayer, resolveFixtures, resolveTmp, testFileLayer, testLayer } from './utils'
+import themeConfig from '../fixtures/theme/theme.config'
+import { findNode, paletteLayer, resolveFixtures, resolveTmp, testFileLayer, testLayer } from '../utils'
+import themeConfigContent from '../fixtures/theme/theme.config.ts?raw'
 
 describe('@pinceau/theme', () => {
   describe('utils/config-context.ts', () => {
@@ -171,7 +171,7 @@ describe('@pinceau/theme', () => {
     })
 
     it('resolve a definitions from a config file AST', () => {
-      const definitions = resolveConfigDefinitions(configAst, mqKeys, resolveFixtures('./theme.config.ts'))
+      const definitions = resolveConfigDefinitions(configAst, mqKeys, resolveFixtures('./theme/theme.config.ts'))
 
       const configPaths = tokensPaths(themeConfig, mqKeys).map(path => path[0]).filter(p => !p.startsWith('utils'))
 
@@ -271,7 +271,7 @@ describe('@pinceau/theme', () => {
 
       const layer = await resolveFileLayer(testFileLayer, options)
 
-      expect(layer.path).toBe(resolveFixtures('./theme.config.ts'))
+      expect(layer.path).toBe(resolveFixtures('./theme/theme.config.ts'))
       expect(layer.content).toContain('white')
       expect(layer.content).toContain('black')
       expect(layer.content).toContain('responsiveColor')
@@ -279,7 +279,7 @@ describe('@pinceau/theme', () => {
       expect(layer.imports.length).toBe(0)
     })
     it('importConfigFile() - import a configuration file and its content', async () => {
-      const file = await importConfigFile(resolveFixtures('./theme.config.ts'), '.ts')
+      const file = await importConfigFile(resolveFixtures('./theme/theme.config.ts'), '.ts')
 
       expect(Object.keys(file.config).length).toBe(Object.keys(themeConfig).length)
       expect(file.content).toContain('white')
@@ -290,13 +290,13 @@ describe('@pinceau/theme', () => {
     it('resolveConfigPath() - get a full configuration path from a layer', () => {
       const result = resolveConfigPath(
         {
-          path: resolveFixtures('./'),
+          path: resolveFixtures('./theme'),
           configFileName: 'theme.config',
         },
         options,
       )
 
-      expect(result?.path).toBe(resolveFixtures('./theme.config.ts'))
+      expect(result?.path).toBe(resolveFixtures('./theme/theme.config.ts'))
     })
   })
 
@@ -359,17 +359,17 @@ describe('@pinceau/theme', () => {
     it('resolveMediaQueriesKeys() - it can resolve media queries keys from a config', () => {
       const keys = resolveMediaQueriesKeys(themeConfig)
 
-      expect(keys).toStrictEqual(['dark', 'light', 'initial', ...Object.keys(themeConfig.media as any)])
+      expect(keys).toStrictEqual(['$dark', '$light', '$initial', ...Object.keys(themeConfig.media as any).map(key => `$${key}`)])
     })
     it('resolveMediaQueriesKeys() - it can resolve media queries keys multiple configs', () => {
       const keys = resolveMediaQueriesKeys([themeConfig, { media: { test: '(prefers-reduced-motion)' } }])
 
-      expect(keys).toStrictEqual(['dark', 'light', 'initial', ...Object.keys(themeConfig.media as any), 'test'])
+      expect(keys).toStrictEqual(['$dark', '$light', '$initial', ...Object.keys(themeConfig.media as any).map(key => `$${key}`), '$test'])
     })
     it('resolveMediaQueriesKeys() - it avoid duplicates from multiple configs', () => {
       const keys = resolveMediaQueriesKeys([themeConfig, { media: { sm: '(prefers-reduced-motion)' } }])
 
-      expect(keys).toStrictEqual(['dark', 'light', 'initial', ...Object.keys(themeConfig.media as any)])
+      expect(keys).toStrictEqual(['$dark', '$light', '$initial', ...Object.keys(themeConfig.media as any).map(key => `$${key}`)])
     })
     it('resolveInlineLayer() - cast an inline layer to a resolved config layer', () => {
       const options = normalizeOptions()
@@ -408,7 +408,7 @@ describe('@pinceau/theme', () => {
       options.theme.layers = [
         resolveFixtures('../../packages/palette'),
         {
-          path: resolveFixtures(),
+          path: resolveFixtures('./theme'),
           configFileName: 'theme.config',
         },
         {
@@ -448,7 +448,7 @@ describe('@pinceau/theme', () => {
   describe('utils/css-rules.ts', () => {
     it('resolveMediaSelector() - returns a class based selector for color schemes when mode is "class"', () => {
       const result = resolveMediaSelector({
-        mq: 'dark',
+        mq: '$dark',
         colorSchemeMode: 'class',
         theme: {},
       })
@@ -457,7 +457,7 @@ describe('@pinceau/theme', () => {
 
     it('resolveMediaSelector() - returns a preference based selector for color schemes when mode is not "class"', () => {
       const result = resolveMediaSelector({
-        mq: 'light',
+        mq: '$light',
         colorSchemeMode: 'media',
         theme: {},
       })
@@ -480,7 +480,7 @@ describe('@pinceau/theme', () => {
 
     it('resolveMediaSelector() - returns an empty string for the "initial" media query', () => {
       const result = resolveMediaSelector({
-        mq: 'initial',
+        mq: '$initial',
         colorSchemeMode: 'class',
         theme: {},
       })
@@ -510,12 +510,12 @@ describe('@pinceau/theme', () => {
     it('createThemeRule() - returns a properly formatted theme rule', () => {
       const themeRule = createThemeRule({
         content: '    background-color: red;',
-        mq: 'dark',
+        mq: '$dark',
         colorSchemeMode: 'class',
         theme: {},
         indentation: '  ',
       })
-      expect(themeRule).toBe('\n@media {\n  :root.dark {\n    --pinceau-mq: dark;\n    background-color: red;\n  }\n}\n')
+      expect(themeRule).toBe('\n@media {\n  :root.dark {\n    --pinceau-mq: $dark;\n    background-color: red;\n  }\n}\n')
     })
   })
 
@@ -800,7 +800,7 @@ describe('@pinceau/theme', () => {
       expect(transformedContent.color.white.value).toBe('#ffffff-transformed')
 
       // Responsive token
-      expect(transformedContent.color.responsiveColor.value.initial).toBe('blue-transformed')
+      expect(transformedContent.color.responsiveColor.value.$initial).toBe('blue-transformed')
     })
 
     describe('utils/tokens-transformers.ts', () => {

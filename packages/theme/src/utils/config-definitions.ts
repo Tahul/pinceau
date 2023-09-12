@@ -55,7 +55,7 @@ export function resolveConfigDefinitions(
 export function isResponsiveToken(node: NodePath<namedTypes.ObjectProperty>, mqKeys: string[]) {
   const properties = node?.value?.value?.properties || []
   const propertiesKeys = properties.map(node => node?.key?.value?.toString() || node?.key?.name?.toString())
-  if (propertiesKeys.includes('initial') && propertiesKeys.some(propKey => mqKeys.includes(propKey))) { return true }
+  if (propertiesKeys.includes('$initial') && propertiesKeys.some(propKey => mqKeys.includes(propKey))) { return true }
 }
 
 /**

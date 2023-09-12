@@ -30,6 +30,14 @@ export function expressionToAst(type: string, leftSide = 'const toAst = ') {
 }
 
 /**
+ * Cast any TS type expression into an AST declaration.
+ */
+export function typeToAst(type: string, leftSide = 'type toType = ') {
+  const parsed = recast.parse(`${leftSide}${type}`, { parser: { parse: tsParse } })
+  return parsed.program.body[0].typeAnnotation
+}
+
+/**
  * Gets the default export from an AST node.
  */
 export function findDefaultExport(node: File): NodePath<namedTypes.ExportDefaultDeclaration> & ASTNode {
@@ -62,6 +70,22 @@ export function findCallees(ast: ASTNode, functionName: string | RegExp) {
   )
 
   return paths
+}
+
+export function getCharAfterLastImport(ast: ASTNode) {
+  let lastImportEndPos = 0
+
+  recast.visit(ast, {
+    visitImportDeclaration(path) {
+      // Capture the end position of each import statement
+      lastImportEndPos = path.value.loc.end.column
+      // Continue traversal
+      return this.traverse(path)
+    },
+  })
+
+  // Return the next character position after the last import statement
+  return lastImportEndPos
 }
 
 /**

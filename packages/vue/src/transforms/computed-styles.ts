@@ -8,15 +8,19 @@ export const transformComputedStyles: PinceauTransformFunction = (
 ) => {
   const { target } = transformContext
 
-  if (!target.setup) { return }
+  if (!target?.attrs?.setup) { return }
+
+  const fns: string[] = []
 
   for (const [_, cssFunction] of Object.entries(transformContext?.state?.styleFunctions || {})) {
-    if (!cssFunction?.computedStyles) { continue }
+    if (!cssFunction?.computedStyles?.length) { continue }
 
     cssFunction
       .computedStyles
-      .forEach((computedStyle) => {
-        target.append(`\nuseComputedStyle(\'${computedStyle.variable}\', ${computedStyle.compiled})\n`)
-      })
+      .forEach(computedStyle => fns.push(`[\'${computedStyle.variable}\', ${computedStyle.compiled}]`))
+  }
+
+  if (fns.length) {
+    target.append(`\nconst $pcExtractedComputedStyles = [\n${fns.join(', \n')}\n]\n`)
   }
 }

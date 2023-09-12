@@ -84,23 +84,23 @@ type UnwrapToken<Source extends DesignToken<RawTokenType>> = Source['value']
 /**
  * Extensible configuration type
  */
-export type ThemeTokens<D extends {} = {}> =
-  { [K in keyof D]?: D[K] extends DesignToken<ResponsiveToken> ? UnwrapResponsiveToken<D[K]> | D[K] : D[K] | DesignToken<RawTokenType> | ThemeTokens }
+export type ThemeTokenDefinition<D = {}> =
+  { [K in keyof D]?: D[K] extends DesignToken<ResponsiveToken> ? UnwrapResponsiveToken<D[K]> | D[K] : D[K] | DesignToken<RawTokenType> | ThemeTokenDefinition }
   |
-  { [K in keyof D]?: D[K] extends DesignToken<RawTokenType> ? UnwrapToken<D[K]> | D[K] : D[K] | DesignToken<ResponsiveToken> | ThemeTokens }
+  { [K in keyof D]?: D[K] extends DesignToken<RawTokenType> ? UnwrapToken<D[K]> | D[K] : D[K] | DesignToken<ResponsiveToken> | ThemeTokenDefinition }
   |
   { $schema?: Schema }
 
 /**
  * Reserved keys and extensible configuration type
  */
-export type Theme<D extends ThemeTokens = {}> =
+export type Theme<D = {}> =
   ReservedConfigKeys
   &
   (
-    { [K in keyof D]: ThemeTokens<D[K]> }
+    { [K in keyof D]: ThemeTokenDefinition<D[K]> }
     |
-    { [key: string | number]: ThemeTokens }
+    { [key: string | number]: ThemeTokenDefinition }
   )
 
 /**

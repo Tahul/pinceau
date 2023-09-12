@@ -12,7 +12,7 @@ import { setupThemeFormats } from './utils/setup'
 
 const _require = createRequire(import.meta.url)
 
-const PinceauThemePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
+export const PinceauThemePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
   let ctx: PinceauContext
   let configCtx: PinceauConfigContext
 
@@ -77,5 +77,3 @@ const PinceauThemePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
     transform: (code, id) => transform(code, id, suite, ctx),
   }
 })
-
-export default PinceauThemePlugin

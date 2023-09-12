@@ -9,8 +9,8 @@ export const theme = {
 
 export type GeneratedPinceauTheme = typeof theme
 
-export type GeneratedPinceauMediaQueries = "dark" | "light" | "initial";
+export type GeneratedPinceauMediaQueries = "$dark" | "$light" | "$initial";
 
-export type GeneratedPinceauThemePaths = "color.primary";
+export type GeneratedPinceauThemePaths = "$color.primary";
 
 export default theme

@@ -6,7 +6,7 @@ import { registerVirtualOutputs } from './utils/virtual'
 import { PinceauVueTransformer } from './utils/transformer'
 import { suite } from './transforms/suite'
 
-const PinceauVuePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
+export const PinceauVuePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
   let ctx: PinceauContext
 
   return {
@@ -40,5 +40,3 @@ const PinceauVuePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
     transform: (code, id) => transform(code, id, suite, ctx),
   }
 })
-
-export default PinceauVuePlugin

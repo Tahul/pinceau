@@ -1,7 +1,7 @@
 /**
  * Check if a token is responsive expression or not
  */
-export function isResponsiveToken(token) { return !!((token?.value as any || token)?.initial) }
+export function isResponsiveToken(token) { return !!((token?.value as any || token)?.$initial) }
 
 /**
  * Return stringified value of a token (to display in hints).

@@ -7,7 +7,7 @@ import type { PinceauConfigContext } from '@pinceau/theme'
 import { PinceauVueTransformer } from '@pinceau/vue/utils'
 import { setupThemeFormats, usePinceauConfigContext } from '@pinceau/theme/utils'
 import { transformStyleFunctions, transformStyledProps } from '@pinceau/style/transforms'
-import { resolveFixtures, resolveTmp, testFileLayer } from './utils'
+import { resolveFixtures, resolveTmp, testFileLayer } from '../utils'
 
 describe('@pinceau/style', () => {
   describe('utils/css-function-context.ts', () => {

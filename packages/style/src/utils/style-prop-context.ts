@@ -87,8 +87,13 @@ export const resolveStylePropContext: PinceauTransformFunction<PinceauStyleFunct
   const css = stringify(
     { [`.${className}`]: declaration },
     stringifyContext => resolveCssProperty(
-      stringifyContext,
-      pinceauContext,
+      {
+        localTokens: Object.keys(localTokens),
+        stringifyContext,
+        $theme: pinceauContext.$theme,
+        colorSchemeMode: pinceauContext.options.theme.colorSchemeMode,
+        utils: pinceauContext.utils,
+      },
     ),
   )
 

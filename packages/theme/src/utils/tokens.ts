@@ -1,4 +1,4 @@
-import type { DesignTokens, ThemeTokens } from '../types'
+import type { DesignTokens, ThemeTokenDefinition } from '../types'
 
 /**
  * Walk through tokens definition an call callback on each design token.
@@ -68,8 +68,8 @@ export function normalizeTokens(
         // Handle responsive tokens
         const keys = Object.keys(obj[k])
         if (
-          keys.includes('initial')
-          && keys.some(key => key !== 'initial' && mqKeys.includes(key))
+          keys.includes('$initial')
+          && keys.some(key => key !== '$initial' && mqKeys.includes(key))
         ) {
           result[k] = { value: obj[k] }
           continue
@@ -86,6 +86,6 @@ export function normalizeTokens(
 /**
  * Flatten tokens object for runtime usage.
  */
-export function flattenTokens(data: any): ThemeTokens {
+export function flattenTokens(data: any): ThemeTokenDefinition {
   return walkTokens(data, value => ({ value: value?.value, variable: value?.attributes?.variable }))
 }

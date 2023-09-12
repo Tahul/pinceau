@@ -13,9 +13,9 @@ export const suite: PinceauTransforms = {
     (transformCtx, pinceauCtx) => {
       // Pick only:
       // - `<style lang="ts">` blocks that has been transformed to `<style lang="postcss" transformed=true">`
-      // - `<style lang="ts">` blocks that has not been transformed in previous steps.
+      // - `<style lang="ts">` blocks that has not been transformed in previous steps
       if (
-        (transformCtx.query.transformed || transformCtx.target?.attrs?.transformed)
+        (transformCtx.query.transformed || transformCtx.target?.attrs?.pctransformed)
           || (transformCtx.query.type === 'style' && transformCtx.query.lang === 'ts')
       ) {
         transformStyleFunctions(transformCtx, pinceauCtx)

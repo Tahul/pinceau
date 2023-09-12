@@ -1,5 +1,5 @@
 import MagicString from 'magic-string'
-import type { MagicBlock } from 'sfc-composer'
+import type { MagicBlock, MagicSFC } from 'sfc-composer'
 import { createSourceLocation, proxyBlock } from 'sfc-composer'
 import type { PinceauContext, PinceauQuery, PinceauQueryBlockType, PinceauTransformContext, PinceauTransformFunction, PinceauTransformState, PinceauTransforms } from '../types'
 
@@ -23,7 +23,7 @@ export function usePinceauTransformContext(
   let currentTarget: MagicBlock<{ type: PinceauQueryBlockType }> | undefined
 
   // Current compiler result
-  let sfcCompilerResult: any
+  let sfc: MagicSFC
 
   // Local state in case there is no global state available for this file
   const localState: PinceauTransformState = {}
@@ -70,6 +70,13 @@ export function usePinceauTransformContext(
     },
 
     /**
+     * Update the currnet target
+     */
+    set target(target) {
+      currentTarget = target
+    },
+
+    /**
      * Get the current code at this state of the transform.
      */
     get code() { return ms.toString() },
@@ -94,16 +101,16 @@ export function usePinceauTransformContext(
     get sfc() {
       if (!query.sfc) { return }
 
-      if (sfcCompilerResult) { return sfcCompilerResult }
+      if (sfc) { return sfc }
 
       // Grab parser from SFC resolved type
       const parser = pinceauContext?.transformers?.[query.ext]
       if (!parser) { return }
 
       // Return a MagicSFC using the apropriate parser
-      sfcCompilerResult = new parser.MagicSFC(ms, { parser: parser.parser, parserOptions: parser?.parserOptions })
+      sfc = new parser.MagicSFC(ms, { parser: parser.parser, parserOptions: parser?.parserOptions })
 
-      return sfcCompilerResult
+      return sfc
     },
 
     transform() {
@@ -114,9 +121,6 @@ export function usePinceauTransformContext(
           transformFn?.(this, pinceauContext)
         }
       }
-
-      // Apply globals transforms
-      if (transforms?.globals?.length) { applyTransforms(transforms.globals) }
 
       // Apply SFC transforms
       if (query.sfc && this.sfc) {
@@ -134,12 +138,18 @@ export function usePinceauTransformContext(
             // Add `index` to block for scope tracking
             block.index = i
 
-            currentTarget = block
+            this.target = block
+
             applyTransforms(transforms[blockType])
           }
         }
 
         currentTarget = undefined
+
+        // Apply globals transforms
+        if (transforms?.globals?.length) {
+          applyTransforms(transforms.globals)
+        }
 
         return
       }
@@ -148,6 +158,11 @@ export function usePinceauTransformContext(
       if (transforms?.templates?.length && query.type === 'template') { applyTransforms(transforms.templates) }
       if (transforms?.scripts?.length && query.type === 'script') { applyTransforms(transforms.scripts) }
       if (transforms?.customs?.length && query.type === 'custom') { applyTransforms(transforms.customs) }
+
+      // Apply globals transforms
+      if (transforms?.globals?.length) {
+        applyTransforms(transforms.globals)
+      }
     },
 
     /**

@@ -62,3 +62,5 @@ export type WrapUnion<
 > = keyof {
   [K in WrapKey<TObject, TPrefix, TSuffix>]: any
 }
+
+export type FilterPaths<T extends string, U extends string> = T extends `${infer R}.${U}` ? R : never

@@ -21,7 +21,7 @@ export interface PinceauTransformContext {
   loc: SourceLocation
   query: PinceauQuery
   ms: MagicString
-  target: MagicBlock<{ type: PinceauQueryBlockType; attrs?: { [key: string]: string }; [key: string]: any }>
+  target: MagicBlock<{ type: PinceauQueryBlockType; attrs?: { [key: string]: any }; [key: string]: any }>
   code: string
   state: PinceauTransformState
   transforms: PinceauTransforms

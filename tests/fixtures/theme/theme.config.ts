@@ -15,13 +15,13 @@ export default defineTheme({
     },
     black: '#0E0D0D',
     responsiveColor: {
-      initial: 'blue',
-      dark: 'red'
+      $initial: 'blue',
+      $dark: 'red'
     },
     responsiveFullColor: {
       value: {
-        initial: 'green',
-        dark: 'yellow'
+        $initial: 'green',
+        $dark: 'yellow'
       }
     }
   },
@@ -54,11 +54,11 @@ export default defineTheme({
         paddingRight: value,
       }
     },
-    truncate: {
+    truncate: () => ({
       overflow: 'hidden',
       textOverflow: 'ellipsis',
       whiteSpace: 'nowrap',
-    },
+    }),
     lineClamp: (lines: number | string) => ({
       'overflow': 'hidden',
       'display': '-webkit-box',

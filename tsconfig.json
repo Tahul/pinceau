@@ -21,7 +21,7 @@
     "paths": {
       // Packages
       "pinceau": ["./packages/pinceau/src/index.ts"],
-      "pinceau/plugin": ["./packages/pinceau/plugin.d.ts"],
+      "pinceau/plugin": ["./packages/pinceau/src/plugin.ts"],
       "@pinceau/core": ["./packages/core/src/index.ts"],
       "@pinceau/core/plugin": ["./packages/core/src/plugin.ts"],
       "@pinceau/core/runtime": ["./packages/core/src/runtime.ts"],

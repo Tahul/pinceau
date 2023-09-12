@@ -1,11 +1,14 @@
-import type { ASTNode } from 'ast-types'
+import type { ASTNode, namedTypes } from 'ast-types'
 import type { PinceauTransformContext, PinceauTransformFunction } from '@pinceau/core'
-import { astTypes, expressionToAst, parseAst, printAst, visitAst } from '@pinceau/core/utils'
+import { astTypes, expressionToAst, getCharAfterLastImport, parseAst, printAst, typeToAst, visitAst } from '@pinceau/core/utils'
+import type { Variants } from '@pinceau/style'
+import type { NodePath } from 'ast-types/lib/node-path'
 
 export interface PropOptions {
   type?: any
   required?: boolean
   default?: any
+  possibleValues?: (string | boolean)[]
   validator?: (value: unknown) => boolean
 }
 
@@ -19,23 +22,22 @@ export const transformVariants: PinceauTransformFunction = (
 
   const isTs = target?.lang === 'ts' || target?.attrs?.lang === 'ts'
 
+  let variantsProps: { [key: string]: PropOptions } = {}
+
+  let pushableDecl = {}
+
   for (const [_, cssFunction] of Object.entries(transformContext?.state?.styleFunctions || {})) {
     if (!cssFunction.variants) { continue }
 
-    const variantsProps = resolveVariantsProps(transformContext, isTs)
+    variantsProps = { ...variantsProps, ...resolveVariantsProps(cssFunction.variants, isTs) }
 
-    const sanitizedVariants = Object.entries(cssFunction.variants).reduce(
-      (acc, [key, variant]: any) => {
-        delete variant.options
-        acc[key] = variant
-        return acc
-      },
-      {},
-    )
+    // Append `useVariants({ ...sanitizedVariants })` for runtime usage
+    pushableDecl = { ...pushableDecl, ...sanitizeVariantsDeclaration(cssFunction.variants) }
+  }
 
-    target.append(`\nuseVariants(${JSON.stringify(sanitizedVariants)})\n`)
-
-    if (variantsProps) { pushVariantsProps(transformContext, variantsProps) }
+  if (Object.keys(variantsProps).length) {
+    pushVariantsProps(transformContext, variantsProps)
+    transformContext.target.append(`\nconst $pcExtractedVariants = ${JSON.stringify(pushableDecl)}\n`)
   }
 }
 
@@ -48,40 +50,118 @@ export function pushVariantsProps(
   transformContext: PinceauTransformContext,
   variantsProps: any,
 ) {
-  const scriptAst = parseAst(transformContext.target.toString())
+  const scriptAst = transformContext?.target?.ast || parseAst(transformContext.target.toString())
 
-  let propsAst = expressionToAst(JSON.stringify(variantsProps))
-
-  propsAst = castVariantsPropsAst(propsAst)
+  let targetProps: (NodePath<namedTypes.CallExpression> & ASTNode & { loc: any }) | undefined
+  let writeableProps: (NodePath & ASTNode) | undefined
 
   // Push to defineProps
-  propsAst = visitAst(
+  visitAst(
     scriptAst,
     {
       visitCallExpression(path) {
         if (path?.value?.callee?.name === 'defineProps') {
-          if (path.value.arguments[0]) {
-            path.value.arguments[0].properties.push(
-              astTypes.builders.spreadElement(propsAst),
-            )
+          // Handle defineProps({ ...variants })
+          if (path?.value?.arguments?.[0]?.properties) {
+            targetProps = path.value.arguments[0]
+
+            const propsAst = castVariantsPropsAst(expressionToAst(JSON.stringify(variantsProps)))
+
+            path.value.arguments[0].properties.push(astTypes.builders.spreadElement(propsAst as any))
+
+            writeableProps = path.value.arguments[0]
+
+            return false
+          }
+
+          // Handle defineProps<{ ... } & { ...VariantsExpression }>()
+          if (path?.value?.typeParameters?.params) {
+            targetProps = path.value.typeParameters.params[0]
+
+            const propsExpression = castVariantsPropsTypeExpression(variantsProps)
+
+            writeableProps = typeToAst(`${propsExpression} & ${printAst(path.value.typeParameters.params[0]).code}`, 'type UnionProps =')
+
+            return false
+          }
+
+          // Handle defineProps() empty call
+          if (path?.value?.arguments) {
+            path.value.arguments.push(castVariantsPropsAst(expressionToAst(JSON.stringify(variantsProps))))
+
+            writeableProps = path.value.arguments[0]
+
+            return false
           }
         }
+
         return this.traverse(path)
       },
     },
   )
+
+  let targetDefaults: (NodePath<namedTypes.ObjectExpression> & ASTNode & { loc: any; properties: any[] }) | undefined
+  let writeableDefaults: (NodePath & ASTNode) | undefined
+
+  // Handle `withDefaults` usage
+  visitAst(
+    scriptAst,
+    {
+      visitCallExpression(path) {
+        if (path?.value?.callee?.name === 'withDefaults') {
+          targetDefaults = path?.value?.arguments?.[1] as NodePath<namedTypes.ObjectExpression> & ASTNode & { loc: any; properties: any[] } | undefined
+
+          if (!targetDefaults) { return }
+
+          const variantsDefaults = expressionToAst(JSON.stringify(castVariantsPropsToDefaults(variantsProps)))
+
+          targetDefaults.properties.push(astTypes.builders.spreadElement(variantsDefaults))
+
+          writeableDefaults = targetDefaults
+        }
+
+        return this.traverse(path)
+      },
+    },
+  )
+
+  // If withDefaults has been found and is overwriteable, overwrite it with new defaults.
+  if (targetDefaults && writeableDefaults) {
+    transformContext.target.overwrite(
+      targetDefaults.loc.start.index,
+      targetDefaults.loc.end.index,
+      printAst(writeableDefaults).code,
+    )
+  }
+
+  // `defineProps` found in existing component code, overwrite it with new one.
+  if (targetProps && writeableProps) {
+    transformContext.target.overwrite(
+      targetProps.loc.start.index,
+      targetProps.loc.end.index,
+      printAst(writeableProps).code,
+    )
+    return
+  }
+
+  // No `defineProps` found in existing component code, push a new one.
+  const importsEnd = getCharAfterLastImport(scriptAst)
+
+  const definePropsContent = printAst(castVariantsPropsAst(expressionToAst(JSON.stringify(variantsProps)))).code
+
+  transformContext.target.appendLeft(importsEnd, `\ndefineProps(${definePropsContent})`)
 }
 
 /**
  * Resolve a Vue component props object from css() variant.
  */
 export function resolveVariantsProps(
-  transformContext: PinceauTransformContext,
-  isTs: boolean,
+  variants: Variants<any>,
+  isTs?: boolean,
 ) {
-  const props: Record<string, PropOptions> = {}
+  const props: { [key: string]: PropOptions } = {}
 
-  Object.entries(transformContext?.state?.variants || {}).forEach(
+  Object.entries(variants).forEach(
     ([key, variant]: [string, any]) => {
       const prop: any = {
         required: false,
@@ -89,12 +169,15 @@ export function resolveVariantsProps(
 
       const isBooleanVariant = Object.keys(variant).some(key => (key === 'true' || key === 'false'))
       if (isBooleanVariant) {
-        prop.type = isTs ? ' [Boolean, Object] as import(\'vue\').PropType<boolean | { [key in PinceauMediaQueries]?: boolean }>' : ' [Boolean, Object]'
+        // Type gets written as string as it gets casted to AST later on.
+        prop.type = isTs ? ' [Boolean, Object] as ResponsivePropType<boolean>' : ' [Boolean, Object]'
+        prop.possibleValues = [true, false]
         prop.default = false
       }
       else {
-        const possibleValues = `\'${Object.keys(variant).filter(key => key !== 'options').join('\' | \'')}\'`
-        prop.type = isTs ? ` [String, Object] as import(\'vue\').PropType<${possibleValues} | { [key in PinceauMediaQueries]?: ${possibleValues} }>` : ' [String, Object]'
+        prop.possibleValues = Object.keys(variant).filter(key => key !== 'options')
+        // Type gets written as string as it gets casted to AST later on.
+        prop.type = isTs ? ` [String, Object] as ResponsivePropType<\'${prop.possibleValues.join('\' | \'')}\'>` : ' [String, Object]'
         prop.default = undefined
       }
 
@@ -142,4 +225,41 @@ export function castVariantsPropsAst(
   )
 
   return ast
+}
+
+export function castVariantsPropsTypeExpression(
+  variantsProps: { [key: string]: PropOptions },
+) {
+  return `{
+    ${Object.entries(variantsProps).map(
+      ([key, value]) => {
+        const result = `${key}${value?.required ? '' : '?'}: ResponsiveProp<${value?.possibleValues?.map(value => typeof value === 'boolean' ? value : `\'${value}\'`)?.join(' | ')}>`
+        if (value?.possibleValues) { delete value.possibleValues }
+        return result
+      },
+  ).join(',\n')}
+}`
+}
+
+export function sanitizeVariantsDeclaration(variants: Variants) {
+  return Object.entries(variants).reduce(
+    (acc, [key, variant]: any) => {
+      delete variant.options
+      acc[key] = variant
+      return acc
+    },
+    {},
+  )
+}
+
+export function castVariantsPropsToDefaults(
+  variantsProps: { [key: string]: PropOptions },
+) {
+  return Object.entries(variantsProps).reduce(
+    (acc, [key, value]) => {
+      if (value.default) { acc[key] = value.default }
+      return acc
+    },
+    {},
+  )
 }

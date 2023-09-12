@@ -14,15 +14,15 @@ export const cssFormat: PinceauThemeFormat = {
     const { formattedVariables } = StyleDictionary.formatHelpers
 
     // Create :root tokens list
-    const mediaQueries: { [key in PinceauMediaQueries]?: DesignToken[] } & { initial: DesignToken[] } = {
-      initial: [],
+    const mediaQueries: { [key in PinceauMediaQueries]?: DesignToken[] } & { $initial: DesignToken[] } = {
+      $initial: [],
     }
 
     walkTokens(
       dictionary.tokens,
       (token) => {
         // Handle responsive tokens
-        if (typeof token?.value === 'object' && token?.value?.initial) {
+        if (typeof token?.value === 'object' && token?.value?.$initial) {
           Object.entries(token.value).forEach(([query, value]) => {
             if (!mediaQueries[query]) { mediaQueries[query] = [] }
 
@@ -41,7 +41,7 @@ export const cssFormat: PinceauThemeFormat = {
         }
 
         // Handle regular tokens
-        mediaQueries.initial.push(token)
+        mediaQueries.$initial.push(token)
 
         return token
       },

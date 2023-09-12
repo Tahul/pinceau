@@ -57,7 +57,12 @@ export const utilsTypesFormat: PinceauThemeFormat = {
     // Stringify utils properties
     result += `${result === '' ? '' : '\n'}${stringifyUtils(utils, 'ts')}`
 
-    result += 'export type GeneratedPinceauUtils = typeof utils'
+    result += `export const utils = ${Object.keys(utils).length ? `{ ${Object.keys(utils).join(', ')} }` : '{}'}\n\n`
+
+    result += 'export type GeneratedPinceauUtils = typeof utils\n\n'
+
+    // Default export
+    result += 'export default utils'
 
     return result
   },

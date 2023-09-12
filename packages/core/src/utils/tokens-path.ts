@@ -52,7 +52,7 @@ export function tokensPaths(
 
 export function isResponsiveTokenObjectLike(value: any, mqKeys?: string[]) {
   if (typeof value === 'object') {
-    return value?.initial && mqKeys ? Object.keys(value).some(key => key !== 'initial' && (mqKeys).includes(key)) : false
+    return value?.$initial && mqKeys ? Object.keys(value).some(key => key !== '$initial' && (mqKeys).includes(key)) : false
   }
 }
 

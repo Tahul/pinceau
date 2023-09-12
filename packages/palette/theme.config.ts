@@ -32,44 +32,44 @@ export default defineTheme({
     black: '#0E0D0D',
     primary: {
       0: {
-        initial: '$color.red.9',
-        dark: '$color.red.2',
+        $initial: '$color.red.0',
+        $dark: '$color.red.9',
       },
       1: {
-        initial: '$color.red.1',
-        dark: '$color.red.8',
+        $initial: '$color.red.1',
+        $dark: '$color.red.8',
       },
       2: {
-        initial: '$color.red.2',
-        dark: '$color.red.7',
+        $initial: '$color.red.2',
+        $dark: '$color.red.7',
       },
       3: {
-        initial: '$color.red.3',
-        dark: '$color.red.6',
+        $initial: '$color.red.3',
+        $dark: '$color.red.6',
       },
       4: {
-        initial: '$color.red.4',
-        dark: '$color.red.5',
+        $initial: '$color.red.4',
+        $dark: '$color.red.5',
       },
       5: {
-        initial: '$color.red.5',
-        dark: '$color.red.4',
+        $initial: '$color.red.5',
+        $dark: '$color.red.4',
       },
       6: {
-        initial: '$color.red.6',
-        dark: '$color.red.3',
+        $initial: '$color.red.6',
+        $dark: '$color.red.3',
       },
       7: {
-        initial: '$color.red.7',
-        dark: '$color.red.2',
+        $initial: '$color.red.7',
+        $dark: '$color.red.2',
       },
       8: {
-        initial: '$color.red.8',
-        dark: '$color.red.1',
+        $initial: '$color.red.8',
+        $dark: '$color.red.1',
       },
       9: {
-        initial: '$color.red.9',
-        dark: '$color.red.0',
+        $initial: '$color.red.9',
+        $dark: '$color.red.0',
       },
     },
     gray: {

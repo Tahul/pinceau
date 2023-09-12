@@ -7,6 +7,6 @@
  */
 export function transformStyleTs(code: string = '') {
   const styleTagRe = /<style\b(.*?)\blang=['"][tj]sx?['"](.*?)>/g
-  if (code.match(styleTagRe)) { code = code.replace(styleTagRe, '<style$1lang="postcss" transformed$2>') }
+  if (code.match(styleTagRe)) { code = code.replace(styleTagRe, '<style$1lang="postcss" pctransformed$2>') }
   return code
 }

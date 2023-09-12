@@ -17,10 +17,13 @@ export type Variant<T> =
     [K in keyof T]?: K extends 'options' ? VariantOptions<T> : CSSProperties<T[K]> & { $class?: string }
   }
 
-export type Variants<Source = {}> =
-  {
-    [Key in keyof Source]: Variant<Source[Key]>
-  }
+export type Variants<Source = {}> = {
+  [Key in keyof Source]: Variant<Source[Key]>
+}
+
+export interface VariantsProps {
+  [key: string]: string | boolean | { [key: string]: string | boolean }
+}
 
 /** Local testing purposes; this ain't exposed nor used anywhere */
 /* eslint-disable-next-line unused-imports/no-unused-vars */

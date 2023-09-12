@@ -43,5 +43,6 @@ export default defineBuildConfig({
     'postcss-dark-theme-class',
     'chalk',
     'consola',
+    'ultrahtml',
   ],
 })

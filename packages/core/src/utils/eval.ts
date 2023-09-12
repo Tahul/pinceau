@@ -15,7 +15,6 @@ export function evalDeclaration(cssAst: ASTNode) {
     return $__declaration
   }
   catch (e) {
-    console.log({ e })
     return {}
   }
 }

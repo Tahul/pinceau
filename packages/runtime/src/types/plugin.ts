@@ -1,6 +1,13 @@
-import type { ColorSchemeModes, Theme } from '@pinceau/theme'
+import type { ColorSchemeModes, PinceauTheme, PinceauUtils, Theme } from '@pinceau/theme'
+import type { PinceauRuntimeOptions } from '.'
 
-export interface PinceauRuntimePluginOptions {
+export interface PinceauRuntimePluginOptions extends Partial<PinceauRuntimeOptions> {
+  /**
+   * Inherit from Pinceau core options.
+   *
+   * Enables the runtime plugin debug mode.
+   */
+  dev?: boolean
   /**
    * Initial theme.
    *
@@ -11,12 +18,6 @@ export interface PinceauRuntimePluginOptions {
    * Utils functions coming from `$pinceau/utils` imports.
    */
   utils?: PinceauUtils
-  /**
-   * App id used to identify this app if multiple Pinceau instances runs at the same time.
-   *
-   * Setting it to a string enables the multi-app feature.
-   */
-  appId?: string
   /**
    * Color scheme mode to be used by runtime plugin.
    */

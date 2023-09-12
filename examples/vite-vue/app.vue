@@ -1,28 +1,17 @@
 <template>
-  <main class="main">
-    <Navigation />
+  <App class="main">
+    <div 
+      :styled="{
+        width: '100%',
+      }"
+    >
+      <Navigation />
+    </div>
 
     <RouterView />
-  </main>
+  </App>
 </template>
 
-
-<style lang="ts">
-css({
-  'html, body, #app': {
-    height: '100vh',
-    width: '100vw',
-    backgroundColor: '$color.blue.2'
-  },
-})
-</style>
-
-<style scoped lang="ts">
-css({
-  '.main': {
-    width: '100%',
-    height: '100%',
-    padding: '$space.8',
-  }
-})
-</style>
+<script lang="ts" setup>
+import App from '../shared/App.vue'
+</script>
