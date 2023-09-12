@@ -74,7 +74,7 @@ export interface PinceauThemeOptions {
    *
    * @default true
    */
-  preflight: boolean | 'tailwind' | 'antfu' | 'eric-meyer' | 'normalize'
+  preflight: boolean | 'normalize' | 'sanitize' | 'eric-meyer' | 'tailwind' | 'tailwind-compat'
 
   /**
    * Toggle follow of symbolic links in glob.
