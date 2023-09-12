@@ -1441,6 +1441,7 @@ packages:
         optional: true
     dependencies:
       '@iconify/types': 2.0.0
+      vue: 3.3.4
     dev: true
 
   /@ioredis/commands@1.2.0:
@@ -1686,7 +1687,6 @@ packages:
       - rollup
       - supports-color
       - utf-8-validate
-      - vue
     dev: true
 
   /@nuxt/devalue@2.0.2:
@@ -1807,6 +1807,12 @@ packages:
     peerDependencies:
       vue: ^3.3.4
     peerDependenciesMeta:
+      '@jest/globals':
+        optional: true
+      playwright-core:
+        optional: true
+      vitest:
+        optional: true
       vue:
         optional: true
     dependencies:
@@ -2303,7 +2309,6 @@ packages:
     dependencies:
       rollup: 3.29.1
       slash: 4.0.0
-    dev: true
 
   /@rollup/plugin-commonjs@25.0.4(rollup@3.29.1):
     resolution: {integrity: sha512-L92Vz9WUZXDnlQQl3EwbypJR4+DM2EbsO+/KOcEkP4Mc6Ct453EeDB2uH9lgRwj4w5yflgNpq9pHOiY8aoUXBQ==}
@@ -3314,6 +3319,7 @@ packages:
       framesync: 6.1.2
       popmotion: 11.0.5
       style-value-types: 5.1.2
+      vue: 3.3.4
     optionalDependencies:
       '@nuxt/kit': 3.7.1(rollup@3.29.1)
     transitivePeerDependencies:
@@ -6220,8 +6226,6 @@ packages:
     resolution: {integrity: sha512-k0zdNgqWTGA6aeIRVpvfVob4fL52dTfaehylg0Y4UvSySvOq/Y+BOyPrgpUrA7HylqvU8vIZGsRuXmspskV0Tg==}
     engines: {node: '>= 6'}
     dependencies:
-      '@tootallnate/once': 1.1.2
-      agent-base: 6.0.2
       debug: 4.3.4
     transitivePeerDependencies:
       - supports-color

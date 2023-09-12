@@ -23,9 +23,9 @@ build({
       ...options.alias,
       ...alias,
       'fs': 'fs',
-      'node:fs': 'node:fs',
+      'node:fs': 'fs',
       'fs/promises': 'fs/promises',
-      'node:fs/promises': 'node:fs/promises',
+      'node:fs/promises': 'fs/promises',
       'fast-glob': 'unenv/runtime/mock/noop',
     }
     options.define = {
