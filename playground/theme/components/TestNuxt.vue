@@ -16,6 +16,10 @@ defineProps({
 </template>
 
 <style scoped lang="ts">
+keyFrames({
+    from: 'scale(1)',
+    to: 'scale(1.5)'
+})
 css({
     variants: {
         padded: {

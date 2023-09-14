@@ -4,7 +4,7 @@ import { parseVueComponent } from '../../utils/ast'
 import type { PinceauContext, PinceauQuery } from '../../types'
 import { variantsRegex } from '../../utils'
 import { transformDtHelper } from '../dt'
-import { transformCssFunction } from '../css'
+import { transformCssFunction, transformKeyFrameFunction } from '../css'
 import { message } from '../../utils/logger'
 import { transformStyle } from './style'
 import { transformVariants } from './variants'
@@ -107,6 +107,13 @@ export function resolveStyle(
         || styleBlock.lang === 'ts'
         || styleBlock.attrs?.transformed
       ) {
+        try {
+          const keyframeCode = transformKeyFrameFunction(id, code, { query, ...loc })
+          console.log(keyframeCode)
+        }
+        catch (error) {
+          console.log(error, 'error')
+        }
         code = transformCssFunction(id, code, variants, computedStyles, localTokens, ctx, { query, ...loc })
       }
 
