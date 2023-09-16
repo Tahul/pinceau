@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs'
-import { transformCssFunction, transformStyle } from '../transforms'
+import { transformCssFunction, transformKeyFrameFunction, transformStyle } from '../transforms'
 import type { PinceauContext, PinceauQuery } from '../types'
 import { parseVueComponent } from './ast'
 
@@ -25,7 +25,11 @@ export function loadVueStyle(query: PinceauQuery, ctx: PinceauContext) {
 
   const loc = { query, ...style.loc }
 
-  if (style.attrs.lang === 'ts') { source = transformCssFunction(query.id, source, undefined, undefined, undefined, ctx, loc) }
+  if (style.attrs.lang === 'ts') {
+    const keyFrameCode = transformKeyFrameFunction(query.id, source, loc)
+    const cssCode = transformCssFunction(query.id, source, undefined, undefined, undefined, ctx, loc)
+    source = keyFrameCode + cssCode
+  }
 
   return transformStyle(source, ctx, loc)
 }
