@@ -151,14 +151,14 @@ export function stringify(value,
 }
 
 export function stringifyKeyFrames(value) {
+  if (!value) { return '' }
   let cssText = ''
-  Object.entries(value).forEach(([key, content]) => {
-    const animateRule: string[] = []
-    Object.entries(content).forEach(([key, value]) => {
-      animateRule.push(`${key} ${JSON.stringify(value).replace(/'|"/g, '')}`)
-    })
-    cssText = `@keyframes ${key} { ${animateRule.join(' ')} }`
+  const { keyFrameDeclaration, keyFrameName } = value
+  const animationKey = keyFrameName
+  const animateRule: string[] = []
+  Object.entries(keyFrameDeclaration).forEach(([key, content]) => {
+    animateRule.push(`${key} ${JSON.stringify(content).replace(/'|"/g, '')}`)
   })
-
+  cssText = `@keyframes ${animationKey} { ${animateRule.join(' ')} } `
   return cssText || ''
 }

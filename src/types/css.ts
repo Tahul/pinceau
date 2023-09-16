@@ -1,3 +1,4 @@
+import type { ASTNode } from 'ast-types'
 import type * as Utils from './utils'
 import type { PinceauMediaQueries, PinceauUtils } from './theme'
 import type { DefaultThemeMap } from './map'
@@ -65,3 +66,8 @@ export type CSSFunctionType<
   {
     [K in string]: CSSProperties<ComponentProps> | never
   }
+
+export interface AnimationAst {
+  animationName: string
+  animationCode: ASTNode
+}

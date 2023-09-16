@@ -53,11 +53,11 @@ export function transformVueSFC(
  */
 export function resolveStyleQuery(code: string, magicString: MagicString, query: PinceauQuery, ctx: PinceauContext, loc?: any) {
   // Handle `lang="ts"` even though that should not happen here.
-  if (query.lang === 'ts') { code = transformCssFunction(query.id, code, {}, {}, {}, ctx, loc) }
-
+  if (query.lang === 'ts') {
+    code = transformCssFunction(query.id, code, {}, {}, {}, ctx, loc)
+  }
   // Transform <style> block
   code = transformStyle(code, ctx)
-
   return { code, magicString }
 }
 
@@ -101,23 +101,18 @@ export function resolveStyle(
     (styleBlock) => {
       const { loc, content } = styleBlock
       let code = content
-
+      let keyframeCode = ''
       if (
         styleBlock.attrs.lang === 'ts'
         || styleBlock.lang === 'ts'
         || styleBlock.attrs?.transformed
       ) {
-        try {
-          const keyframeCode = transformKeyFrameFunction(id, code, { query, ...loc })
-          console.log(keyframeCode)
-        }
-        catch (error) {
-          console.log(error, 'error')
-        }
+        keyframeCode = transformKeyFrameFunction(id, code, { query, ...loc })
         code = transformCssFunction(id, code, variants, computedStyles, localTokens, ctx, { query, ...loc })
       }
 
       code = transformStyle(code, ctx)
+      code = keyframeCode + code
 
       magicString.remove(loc.start.offset, loc.end.offset)
       magicString.appendRight(loc.end.offset, `\n${code}\n`)

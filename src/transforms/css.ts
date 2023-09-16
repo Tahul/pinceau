@@ -1,8 +1,9 @@
 import type { ASTNode } from 'ast-types'
 import { defu } from 'defu'
 import { parse } from 'acorn'
-import type { PinceauContext } from '../types'
-import { resolveCssProperty, stringify } from '../utils'
+import { hash } from 'ohash'
+import type { AnimationAst, PinceauContext } from '../types'
+import { resolveCssProperty, stringify, stringifyKeyFrames } from '../utils'
 import { message } from '../utils/logger'
 import { parseAst, printAst, visitAst } from '../utils/ast'
 import { resolveRuntimeContents } from './vue/computed'
@@ -57,8 +58,7 @@ export function transformKeyFrameFunction(id: string, code = '', loc?: any) {
   }
 
   const declaration = resolveKeyFrameCallees(code, ast => evalKeyframeDeclaration(ast))
-
-  return declaration
+  return stringifyKeyFrames(declaration)
 }
 
 /**
@@ -89,13 +89,16 @@ export function resolveCssCallees(code: string, cb: (ast: ASTNode) => any): any 
   return result
 }
 
-export function resolveKeyFrameCallees(code: string, cb: (ast: ASTNode) => any): any {
+export function resolveKeyFrameCallees(code: string, cb: (body: AnimationAst) => any): any {
   const ast = parseAst(code)
   let result: any = false
   visitAst(ast, {
     visitCallExpression(path: any) {
       if (path.value.callee.name === 'keyFrames') {
-        result = defu(result || {}, cb(path.value.arguments[0]))
+        result = defu(result || {}, cb({
+          animationName: path?.parentPath.value.id.name,
+          animationCode: path.value.arguments[0],
+        }))
       }
       return this.traverse(path)
     },
@@ -125,15 +128,19 @@ export function evalCssDeclaration(cssAst: ASTNode, computedStyles: any = {}, lo
   }
 }
 
-export function evalKeyframeDeclaration(cssAst: ASTNode) {
+export function evalKeyframeDeclaration(body: AnimationAst) {
   try {
+    const { animationCode, animationName } = body
     // eslint-disable-next-line no-eval
     const _eval = eval
+    const keyFramesCode = printAst(animationCode).code
+    const keyFrameName = `pa-${hash(keyFramesCode)}`
 
-    _eval(`var keyFrameDeclaration = ${printAst(cssAst).code}`)
+    _eval(`var ${animationName} = '${keyFrameName}'`)
+    _eval(`var keyFrameDeclaration = ${keyFramesCode}`)
 
     // @ts-expect-error - Evaluated code
-    return keyFrameDeclaration
+    return { keyFrameDeclaration, keyFrameName }
   }
   catch (error) {
     return {}

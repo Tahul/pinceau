@@ -54,6 +54,7 @@ const plugin: VueLanguagePlugin = _ => ({
         '\ntype OmittedKeysPinceau = \'onVnodeBeforeMount\' | \'onVnodeBeforeUnmount\' | \'onVnodeBeforeUpdate\' | \'onVnodeMounted\' | \'onVnodeUnmounted\' | \'onVnodeUpdated\' | \'key\' | \'ref\' | \'ref_for\' | \'ref_key\' | \'style\' | \'class\'\n',
         `\ntype PinceauProps = Omit<InstanceType<typeof import('${fileName}').default>['$props'], OmittedKeysPinceau>\n`,
         '\nfunction css (declaration: CSSFunctionType<PinceauProps>) { return { declaration } }\n',
+        '\nfunction keyframes(declartion: Record<string, any>) { return declaration }',
       ]
       embeddedFile.content.push(...context)
 

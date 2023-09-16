@@ -17,6 +17,14 @@ defineProps({
 </template>
 
 <style scoped lang="ts">
+const test = keyFrames({
+    from: {
+        transform: 'scale(1)'
+    },
+    to: {
+        transform: 'scale(1.2)'
+    }
+})
 css({
   '.demo-button': {
     '--button-primary': (props) => `{color.${props.color}.600}`,
@@ -26,6 +34,7 @@ css({
     transition: '{transition.all}',
     color: '{color.white}',
     boxShadow: `0 5px 0 {button.primary}, 0 12px 16px {color.dimmed}`,
+    animation: `3s linear 1s ${test} infinite`,
     span: {
       display: 'inline-block',
       fontFamily: '{font.secondary}',
