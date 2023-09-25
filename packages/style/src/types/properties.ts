@@ -1,102 +1,13 @@
-import type * as CSSType from 'csstype'
+import type * as CSSType from './csstype'
 
-export type VuePseudos =
-| '&:deep('
-| '&:slotted('
-| '&:global('
+export type PseudosProperties = { [key in CSSType.Pseudos]?: CSSProperties }
 
-export type AdvancedPseudos =
-  | '&::cue('
-  | '&::cue-region('
-  | '&::part('
-  | '&::slotted('
-  | '&:dir('
-  | '&:has('
-  | '&:host('
-  | '&:host-context('
-  | '&:is('
-  | '&:lang('
-  | '&:not('
-  | '&:nth-child('
-  | '&:nth-last-child('
-  | '&:nth-last-of-type('
-  | '&:nth-of-type('
-  | '&:where('
+export type CSSProperties<
+  LocalTokens extends string = (string & {}),
+> =
+  CSSType.StandardProperties<LocalTokens> &
+  CSSType.StandardShorthandProperties<LocalTokens> &
+  CSSType.StandardProperties<LocalTokens> &
+  CSSType.SvgProperties<LocalTokens>
 
-export type SimplePseudos =
-  | '&::after'
-  | '&::backdrop'
-  | '&::before'
-  | '&::cue'
-  | '&::cue-region'
-  | '&::first-letter'
-  | '&::first-line'
-  | '&::grammar-error'
-  | '&::marker'
-  | '&::placeholder'
-  | '&::selection'
-  | '&::spelling-error'
-  | '&::target-text'
-  | '&:active'
-  | '&:after'
-  | '&:any-link'
-  | '&:before'
-  | '&:blank'
-  | '&:checked'
-  | '&:current'
-  | '&:default'
-  | '&:defined'
-  | '&:disabled'
-  | '&:empty'
-  | '&:enabled'
-  | '&:first'
-  | '&:first-child'
-  | '&:first-letter'
-  | '&:first-line'
-  | '&:first-of-type'
-  | '&:focus'
-  | '&:focus-visible'
-  | '&:focus-within'
-  | '&:fullscreen'
-  | '&:future'
-  | '&:hover'
-  | '&:in-range'
-  | '&:indeterminate'
-  | '&:invalid'
-  | '&:last-child'
-  | '&:last-of-type'
-  | '&:left'
-  | '&:link'
-  | '&:local-link'
-  | '&:nth-col'
-  | '&:nth-last-col'
-  | '&:only-child'
-  | '&:only-of-type'
-  | '&:optional'
-  | '&:out-of-range'
-  | '&:past'
-  | '&:paused'
-  | '&:picture-in-picture'
-  | '&:placeholder-shown'
-  | '&:read-only'
-  | '&:read-write'
-  | '&:required'
-  | '&:right'
-  | '&:root'
-  | '&:scope'
-  | '&:target'
-  | '&:target-within'
-  | '&:user-invalid'
-  | '&:user-valid'
-  | '&:valid'
-  | '&:visited'
-
-export type Pseudos = AdvancedPseudos | SimplePseudos | VuePseudos
-
-export type PseudosProperties = { [key in Pseudos]?: NativeProperties }
-
-export interface NativeProperties extends
-  CSSType.StandardProperties,
-  CSSType.StandardShorthandProperties,
-  CSSType.StandardProperties,
-  CSSType.SvgProperties {}
+export type PropertyValue<K extends string | number | undefined> = K extends keyof CSSProperties ? CSSProperties[K] : never

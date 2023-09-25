@@ -8,21 +8,23 @@ import { stringifiedValue } from '../utils/tokens'
 export function registerCompletion(
   context: PinceauExtension,
 ) {
-  const { connection, documents, tokensManager, documentReady, rootPath, getDocumentTokensData } = context
+  const { connection, documents, tokensManager, documentReady, rootPath, getStyleFunctions } = context
 
   // This handler provides the initial list of the completion items.
-  connection.onCompletion(async (_textDocumentPosition: TextDocumentPositionParams): Promise<CompletionItem[]> => {
+  connection.onCompletion(async (textDocumentPosition: TextDocumentPositionParams): Promise<CompletionItem[]> => {
     await documentReady('✅ onCompletion')
 
-    const doc = documents.get(_textDocumentPosition.textDocument.uri)
+    const doc = documents.get(textDocumentPosition.textDocument.uri)
     if (!doc) { return [] }
 
-    const tokensData = getDocumentTokensData(doc)
+    const styleFns = getStyleFunctions(doc)
 
-    const { isInStringExpression, isOffsetOnStyleTsTag, isTokenFunctionCall } = getCursorContext(doc, _textDocumentPosition.position, tokensData?.styles)
+    const { isInStringExpression, isOffsetOnStyleTsTag, isTokenFunctionCall } = getCursorContext(doc, textDocumentPosition.position, styleFns)
 
     // Create completion symbols
     const items: CompletionItem[] = []
+
+    /*
     if (isTokenFunctionCall || ((doc.uri.includes('theme.config.ts') || isOffsetOnStyleTsTag) && isInStringExpression)) {
       Object.entries(tokensData?.localTokens || {}).forEach(
         ([key, localToken]: [string, any]) => {
@@ -30,7 +32,7 @@ export function registerCompletion(
           const completion: CompletionItem = {
             label: path,
             detail: printAst(localToken).code,
-            insertText: `{${path}}`,
+            insertText: `$${path}`,
             kind: CompletionItemKind.EnumMember,
             sortText: `z${path}`,
           }
@@ -40,7 +42,7 @@ export function registerCompletion(
       tokensManager.getAll().forEach((token: any) => {
         if (!token?.name || !token?.value) { return }
 
-        const insertText = isTokenFunctionCall ? token?.name : `{${token.name}}`
+        const insertText = isTokenFunctionCall ? token?.name : `$${token.name}`
 
         const originalString = stringifiedValue({ value: token?.original })
         const configValue = originalString ? `🎨 Config value:\n${originalString}` : undefined
@@ -60,6 +62,8 @@ export function registerCompletion(
         items.push(completion)
       })
     }
+    */
+
     return items
   },
   )

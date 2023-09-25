@@ -30,53 +30,11 @@
     "configuration": {
       "title": "Pinceau",
       "properties": {
-        "pinceau.tokensOutput": {
-          "type": "array",
+        "pinceau.buildDir": {
+          "type": "string",
           "markdownDescription": "Configure glob patterns for including files and folders. Read more about glob patterns [here](https://code.visualstudio.com/docs/editor/codebasics#_advanced-search-options).",
-          "default": [
-            "**/.nuxt/pinceau/index.ts",
-        		"**/node_modules/.vite/pinceau/index.ts"
-          ],
-          "scope": 3,
-          "additionalProperties": {
-            "anyOf": [
-              {
-                "type": "array",
-                "properties": {
-                  "when": {
-                    "type": "string",
-                    "pattern": "\\w*\\$\\(basename\\)\\w*",
-                    "default": "$(basename).ext",
-                    "description": "Additional check on the siblings of a matching file. Use $(basename) as variable for the matching file name."
-                  }
-                }
-              }
-            ]
-          }
-        },
-        "pinceau.definitionsOutput": {
-          "type": "array",
-          "markdownDescription": "Configure glob patterns for including files and folders. Read more about glob patterns [here](https://code.visualstudio.com/docs/editor/codebasics#_advanced-search-options).",
-          "default": [
-            "**/.nuxt/pinceau/definitions.ts",
-        		"**/node_modules/.vite/pinceau/definitions.ts"
-          ],
-          "scope": 3,
-          "additionalProperties": {
-            "anyOf": [
-              {
-                "type": "array",
-                "properties": {
-                  "when": {
-                    "type": "string",
-                    "pattern": "\\w*\\$\\(basename\\)\\w*",
-                    "default": "$(basename).ext",
-                    "description": "Additional check on the siblings of a matching file. Use $(basename) as variable for the matching file name."
-                  }
-                }
-              }
-            ]
-          }
+          "default": "/node_modules/.pinceau",
+          "scope": 3
         },
         "pinceau.blacklistFolders": {
           "type": "array",
@@ -154,10 +112,10 @@
   },
   "devDependencies": {
     "@pinceau/language-server": "workspace:*",
-    "@types/node": "^20.6.0",
+    "@types/node": "^20.6.3",
     "@types/vscode": "^1.82.0",
     "@vscode/test-electron": "^2.3.4",
     "@vscode/vsce": "^2.21.0",
-    "vscode-languageclient": "^8.1.0"
+    "vscode-languageclient": "^9.0.0"
   }
 }

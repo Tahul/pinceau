@@ -4,13 +4,13 @@ import {
   createConnection,
 } from 'vscode-languageserver/node'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import type { SFCStyleBlock } from 'vue/compiler-sfc'
+import type { PinceauStyleFunctionContext } from '@pinceau/style'
 import PinceauTokensManager from './manager'
 import { setupExtension } from './config'
 import { setupTokensHelpers } from './features/tokens'
 import * as features from './features'
 
-export interface DocumentTokensData { version: number; styles: SFCStyleBlock[]; variants: any; computedStyles: any; localTokens: any }
+export interface DocumentTokensData { version: number; styleFns: PinceauStyleFunctionContext[] }
 
 export { PinceauTokensManager, setupExtension, setupTokensHelpers, features }
 

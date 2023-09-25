@@ -8,7 +8,7 @@ describe('CSS Variable Manager', () => {
 
     await tokensManager.syncTokens(
       [path.resolve(__dirname, '../fixtures/theme/index.css')],
-      { debug: true, missingTokenHintSeverity: 'error', tokensOutput: [path.join(__dirname, '../fixtures/pinceau')] },
+      { debug: true, missingTokenHintSeverity: 'error', buildDirs: [path.join(__dirname, '../fixtures/pinceau')] },
     )
 
     const allTokens = tokensManager.getAll()

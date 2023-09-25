@@ -1,50 +1,46 @@
+import { dirname } from 'node:path'
 import type { Color, Location } from 'vscode-languageserver/node'
 import type { DesignToken } from '@pinceau/theme'
 import fastGlob from 'fast-glob'
 import createJITI from 'jiti'
+import type { PinceauStyleFunctionContext } from '@pinceau/style'
 import CacheManager from './cache'
 import isColor from './utils/isColor'
 import { colorToVSCode } from './utils/convert-color'
 
 export interface PinceauVSCodeSettings {
-  tokensOutput: string[]
-  definitionsOutput: string[]
+  buildDirs: string[]
   debug: boolean
   missingTokenHintSeverity: 'warning' | 'error' | 'information' | 'hint'
 }
 
 export const defaultSettings: PinceauVSCodeSettings = {
-  tokensOutput: [
-    '**/.nuxt/pinceau/index.ts',
-    '**/node_modules/.vite/pinceau/index.ts',
-  ],
-  definitionsOutput: [
-    '**/.nuxt/pinceau/definitions.ts',
-    '**/node_modules/.vite/pinceau/definitions.ts',
-  ],
+  buildDirs: ['./node_modules/.pinceau'],
   debug: false,
   missingTokenHintSeverity: 'warning',
 }
 
 async function globRequire(folderPath: string, globPaths: string[], cb: (filePath: string) => void) {
-  return await fastGlob(
+  const globResult = await fastGlob(
     globPaths,
     {
       cwd: folderPath,
       onlyFiles: true,
       absolute: true,
     },
-  ).then(files => Promise.all(files.map(cb)))
+  )
+
+  return Promise.all(globResult.map(cb))
 }
 
 export default class PinceauTokensManager {
   public initialized = false
   public synchronizing: Promise<void> | false = false
   private tokensCache = new CacheManager<DesignToken & { definition: Location; color?: Color }>()
-  private transformCache = new CacheManager<{ version: number; variants: any; computedStyles: any; localTokens: any }>()
+  private transformCache = new CacheManager<{ version: number; styleFns: PinceauStyleFunctionContext[] }>()
 
   public async syncTokens(folders: string[], settings: Partial<PinceauVSCodeSettings>) {
-    this.synchronizing = this._syncTokens(folders, settings)
+    this.synchronizing = this.scanFolders(folders, settings)
 
     await this.synchronizing
 
@@ -55,40 +51,32 @@ export default class PinceauTokensManager {
     settings.debug && console.log('✅ Loaded config!')
   }
 
-  private async _syncTokens(folders: string[], settings: Partial<PinceauVSCodeSettings>) {
+  public async scanFolders(folders: string[], settings: Partial<PinceauVSCodeSettings>) {
     for (const folderPath of folders) {
       const jiti = createJITI(folderPath, { cache: false, requireCache: false, v8cache: false })
 
-      // index.ts
       try {
         await globRequire(
           folderPath,
-          settings?.tokensOutput || defaultSettings.tokensOutput,
-          (filePath) => {
-            settings?.debug && console.log('📥 Loaded:', filePath)
-            const file = jiti(filePath)
-            this.updateCacheFromTokensContent({ content: file?.default || file, filePath })
+          (settings?.buildDirs || defaultSettings.buildDirs).map(buildDir => `${buildDir}/*.js`),
+          async (filePath) => {
+            const themePath = dirname(filePath)
+
+            if (filePath.includes('theme.js')) {
+              const file = await jiti(filePath)
+              this.updateCacheFromTokensContent({ content: file?.default || file, filePath: themePath })
+              settings?.debug && console.log('📥 Loaded theme:', filePath)
+            }
+            if (filePath.includes('definitions.js')) {
+              const file = await jiti(filePath)
+              this.pushDefinitions({ content: file?.default || file, filePath: themePath })
+              settings?.debug && console.log('📥 Loaded definitions:', filePath)
+            }
           },
         )
       }
       catch (e) {
         console.log('❌ Could not load theme file:', folderPath)
-      }
-
-      // defintions.ts
-      try {
-        await globRequire(
-          folderPath,
-          settings?.definitionsOutput || defaultSettings.definitionsOutput,
-          (filePath) => {
-            settings?.debug && console.log('📥 Loaded:', filePath)
-            const file = jiti(filePath)
-            this.pushDefinitions({ content: file?.default || file, filePath })
-          },
-        )
-      }
-      catch (e) {
-        console.log('❌ Could not load definitions file:', folderPath)
       }
     }
 
@@ -105,14 +93,14 @@ export default class PinceauTokensManager {
     content: any
     filePath: string
   }) {
-    const indexFileName = filePath.replace('definitions.ts', 'index.ts')
     Object
-      .entries(content.definitions)
+      .entries(content || {})
       .forEach(
         ([key, definition]) => {
-          const tokenValue = this.tokensCache.get(key, indexFileName)
+          const tokenValue = this.tokensCache.get(key, filePath)
+
           this.tokensCache.set(
-            indexFileName,
+            filePath,
             key,
             {
               ...(tokenValue || {}),
@@ -135,9 +123,26 @@ export default class PinceauTokensManager {
       content || {},
       (token, _, paths) => {
         const name = paths.join('.')
-        const value = token.value?.$initial || token?.value
-        if (isColor(value)) { token.color = colorToVSCode(value) }
-        this.tokensCache.set(filePath, name, { ...token, name })
+
+        const tokenValue = this.tokensCache.get(name, filePath) || {}
+
+        // Handle responsive colors
+        if (isColor(token.value?.$initial || token?.value)) {
+          if (typeof token.value === 'object') {
+            token.color = Object.entries(token.value as { [key: string]: string }).reduce(
+              (acc, [key, value]) => {
+                acc[key] = colorToVSCode(value)
+                return acc
+              },
+              {},
+            )
+          }
+          else {
+            token.color = colorToVSCode(token.value)
+          }
+        }
+
+        this.tokensCache.set(filePath, name, { ...tokenValue, ...token, name })
       },
     )
   }

@@ -6,7 +6,7 @@ import type { PinceauVSCodeSettings } from '../manager'
 export function registerDiagnostics(
   context: PinceauExtension,
 ) {
-  const { connection, tokensManager, documents, debugMessage, getDocumentSettings, getDocumentTokensData, getDocumentTokens } = context
+  const { connection, tokensManager, documents, debugMessage, getDocumentSettings, getStyleFunctions, getDocumentTokens } = context
 
   function updateDocumentDiagnostics(
     doc: TextDocument,
@@ -14,11 +14,11 @@ export function registerDiagnostics(
   ) {
     const text = doc.getText()
     const diagnostics: Diagnostic[] = []
-    const tokensData = getDocumentTokensData(doc)
+    const styleFunctions = getStyleFunctions(doc)
 
     getDocumentTokens(
       doc,
-      tokensData,
+      styleFunctions,
       settings,
       ({ range, token, tokenPath, match, localToken }) => {
         if (!match.index) { return }

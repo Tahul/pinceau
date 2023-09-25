@@ -2,7 +2,7 @@
   <div>Hello Index</div>
 </template>
 
-<style scoped lang="postcss">
+<style scoped>
 div {
   background-color: $theme('color.green.9');
 }

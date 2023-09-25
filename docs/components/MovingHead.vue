@@ -82,16 +82,16 @@ watch(
 <style lang="ts">
 css({
   '.logo': {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '32px',
-    height: '32px',
+    'display': 'flex',
+    'alignItems': 'center',
+    'justifyContent': 'center',
+    'width': '32px',
+    'height': '32px',
     'img, object': {
       width: '100%',
       height: '100%',
-      backgroundColor: 'transparent'
-    }
+      backgroundColor: 'transparent',
+    },
   },
 })
 </style>

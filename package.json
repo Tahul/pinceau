@@ -2,7 +2,14 @@
   "name": "@pinceau/monorepo",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "Make your <script> lighter and your <style> smarter.",
+  "workspaces": [
+    "docs",
+    "tests",
+    "packages/*",
+    "examples/*"
+  ],
   "keywords": [
     "css-in-js",
     "vue",
@@ -21,32 +28,35 @@
     "url": "git+https://github.com/Tahul/pinceau.git"
   },
   "license": "MIT",
-  "type": "module",
   "scripts": {
-    "build": "pnpm -r --filter=./packages/* run build && pnpm -r run build:post",
+    "build": "pnpm -r --filter=\"./packages/*\" run build && pnpm -r run build:post",
+    "build:docs": "pnpm -r --filter=\"./docs\" run build",
+    "build:vscode": "pnpm -r --filter=\"./packages/(language-server|vscode)\" run build",
     "clean:snapshots": "rm -rf ./tests/__snapshots__",
-    "dev:lib": "nodemon --exec 'pnpm --filter=./examples/vite-lib run dev' --watch 'packages' -e js,ts,vue",
-    "dev:nuxt": "pnpm -r --filter=./examples/nuxt run dev",
+    "dev:lib": "nodemon --exec 'pnpm --filter=\"./examples/vite-lib\" run dev' --watch 'packages' -e js,ts,vue",
+    "dev:nuxt": "pnpm -r --filter=\"./examples/nuxt\" run dev",
     "dev:nuxt:debug": "DEBUG=\"*\" pnpm dev:nuxt",
-    "dev:vue": "nodemon --exec 'pnpm --filter=./examples/vite-vue run dev' --watch 'packages' -e js,ts,vue",
+    "dev:vue": "nodemon --exec 'pnpm --filter=\"./examples/vite-vue\" run dev' --watch 'packages' -e js,ts,vue",
     "dev:vue:debug": "DEBUG=\"*\" pnpm dev:vue",
     "docs": "nuxi dev docs",
     "lint": "eslint --cache .",
     "lint:fix": "eslint --cache . --fix",
-    "palette": "pnpm -r --filter=./packages/palette run stub",
+    "palette": "pnpm -r --filter=\"./packages/palette\" run build:post",
     "prepare": "pnpm stub",
-    "stub": "pnpm -r --filter=./packages/* run stub && pnpm -r run build:post",
-    "test": "pnpm lint && pnpm -r --filter=./tests run test",
-    "test:run": "pnpm -r --filter=./tests run test",
-    "test:ui": "pnpm -r --filter=./tests run test:ui",
-    "test:fixtures": "pnpm -r --filter=./tests run test:fixtures"
+    "stub": "pnpm -r --filter=\"./packages/*\" run stub && pnpm -r run build:post",
+    "test": "pnpm -r --filter=\"./tests\" run test",
+    "test:run": "pnpm -r --filter=\"./tests\" run test",
+    "test:ui": "pnpm -r --filter=\"./tests\" run test:ui",
+    "test:fixtures": "pnpm -r --filter=\"./tests\" run test:fixtures"
   },
   "resolutions": {
-    "pinceau": "workspace:*",
-    "jiti": "npm:@pinceau/jiti@latest"
+    "jiti": "npm:@pinceau/jiti@latest",
+    "vue-eslint-parser": "npm:@pinceau/vue-eslint-parser",
+    "unbuild": "npm:@pinceau/unbuild@latest"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^0.41.2",
+    "@antfu/eslint-config": "^0.43.1",
+    "pinceau": "workspace:*",
     "@pinceau/core": "workspace:*",
     "@pinceau/language-server": "workspace:*",
     "@pinceau/nuxt": "workspace:*",
@@ -57,16 +67,15 @@
     "@pinceau/volar": "workspace:*",
     "@pinceau/vscode": "workspace:*",
     "@pinceau/vue": "workspace:*",
-    "@types/node": "^20.6.0",
+    "@types/node": "^20.6.3",
     "eslint": "^8.49.0",
     "nodemon": "^3.0.1",
-    "pinceau": "workspace:*",
     "release-it": "^16.1.5",
-    "rollup": "^3.29.1",
+    "rollup": "^3.29.2",
     "tsup": "^7.2.0",
     "typescript": "^5.2.2",
-    "unbuild": "npm:@pinceau/unbuild@latest",
-    "unenv": "^1.7.4"
+    "unenv": "^1.7.4",
+    "unbuild": "^2.0.0"
   },
   "packageManager": "pnpm@8.6.0",
   "pnpm": {
@@ -78,8 +87,6 @@
         "vue": "^3.3.4"
       },
       "ignoreMissing": [
-        "postcss",
-        "postcss-*",
         "@algolia/client-search",
         "nuxt",
         "vue",

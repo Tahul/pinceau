@@ -4,7 +4,6 @@ import chalk from 'chalk'
 import { consola } from 'consola'
 import type { PinceauUserOptions } from './types'
 import { updateDebugContext } from './utils/debug'
-import { registerPostCSSPlugins } from './utils/postcss'
 import { usePinceauContext } from './utils/core-context'
 import { load, loadInclude } from './utils/unplugin'
 
@@ -31,9 +30,6 @@ export const PinceauCorePlugin: UnpluginInstance<PinceauUserOptions> = createUnp
     enforce: 'pre',
 
     vite: {
-      config(config) {
-        registerPostCSSPlugins(config, ctx.options)
-      },
       configResolved(config) {
         if (!ctx.options.cwd) { ctx.options.cwd = config.root }
       },

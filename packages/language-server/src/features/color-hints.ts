@@ -4,7 +4,7 @@ import type { PinceauExtension } from '../index'
 export function registerColorHints(
   context: PinceauExtension,
 ) {
-  const { connection, documents, documentReady, getDocumentSettings, getDocumentTokensData, getDocumentTokens } = context
+  const { connection, documents, documentReady, getDocumentSettings, getDocumentTokens, getStyleFunctions } = context
 
   connection.onDocumentColor(async (params): Promise<ColorInformation[]> => {
     await documentReady('🎨 onDocumentColor')
@@ -16,16 +16,18 @@ export function registerColorHints(
 
     const settings = await getDocumentSettings()
 
-    const tokensData = getDocumentTokensData(doc)
+    const styleFns = getStyleFunctions(doc)
 
     getDocumentTokens(
       doc,
-      tokensData,
+      styleFns,
       settings,
       ({ range, token }) => {
-        if ((token as any)?.color) {
+        const color = (token as any)?.color
+
+        if (color) {
           colors.push({
-            color: (token as any)?.color,
+            color: color?.$initial || color,
             range: range as any,
           })
         }
@@ -40,8 +42,6 @@ export function registerColorHints(
 
     const document = documents.get(params.textDocument.uri)
     const className = document?.getText(params.range)
-
-    console.log(className)
 
     if (!className) { return [] }
 

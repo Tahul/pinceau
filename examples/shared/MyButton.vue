@@ -20,21 +20,21 @@ const props = withDefaults(
   </button>
 </template>
 
-<style scoped lang="ts">
+<style lang="ts">
 css({
   '.my-button': {
-    '--button-bg': () => `$color.${props.color}.5`,
-    '--button-border': () => `$color.${props.color}.6`,
-    '--button-active': () => `$color.${props.color}.4`,
+    '$button.bg': () => `$color.${props.color}.5`,
+    '$button.border': () => `$color.${props.color}.6`,
+    '$button.active': () => `$color.${props.color}.4`,
+    color: '$color.white',
     transition: 'all 333ms ease-out',
     display: 'inline-block',
     borderRadius: '$radii.xs',
-    color: '$color.white',
     backgroundColor: '$button.bg',
     span: {
       boxShadow: 'inset 0 0 0 2px $button.border, 0 1px 2px $color.black',
       display: 'inline-block',
-      fontFamily: '$font.sans',
+      fontFamily: '$',
       borderRadius: '$radii.xs',
       fontSize: '$fontSize.xl',
       lineHeight: '0',

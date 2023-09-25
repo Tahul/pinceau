@@ -139,6 +139,8 @@ describe('@pinceau/theme', () => {
 
       const output = await configCtx.buildTheme()
 
+      console.log(output)
+
       expect((output as any).theme.color.primary.value).toBe('red')
       expect((output as any).theme.color.white.value).toBe('#ffffff')
     })
@@ -636,16 +638,16 @@ describe('@pinceau/theme', () => {
 
   describe('utils/helper-regex.ts', () => {
     it('matches helper function with one argument and single quotes', () => {
-      const regex = helperRegex('$dt')
-      const matches = regex.exec('$dt(\'my.color.token\')')
+      const regex = helperRegex('$theme')
+      const matches = regex.exec('$theme(\'my.color.token\')')
 
       expect(matches).not.toBeNull()
       expect(matches?.[1]).toBe('my.color.token')
     })
 
     it('matches helper function with two arguments and single quotes', () => {
-      const regex = helperRegex('$dt')
-      const matches = regex.exec('$dt(\'my.color.token\', \'key\')')
+      const regex = helperRegex('$theme')
+      const matches = regex.exec('$theme(\'my.color.token\', \'key\')')
 
       expect(matches).not.toBeNull()
       expect(matches?.[1]).toBe('my.color.token')
@@ -653,24 +655,24 @@ describe('@pinceau/theme', () => {
     })
 
     it('matches helper function with one argument and double quotes', () => {
-      const regex = helperRegex('$dt')
-      const matches = regex.exec('$dt("my.color.token")')
+      const regex = helperRegex('$theme')
+      const matches = regex.exec('$theme("my.color.token")')
 
       expect(matches).not.toBeNull()
       expect(matches?.[1]).toBe('my.color.token')
     })
 
     it('matches helper function with one argument and backticks', () => {
-      const regex = helperRegex('$dt')
-      const matches = regex.exec('$dt(`my.color.token`)')
+      const regex = helperRegex('$theme')
+      const matches = regex.exec('$theme(`my.color.token`)')
 
       expect(matches).not.toBeNull()
       expect(matches?.[1]).toBe('my.color.token')
     })
 
     it('matches helper function with two mixed argument quotes', () => {
-      const regex = helperRegex('$dt')
-      const matches = regex.exec('$dt("my.color.token", \'key\')')
+      const regex = helperRegex('$theme')
+      const matches = regex.exec('$theme("my.color.token", \'key\')')
 
       expect(matches).not.toBeNull()
       expect(matches?.[1]).toBe('my.color.token')
@@ -678,15 +680,15 @@ describe('@pinceau/theme', () => {
     })
 
     it('does not match an incorrect helper function name', () => {
-      const regex = helperRegex('$dt')
+      const regex = helperRegex('$theme')
       const matches = regex.exec('$incorrect(\'my.color.token\', \'key\')')
 
       expect(matches).toBeNull()
     })
 
     it('matches multiple occurrences of the helper function', () => {
-      const regex = helperRegex('$dt')
-      const str = 'Use $dt("my.color.token1"). Also use $dt(\'my.color.token2\', \'key2\')'
+      const regex = helperRegex('$theme')
+      const str = 'Use $theme("my.color.token1"). Also use $theme(\'my.color.token2\', \'key2\')'
       const matches = Array.from(str.matchAll(regex))
 
       expect(matches).toHaveLength(2)

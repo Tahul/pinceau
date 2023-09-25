@@ -34,7 +34,7 @@ export function transformStyledProps(
 
       target.appendRight(
         styledPropContext.loc.start.offset,
-        `class="${styledPropContext?.className || ''}"`,
+        `class="${styledPropContext?.className || ''}" pcsp`,
       )
 
       transformContext.state.styleFunctions[id] = styledPropContext

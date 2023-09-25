@@ -67,12 +67,6 @@ export function useRuntimeSheet(options?: PinceauRuntimeSheetOptions): PinceauRu
     // Hash decl to get a className
     const className = getClassName(declaration)
 
-    // Flush previous rule if supplied and hits no members
-    if (previousClass && previousClass !== className) {
-      deleteMember(previousClass)
-      flush(0, previousClass)
-    }
-
     const cachedRule = cache.get(className)
 
     // Use hashed className to return cached rule
@@ -106,6 +100,12 @@ export function useRuntimeSheet(options?: PinceauRuntimeSheetOptions): PinceauRu
     const rule = sheet.insertRule(stringified, sheet?.cssRules?.length || 0)
 
     cache.set(className, { members: 1, rule: sheet.cssRules[rule] })
+
+    // Flush previous rule if supplied and hits no members
+    if (previousClass && previousClass !== className) {
+      deleteMember(previousClass)
+      flush(0, previousClass)
+    }
 
     return className
   }

@@ -1,10 +1,9 @@
-import { camelCase, kebabCase } from 'scule'
 import type { PinceauContext, PinceauTransformContext, PinceauTransformFunction, PropMatch } from '@pinceau/core'
-import { astTypes, evalDeclaration, expressionToAst, printAst, visitAst } from '@pinceau/core/utils'
+import { evalDeclaration, expressionToAst } from '@pinceau/core/utils'
 import { resolveCssProperty, stringify } from '@pinceau/stringify'
-import { nanoid } from 'nanoid'
-import type { CSSFunctionArg, PinceauStyleFunctionContext } from '../types/style-functions'
+import type { CSSFunctionArgAST, PinceauStyleFunctionContext } from '../types/style-functions'
 import { createUniqueClass } from './create-class'
+import { resolveStyleArg } from './resolve-arg'
 
 /**
  * Resolve transform context runtime features from `css()` function.
@@ -21,57 +20,18 @@ export const resolveStylePropContext: PinceauTransformFunction<PinceauStyleFunct
 
   const className = previousState?.className || createUniqueClass()
 
-  const arg = expressionToAst(prop.content) as any as CSSFunctionArg
+  const arg = expressionToAst(prop.content) as any as CSSFunctionArgAST
 
   const localTokens: PinceauStyleFunctionContext['localTokens'] = {}
   const variants: PinceauStyleFunctionContext['variants'] = {}
   const computedStyles: PinceauStyleFunctionContext['computedStyles'] = []
 
   // Search for function properties in css() AST
-  visitAst(
+  resolveStyleArg(
+    transformContext,
     arg,
-    {
-      visitObjectProperty(path) {
-        if (path.value) {
-          // Resolve path key & type
-          const key = path?.value?.key?.name || path?.value?.key?.value
-          const valueType = path?.value?.value?.type
-
-          // Store local tokens
-          if (key.startsWith('--')) { localTokens[key] = path.value.value }
-
-          // Store computed styles in state
-          if (valueType === 'ArrowFunctionExpression' || valueType === 'FunctionExpression') {
-            // Local UID is used to avoid collision of names if there is plenty of computed styles in the same component.
-            // As collision rate in this kind of context is extremely improbable the UID is very short.
-            const uid = nanoid(3).toLowerCase()
-
-            // Create computed styles identifiers
-            const computedStyleKey = camelCase((key).replace(/--/g, '__'))
-            const id = `pcs_${uid}_${computedStyleKey}`
-            const variable = `--${kebabCase(id)}`
-
-            // Push property function to computedStyles
-            computedStyles.push({
-              id,
-              variable,
-              ast: path.value.value.body,
-              compiled: printAst(path.value.value).code,
-            })
-
-            // Overwrite function in declaration by the CSS variable.
-            path.replace(
-              astTypes.builders.objectProperty(
-                path.value.key,
-                astTypes.builders.stringLiteral(`var(${variable})`),
-              ),
-            )
-          }
-        }
-
-        return this.traverse(path)
-      },
-    },
+    localTokens,
+    computedStyles,
   )
 
   // Handle variants and remove them from declaration
@@ -85,7 +45,7 @@ export const resolveStylePropContext: PinceauTransformFunction<PinceauStyleFunct
 
   // Transform css() declaration to string
   const css = stringify(
-    { [`.${className}`]: declaration },
+    { [`.${className}[pcsp]`]: declaration },
     stringifyContext => resolveCssProperty(
       {
         localTokens: Object.keys(localTokens),

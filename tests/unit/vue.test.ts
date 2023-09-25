@@ -347,6 +347,32 @@ console.log('hello world')
         + '</template>',
       )
     })
+    it('adds class to existing :class attribute (identifier)', () => {
+      const transformContext = usePinceauTransformContext(
+        '<template>'
+        + '<div :class="test">Variants component</div>'
+        + '<div><section><button type="button">Hello World</button></section></div>'
+        + '</template>',
+        variantsQuery,
+        pinceauContext,
+      )
+
+      transformContext.registerTransforms(styleTransformSuite)
+      transformContext.registerTransforms({
+        templates: [
+          transformAddPinceauClass,
+        ],
+      })
+
+      transformContext.transform()
+
+      expect(transformContext.result()?.code).toStrictEqual(
+        '<template>'
+        + '<div :class="[$pcClass, test]">Variants component</div>'
+        + '<div :class="[$pcClass]"><section><button type="button">Hello World</button></section></div>'
+        + '</template>',
+      )
+    })
   })
 
   describe('transforms/computed-styles.ts', () => {
@@ -433,7 +459,7 @@ console.log('hello world')
       pinceauContext.addTransformed(query.filename, query)
 
       const transformContext = usePinceauTransformContext(
-        '<template><div :styled="{ color: () => \'blue\' }">Hello World</div></template>\n<style lang="postcss" pctransformed>css({ div: { color: () => \'red\' } })</style>',
+        '<template><div :styled="{ color: () => \'blue\' }">Hello World</div></template>\n<style pctransformed>css({ div: { color: () => \'red\' } })</style>',
         query,
         pinceauContext,
       )
@@ -462,7 +488,7 @@ console.log('hello world')
       pinceauContext.addTransformed(query.filename, query)
 
       const transformContext = usePinceauTransformContext(
-        '<template><div>Hello World</div></template>\n<style lang="postcss" pctransformed>css({ variants: { size: { sm: { width: \'32px\' } } } })</style>',
+        '<template><div>Hello World</div></template>\n<style pctransformed>css({ variants: { size: { sm: { width: \'32px\' } } } })</style>',
         query,
         pinceauContext,
       )
@@ -486,22 +512,22 @@ console.log('hello world')
   })
 
   describe('transforms/style-lang-ts.ts', () => {
-    it('should replace lang="ts" with lang="postcss" and pctransformed in a <style> tag', () => {
+    it('should replace lang="ts" with and pctransformed in a <style> tag', () => {
       const code = '<style lang="ts"></style>'
       const transformedCode = transformStyleTs(code)
-      expect(transformedCode).toBe('<style lang="postcss" pctransformed></style>')
+      expect(transformedCode).toBe('<style pctransformed></style>')
     })
 
     it('should correctly handle multiple <style> tags with lang="ts" attributes', () => {
       const code = '<style lang="ts"></style><style lang="ts"></style>'
       const transformedCode = transformStyleTs(code)
-      expect(transformedCode).toBe('<style lang="postcss" pctransformed></style><style lang="postcss" pctransformed></style>')
+      expect(transformedCode).toBe('<style pctransformed></style><style pctransformed></style>')
     })
 
     it('should not modify other <style> tags', () => {
-      const code = '<style lang="postcss"></style><style lang="scss"></style>'
+      const code = '<style></style><style lang="scss"></style>'
       const transformedCode = transformStyleTs(code)
-      expect(transformedCode).toBe('<style lang="postcss"></style><style lang="scss"></style>')
+      expect(transformedCode).toBe('<style></style><style lang="scss"></style>')
     })
 
     it('should not modify other lang="ts" tags', () => {
@@ -558,7 +584,7 @@ console.log('hello world')
       pinceauContext.addTransformed(query.filename, query)
 
       const transformContext = usePinceauTransformContext(
-        '<style lang="postcss" pctransformed>\ncss({ variants: { size: { sm: { padding: \'1rem\' } } } })\n</style>',
+        '<style pctransformed>\ncss({ variants: { size: { sm: { padding: \'1rem\' } } } })\n</style>',
         query,
         pinceauContext,
       )
@@ -580,7 +606,7 @@ console.log('hello world')
       pinceauContext.addTransformed(query.filename, query)
 
       const transformContext = usePinceauTransformContext(
-        '<script setup lang="ts">defineProps()</script>\n<style lang="postcss" pctransformed>\ncss({ variants: { size: { sm: { padding: \'1rem\' } } } })\n</style>',
+        '<script setup lang="ts">defineProps()</script>\n<style pctransformed>\ncss({ variants: { size: { sm: { padding: \'1rem\' } } } })\n</style>',
         query,
         pinceauContext,
       )
@@ -601,7 +627,7 @@ console.log('hello world')
       pinceauContext.addTransformed(query.filename, query)
 
       const transformContext = usePinceauTransformContext(
-        '<script setup lang="ts">defineProps({ test: { type: String, required: false } })</script>\n<style lang="postcss" pctransformed>\ncss({ variants: { size: { sm: { padding: \'1rem\' } } } })\n</style>',
+        '<script setup lang="ts">defineProps({ test: { type: String, required: false } })</script>\n<style pctransformed>\ncss({ variants: { size: { sm: { padding: \'1rem\' } } } })\n</style>',
         query,
         pinceauContext,
       )
@@ -624,7 +650,7 @@ console.log('hello world')
       pinceauContext.addTransformed(query.filename, query)
 
       const transformContext = usePinceauTransformContext(
-        '<script setup lang="ts">defineProps<{ test?: String }>()</script>\n<style lang="postcss" pctransformed>\ncss({ variants: { size: { sm: { padding: \'1rem\' } } } })\n</style>',
+        '<script setup lang="ts">defineProps<{ test?: String }>()</script>\n<style pctransformed>\ncss({ variants: { size: { sm: { padding: \'1rem\' } } } })\n</style>',
         query,
         pinceauContext,
       )
@@ -649,7 +675,7 @@ console.log('hello world')
       pinceauContext.addTransformed(query.filename, query)
 
       const transformContext = usePinceauTransformContext(
-        '<script setup lang="ts">withDefaults(defineProps<{ test?: String }>(), { test: \'hello world\' })</script>\n<style lang="postcss" pctransformed>\ncss({ variants: { size: { sm: { padding: \'1rem\' }, options: { default: \'sm\' } } } })\n</style>',
+        '<script setup lang="ts">withDefaults(defineProps<{ test?: String }>(), { test: \'hello world\' })</script>\n<style pctransformed>\ncss({ variants: { size: { sm: { padding: \'1rem\' }, options: { default: \'sm\' } } } })\n</style>',
         query,
         pinceauContext,
       )
@@ -674,7 +700,7 @@ console.log('hello world')
       pinceauContext.addTransformed(query.filename, query)
 
       const transformContext = usePinceauTransformContext(
-        '<script setup lang="ts">withDefaults(defineProps<{ test?: String }>(), { test: \'hello world\' })</script>\n<style lang="postcss" pctransformed>\ncss({ variants: { size: { sm: { padding: \'1rem\' }, options: { default: \'sm\' } } } })\n</style>',
+        '<script setup lang="ts">withDefaults(defineProps<{ test?: String }>(), { test: \'hello world\' })</script>\n<style pctransformed>\ncss({ variants: { size: { sm: { padding: \'1rem\' }, options: { default: \'sm\' } } } })\n</style>',
         query,
         pinceauContext,
       )
@@ -743,7 +769,7 @@ console.log('hello world')
     })
     it('can write css pointer from <style> styled() function', () => {
       const transformContext = usePinceauTransformContext(
-        '<style lang="postcss" pctransformed>styled({ backgroundColor: \'red\' })</style>',
+        '<style pctransformed>styled({ backgroundColor: \'red\' })</style>',
         { ...baseQuery, transformed: true },
         pinceauContext,
       )
@@ -759,11 +785,11 @@ console.log('hello world')
 
       const styleFunction = transformContext.state.styleFunctions?.style0_styled0
 
-      expect(transformContext.result()?.code).toBe(`<style lang="postcss" pctransformed>${styleFunction?.pointer}\n.${styleFunction?.className}{background-color:red;}\n</style>`)
+      expect(transformContext.result()?.code).toBe(`<style pctransformed>${styleFunction?.pointer}\n.${styleFunction?.className}{background-color:red;}\n</style>`)
     })
     it('can write css content from <style> css() function', () => {
       const transformContext = usePinceauTransformContext(
-        '<style lang="postcss" pctransformed>css({ div: { backgroundColor: \'red\' } })</style>',
+        '<style pctransformed>css({ div: { backgroundColor: \'red\' } })</style>',
         { ...baseQuery, transformed: true },
         pinceauContext,
       )
@@ -779,12 +805,12 @@ console.log('hello world')
 
       const styleFunction = transformContext.state.styleFunctions?.style0_css0
 
-      expect(transformContext.result()?.code).toBe(`<style lang="postcss" pctransformed>${styleFunction?.pointer}\ndiv{background-color:red;}\n</style>`)
+      expect(transformContext.result()?.code).toBe(`<style pctransformed>${styleFunction?.pointer}\ndiv{background-color:red;}\n</style>`)
     })
     it('can write css pointers from multiple <style> css() function', () => {
       const transformContext = usePinceauTransformContext(
-        '<style lang="postcss" pctransformed>css({ div: { backgroundColor: \'red\' } })</style>\n'
-        + '<style lang="postcss" pctransformed>css({ button: { backgroundColor: \'blue\' } })</style>',
+        '<style pctransformed>css({ div: { backgroundColor: \'red\' } })</style>\n'
+        + '<style pctransformed>css({ button: { backgroundColor: \'blue\' } })</style>',
         { ...baseQuery, transformed: true },
         pinceauContext,
       )
@@ -802,14 +828,14 @@ console.log('hello world')
       const secondStyleFunction = transformContext.state.styleFunctions?.style1_css0
 
       expect(transformContext.result()?.code).toBe(
-        `<style lang="postcss" pctransformed>${firstStyleFunction?.pointer}\ndiv{background-color:red;}\n</style>\n`
-        + `<style lang="postcss" pctransformed>${secondStyleFunction?.pointer}\nbutton{background-color:blue;}\n</style>`,
+        `<style pctransformed>${firstStyleFunction?.pointer}\ndiv{background-color:red;}\n</style>\n`
+        + `<style pctransformed>${secondStyleFunction?.pointer}\nbutton{background-color:blue;}\n</style>`,
       )
     })
     it('can write css contents from multiple <style> css() function on vueQuery', () => {
       const transformContext = usePinceauTransformContext(
-        '<style lang="postcss" pctransformed>css({ div: { backgroundColor: \'red\' } })</style>\n'
-        + '<style lang="postcss" pctransformed>css({ button: { backgroundColor: \'blue\' } })</style>',
+        '<style pctransformed>css({ div: { backgroundColor: \'red\' } })</style>\n'
+        + '<style pctransformed>css({ button: { backgroundColor: \'blue\' } })</style>',
         { ...baseQuery, transformed: true, vueQuery: true },
         pinceauContext,
       )
@@ -827,8 +853,8 @@ console.log('hello world')
       const secondStyleFunction = transformContext.state.styleFunctions?.style1_css0
 
       expect(transformContext.result()?.code).toBe(
-        `<style lang="postcss" pctransformed>${firstStyleFunction?.pointer}\ndiv{background-color:red;}\n</style>\n`
-        + `<style lang="postcss" pctransformed>${secondStyleFunction?.pointer}\nbutton{background-color:blue;}\n</style>`,
+        `<style pctransformed>${firstStyleFunction?.pointer}\ndiv{background-color:red;}\n</style>\n`
+        + `<style pctransformed>${secondStyleFunction?.pointer}\nbutton{background-color:blue;}\n</style>`,
       )
     })
     it('can write css content from <template> styled prop', () => {
@@ -850,8 +876,8 @@ console.log('hello world')
       const className = transformContext.state.styleFunctions?.template0_styled0?.className
 
       expect(transformContext.result()?.code).toBe(
-        `<template><div class="${className}">Hello World</div></template>\n`
-        + `<style scoped pinceau-style-function="template0_styled0">.${className}{background-color:red;}</style>`,
+        `<template><div class="${className}" pcsp>Hello World</div></template>\n`
+        + `<style scoped pinceau-style-function="template0_styled0">.${className}[pcsp]{background-color:red;}</style>`,
       )
     })
     it('can write css content from multiple <template> styled prop', () => {
@@ -874,9 +900,9 @@ console.log('hello world')
       const secondClassName = transformContext.state.styleFunctions?.template0_styled1?.className
 
       expect(transformContext.result()?.code).toBe(
-        `<template><div class="${className}">Hello World<a class="${secondClassName}">Test link</a></div></template>\n`
-        + `<style scoped pinceau-style-function="template0_styled0">.${className}{background-color:red;}</style>\n`
-        + `<style scoped pinceau-style-function="template0_styled1">.${secondClassName}{color:red;}</style>`,
+        `<template><div class="${className}" pcsp>Hello World<a class="${secondClassName}" pcsp>Test link</a></div></template>\n`
+        + `<style scoped pinceau-style-function="template0_styled0">.${className}[pcsp]{background-color:red;}</style>\n`
+        + `<style scoped pinceau-style-function="template0_styled1">.${secondClassName}[pcsp]{color:red;}</style>`,
       )
     })
     it('can write css content from all <script>, <style> and <template> tags', () => {
@@ -884,7 +910,7 @@ console.log('hello world')
         '<template><div :styled="{ backgroundColor: \'red\' }">Hello World<a :styled="{ color: \'red\' }">Test link</a></div></template>\n'
         + '<script>const testStyled = styled({ backgroundColor: \'red\' })</script>\n'
         + '<script setup>const testStyledSetup = styled({ backgroundColor: \'red\' })</script>\n'
-        + '<style lang="postcss" transformed>css({ div: { backgroundColor: \'red\' } })\ncss({ div: { backgroundColor: \'green\' } })</style>',
+        + '<style transformed>css({ div: { backgroundColor: \'red\' } })\ncss({ div: { backgroundColor: \'green\' } })</style>',
         { ...baseQuery, transformed: true },
         pinceauContext,
       )
@@ -917,12 +943,12 @@ console.log('hello world')
       const sixthCssFunction = transformContext.state.styleFunctions?.style0_css1
 
       expect(transformContext.result()?.code).toBe(
-        `<template><div class="${className}">Hello World<a class="${secondClassName}">Test link</a></div></template>\n`
+        `<template><div class="${className}" pcsp>Hello World<a class="${secondClassName}" pcsp>Test link</a></div></template>\n`
         + `<script>const testStyled = \`${thirdClassName}\`</script>\n`
         + `<script setup>const testStyledSetup = \`${fourthClassName}\`</script>\n`
-        + `<style lang="postcss" transformed>${fifthCssFunction?.pointer}\n${sixthCssFunction?.pointer}\ndiv{background-color:red;}\n\ndiv{background-color:green;}\n</style>\n`
-        + `<style scoped pinceau-style-function="template0_styled0">.${className}{background-color:red;}</style>\n`
-        + `<style scoped pinceau-style-function="template0_styled1">.${secondClassName}{color:red;}</style>\n`
+        + `<style transformed>${fifthCssFunction?.pointer}\n${sixthCssFunction?.pointer}\ndiv{background-color:red;}\n\ndiv{background-color:green;}\n</style>\n`
+        + `<style scoped pinceau-style-function="template0_styled0">.${className}[pcsp]{background-color:red;}</style>\n`
+        + `<style scoped pinceau-style-function="template0_styled1">.${secondClassName}[pcsp]{color:red;}</style>\n`
         + `<style scoped pinceau-style-function="script0_styled0">.${thirdClassName}{background-color:red;}</style>\n`
         + `<style scoped pinceau-style-function="script1_styled0">.${fourthClassName}{background-color:red;}</style>`,
       )

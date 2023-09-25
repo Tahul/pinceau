@@ -1,91 +1,92 @@
-import type { DefaultThemeMap, PinceauMediaQueries, PinceauUtils } from '@pinceau/theme'
-import type { DataType as CSSDataType } from 'csstype'
-import type { NativeProperties, PseudosProperties } from './properties'
-import type { PropertyValue } from './resolvers'
+import type { PinceauMediaQueries, PinceauUtils } from '@pinceau/theme'
+import type { CSSProperties, PseudosProperties } from './properties'
 import type { ComputedStyleDefinition } from './computed-styles'
 import type { Variants } from './variants'
 
-export type MappedProperty<K extends string | number> = Exclude<
-  // Source
-  PropertyValue<K> | ComputedStyleDefinition<K | number> | (string & {}) | (number & {}),
-  // Filtered value types
-  CSSDataType.DeprecatedSystemColor
->
+export type PropertyType = (string & {}) | (number & {}) | undefined
 
-export type ResponsiveProp<T> = T | { [key in PinceauMediaQueries]?: T }
+export type ResponsiveProp<T extends string | number | undefined> = { [key in PinceauMediaQueries]?: T } | T
 
-export type RawCSS =
-  (
-    {
-      [K in keyof PseudosProperties]?: CSSProperties
-    }
-    &
-    {
-      [K in keyof PinceauUtils]?: Parameters<PinceauUtils[K]>[0] | ComputedStyleDefinition<Parameters<PinceauUtils[K]>[0]>
-    }
-    &
-    {
-      [K in keyof NativeProperties]?: MappedProperty<K>
-    }
-    &
-    {
-      [K in keyof DefaultThemeMap]?: MappedProperty<K>
-    }
-    &
-    {
-      [K in PinceauMediaQueries]?: { [key: string]: CSSProperties }
-    }
-  )
-  |
-  {
-    [key: string]: RawCSS
-  }
-
-export type CSSProperties<Source = {}> =
-  RawCSS
-  &
-  {
-    [K in keyof Source]?: K extends PinceauMediaQueries ? { [MQ in keyof Source[K]]: CSSProperties<Source[K][MQ]> } :
-      K extends keyof PseudosProperties ? CSSProperties<Source[K]> :
-        K extends keyof PinceauUtils ? Parameters<PinceauUtils[K]>[0] | ComputedStyleDefinition<Parameters<PinceauUtils[K]>[0]> :
-          K extends keyof NativeProperties ? MappedProperty<K> :
-            K extends keyof DefaultThemeMap ? MappedProperty<K> :
-              K extends string ? CSSProperties<Source[K]> :
-                CSSProperties<Source[K]>
-  }
-
-/**
- * This type proxifies the Source object and tries to provide context to both keys and values from generated built outputs.
- */
-export type CSS<
-  Source = {},
+export type StyledFunctionArg<
+  LocalTokens extends string = (string & {}),
   TemplateSource = {},
-> =
-  (
-    // Autocomplete from template source object
-    {
-      [K in keyof TemplateSource]?: TemplateSource[K]
-    }
-    |
-    // Autocomplete from theme and native properties
-    {
-      [K in keyof Source | PinceauMediaQueries | keyof PinceauUtils]?:
-      (
-        K extends PinceauMediaQueries ? (K extends keyof Source ? { [MQ in keyof Source[K]]: CSSProperties<Source[K][MQ]> } : never) :
-          K extends keyof PinceauUtils ? (Parameters<PinceauUtils[K]>[0] extends undefined ? string | number | boolean : Parameters<PinceauUtils[K]>[0] | ComputedStyleDefinition<Parameters<PinceauUtils[K]>[0]>) :
-            K extends 'variants' ? Variants<Source[K]> :
-              K extends keyof Source ? CSSProperties<Source[K]> | Source[K] : never
-      )
-    }
-  )
-  &
+  > =
+  RawCSS<LocalTokens, TemplateSource, true>
+
+export type CSSFunctionArg<
+  LocalTokens extends string = (string & {}),
+  TemplateSource = {},
+  > =
+  // Support for variants
   {
     variants?: Variants
   }
+  |
+  RawCSS<LocalTokens, TemplateSource, false>
 
-/** Local testing purposes; this ain't exposed nor used anywhere */
+export type RawCSS<
+  LocalTokens extends string = (string & {}),
+  TemplateSource = {},
+  HasRoot extends boolean = false,
+  > =
+  // Utils properties
+  {
+    [K in keyof PinceauUtils]?:
+    // `utils: { mx: (value: string) => ... }`, grab the type of `value` and inject it.
+    | Parameters<PinceauUtils[K]>[0]
+    // Same but as Computed Style
+    | ComputedStyleDefinition
+  }
+  |
+  // Autocomplete from template source
+  {
+    [K in keyof TemplateSource]?: RawCSS<LocalTokens, TemplateSource[K], true>
+  }
+  |
+  // $media queries
+  {
+    [K in PinceauMediaQueries]?: RawCSS<LocalTokens, TemplateSource, HasRoot>
+  }
+  |
+  // If the CSS has a root, display all possible properties.
+  (
+    HasRoot extends true ?
+    // CSS Properties
+        {
+          [K in keyof CSSProperties]?: CSSProperties<LocalTokens>[K] | ComputedStyleDefinition
+        }
+        |
+        // Pseudos properties
+        {
+          [K in keyof PseudosProperties]?: RawCSS<LocalTokens, TemplateSource>
+        }
+        |
+        // Local tokens overwriting
+        {
+          [K in LocalTokens]?: PropertyType | ComputedStyleDefinition
+        }
+        |
+        // Support for custom properties
+        (
+          {
+            [K in `$${string}`]?: PropertyType | ComputedStyleDefinition
+          }
+          &
+          {
+            [K in `--${string}`]?: PropertyType | ComputedStyleDefinition
+          }
+        )
+      :
+      never
+  )
+  |
+  // Make this recursive, set root to true past first level
+  {
+    [key: string]: RawCSS<LocalTokens, TemplateSource, true>
+  }
+
 interface TestTemplate { div: { button: {}; span: {}; '.test': {} }; '.class-test': { button: {}; span: { a: {} } } }
 /* eslint-disable-next-line unused-imports/no-unused-vars */
-function css<T extends {}>(declaration: CSS<T, TestTemplate>) { return declaration as Readonly<T> }
+function css(declaration: CSSFunctionArg<'$test.token', TestTemplate>) { return declaration as Readonly<typeof declaration> }
 /* eslint-disable-next-line unused-imports/no-unused-vars */
-function styled<T extends {}>(declaration: CSSProperties<T>) { return declaration as Readonly<T> }
+function styled(declaration: StyledFunctionArg<'$test.token', TestTemplate>) { return declaration as Readonly<typeof declaration> }

@@ -1,11 +1,11 @@
 import type { PinceauThemePaths } from '@pinceau/theme'
 import type {
-  CSS,
+  CSSFunctionArg,
   FilterStartingWith,
+  ResponsiveProp as PinceauResponsiveProp,
   PinceauStyleFunctionContext,
-  RawCSS,
+  StyledFunctionArg,
   ThemeTokens,
-  ResponsiveProp as _ResponsiveProp,
 } from './types'
 
 export * from './types'
@@ -19,8 +19,8 @@ declare module '@pinceau/core' {
 }
 
 declare global {
-  export function css<T>(declaration: CSS<T, {}>): string
-  export function styled(declaration: RawCSS): string
-  export type ResponsiveProp<T> = _ResponsiveProp<T>
-  export type TokenProp<T extends string & ThemeTokens<PinceauThemePaths | (string & {})>> = _ResponsiveProp<FilterStartingWith<PinceauThemePaths, T>>
+  export function css(declaration: CSSFunctionArg): string
+  export function styled(declaration: StyledFunctionArg): string
+  export type ResponsiveProp<T extends string | number | undefined> = PinceauResponsiveProp<T>
+  export type TokenProp<T extends ThemeTokens<PinceauThemePaths | (string & {})>> = PinceauResponsiveProp<FilterStartingWith<PinceauThemePaths, T>>
 }

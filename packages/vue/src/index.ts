@@ -1,20 +1,22 @@
 import type { PropType } from 'vue'
 import type {
-  CSSProperties as PinceauCSSProperties,
+  ResponsiveProp as PinceauResponsiveProp,
+  PropertyType,
+  StyledFunctionArg,
   ThemeTokens,
-  ResponsiveProp as _ResponsiveProp,
 } from '@pinceau/style'
 import type { PinceauThemePaths } from '@pinceau/theme'
 
-export * from './types'
-
 declare module '@vue/runtime-dom' {
   interface HTMLAttributes {
-    styled?: PinceauCSSProperties
+    styled?: StyledFunctionArg
   }
 }
 
 declare global {
-  export type ResponsivePropType<T> = PropType<_ResponsiveProp<T>>
-  export type TokenPropType<T extends string & ThemeTokens<PinceauThemePaths | (string & {})>> = PropType<TokenProp<T>>
+  export type ResponsivePropType<T = PropertyType> = PropType<PinceauResponsiveProp<T>>
+  export type StyledProp<T extends PropertyType = PropertyType> = PropType<StyledFunctionArg<T>>
+  export type TokenPropType<T extends PropertyType & ThemeTokens<PinceauThemePaths | (string & {})>> = PropType<TokenProp<T>>
 }
+
+export * from './types'

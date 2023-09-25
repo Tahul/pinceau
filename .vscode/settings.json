@@ -1,2 +1,28 @@
 {
+  "eslint.workingDirectories": [{ "mode": "auto"}],
+  "peacock.color": "#b8452f",
+  "references.preferredLocation": "peek",
+  "search.exclude": {
+    "**/.output": true,
+    "**/pnpm-lock.yaml": true,
+  },
+  "workbench.colorCustomizations": {
+    "activityBar.activeBackground": "#d15f49",
+    "activityBar.background": "#d15f49",
+    "activityBar.foreground": "#e7e7e7",
+    "activityBar.inactiveForeground": "#e7e7e799",
+    "activityBarBadge.background": "#66d879",
+    "activityBarBadge.foreground": "#15202b",
+    "commandCenter.border": "#e7e7e799",
+    "sash.hoverBorder": "#d15f49",
+    "statusBar.background": "#b8452f",
+    "statusBar.foreground": "#e7e7e7",
+    "statusBarItem.hoverBackground": "#d15f49",
+    "statusBarItem.remoteBackground": "#b8452f",
+    "statusBarItem.remoteForeground": "#e7e7e7",
+    "titleBar.activeBackground": "#b8452f",
+    "titleBar.activeForeground": "#e7e7e7",
+    "titleBar.inactiveBackground": "#b8452f99",
+    "titleBar.inactiveForeground": "#e7e7e799"
+  },
 }

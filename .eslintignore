@@ -5,3 +5,4 @@ README.md
 packages/palette/output/*
 tests/fixtures/**/*
 tests/tmp/**/*
+.vscode

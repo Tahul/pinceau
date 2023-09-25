@@ -1,10 +1,6 @@
-<script lang="ts">
-const testSecond = 'hello world?'
-</script>
-
 <script setup lang="ts">
-import { ref } from 'vue';
-import MyButton from '../../shared/MyButton.vue'
+import { ref } from 'vue'
+import MyButton from '@/shared/MyButton.vue'
 
 const props = defineProps<{
   backgroundColor?: string
@@ -15,21 +11,21 @@ const backgroundColor = $theme('color.blue.9')
 
 const visible = ref(true)
 
-const enter = (el, done) => {
+function enter(el, done) {
   setTimeout(
     () => {
       done()
     },
-    1000
+    1000,
   )
 }
 
-const leave = (el, done) => {
+function leave(el, done) {
   setTimeout(
     () => {
       done()
     },
-    1000
+    1000,
   )
 }
 
@@ -38,12 +34,14 @@ const toggle = () => (visible.value = !visible.value)
 
 <template>
   <div :style="{ backgroundColor }">
-    <MyButton v-if="visible" :size="{ $initial: 'xl', $md: 'sm' }" color="blue" />
+    <MyButton v-if="visible" color="green" />
 
-    <MyButton v-if="visible" size="sm" color="green" />
+    <MyButton v-if="visible" color="green" size="xl" />
 
     <div :styled="{ marginTop: '$space.8' }">
-      <button @click="toggle">Toggle</button>
+      <button @click="toggle">
+        Toggle
+      </button>
     </div>
   </div>
 </template>

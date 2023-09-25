@@ -1,107 +1,52 @@
 import type { TextDocument } from 'vscode-languageserver-textdocument'
 import { defu } from 'defu'
-import type { SFCStyleBlock } from '@vue/compiler-sfc'
-import { parse as parseSfc } from '@vue/compiler-sfc'
+import { parse as parseVueSFC } from '@vue/compiler-sfc'
 import { pathToVarName, referencesRegex } from '@pinceau/core/runtime'
 import type { DesignToken } from '@pinceau/theme'
 import type { ColorInformation, Position, Range } from 'vscode-languageserver'
-import type { DocumentTokensData } from '../index'
+import { helperRegex } from '@pinceau/theme/utils'
+import type { PinceauStyleFunctionContext } from '@pinceau/style'
+import { parsePinceauQuery } from '@pinceau/core/utils'
 import type { PinceauVSCodeSettings } from '../manager'
 import type PinceauTokensManager from '../manager'
 import { findAll } from '../utils/findAll'
 import { indexToPosition } from '../utils/indexToPosition'
 import { getCurrentLine } from '../utils/getCurrentLine'
-import { getHoveredToken, getHoveredTokenFunction } from '../utils/getHoveredToken'
+import { getHoveredThemeFunction, getHoveredToken } from '../utils/getHoveredToken'
 import { findStringRange } from '../utils/findStringRange'
 
 export function setupTokensHelpers(
   tokensManager: PinceauTokensManager,
 ) {
   /**
-   * Use the Pinceau transformers to get the style data out of a `css()` tag.
-   *
-   * This helps in resolving the local tokens of a `css()` function.
-   */
-  function getStyleData(uri: string, version: number, index: number, styleBlock: SFCStyleBlock) {
-    let transformData = {
-      version,
-      start: styleBlock.loc.start,
-      end: styleBlock.loc.end,
-      variants: {},
-      computedStyles: {},
-      localTokens: {},
-    }
-    try {
-      const transformCache = tokensManager.getTransformCache()
-      const cachedTransform = transformCache.get(`css${index}`, uri)
-      if (cachedTransform?.version === version) {
-        transformData = cachedTransform
-      }
-      else {
-        // transformCssFunction('---', styleBlock.content, transformData.variants, transformData.computedStyles, transformData.localTokens, { $theme: () => undefined, utils: {} })
-
-        // Tag localTokens with <style> source
-        transformData.localTokens = Object.entries(transformData.localTokens as any).reduce((acc, [key, value]: [string, any]) => ({
-          ...acc,
-          [key]: {
-            ...value,
-            source: {
-              start: styleBlock.loc.start,
-              end: styleBlock.loc.end,
-            },
-          },
-        }), {})
-        tokensManager.getTransformCache().set(uri, `css${index}`, transformData)
-      }
-    }
-    catch (e) {
-    // Mitigate
-    }
-
-    return transformData
-  }
-
-  /**
-   * Get the local component list of local tokens.
-   */
-  function getDocumentTokensData(
-    doc: TextDocument,
-  ): DocumentTokensData {
-    const parsedData = getParsedVueComponent(doc.uri, doc.version, doc.getText())
-    const mergedData = (parsedData?.styles || []).reduce(
-      (acc, styleTag, index) => defu(getStyleData(doc.uri, doc.version, index, styleTag), acc),
-      {},
-    )
-    return { ...parsedData, ...mergedData } as DocumentTokensData
-  }
-
-  /**
    * Returns a parsed Vue component data.
    */
-  function getParsedVueComponent(
-    uri: string,
-    version: number,
-    code: string,
-  ): { version: number; styles: SFCStyleBlock[] } {
+  function getStyleFunctions(
+    doc: TextDocument,
+  ): PinceauStyleFunctionContext[] {
+    const version = doc.version
+    const transformCache = tokensManager.getTransformCache()
+    const cachedTransform = transformCache.get('parsed', doc.uri)
+    const styleFns: PinceauStyleFunctionContext[] = []
+
     try {
-      const transformCache = tokensManager.getTransformCache()
-      const cachedTransform = transformCache.get('sfc', uri)
-      if (cachedTransform?.version === version) {
-        return cachedTransform
-      }
-      else {
-        const parsed = parseSfc(code)
-        const data = { version, styles: parsed?.descriptor?.styles.filter(styleTag => styleTag.lang === 'ts') || [] }
-        tokensManager.getTransformCache().set(uri, 'sfc', data)
-        return data
-      }
+      if (cachedTransform?.version === doc.version) { return cachedTransform }
+
+      const query = parsePinceauQuery(doc.uri)
+
+      const parsed = parseVueSFC(doc.getText())
+
+      console.log({ query, parsed })
+
+      const data = { version }
+
+      tokensManager.getTransformCache().set(doc.uri, 'parsed', data)
     }
     catch (e) {
-      return {
-        version,
-        styles: [],
-      }
+      console.log({ e })
     }
+
+    return styleFns
   }
 
   /**
@@ -109,26 +54,25 @@ export function setupTokensHelpers(
    */
   function getDocumentTokens(
     doc: TextDocument,
-    tokensData?: DocumentTokensData,
+    styleFns?: PinceauStyleFunctionContext[],
     settings?: PinceauVSCodeSettings,
     onToken?: (token: { match: RegExpMatchArray; tokenPath: string; range: Range; settings?: PinceauVSCodeSettings; token?: DesignToken; localToken?: any }) => void,
   ) {
     const colors: ColorInformation[] = []
 
     const text = doc.getText()
-    const dtRegex = /\$dt\(['|`|"]([a-zA-Z0-9.]+)['|`|"](?:,\s*(['|`|"]([a-zA-Z0-9.]+)['|`|"]))?\)?/g
-    const dtMatches = findAll(dtRegex, text)
+    const dtMatches = findAll(helperRegex('$theme'), text)
     const tokenMatches = findAll(referencesRegex, text)
 
     const globalStart: Position = { line: 0, character: 0 }
 
     for (const match of [...dtMatches, ...tokenMatches]) {
       const tokenPath = match[1]
-      const varName = pathToVarName(tokenPath)
+      // const varName = pathToVarName(tokenPath)
       const start = indexToPosition(text, match?.index || 0)
       const end = indexToPosition(text, (match?.index || 0) + tokenPath.length)
 
-      const localToken = tokensData?.localTokens?.[varName]
+      // const localToken = tokensData?.localTokens?.[varName]
 
       const token = tokensManager.getAll().get(tokenPath)
 
@@ -147,7 +91,7 @@ export function setupTokensHelpers(
         match,
         tokenPath,
         token,
-        localToken,
+        // localToken,
         range,
         settings,
       })
@@ -164,7 +108,6 @@ export function setupTokensHelpers(
   function getClosestToken(
     doc: TextDocument,
     position: Position,
-    tokensData?: DocumentTokensData,
   ) {
     const toRet: {
       delimiter: string
@@ -175,7 +118,7 @@ export function setupTokensHelpers(
       localToken?: any
       lineRange?: { start: number; end: number }
     } = {
-      delimiter: '{',
+      delimiter: '$',
       currentToken: undefined,
       currentLine: undefined,
       closestToken: undefined,
@@ -187,20 +130,20 @@ export function setupTokensHelpers(
     toRet.currentLine = getCurrentLine(doc, position)
     if (!toRet.currentLine) { return }
 
-    // Try to grab `{}` syntax
+    // Try to grab `$token.path` syntax
     toRet.currentToken = getHoveredToken(doc, position)
 
-    // Try to grab `$dt()` syntax
+    // Try to grab `$theme('token.path')` syntax
     if (!toRet.currentToken) {
-      toRet.currentToken = getHoveredTokenFunction(doc, position)
-      if (toRet.currentToken) { toRet.delimiter = '$dt(' }
+      toRet.currentToken = getHoveredThemeFunction(doc, position)
+      if (toRet.currentToken) { toRet.delimiter = '$theme(' }
     }
 
     // No syntax found
     if (!toRet.currentToken) { return toRet }
 
     // Get from local component tokens
-    toRet.localToken = tokensData?.localTokens?.[pathToVarName(toRet.currentToken.token)]
+    // toRet.localToken = tokensData?.localTokens?.[pathToVarName(toRet.currentToken.token)]
 
     toRet.token = tokensManager.getAll().get(toRet.currentToken.token)
 
@@ -222,9 +165,7 @@ export function setupTokensHelpers(
 
   return {
     getClosestToken,
-    getDocumentTokensData,
-    getParsedVueComponent,
+    getStyleFunctions,
     getDocumentTokens,
-    getStyleData,
   }
 }

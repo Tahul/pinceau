@@ -2,7 +2,7 @@
   <div>Hello Runtime</div>
 </template>
 
-<style scoped lang="postcss">
+<style scoped>
 div {
   background-color: $theme('color.violet.9');
 }

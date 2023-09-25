@@ -16,8 +16,7 @@
     "theme.config.ts"
   ],
   "scripts": {
-    "build": "vite build && rm -rf dist",
-    "stub": "vite build && rm -rf dist"
+    "build:post": "vite build && rm -rf dist"
   },
   "peerDependencies": {
     "pinceau": "workspace:*"

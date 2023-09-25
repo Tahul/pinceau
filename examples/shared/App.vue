@@ -38,8 +38,8 @@ css({
 <style scoped lang="ts">
 css({
   main: {
-    color: '$color.blue.1',
-    backgroundColor: '$color.blue.9',
+    color: '$color.gray.1',
+    backgroundColor: '$color.gray.9',
     minHeight: '100vh',
     minWidth: '100vw',
     padding: '$space.16'

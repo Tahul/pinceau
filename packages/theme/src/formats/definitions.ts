@@ -10,6 +10,6 @@ export const definitionsFormat: PinceauThemeFormat = {
   formatter({ loadedTheme }) {
     const { definitions } = loadedTheme
 
-    return `export const definitions = ${JSON.stringify(definitions || {}, null, 2)}`
+    return `export const definitions = ${JSON.stringify(definitions || {}, null, 2)}\n\nexport default definitions`
   },
 }

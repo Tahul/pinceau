@@ -2,11 +2,31 @@ import type { Position, TextDocument } from 'vscode-languageserver-textdocument'
 import { helperRegex } from '@pinceau/theme/utils'
 import { getCurrentLine } from './getCurrentLine'
 
+function findClosestChar(
+  source: string,
+  char: string | string[],
+  position: number,
+): number | -1 {
+  let before = position - 1
+  let after = position
+  while (before >= 0 || after < source.length) {
+    if (Array.isArray(char) ? char.includes(source[before]) : (source[before] === char)) {
+      return before
+    }
+    if (Array.isArray(char) ? char.includes(source[after]) : (source[after] === char)) {
+      return after
+    }
+    before--
+    after++
+  }
+  return -1
+}
+
 export function getHoveredToken(doc: TextDocument, position: Position): { token: string; range: { start: number; end: number } } | undefined {
   const line = getCurrentLine(doc, position)
   if (!line) { return }
-  const startIndex = line.text.lastIndexOf('{', position.character)
-  const endIndex = line.text.indexOf('}', position.character)
+  const startIndex = findClosestChar(line.text, '$', position.character)
+  const endIndex = findClosestChar(line.text, [' ', '\'', '\`', '\"', ','], position.character)
   if (startIndex === -1 || endIndex === -1 || startIndex > endIndex) { return }
   return {
     token: line.text.substring(startIndex + 1, endIndex),
@@ -17,14 +37,14 @@ export function getHoveredToken(doc: TextDocument, position: Position): { token:
   }
 }
 
-export function getHoveredTokenFunction(doc: TextDocument, position: Position): { token: string; range: { start: number; end: number } } | undefined {
+export function getHoveredThemeFunction(doc: TextDocument, position: Position): { token: string; range: { start: number; end: number } } | undefined {
   const line = getCurrentLine(doc, position)
   if (!line) { return }
-  const startIndex = line.text.lastIndexOf('$dt(', position.character)
+  const startIndex = line.text.lastIndexOf('$theme(', position.character)
   let endIndex = line.text.indexOf(')', position.character)
   if (startIndex === -1 || endIndex === -1 || startIndex > endIndex) { return }
   endIndex = endIndex + 1
-  const matches = helperRegex('$dt').exec(line.text.substring(startIndex, endIndex))
+  const matches = helperRegex('$theme').exec(line.text.substring(startIndex, endIndex))
   return {
     token: matches?.[1] as string,
     range: {

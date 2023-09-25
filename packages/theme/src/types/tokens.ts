@@ -17,13 +17,13 @@ export interface DesignToken<T extends RawTokenType | ResponsiveToken = RawToken
    */
   value: T
   /**
-   * The schema definition for the schema output format.
-   */
-  $schema?: Schema
-  /**
    * CSS Variable reference that gets generated out of the token path.
    */
   variable?: string
+  /**
+   * The schema definition for the schema output format.
+   */
+  $schema?: Schema
   /**
    * The file path to the source of this token.
    */

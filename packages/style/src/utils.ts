@@ -1,1 +1,5 @@
 export * from './utils/style-function-context'
+export * from './utils/style-prop-context'
+export * from './utils/create-class'
+export * from './utils/html-elements'
+export * from './utils/resolve-arg'

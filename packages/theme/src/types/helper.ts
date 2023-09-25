@@ -1,3 +1,4 @@
+import type { UnwrapKey } from '@pinceau/style'
 import type { PinceauThemePaths } from './theme'
 import type { DesignToken, DesignTokens } from './tokens'
 
@@ -5,5 +6,5 @@ import type { DesignToken, DesignTokens } from './tokens'
  * $theme function
  */
 export type ThemeFunction = (
-  token?: PinceauThemePaths | (string & {})
+  token?: UnwrapKey<PinceauThemePaths, '$'> | (string & {})
 ) => DesignTokens | DesignToken | undefined

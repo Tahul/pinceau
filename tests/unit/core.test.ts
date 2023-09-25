@@ -19,7 +19,6 @@ import {
   normalizeOptions,
   parseAst,
   parsePinceauQuery,
-  registerPostCSSPlugins,
   transform,
   transformInclude,
   usePinceauContext,
@@ -30,7 +29,7 @@ import { Pinceau } from 'pinceau/plugin'
 import { createThemeHelper, get, referencesRegex, set, tokensPaths } from '@pinceau/core/runtime'
 import type { PinceauContext, PinceauQuery, PinceauTransformContext, PinceauTransforms, PinceauVirtualContext } from '@pinceau/core'
 import { PinceauVueTransformer } from '@pinceau/vue/utils'
-import type { CSSFunctionArg } from '@pinceau/style'
+import type { CSSFunctionArgAST } from '@pinceau/style'
 import { resolveFixtures, resolveTmp } from '../utils'
 
 const defaults = getDefaultOptions()
@@ -159,7 +158,7 @@ describe('@pinceau/core', () => {
       context.addTransformed(componentPath, query)
       const code = load(componentPath, context)
       // Target fixture do have `<style lang="css">`; PinceauVueTransformer should turn this into a PostCSS block
-      expect(code).toContain('<style lang="postcss" pctransformed>')
+      expect(code).toContain('<style pctransformed>')
     })
     it('registers a new module query filter', () => {
       const filterFn = () => true
@@ -332,7 +331,7 @@ describe('@pinceau/core', () => {
     it('should eval css declaration', () => {
       const css = parseAst('css({ div: { color: \'red\', backgroundColor: \'blue\', \'&:hover\': { color: \'green\' } } })')
       const callees = findCallees(css, 'css')
-      const ast = callees[0].value.arguments[0] as CSSFunctionArg
+      const ast = callees[0].value.arguments[0] as CSSFunctionArgAST
       const declaration = evalDeclaration(ast)
       expect(declaration).toStrictEqual({ div: { 'color': 'red', 'backgroundColor': 'blue', '&:hover': { color: 'green' } } })
     })
@@ -457,22 +456,6 @@ describe('@pinceau/core', () => {
         property => expect(normalized[property]).toBe(false),
       )
       expect(normalized.runtime).toEqual(defaults.runtime)
-    })
-  })
-
-  describe('utils/postcss.ts', () => {
-    it('properly registers the PostCSS plugins in a Vite config', () => {
-      const options = normalizeOptions()
-      // Existing Vite config with supposed PostCSS plugin
-      const viteConfig: any = {
-        css: {
-          postcss: {
-            plugins: [() => {}],
-          },
-        },
-      }
-      registerPostCSSPlugins(viteConfig, options)
-      expect(viteConfig.css.postcss.plugins).toHaveLength(3)
     })
   })
 

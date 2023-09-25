@@ -1,12 +1,11 @@
-import { camelCase, kebabCase } from 'scule'
 import type { PathMatch, PinceauContext, PinceauTransformContext, PinceauTransformFunction } from '@pinceau/core'
-import { astTypes, evalDeclaration, printAst, visitAst } from '@pinceau/core/utils'
+import { evalDeclaration } from '@pinceau/core/utils'
 import { createSourceLocationFromOffsets } from 'sfc-composer'
 import { resolveCssProperty, stringify } from '@pinceau/stringify'
-import { toHash } from '@pinceau/core/runtime'
 import type { PinceauStyleFunctionContext } from '../types/style-functions'
 import type { CSSFunctionSource } from '../types/ast'
 import { createUniqueClass } from './create-class'
+import { resolveStyleArg } from './resolve-arg'
 
 /**
  * Resolve transform context runtime features from `css()` function.
@@ -38,53 +37,11 @@ export const resolveStyleFunctionContext: PinceauTransformFunction<PinceauStyleF
   const loc = createSourceLocationFromOffsets(transformContext.target.toString(), callee.value.start, callee.value.end)
 
   // Search for function properties in css() AST
-  visitAst(
+  resolveStyleArg(
+    transformContext,
     arg,
-    {
-      visitObjectProperty(path) {
-        if (path.value) {
-          // Resolve path key & type
-          const key = path?.value?.key?.name || path?.value?.key?.value
-          const valueType = path?.value?.value?.type
-
-          // Store local tokens
-          if (key.startsWith('--')) { localTokens[key] = path.value.value }
-
-          // Store computed styles in state
-          if (valueType === 'ArrowFunctionExpression' || valueType === 'FunctionExpression') {
-            // Create a unique id from the ComputedStyle LOC.
-            const hash = toHash({
-              start: path.value.loc.start,
-              end: path.value.loc.end,
-              filename: transformContext.query.filename,
-            })
-
-            // Create computed styles identifiers
-            const computedStyleKey = camelCase((key).replace(/--/g, '__'))
-            const id = `pcs_${hash}_${computedStyleKey}`
-            const variable = `--${kebabCase(id)}`
-
-            // Push property function to computedStyles
-            computedStyles.push({
-              id,
-              variable,
-              ast: path.value.value.body,
-              compiled: printAst(path.value.value).code,
-            })
-
-            // Overwrite function in declaration by the CSS variable.
-            path.replace(
-              astTypes.builders.objectProperty(
-                path.value.key,
-                astTypes.builders.stringLiteral(`var(${variable})`),
-              ),
-            )
-          }
-        }
-
-        return this.traverse(path)
-      },
-    },
+    localTokens,
+    computedStyles,
   )
 
   // Handle variants and remove them from declaration

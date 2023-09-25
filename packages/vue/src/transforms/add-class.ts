@@ -51,6 +51,7 @@ export const transformAddPinceauClass: PinceauTransformFunction = (
               attrAst.elements.unshift(newAttrAst)
               break
             case 'StringLiteral':
+            case 'Identifier':
             case 'Literal':
             case 'ObjectExpression':
               attrAst = astTypes.builders.arrayExpression([

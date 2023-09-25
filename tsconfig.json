@@ -1,23 +1,11 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
     "target": "es2018",
-    "module": "esnext",
     "lib": ["esnext", "dom"],
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "strict": true,
-    "strictNullChecks": true,
-    "resolveJsonModule": true,
-    "skipDefaultLibCheck": true,
-    "noImplicitAny": false,
-    "skipLibCheck": true,
     "jsx": "preserve",
-    "types": [
-      "node",
-      "vite/client",
-      "vitest/importMeta"
-    ],
+    "module": "esnext",
+    "moduleResolution": "node",
+    "baseUrl": ".",
     "paths": {
       // Packages
       "pinceau": ["./packages/pinceau/src/index.ts"],
@@ -55,10 +43,21 @@
       "$pinceau/vue-plugin": ["./packages/palette/output/vue-plugin.js"],
       "$pinceau": ["./packages/palette/output/runtime.js"],
       "pinceau.css": ["./packages/palette/output/pinceau.css"]
-    }
+    },
+    "types": [
+      "node",
+      "vite/client",
+      "vitest/importMeta"
+    ],
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "noImplicitAny": false,
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true
   },
   "exclude": [
-    "**/dist/**",
     "**/node_modules/**",
     "**/output/**"
   ],

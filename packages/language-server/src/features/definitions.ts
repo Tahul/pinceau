@@ -4,7 +4,7 @@ import type { PinceauExtension } from '..'
 export function regsiterDefinitions(
   context: PinceauExtension,
 ) {
-  const { connection, documents, getDocumentTokensData, getClosestToken, documentReady } = context
+  const { connection, documents, getClosestToken, documentReady } = context
 
   connection.onDefinition(async (params) => {
     await documentReady('🔗 onDefinition')
@@ -12,9 +12,7 @@ export function regsiterDefinitions(
     const doc = documents.get(params.textDocument.uri)
     if (!doc) { return null }
 
-    const tokensData = getDocumentTokensData(doc)
-
-    const closestToken = getClosestToken(doc, params.position, tokensData)
+    const closestToken = getClosestToken(doc, params.position)
 
     if (!closestToken) { return }
 

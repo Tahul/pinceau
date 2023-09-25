@@ -5,7 +5,7 @@ import { stringifiedValue } from '../utils/tokens'
 export function registerHover(
   context: PinceauExtension,
 ) {
-  const { connection, documentReady, documents, getDocumentTokensData, getClosestToken } = context
+  const { connection, documentReady, documents, getClosestToken } = context
 
   connection.onHover(async (params) => {
     await documentReady('📘 onHover')
@@ -13,9 +13,7 @@ export function registerHover(
     const doc = documents.get(params.textDocument.uri)
     if (!doc) { return }
 
-    const tokensData = getDocumentTokensData(doc)
-
-    const closestToken = getClosestToken(doc, params.position, tokensData)
+    const closestToken = getClosestToken(doc, params.position)
 
     if (!closestToken) { return }
 

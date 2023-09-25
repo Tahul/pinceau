@@ -28,8 +28,13 @@ export function createThemeHelper(
 /**
  * Resolve a variable from a path.
  */
-export function pathToVarName(path: string | string[]) {
-  if (Array.isArray(path)) { path = path.join('-') }
-  if (path.charAt(0) === '{' && path.charAt(path.length - 1) === '}') { path = path.substring(1, path.length - 1) }
-  return `--${path.split('.').join('-')}`
+export function pathToVarName(
+  path: string | string[],
+  prefix: string = '--',
+  splitPoint: string = '.',
+  separator: string = '-',
+) {
+  if (Array.isArray(path)) { path = path.join(separator) }
+  if (path.charAt(0) === '$') { path = path.substring(1) }
+  return `${prefix}${path.split(splitPoint).join(separator)}`
 }

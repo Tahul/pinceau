@@ -2,7 +2,7 @@
   <div>Hello Core</div>
 </template>
 
-<style scoped lang="postcss">
+<style scoped>
 div {
   background-color: $theme('color.yellow.9');
 }

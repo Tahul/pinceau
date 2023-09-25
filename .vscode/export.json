@@ -1,0 +1,743 @@
+{
+  "Pinceau Colors": {
+    "name": "Pinceau Colors",
+    "Pink": {
+      "0": {
+        "name": "Pink/0",
+        "description": "",
+        "value": "#fdf4fc",
+        "type": "color"
+      },
+      "1": {
+        "name": "Pink/1",
+        "description": "",
+        "value": "#fae8f9",
+        "type": "color"
+      },
+      "2": {
+        "name": "Pink/2",
+        "description": "",
+        "value": "#f3c7f1",
+        "type": "color"
+      },
+      "3": {
+        "name": "Pink/3",
+        "description": "",
+        "value": "#eca7e9",
+        "type": "color"
+      },
+      "4": {
+        "name": "Pink/4",
+        "description": "",
+        "value": "#e171db",
+        "type": "color"
+      },
+      "5": {
+        "name": "Pink/5",
+        "description": "",
+        "value": "#da52d4",
+        "type": "color"
+      },
+      "6": {
+        "name": "Pink/6",
+        "description": "",
+        "value": "#c325bb",
+        "type": "color"
+      },
+      "7": {
+        "name": "Pink/7",
+        "description": "",
+        "value": "#a5209f",
+        "type": "color"
+      },
+      "8": {
+        "name": "Pink/8",
+        "description": "",
+        "value": "#851980",
+        "type": "color"
+      },
+      "9": {
+        "name": "Pink/9",
+        "description": "",
+        "value": "#63135f",
+        "type": "color"
+      }
+    },
+    "Purple": {
+      "0": {
+        "name": "Purple/0",
+        "description": "",
+        "value": "#f8f5fd",
+        "type": "color"
+      },
+      "1": {
+        "name": "Purple/1",
+        "description": "",
+        "value": "#f2ebfc",
+        "type": "color"
+      },
+      "2": {
+        "name": "Purple/2",
+        "description": "",
+        "value": "#decef7",
+        "type": "color"
+      },
+      "3": {
+        "name": "Purple/3",
+        "description": "",
+        "value": "#ccb3f2",
+        "type": "color"
+      },
+      "4": {
+        "name": "Purple/4",
+        "description": "",
+        "value": "#b088eb",
+        "type": "color"
+      },
+      "5": {
+        "name": "Purple/5",
+        "description": "",
+        "value": "#a273e8",
+        "type": "color"
+      },
+      "6": {
+        "name": "Purple/6",
+        "description": "",
+        "value": "#8a4fe2",
+        "type": "color"
+      },
+      "7": {
+        "name": "Purple/7",
+        "description": "",
+        "value": "#7733dd",
+        "type": "color"
+      },
+      "8": {
+        "name": "Purple/8",
+        "description": "",
+        "value": "#5f1cc4",
+        "type": "color"
+      },
+      "9": {
+        "name": "Purple/9",
+        "description": "",
+        "value": "#471592",
+        "type": "color"
+      }
+    },
+    "Blue": {
+      "0": {
+        "name": "Blue/0",
+        "description": "",
+        "value": "#f3f7fb",
+        "type": "color"
+      },
+      "1": {
+        "name": "Blue/1",
+        "description": "",
+        "value": "#e8eef7",
+        "type": "color"
+      },
+      "2": {
+        "name": "Blue/2",
+        "description": "",
+        "value": "#c6d6eb",
+        "type": "color"
+      },
+      "3": {
+        "name": "Blue/3",
+        "description": "",
+        "value": "#a7c0e1",
+        "type": "color"
+      },
+      "4": {
+        "name": "Blue/4",
+        "description": "",
+        "value": "#779ed0",
+        "type": "color"
+      },
+      "5": {
+        "name": "Blue/5",
+        "description": "",
+        "value": "#608dc8",
+        "type": "color"
+      },
+      "6": {
+        "name": "Blue/6",
+        "description": "",
+        "value": "#3a72bb",
+        "type": "color"
+      },
+      "7": {
+        "name": "Blue/7",
+        "description": "",
+        "value": "#1e5eb1",
+        "type": "color"
+      },
+      "8": {
+        "name": "Blue/8",
+        "description": "",
+        "value": "#0c4a9a",
+        "type": "color"
+      },
+      "9": {
+        "name": "Blue/9",
+        "description": "",
+        "value": "#093772",
+        "type": "color"
+      }
+    },
+    "Lightblue": {
+      "0": {
+        "name": "Lightblue/0",
+        "description": "",
+        "value": "#e7fafb",
+        "type": "color"
+      },
+      "1": {
+        "name": "Lightblue/1",
+        "description": "",
+        "value": "#cef5f7",
+        "type": "color"
+      },
+      "2": {
+        "name": "Lightblue/2",
+        "description": "",
+        "value": "#7ee5ea",
+        "type": "color"
+      },
+      "3": {
+        "name": "Lightblue/3",
+        "description": "",
+        "value": "#24d2db",
+        "type": "color"
+      },
+      "4": {
+        "name": "Lightblue/4",
+        "description": "",
+        "value": "#19acb3",
+        "type": "color"
+      },
+      "5": {
+        "name": "Lightblue/5",
+        "description": "",
+        "value": "#179aa0",
+        "type": "color"
+      },
+      "6": {
+        "name": "Lightblue/6",
+        "description": "",
+        "value": "#137d83",
+        "type": "color"
+      },
+      "7": {
+        "name": "Lightblue/7",
+        "description": "",
+        "value": "#106a6e",
+        "type": "color"
+      },
+      "8": {
+        "name": "Lightblue/8",
+        "description": "",
+        "value": "#0d5558",
+        "type": "color"
+      },
+      "9": {
+        "name": "Lightblue/9",
+        "description": "",
+        "value": "#093f41",
+        "type": "color"
+      }
+    },
+    "Seagreen": {
+      "0": {
+        "name": "Seagreen/0",
+        "description": "",
+        "value": "#e8faf4",
+        "type": "color"
+      },
+      "1": {
+        "name": "Seagreen/1",
+        "description": "",
+        "value": "#d1f6ea",
+        "type": "color"
+      },
+      "2": {
+        "name": "Seagreen/2",
+        "description": "",
+        "value": "#83e7c9",
+        "type": "color"
+      },
+      "3": {
+        "name": "Seagreen/3",
+        "description": "",
+        "value": "#15d7a6",
+        "type": "color"
+      },
+      "4": {
+        "name": "Seagreen/4",
+        "description": "",
+        "value": "#00b184",
+        "type": "color"
+      },
+      "5": {
+        "name": "Seagreen/5",
+        "description": "",
+        "value": "#009f78",
+        "type": "color"
+      },
+      "6": {
+        "name": "Seagreen/6",
+        "description": "",
+        "value": "#008263",
+        "type": "color"
+      },
+      "7": {
+        "name": "Seagreen/7",
+        "description": "",
+        "value": "#006e55",
+        "type": "color"
+      },
+      "8": {
+        "name": "Seagreen/8",
+        "description": "",
+        "value": "#005846",
+        "type": "color"
+      },
+      "9": {
+        "name": "Seagreen/9",
+        "description": "",
+        "value": "#004134",
+        "type": "color"
+      }
+    },
+    "Green": {
+      "0": {
+        "name": "Green/0",
+        "description": "",
+        "value": "#ebfaf1",
+        "type": "color"
+      },
+      "1": {
+        "name": "Green/1",
+        "description": "",
+        "value": "#d5f5e2",
+        "type": "color"
+      },
+      "2": {
+        "name": "Green/2",
+        "description": "",
+        "value": "#94e6b4",
+        "type": "color"
+      },
+      "3": {
+        "name": "Green/3",
+        "description": "",
+        "value": "#51d685",
+        "type": "color"
+      },
+      "4": {
+        "name": "Green/4",
+        "description": "",
+        "value": "#13b351",
+        "type": "color"
+      },
+      "5": {
+        "name": "Green/5",
+        "description": "",
+        "value": "#11a049",
+        "type": "color"
+      },
+      "6": {
+        "name": "Green/6",
+        "description": "",
+        "value": "#0e823b",
+        "type": "color"
+      },
+      "7": {
+        "name": "Green/7",
+        "description": "",
+        "value": "#0c6e32",
+        "type": "color"
+      },
+      "8": {
+        "name": "Green/8",
+        "description": "",
+        "value": "#095828",
+        "type": "color"
+      },
+      "9": {
+        "name": "Green/9",
+        "description": "",
+        "value": "#07411e",
+        "type": "color"
+      }
+    },
+    "Gray": {
+      "0": {
+        "name": "Gray/0",
+        "description": "",
+        "value": "#f6f6f7",
+        "type": "color"
+      },
+      "1": {
+        "name": "Gray/1",
+        "description": "",
+        "value": "#eeeeee",
+        "type": "color"
+      },
+      "2": {
+        "name": "Gray/2",
+        "description": "",
+        "value": "#d4d4d6",
+        "type": "color"
+      },
+      "3": {
+        "name": "Gray/3",
+        "description": "",
+        "value": "#bebec0",
+        "type": "color"
+      },
+      "4": {
+        "name": "Gray/4",
+        "description": "",
+        "value": "#9b9b9e",
+        "type": "color"
+      },
+      "5": {
+        "name": "Gray/5",
+        "description": "",
+        "value": "#8b8b8f",
+        "type": "color"
+      },
+      "6": {
+        "name": "Gray/6",
+        "description": "",
+        "value": "#717175",
+        "type": "color"
+      },
+      "7": {
+        "name": "Gray/7",
+        "description": "",
+        "value": "#5f5f63",
+        "type": "color"
+      },
+      "8": {
+        "name": "Gray/8",
+        "description": "",
+        "value": "#4c4c4f",
+        "type": "color"
+      },
+      "9": {
+        "name": "Gray/9",
+        "description": "",
+        "value": "#38383a",
+        "type": "color"
+      }
+    },
+    "Lime": {
+      "0": {
+        "name": "Lime/0",
+        "description": "",
+        "value": "#f3f9e6",
+        "type": "color"
+      },
+      "1": {
+        "name": "Lime/1",
+        "description": "",
+        "value": "#e7f2cd",
+        "type": "color"
+      },
+      "2": {
+        "name": "Lime/2",
+        "description": "",
+        "value": "#c4df81",
+        "type": "color"
+      },
+      "3": {
+        "name": "Lime/3",
+        "description": "",
+        "value": "#a1cd39",
+        "type": "color"
+      },
+      "4": {
+        "name": "Lime/4",
+        "description": "",
+        "value": "#80a81f",
+        "type": "color"
+      },
+      "5": {
+        "name": "Lime/5",
+        "description": "",
+        "value": "#73971c",
+        "type": "color"
+      },
+      "6": {
+        "name": "Lime/6",
+        "description": "",
+        "value": "#5d7b17",
+        "type": "color"
+      },
+      "7": {
+        "name": "Lime/7",
+        "description": "",
+        "value": "#4f6713",
+        "type": "color"
+      },
+      "8": {
+        "name": "Lime/8",
+        "description": "",
+        "value": "#3f530f",
+        "type": "color"
+      },
+      "9": {
+        "name": "Lime/9",
+        "description": "",
+        "value": "#2e3d0b",
+        "type": "color"
+      }
+    },
+    "Yellow": {
+      "0": {
+        "name": "Yellow/0",
+        "description": "",
+        "value": "#fdf6e2",
+        "type": "color"
+      },
+      "1": {
+        "name": "Yellow/1",
+        "description": "",
+        "value": "#fbedc4",
+        "type": "color"
+      },
+      "2": {
+        "name": "Yellow/2",
+        "description": "",
+        "value": "#f6d168",
+        "type": "color"
+      },
+      "3": {
+        "name": "Yellow/3",
+        "description": "",
+        "value": "#e8b833",
+        "type": "color"
+      },
+      "4": {
+        "name": "Yellow/4",
+        "description": "",
+        "value": "#be952a",
+        "type": "color"
+      },
+      "5": {
+        "name": "Yellow/5",
+        "description": "",
+        "value": "#ab8525",
+        "type": "color"
+      },
+      "6": {
+        "name": "Yellow/6",
+        "description": "",
+        "value": "#8c6c1f",
+        "type": "color"
+      },
+      "7": {
+        "name": "Yellow/7",
+        "description": "",
+        "value": "#775b1a",
+        "type": "color"
+      },
+      "8": {
+        "name": "Yellow/8",
+        "description": "",
+        "value": "#604915",
+        "type": "color"
+      },
+      "9": {
+        "name": "Yellow/9",
+        "description": "",
+        "value": "#47350f",
+        "type": "color"
+      }
+    },
+    "Orange": {
+      "0": {
+        "name": "Orange/0",
+        "description": "",
+        "value": "#fef5e8",
+        "type": "color"
+      },
+      "1": {
+        "name": "Orange/1",
+        "description": "",
+        "value": "#feebd0",
+        "type": "color"
+      },
+      "2": {
+        "name": "Orange/2",
+        "description": "",
+        "value": "#fdcd8a",
+        "type": "color"
+      },
+      "3": {
+        "name": "Orange/3",
+        "description": "",
+        "value": "#fcae46",
+        "type": "color"
+      },
+      "4": {
+        "name": "Orange/4",
+        "description": "",
+        "value": "#d78a28",
+        "type": "color"
+      },
+      "5": {
+        "name": "Orange/5",
+        "description": "",
+        "value": "#c27b25",
+        "type": "color"
+      },
+      "7": {
+        "name": "Orange/7",
+        "description": "",
+        "value": "#86541a",
+        "type": "color"
+      },
+      "8": {
+        "name": "Orange/8",
+        "description": "",
+        "value": "#6c4315",
+        "type": "color"
+      },
+      "9": {
+        "name": "Orange/9",
+        "description": "",
+        "value": "#503110",
+        "type": "color"
+      }
+    },
+    "Red": {
+      "0": {
+        "name": "Red/0",
+        "description": "",
+        "value": "#fff4f3",
+        "type": "color"
+      },
+      "1": {
+        "name": "Red/1",
+        "description": "",
+        "value": "#ffe9e7",
+        "type": "color"
+      },
+      "2": {
+        "name": "Red/2",
+        "description": "",
+        "value": "#fec8c2",
+        "type": "color"
+      },
+      "3": {
+        "name": "Red/3",
+        "description": "",
+        "value": "#fda99e",
+        "type": "color"
+      },
+      "4": {
+        "name": "Red/4",
+        "description": "",
+        "value": "#fb705c",
+        "type": "color"
+      },
+      "5": {
+        "name": "Red/5",
+        "description": "",
+        "value": "#ef583f",
+        "type": "color"
+      },
+      "6": {
+        "name": "Red/6",
+        "description": "",
+        "value": "#c34833",
+        "type": "color"
+      },
+      "7": {
+        "name": "Red/7",
+        "description": "",
+        "value": "#a43d2a",
+        "type": "color"
+      },
+      "8": {
+        "name": "Red/8",
+        "description": "",
+        "value": "#843221",
+        "type": "color"
+      },
+      "9": {
+        "name": "Red/9",
+        "description": "",
+        "value": "#622518",
+        "type": "color"
+      }
+    },
+    "Magenta": {
+      "0": {
+        "name": "Magenta/0",
+        "description": "",
+        "value": "#fdf4f8",
+        "type": "color"
+      },
+      "1": {
+        "name": "Magenta/1",
+        "description": "",
+        "value": "#fce9f1",
+        "type": "color"
+      },
+      "2": {
+        "name": "Magenta/2",
+        "description": "",
+        "value": "#f7c8dc",
+        "type": "color"
+      },
+      "3": {
+        "name": "Magenta/3",
+        "description": "",
+        "value": "#f2a9c9",
+        "type": "color"
+      },
+      "4": {
+        "name": "Magenta/4",
+        "description": "",
+        "value": "#ea74a8",
+        "type": "color"
+      },
+      "5": {
+        "name": "Magenta/5",
+        "description": "",
+        "value": "#e65695",
+        "type": "color"
+      },
+      "6": {
+        "name": "Magenta/6",
+        "description": "",
+        "value": "#d42471",
+        "type": "color"
+      },
+      "7": {
+        "name": "Magenta/7",
+        "description": "",
+        "value": "#b41f60",
+        "type": "color"
+      },
+      "8": {
+        "name": "Magenta/8",
+        "description": "",
+        "value": "#91194d",
+        "type": "color"
+      },
+      "9": {
+        "name": "Magenta/9",
+        "description": "",
+        "value": "#6c123a",
+        "type": "color"
+      }
+    }
+  }
+}

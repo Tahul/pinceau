@@ -19,7 +19,8 @@
     "@typescript-eslint/ban-types": "off",
     "vue/one-component-per-file": "off",
     "jsdoc/require-param": "off",
-    "jsdoc/require-returns": "off"
+    "jsdoc/require-returns": "off",
+    "@typescript-eslint/no-namespace": "off"
   },
   "overrides": [
     {

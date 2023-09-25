@@ -1,17 +1,24 @@
 import { pathToVarName, referencesRegex } from '@pinceau/core/runtime'
-import type { ColorSchemeModes, PinceauUtils, ThemeFunction } from '@pinceau/theme'
+import type { ColorSchemeModes, DesignToken, DesignTokens, PinceauUtils, ThemeFunction } from '@pinceau/theme'
 import type { StringifyContext } from './types'
 
 const darkToken = '$dark'
 const lightToken = '$light'
 const initialToken = '$initial'
 
+export type CSSResolverCallback = (options: {
+  type: 'mq' | 'token'
+  inputValue: StringifyContext['value']
+  themeValue?: DesignTokens | DesignToken | undefined
+}) => void
+
 export interface CSSResolverContext {
   stringifyContext: StringifyContext
-  localTokens?: string[]
   $theme?: ThemeFunction
   utils?: PinceauUtils
   colorSchemeMode?: ColorSchemeModes
+  localTokens?: string[]
+  cb?: CSSResolverCallback
 }
 
 /**
@@ -78,10 +85,13 @@ export function resolveReferences(ctx: CSSResolverContext) {
       const varName = pathToVarName(tokenPath)
 
       // Handle localTokens
-      if (localTokens?.includes(varName)) { return `var(${varName})` }
+      if (localTokens?.includes(_)) { return `var(${varName})` }
 
       // Handle themeTokens or fallback
       const token = $theme?.(tokenPath)
+
+      // Handle `token` callback
+      ctx?.cb?.({ type: 'token', themeValue: token, inputValue: stringifyContext?.value })
 
       return (token?.variable ? token.variable : `var(${varName})`) as string
     },
@@ -100,6 +110,14 @@ export function resolveCustomDirectives(ctx: CSSResolverContext) {
 
   const mode = colorSchemeMode || 'media'
 
+  // Handle `mq` callback
+  ctx?.cb?.({
+    type: 'mq',
+    themeValue: $theme ? $theme(`media.${property.replace('$', '')}`) : undefined,
+    inputValue: stringifyContext.property,
+  })
+
+  // Only handle `{ $mq: { ... } }`
   if (property.startsWith('$')) {
     const resolveColorScheme = (scheme: string) => {
       scheme = mode === 'class'

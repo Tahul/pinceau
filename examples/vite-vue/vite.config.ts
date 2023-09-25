@@ -27,16 +27,19 @@ export default defineConfig({
         ],
       },
       theme: {
+        buildDir: resolve('./node_modules/.pinceau'),
         layers: [
           {
             path: resolve('../../packages/palette/'),
-          }
-        ]
-      }
+          },
+        ],
+      },
     }),
-    !process.env.VITEST_WORKER_ID ? Inspect({
-      build: true,
-      outputDir: '.vite-inspect',
-    }) : undefined,
+    !process.env.VITEST_WORKER_ID
+      ? Inspect({
+        build: true,
+        outputDir: '.vite-inspect',
+      })
+      : undefined,
   ],
 })

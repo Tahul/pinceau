@@ -1,6 +1,15 @@
 import type { VueLanguagePlugin } from '@volar/vue-language-core'
 import { recomposeScriptSetup } from './vue/lang-ts-blocks'
-import { pushVariantsProps } from './vue/variants'
+import { recomposeProps } from './vue/props'
+import { resolveEmbeddedFileContext } from './resolve'
+
+export interface PinceauVolarFileContext {
+  localTokens: string[]
+  usedTokens: string[]
+  propsContent: string[]
+  variantsObject: any
+  variantsProps: any
+}
 
 const plugin: VueLanguagePlugin = _ => ({
   name: '@pinceau/volar',
@@ -16,17 +25,29 @@ const plugin: VueLanguagePlugin = _ => ({
     return fileNames
   },
   resolveEmbeddedFile(_, sfc, embeddedFile) {
-    // Create css({ }) context
-    const isCssInTsFile = embeddedFile.fileName.includes('.cssInTs.')
-    if (isCssInTsFile) {
-      recomposeScriptSetup(embeddedFile, sfc)
-      return
+    const ctx: PinceauVolarFileContext = {
+      localTokens: [],
+      usedTokens: [],
+      propsContent: [],
+      variantsObject: undefined,
+      variantsProps: undefined,
     }
 
-    // Add variants dynamic props
     const isPublicVueFile = embeddedFile.fileName.endsWith('.vue.ts')
+    const isCssInTsFile = embeddedFile.fileName.includes('.cssInTs.')
+
+    if (!isPublicVueFile && !isCssInTsFile) { return }
+
+    resolveEmbeddedFileContext(sfc, ctx)
+
+    // Add variants dynamic props
     if (isPublicVueFile) {
-      pushVariantsProps(embeddedFile, sfc)
+      recomposeProps(embeddedFile, sfc, ctx)
+    }
+
+    // Create css({ }) context
+    if (isCssInTsFile) {
+      recomposeScriptSetup(embeddedFile, sfc, ctx)
     }
   },
 })

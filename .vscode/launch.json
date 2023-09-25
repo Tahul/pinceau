@@ -9,11 +9,11 @@
       "runtimeExecutable": "${execPath}",
       "args": [
         "--extensionDevelopmentPath=${workspaceRoot}/packages/vscode",
-        "/Users/yaelguilloux/Code/sandbox/pinceau"
+        "/Users/yaelguilloux/Code/sandbox/pinceau/examples/vite-vue"
       ],
       "sourceMaps": true,
       "outFiles": ["${workspaceRoot}/packages/vscode/dist/**/*.js"],
-      "preLaunchTask": "npm: build"
+      "preLaunchTask": "npm: build:vscode"
     },
     {
       "type": "node",

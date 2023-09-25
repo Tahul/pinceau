@@ -156,10 +156,10 @@ css({
     justifyContent: 'center',
     svg: {
       maxWidth: '125px',
-      '@lg': {
-        maxWidth: '420px'
-      }
-    }
-  }
+      $lg: {
+        maxWidth: '420px',
+      },
+    },
+  },
 })
 </style>

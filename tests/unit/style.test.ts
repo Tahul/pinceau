@@ -76,9 +76,9 @@ describe('@pinceau/style', () => {
       if (!result) { throw new Error('No css function context result!') }
       expect(result.declaration.div.color).toEqual('red')
     })
-    it('should resolve localTokens', () => {
+    it('should resolve localTokens in $token format', () => {
       // eslint-disable-next-line no-template-curly-in-string
-      const code = 'css({ div: { \'--test-token\': \'blue\', button: { \'--nested-local-token\': () => \`$color.green.${props.color}\` } } })'
+      const code = 'css({ div: { \'$test.token\': \'blue\', button: { \'$nested.local.token\': () => \`$color.green.${props.color}\` } } })'
       const query = parsePinceauQuery(resolveTmp('./components/css-function.ts'))
       const cssFunctions = findCallees(parseAst(code), 'css')
       const transformContext = usePinceauTransformContext(code, query, pinceauContext)
@@ -86,9 +86,9 @@ describe('@pinceau/style', () => {
 
       expect(result).toBeDefined()
       if (!result) { throw new Error('No css function context result!') }
-      expect(result.localTokens['--test-token'].type).toBe('StringLiteral')
-      expect(result.localTokens['--test-token'].value).toBe('blue')
-      expect(result.localTokens['--nested-local-token'].type).toBe('ArrowFunctionExpression')
+      expect(result.localTokens['$test.token'].type).toBe('StringLiteral')
+      expect(result.localTokens['$test.token'].value).toBe('blue')
+      expect(result.localTokens['$nested.local.token'].type).toBe('ArrowFunctionExpression')
     })
   })
 
@@ -270,7 +270,7 @@ describe('@pinceau/style', () => {
       const firstClassName = transformContext.state?.styleFunctions?.template0_styled0?.className
       const secondClassName = transformContext.state?.styleFunctions?.template0_styled1?.className
 
-      expect(transformContext.result()?.code).toStrictEqual(`<template><div class="${firstClassName}"><a class="${secondClassName}">Hello World</a></div></template>`)
+      expect(transformContext.result()?.code).toStrictEqual(`<template><div class="${firstClassName}" pcsp><a class="${secondClassName}" pcsp>Hello World</a></div></template>`)
     })
   })
 })

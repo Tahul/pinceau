@@ -36,6 +36,6 @@
     "@pinceau/stringify": "workspace:*",
     "@pinceau/theme": "workspace:*",
     "acorn": "^8.10.0",
-    "ultrahtml": "^1.5.2"
+    "ultrahtml": "npm:@pinceau/ultrahtml@1.5.2"
   }
 }
