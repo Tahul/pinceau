@@ -7,8 +7,8 @@
     "prepare": "nuxi prepare"
   },
   "devDependencies": {
-    "@nuxt-themes/docus": "^1.14.6",
-    "@vueuse/motion": "^2.0.0"
+    "@nuxt-themes/docus": "^1.14.9",
+    "@vueuse/motion": "^2.0.0-beta.27"
   },
   "resolutions": {
     "pinceau": "workspace:*"
