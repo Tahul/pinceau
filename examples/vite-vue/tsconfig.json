@@ -1,33 +1,4 @@
 {
-  "compilerOptions": {
-    "rootDir": "./",
-    "baseUrl": "./",
-    "target": "es2018",
-    "lib": ["esnext", "dom"],
-    "jsx": "preserve",
-    "module": "esnext",
-    "moduleResolution": "node",
-    "types": [
-      "node",
-      "vite/client",
-      "vitest/importMeta"
-    ],
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "strict": true,
-    "strictNullChecks": true,
-    "noImplicitAny": false,
-    "skipDefaultLibCheck": true,
-    "skipLibCheck": true,
-    "paths": {
-      "$pinceau/theme": ["node_modules/.pinceau/theme.ts"],
-      "$pinceau/utils": ["node_modules/.pinceau/utils.ts"],
-      "$pinceau/schema": ["node_modules/.pinceau/schema.js"],
-      "$pinceau/vue-plugin": ["node_modules/.pinceau/vue-plugin.js"],
-      "$pinceau": ["node_modules/.pinceau/runtime.js"],
-      "pinceau.css": ["node_modules/.pinceau/pinceau.css"],
-      "@shared/*": ["../shared/*"]
-    }
-  },
+  "extends": "../../tsconfig.json",
   "include": ["./**/*.vue", "./**/*.ts", "node_modules"]
 }

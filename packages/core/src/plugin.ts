@@ -2,12 +2,12 @@ import type { UnpluginInstance } from 'unplugin'
 import { createUnplugin } from 'unplugin'
 import chalk from 'chalk'
 import { consola } from 'consola'
-import type { PinceauUserOptions } from './types'
+import type { PinceauUserOptions } from './types/options'
 import { updateDebugContext } from './utils/debug'
 import { usePinceauContext } from './utils/core-context'
-import { load, loadInclude } from './utils/unplugin'
+import { load, loadInclude, resolveId } from './utils/unplugin'
 
-export const PinceauCorePlugin: UnpluginInstance<PinceauUserOptions> = createUnplugin((options) => {
+const PinceauCorePlugin: UnpluginInstance<PinceauUserOptions> = createUnplugin((options) => {
   // Setup debug context context.
   updateDebugContext({
     debugLevel: options?.dev ? options.debug : false,
@@ -78,7 +78,7 @@ export const PinceauCorePlugin: UnpluginInstance<PinceauUserOptions> = createUnp
       },
     },
 
-    resolveId: id => ctx.getOutputId(id),
+    resolveId: id => resolveId(id, ctx),
 
     /**
      * Global load include check; Pinceau plugins will access this via `ctx.transformed`
@@ -88,6 +88,8 @@ export const PinceauCorePlugin: UnpluginInstance<PinceauUserOptions> = createUnp
     /**
      * Global load block; handles virtual storage assets and load transfomers and block loaders.
      */
-    load: id => load(id, ctx),
+    load: async id => await load(id, ctx),
   }
 })
+
+export default PinceauCorePlugin

@@ -22,9 +22,9 @@ if (import.meta.hot) {
   // CSS Functions updates
   import.meta.hot.on(
     'pinceau:style-function',
-    ({ filename, id, css }) => {
+    ({ filename, id, css, selector }) => {
       // Find the target node
-      const node = document.querySelector(\`style[data-vite-dev-id*="pinceau-style-function"][data-vite-dev-id*="\${id}"]\`)
+      const node = document.querySelector(\`style\${selector}\`)
       if (!node) return
       
       // Find the target node data-vite-dev-id

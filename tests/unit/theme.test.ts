@@ -139,8 +139,6 @@ describe('@pinceau/theme', () => {
 
       const output = await configCtx.buildTheme()
 
-      console.log(output)
-
       expect((output as any).theme.color.primary.value).toBe('red')
       expect((output as any).theme.color.white.value).toBe('#ffffff')
     })
@@ -807,13 +805,13 @@ describe('@pinceau/theme', () => {
 
     describe('utils/tokens-transformers.ts', () => {
       it('pinceauVariableTransformer - add variable attribute', () => {
-        const result = pinceauVariableTransformer.transformer({ name: 'color-primary-100' } as any)
+        const result = pinceauVariableTransformer.transformer({ name: 'color-primary-100' } as any, {})
 
         expect(result).toStrictEqual({ variable: 'var(--color-primary-100)' })
       })
 
       it('pinceauNameTransformer - transform name', () => {
-        const result = pinceauNameTransformer.transformer({ path: ['color', 'primary', '100'] } as any)
+        const result = pinceauNameTransformer.transformer({ path: ['color', 'primary', '100'] } as any, {})
 
         expect(result).toBe('color-primary-100')
       })
@@ -975,7 +973,7 @@ describe('@pinceau/theme', () => {
       await configCtx.buildTheme()
     })
 
-    it('transformColorScheme() - can transform @dark', () => {
+    it('transformColorScheme() - can transform @dark', async () => {
       const transformContext = usePinceauTransformContext(
         '@dark { h1 { color: red; } }',
         styleQuery,
@@ -986,11 +984,11 @@ describe('@pinceau/theme', () => {
         styles: [transformColorScheme],
       })
 
-      transformContext.transform()
+      await transformContext.transform()
 
       expect((transformContext.result() as any).code).toEqual('@media (prefers-color-scheme: dark) { h1 { color: red; } }')
     })
-    it('transformColorScheme() - can transform @light', () => {
+    it('transformColorScheme() - can transform @light', async () => {
       const transformContext = usePinceauTransformContext(
         '@light { h1 { color: red; } }',
         styleQuery,
@@ -1001,11 +999,11 @@ describe('@pinceau/theme', () => {
         styles: [transformColorScheme],
       })
 
-      transformContext.transform()
+      await transformContext.transform()
 
       expect((transformContext.result() as any).code).toEqual('@media (prefers-color-scheme: light) { h1 { color: red; } }')
     })
-    it('transformColorScheme() - can transform both @light and @dark', () => {
+    it('transformColorScheme() - can transform both @light and @dark', async () => {
       const transformContext = usePinceauTransformContext(
         '@light { h1 { color: red; } } @dark { h2 { color: red; } }',
         styleQuery,
@@ -1016,12 +1014,12 @@ describe('@pinceau/theme', () => {
         styles: [transformColorScheme],
       })
 
-      transformContext.transform()
+      await transformContext.transform()
 
       expect((transformContext.result() as any).code).toEqual('@media (prefers-color-scheme: light) { h1 { color: red; } } @media (prefers-color-scheme: dark) { h2 { color: red; } }')
     })
 
-    it('transformColorScheme() - can transform both @light and @dark to class mode', () => {
+    it('transformColorScheme() - can transform both @light and @dark to class mode', async () => {
       pinceauContext.options.theme.colorSchemeMode = 'class'
 
       const transformContext = usePinceauTransformContext(
@@ -1034,11 +1032,11 @@ describe('@pinceau/theme', () => {
         styles: [transformColorScheme],
       })
 
-      transformContext.transform()
+      await transformContext.transform()
 
       expect((transformContext.result() as any).code).toEqual(':root.light { h1 { color: red; } } :root.dark { h2 { color: red; } }')
     })
-    it('transformColorScheme() - do not transform native syntaxes', () => {
+    it('transformColorScheme() - do not transform native syntaxes', async () => {
       const transformContext = usePinceauTransformContext(
         nativeCssQueries(),
         styleQuery,
@@ -1049,11 +1047,11 @@ describe('@pinceau/theme', () => {
         styles: [transformColorScheme],
       })
 
-      transformContext.transform()
+      await transformContext.transform()
 
       expect(transformContext.result()).toBeUndefined()
     })
-    it('transformMediaQueries() - can transform theme media queries', () => {
+    it('transformMediaQueries() - can transform theme media queries', async () => {
       const transformContext = usePinceauTransformContext(
         '@md { h1 { color: red; } } @lg { h2 { color: red; } }',
         styleQuery,
@@ -1064,11 +1062,11 @@ describe('@pinceau/theme', () => {
         styles: [transformMediaQueries],
       })
 
-      transformContext.transform()
+      await transformContext.transform()
 
       expect((transformContext.result() as any).code).toEqual('@media (min-width: 768px) { h1 { color: red; } } @media (min-width: 1024px) { h2 { color: red; } }')
     })
-    it('transformMediaQueries() - do not transform native syntaxes', () => {
+    it('transformMediaQueries() - do not transform native syntaxes', async () => {
       const transformContext = usePinceauTransformContext(
         nativeCssQueries(),
         styleQuery,
@@ -1079,11 +1077,11 @@ describe('@pinceau/theme', () => {
         styles: [transformMediaQueries],
       })
 
-      transformContext.transform()
+      await transformContext.transform()
 
       expect(transformContext.result()).toBeUndefined()
     })
-    it('transformThemeHelper() - can transform token helper in style files', () => {
+    it('transformThemeHelper() - can transform token helper in style files', async () => {
       const transformContext = usePinceauTransformContext(
         'div { background-color: $theme(\'color.white\'); }',
         styleQuery,
@@ -1094,11 +1092,11 @@ describe('@pinceau/theme', () => {
         styles: [transformThemeHelper],
       })
 
-      transformContext.transform()
+      await transformContext.transform()
 
       expect((transformContext.result() as any).code).toStrictEqual('div { background-color: var(--color-white); }')
     })
-    it('transformThemeHelper() - can transform token helper in typescript files', () => {
+    it('transformThemeHelper() - can transform token helper in typescript files', async () => {
       const transformContext = usePinceauTransformContext(
         'const test = $theme(\'color.white\')',
         typescriptQuery,
@@ -1115,11 +1113,11 @@ describe('@pinceau/theme', () => {
         ],
       })
 
-      transformContext.transform()
+      await transformContext.transform()
 
       expect((transformContext.result() as any).code).toStrictEqual('const test = `var(--color-white)`')
     })
-    it('transformThemeHelper() - can transform token helper in vue files', () => {
+    it('transformThemeHelper() - can transform token helper in vue files', async () => {
       const transformContext = usePinceauTransformContext(
         '<template><div :style="{ color: $theme(\'color.white\') }">Hello World</div></template>\n'
         + '<style>div { background-color: $theme(\'color.black\'); }</style>\n'
@@ -1142,7 +1140,7 @@ describe('@pinceau/theme', () => {
         styles: [transformThemeHelper],
       })
 
-      transformContext.transform()
+      await transformContext.transform()
 
       expect((transformContext.result() as any).code).toStrictEqual(
         '<template><div :style="{ color: `var(--color-white)` }">Hello World</div></template>\n'
@@ -1150,7 +1148,7 @@ describe('@pinceau/theme', () => {
         + '<script setup>const test = `var(--color-white)`</script>\n',
       )
     })
-    it('transformThemeHelper() - log on unknown token but transform anyway', () => {
+    it('transformThemeHelper() - log on unknown token but transform anyway', async () => {
       vi.spyOn(console, 'log').mockImplementationOnce(() => { })
 
       const transformContext = usePinceauTransformContext(
@@ -1163,7 +1161,7 @@ describe('@pinceau/theme', () => {
         styles: [transformThemeHelper],
       })
 
-      transformContext.transform()
+      await transformContext.transform()
 
       expect((transformContext.result() as any).code).toStrictEqual('div { background-color: var(--color-primary-100); }')
       expect(console.log).toHaveBeenCalledOnce()

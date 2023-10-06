@@ -1,5 +1,5 @@
 {
-  "name": "vite-vue",
+  "name": "vite-pinceau-vue",
   "type": "module",
   "private": true,
   "scripts": {
@@ -8,21 +8,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@pinceau/core": "workspace:*",
-    "@pinceau/runtime": "workspace:*",
-    "@pinceau/style": "workspace:*",
-    "@pinceau/theme": "workspace:*",
-    "@pinceau/volar": "workspace:*",
-    "@pinceau/vue": "workspace:*",
-    "pinceau": "workspace:*",
     "vue": "^3.3.4",
-    "vue-router": "^4.2.4"
+    "vue-router": "^4.2.5"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^4.3.4",
+    "@pinceau/vue": "workspace:*",
+    "@vitejs/plugin-vue": "^4.4.0",
     "typescript": "^5.2.2",
     "vite": "^4.4.9",
-    "vite-plugin-inspect": "^0.7.38"
+    "@pinceau/configs": "workspace:*"
   },
   "stackblitz": {
     "installDependencies": false,

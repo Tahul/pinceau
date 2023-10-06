@@ -4,6 +4,6 @@
 
 <style scoped>
 div {
-  background-color: $theme('color.violet.9');
+  background-color: $theme('color.purple.9');
 }
 </style>

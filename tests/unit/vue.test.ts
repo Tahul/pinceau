@@ -1,68 +1,18 @@
 import fs from 'node:fs'
 import type { PinceauContext, PinceauQuery } from '@pinceau/core'
 import { load, normalizeOptions, parsePinceauQuery, usePinceauContext, usePinceauTransformContext } from '@pinceau/core/utils'
-import { PinceauVueTransformer, createRuntimeExports, createVuePlugin, hasRuntimeStyling, registerVirtualOutputs } from '@pinceau/vue/utils'
+import { PinceauVueTransformer, createVuePlugin, registerVirtualOutputs } from '@pinceau/vue/utils'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { transformAddPinceauClass, transformComputedStyles, transformStyleTs, transformWriteStyleFeatures, suite as vueTransformSuite } from '@pinceau/vue/transforms'
+import { transformAddPinceauClass, transformComputedStyles, transformStyleTs, transformWriteScriptFeatures, transformWriteStyleFeatures, suite as vueTransformSuite } from '@pinceau/vue/transforms'
 import { suite as styleTransformSuite } from '@pinceau/style/transforms'
 import { usePinceauConfigContext } from '@pinceau/theme/utils'
+import { hasRuntimeStyling } from '@pinceau/style/utils'
 import { paletteLayer, resolveFixtures, resolveTmp } from '../utils'
 
 describe('@pinceau/vue', () => {
-  describe('utils/has-runtime.ts', () => {
-    let pinceauContext: PinceauContext
-    const baseQuery = parsePinceauQuery(resolveFixtures('./components/TestBase.vue'))
-    const computedStylesQuery = parsePinceauQuery(resolveFixtures('./components/TestComputedStyle.vue'))
-
-    beforeEach(async () => {
-      pinceauContext = usePinceauContext()
-      pinceauContext.registerTransformer('vue', PinceauVueTransformer)
-    })
-
-    it('do not find runtime parts in a base transform context', () => {
-      pinceauContext.addTransformed(baseQuery.filename, baseQuery)
-
-      const code = load(baseQuery.filename, pinceauContext)
-
-      const transformContext = usePinceauTransformContext(
-        code,
-        baseQuery,
-        pinceauContext,
-      )
-
-      transformContext.registerTransforms(vueTransformSuite)
-
-      transformContext.transform()
-
-      expect(hasRuntimeStyling(transformContext)).toBe(false)
-
-      delete pinceauContext.transformed[baseQuery.filename]
-    })
-    it('can find runtime parts in a base transform context', () => {
-      pinceauContext.addTransformed(computedStylesQuery.filename, computedStylesQuery)
-
-      const code = load(computedStylesQuery.filename, pinceauContext)
-
-      const transformContext = usePinceauTransformContext(
-        code,
-        computedStylesQuery,
-        pinceauContext,
-      )
-
-      transformContext.registerTransforms(styleTransformSuite)
-      transformContext.registerTransforms(vueTransformSuite)
-
-      transformContext.transform()
-
-      expect(hasRuntimeStyling(transformContext)).toBe(true)
-
-      delete pinceauContext.transformed[baseQuery.filename]
-    })
-  })
-
   describe('utils/load.ts', () => {
     let pinceauContext: PinceauContext
-    const baseQuery = parsePinceauQuery(resolveFixtures('./components/TestBase.vue'))
+    const baseQuery = parsePinceauQuery(resolveFixtures('./components/vue/TestBase.vue'))
 
     beforeEach(async () => {
       const options = normalizeOptions()
@@ -71,12 +21,12 @@ describe('@pinceau/vue', () => {
       pinceauContext.registerTransformer('vue', PinceauVueTransformer)
     })
 
-    it('can load style blocks', () => {
+    it('can load style blocks', async () => {
       const styleQuery: PinceauQuery = { ...baseQuery, type: 'style', index: 0 }
 
       pinceauContext.addTransformed(styleQuery.filename, styleQuery)
 
-      const code = load(styleQuery.filename, pinceauContext)
+      const code = await load(styleQuery.filename, pinceauContext)
 
       expect(code).toBe(`
 .test-base {
@@ -84,48 +34,40 @@ describe('@pinceau/vue', () => {
 }
 `)
     })
-    it('can load template block', () => {
+    it('can load template block', async () => {
       const templateQuery: PinceauQuery = { ...baseQuery, type: 'template' }
 
       pinceauContext.addTransformed(templateQuery.filename, templateQuery)
 
-      const code = load(templateQuery.filename, pinceauContext)
+      const code = await load(templateQuery.filename, pinceauContext)
 
       expect(code).toBe(`
-  <div class="test-base">Basic Vue component</div>
+  <div class="test-base">
+    Basic Vue component
+  </div>
 `)
     })
-    it('can load script block', () => {
+    it('can load script block', async () => {
       const scriptQuery: PinceauQuery = { ...baseQuery, type: 'script' }
 
       pinceauContext.addTransformed(scriptQuery.filename, scriptQuery)
 
-      const code = load(scriptQuery.filename, pinceauContext)
+      const code = await load(scriptQuery.filename, pinceauContext)
 
       expect(code).toBe(`
 export const test = 'hello world'
 `)
     })
-    it('can load script setup block', () => {
+    it('can load script setup block', async () => {
       const scriptSetupQuery: PinceauQuery = { ...baseQuery, type: 'script', setup: true }
 
       pinceauContext.addTransformed(scriptSetupQuery.filename, scriptSetupQuery)
 
-      const code = load(scriptSetupQuery.filename, pinceauContext)
+      const code = await load(scriptSetupQuery.filename, pinceauContext)
 
       expect(code).toBe(`
 console.log('hello world')
 `)
-    })
-  })
-
-  describe('utils/runtime-exports.ts', () => {
-    it('should export all missing features', () => {
-      const requiredExports = ['usePinceauRuntime', 'useVariants', 'useComputedStyles', 'useRuntimeSheet', 'useThemeSheet']
-
-      const exportsString = createRuntimeExports()
-
-      requiredExports.forEach(name => expect(exportsString).toContain(name))
     })
   })
 
@@ -185,6 +127,8 @@ console.log('hello world')
       expect(PinceauVueTransformer.MagicSFC).toBeDefined()
       expect(PinceauVueTransformer.loadBlock).toBeDefined()
       expect(PinceauVueTransformer.loadTransformers?.length).toBeGreaterThan(0)
+      expect(PinceauVueTransformer.classBinding).toBeDefined()
+      expect(PinceauVueTransformer.extractProp).toBeDefined()
       expect(PinceauVueTransformer.parser).toBeDefined()
     })
   })
@@ -213,14 +157,14 @@ console.log('hello world')
 
   describe('transforms/add-class.ts', () => {
     let pinceauContext: PinceauContext
-    const variantsQuery = parsePinceauQuery(resolveFixtures('./components/TestVariants.vue'))
+    const variantsQuery = parsePinceauQuery(resolveFixtures('./components/vue/TestVariants.vue'))
 
     beforeEach(async () => {
       pinceauContext = usePinceauContext()
       pinceauContext.registerTransformer('vue', PinceauVueTransformer)
     })
 
-    it('adds class to root element of a template', () => {
+    it('adds class to root element of a template', async () => {
       const transformContext = usePinceauTransformContext(
         '<template>'
         + '<div class="test-variants">Variants component</div>'
@@ -236,14 +180,20 @@ console.log('hello world')
         ],
       })
 
-      transformContext.transform()
+      // Add mocked runtime styleFunction
+      transformContext.state.styleFunctions = transformContext.state.styleFunctions || {}
+      transformContext.state.styleFunctions['style0_styled0'] = {
+        computedStyles: [{}],
+      } as any
+
+      await transformContext.transform()
 
       expect(transformContext.result()?.code).toStrictEqual(
         '<template>'
-        + '<div class="test-variants" :class="[$pcClass]">Variants component</div>'
+        + '<div class="test-variants" :class="[$style0_styled0]">Variants component</div>'
         + '</template>')
     })
-    it('adds class to all root elements of a template', () => {
+    it('adds class to all root elements of a template', async () => {
       const transformContext = usePinceauTransformContext(
         '<template>'
         + '<div class="test-variants">Variants component</div>'
@@ -260,16 +210,22 @@ console.log('hello world')
         ],
       })
 
-      transformContext.transform()
+      // Add mocked runtime styleFunction
+      transformContext.state.styleFunctions = transformContext.state.styleFunctions || {}
+      transformContext.state.styleFunctions['style0_styled0'] = {
+        computedStyles: [{}],
+      } as any
+
+      await transformContext.transform()
 
       expect(transformContext.result()?.code).toStrictEqual(
         '<template>'
-        + '<div class="test-variants" :class="[$pcClass]">Variants component</div>'
-        + '<div :class="[$pcClass]"><section><button type="button">Hello World</button></section></div>'
+        + '<div class="test-variants" :class="[$style0_styled0]">Variants component</div>'
+        + '<div :class="[$style0_styled0]"><section><button type="button">Hello World</button></section></div>'
         + '</template>',
       )
     })
-    it('adds class to existing :class attribute (object)', () => {
+    it('adds class to existing :class attribute (object)', async () => {
       const transformContext = usePinceauTransformContext(
         '<template>'
         + '<div :class="{ \'test-variants\': true }">Variants component</div>'
@@ -286,16 +242,22 @@ console.log('hello world')
         ],
       })
 
-      transformContext.transform()
+      // Add mocked runtime styleFunction
+      transformContext.state.styleFunctions = transformContext.state.styleFunctions || {}
+      transformContext.state.styleFunctions['style0_styled0'] = {
+        computedStyles: [{}],
+      } as any
+
+      await transformContext.transform()
 
       expect(transformContext.result()?.code).toStrictEqual(
         '<template>'
-        + '<div :class="[$pcClass, { \'test-variants\': true }]">Variants component</div>'
-        + '<div :class="[$pcClass]"><section><button type="button">Hello World</button></section></div>'
+        + '<div :class="[$style0_styled0, { \'test-variants\': true }]">Variants component</div>'
+        + '<div :class="[$style0_styled0]"><section><button type="button">Hello World</button></section></div>'
         + '</template>',
       )
     })
-    it('adds class to existing :class attribute (array)', () => {
+    it('adds class to existing :class attribute (array)', async () => {
       const transformContext = usePinceauTransformContext(
         '<template>'
         + '<div :class="[\'test-variants\']">Variants component</div>'
@@ -312,16 +274,22 @@ console.log('hello world')
         ],
       })
 
-      transformContext.transform()
+      // Add mocked runtime styleFunction
+      transformContext.state.styleFunctions = transformContext.state.styleFunctions || {}
+      transformContext.state.styleFunctions['style0_styled0'] = {
+        computedStyles: [{}],
+      } as any
+
+      await transformContext.transform()
 
       expect(transformContext.result()?.code).toStrictEqual(
         '<template>'
-        + '<div :class="[$pcClass, \'test-variants\']">Variants component</div>'
-        + '<div :class="[$pcClass]"><section><button type="button">Hello World</button></section></div>'
+        + '<div :class="[$style0_styled0, \'test-variants\']">Variants component</div>'
+        + '<div :class="[$style0_styled0]"><section><button type="button">Hello World</button></section></div>'
         + '</template>',
       )
     })
-    it('adds class to existing :class attribute (string)', () => {
+    it('adds class to existing :class attribute (string)', async () => {
       const transformContext = usePinceauTransformContext(
         '<template>'
         + '<div :class="\'test-variants\'">Variants component</div>'
@@ -338,21 +306,28 @@ console.log('hello world')
         ],
       })
 
-      transformContext.transform()
+      // Add mocked runtime styleFunction
+      transformContext.state.styleFunctions = transformContext.state.styleFunctions || {}
+      transformContext.state.styleFunctions['style0_styled0'] = {
+        computedStyles: [{}],
+      } as any
+
+      await transformContext.transform()
 
       expect(transformContext.result()?.code).toStrictEqual(
         '<template>'
-        + '<div :class="[$pcClass, \'test-variants\']">Variants component</div>'
-        + '<div :class="[$pcClass]"><section><button type="button">Hello World</button></section></div>'
+        + '<div :class="[$style0_styled0, \'test-variants\']">Variants component</div>'
+        + '<div :class="[$style0_styled0]"><section><button type="button">Hello World</button></section></div>'
         + '</template>',
       )
     })
-    it('adds class to existing :class attribute (identifier)', () => {
+    it('adds class to existing :class attribute (identifier)', async () => {
       const transformContext = usePinceauTransformContext(
         '<template>'
         + '<div :class="test">Variants component</div>'
         + '<div><section><button type="button">Hello World</button></section></div>'
-        + '</template>',
+        + '</template>'
+        + '<style lang="ts">styled({ color: \'red\' })</style>',
         variantsQuery,
         pinceauContext,
       )
@@ -364,81 +339,20 @@ console.log('hello world')
         ],
       })
 
-      transformContext.transform()
+      // Add mocked runtime styleFunction
+      transformContext.state.styleFunctions = transformContext.state.styleFunctions || {}
+      transformContext.state.styleFunctions['style0_styled0'] = {
+        computedStyles: [{}],
+      } as any
 
-      expect(transformContext.result()?.code).toStrictEqual(
+      await transformContext.transform()
+
+      expect(transformContext.result()?.code).toContain(
         '<template>'
-        + '<div :class="[$pcClass, test]">Variants component</div>'
-        + '<div :class="[$pcClass]"><section><button type="button">Hello World</button></section></div>'
+        + '<div :class="[$style0_styled0, test]">Variants component</div>'
+        + '<div :class="[$style0_styled0]"><section><button type="button">Hello World</button></section></div>'
         + '</template>',
       )
-    })
-  })
-
-  describe('transforms/computed-styles.ts', () => {
-    let pinceauContext: PinceauContext
-    const computedStylesQuery = parsePinceauQuery(resolveFixtures('./components/TestComputedStyle.vue'))
-
-    beforeEach(async () => {
-      pinceauContext = usePinceauContext()
-      pinceauContext.registerTransformer('vue', PinceauVueTransformer)
-    })
-
-    it('adds computed styles to the component', () => {
-      pinceauContext.addTransformed(computedStylesQuery.filename, computedStylesQuery)
-
-      const code = load(computedStylesQuery.filename, pinceauContext)
-
-      const transformContext = usePinceauTransformContext(
-        code,
-        computedStylesQuery,
-        pinceauContext,
-      )
-
-      transformContext.registerTransforms(styleTransformSuite)
-      transformContext.registerTransforms({
-        scripts: [
-          transformComputedStyles,
-        ],
-      })
-
-      transformContext.transform()
-
-      const computedStyle = transformContext?.state?.styleFunctions?.style0_css0?.computedStyles?.[0]
-
-      expect(computedStyle).toBeDefined()
-      expect(transformContext.result()?.code).toContain('$pcExtractedComputedStyles')
-      expect(transformContext.result()?.code).toContain('() => props.fontSize')
-      expect(transformContext.result()?.code).toContain('() => props.backgroundColor')
-    })
-
-    it('adds computed styles from multiple sources to the component', () => {
-      pinceauContext.addTransformed(computedStylesQuery.filename, computedStylesQuery)
-
-      const code = load(computedStylesQuery.filename, pinceauContext)
-
-      const transformContext = usePinceauTransformContext(
-        code,
-        computedStylesQuery,
-        pinceauContext,
-      )
-
-      transformContext.registerTransforms(styleTransformSuite)
-      transformContext.registerTransforms({
-        scripts: [
-          transformComputedStyles,
-        ],
-      })
-
-      transformContext.transform()
-
-      const computedStyle = transformContext?.state?.styleFunctions?.style0_css0?.computedStyles?.[0]
-
-      expect(computedStyle).toBeDefined()
-      expect(transformContext.result()?.code).toContain('$pcExtractedComputedStyles')
-      expect(transformContext.result()?.code).toContain('() => props.fontSize')
-      expect(transformContext.result()?.code).toContain('() => props.fontSize + 2')
-      expect(transformContext.result()?.code).toContain('() => props.backgroundColor')
     })
   })
 
@@ -453,8 +367,8 @@ console.log('hello world')
       pinceauContext.registerTransformer('vue', PinceauVueTransformer)
     })
 
-    it('can write style computed styles features when script is missing', () => {
-      const query = parsePinceauQuery(resolveFixtures('./components/TestComplete1.vue'))
+    it('can write style computed styles features when script is missing', async () => {
+      const query = parsePinceauQuery(resolveFixtures('./components/vue/TestComplete1.vue'))
 
       pinceauContext.addTransformed(query.filename, query)
 
@@ -467,28 +381,23 @@ console.log('hello world')
       transformContext.registerTransforms(styleTransformSuite)
       transformContext.registerTransforms(vueTransformSuite)
 
-      transformContext.transform()
+      await transformContext.transform()
 
       const result = transformContext.result()?.code
 
-      expect(result).toContain('import { usePinceauRuntime } from \'$pinceau\'')
-      expect(result).toContain('const $pcExtractedComputedStyles')
-      expect(result).toContain('const $pcClass')
+      expect(result).toContain('import { usePinceauRuntime } from \'@pinceau/vue/runtime\'')
       expect(result).toContain('() => \'red\'')
       expect(result).toContain('() => \'blue\'')
-      expect(result).toContain(`usePinceauRuntime(
-    $pcExtractedComputedStyles,
-    undefined
-  )`)
+      expect(result).toContain('usePinceauRuntime(`')
     })
 
-    it('can write style variants features when script is missing', () => {
-      const query = parsePinceauQuery(resolveFixtures('./components/TestComplete2.vue'))
+    it('can write style variants features when script is missing', async () => {
+      const query = parsePinceauQuery(resolveFixtures('./components/vue/TestComplete2.vue'))
 
       pinceauContext.addTransformed(query.filename, query)
 
       const transformContext = usePinceauTransformContext(
-        '<template><div>Hello World</div></template>\n<style pctransformed>css({ variants: { size: { sm: { width: \'32px\' } } } })</style>',
+        '<template><div>Hello World</div></template>\n<style pctransformed>styled({ variants: { size: { sm: { width: \'32px\' } } } })</style>',
         query,
         pinceauContext,
       )
@@ -496,18 +405,15 @@ console.log('hello world')
       transformContext.registerTransforms(styleTransformSuite)
       transformContext.registerTransforms(vueTransformSuite)
 
-      transformContext.transform()
+      await transformContext.transform()
 
       const result = transformContext.result()?.code
 
-      expect(result).toContain('import { usePinceauRuntime } from \'$pinceau\'')
-      expect(result).toContain('const $pcExtractedVariants')
-      expect(result).toContain('const $pcClass')
-      expect(result).toContain(`usePinceauRuntime(
-    undefined,
-    $pcExtractedVariants
-  )`)
-      expect(result).toContain('defineProps({"size":{"required":false,"possibleValues":["sm"],"type":[String, Object]}})')
+      const className = transformContext?.state?.styleFunctions?.['style0_styled0'].className
+
+      expect(result).toContain('import { usePinceauRuntime } from \'@pinceau/vue/runtime\'')
+      expect(result).toContain(`const $style0_styled0 = usePinceauRuntime(\`${className}\`, undefined, {"size":{"sm":{"width":"32px"}}})`)
+      expect(result).toContain('defineProps({"size":{"required":false,"type":[String, Object]}})')
     })
   })
 
@@ -554,12 +460,12 @@ console.log('hello world')
       pinceauContext.registerTransformer('vue', PinceauVueTransformer)
     })
 
-    it('can resolve variants from a vue component', () => {
-      const query = parsePinceauQuery(resolveFixtures('./components/TestVariants.vue'))
+    it('can resolve variants from a vue component', async () => {
+      const query = parsePinceauQuery(resolveFixtures('./components/vue/TestVariants.vue'))
 
       pinceauContext.addTransformed(query.filename, query)
 
-      const code = load(query.filename, pinceauContext)
+      const code = await load(query.filename, pinceauContext)
 
       const transformContext = usePinceauTransformContext(
         code,
@@ -569,7 +475,7 @@ console.log('hello world')
 
       transformContext.registerTransforms(styleTransformSuite)
 
-      transformContext.transform()
+      await transformContext.transform()
 
       expect(hasRuntimeStyling(transformContext)).toBe(true)
       expect(transformContext.state?.styleFunctions?.style0_css0).toBeDefined()
@@ -578,8 +484,8 @@ console.log('hello world')
       expect(transformContext.state?.styleFunctions?.style0_css0?.variants?.size).toBeDefined()
     })
 
-    it('can push $pcExtractedVariants to component code', () => {
-      const query = parsePinceauQuery(resolveFixtures('./components/TestVariants2.vue'))
+    it('can push $pcExtractedVariants to component code', async () => {
+      const query = parsePinceauQuery(resolveFixtures('./components/vue/TestVariants2.vue'))
 
       pinceauContext.addTransformed(query.filename, query)
 
@@ -592,16 +498,15 @@ console.log('hello world')
       transformContext.registerTransforms(styleTransformSuite)
       transformContext.registerTransforms(vueTransformSuite)
 
-      transformContext.transform()
+      await transformContext.transform()
 
-      expect(transformContext.result()?.code).contains('$pcExtractedVariants')
-      expect(transformContext.result()?.code).contains('"size":{"sm":{')
+      expect(transformContext.result()?.code).contains('usePinceauRuntime(undefined, undefined, {"size":{"sm":{"padding":"1rem"}}})')
     })
 
-    it('can push props to component existing empty defineProps()', () => {
-      const query = parsePinceauQuery(resolveFixtures('./components/TestVariants3.vue'))
+    it('can push props to component existing empty defineProps()', async () => {
+      const query = parsePinceauQuery(resolveFixtures('./components/vue/TestVariants3.vue'))
 
-      const propDef = '{"size":{"required":false,"possibleValues":["sm"],"type":[String, Object] as ResponsivePropType<\'sm\'>}}'
+      const propDef = '{"size":{"required":false,"type":[String, Object] as ResponsivePropType<\'sm\'>}}'
 
       pinceauContext.addTransformed(query.filename, query)
 
@@ -614,15 +519,15 @@ console.log('hello world')
       transformContext.registerTransforms(styleTransformSuite)
       transformContext.registerTransforms(vueTransformSuite)
 
-      transformContext.transform()
+      await transformContext.transform()
 
       expect(transformContext.result()?.code).contains(`defineProps(${propDef})`)
     })
 
-    it('can push props to component existing object defined defineProps({ ... })', () => {
-      const query = parsePinceauQuery(resolveFixtures('./components/TestVariants4.vue'))
+    it('can push props to component existing object defined defineProps({ ... })', async () => {
+      const query = parsePinceauQuery(resolveFixtures('./components/vue/TestVariants4.vue'))
 
-      const propDef = '{"size":{"required":false,"possibleValues":["sm"],"type":[String, Object] as ResponsivePropType<\'sm\'>}}'
+      const propDef = '{"size":{"required":false,"type":[String, Object] as ResponsivePropType<\'sm\'>}}'
 
       pinceauContext.addTransformed(query.filename, query)
 
@@ -635,13 +540,13 @@ console.log('hello world')
       transformContext.registerTransforms(styleTransformSuite)
       transformContext.registerTransforms(vueTransformSuite)
 
-      transformContext.transform()
+      await transformContext.transform()
 
       expect(transformContext.result()?.code).contains(`defineProps({\n  test: { type: String, required: false },\n  ...${propDef}\n})`)
     })
 
-    it('can push props to component existing type defined defineProps<{ ... }>()', () => {
-      const query = parsePinceauQuery(resolveFixtures('./components/TestVariants5.vue'))
+    it('can push props to component existing type defined defineProps<{ ... }>()', async () => {
+      const query = parsePinceauQuery(resolveFixtures('./components/vue/TestVariants5.vue'))
 
       const propDef = `{
     size?: ResponsiveProp<'sm'>
@@ -658,13 +563,13 @@ console.log('hello world')
       transformContext.registerTransforms(styleTransformSuite)
       transformContext.registerTransforms(vueTransformSuite)
 
-      transformContext.transform()
+      await transformContext.transform()
 
       expect(transformContext.result()?.code).contains(`defineProps<${propDef} & { test?: String }>()`)
     })
 
-    it('can push props to component existing type defined withDefaults(defineProps<{ ... }>(), { ... })', () => {
-      const query = parsePinceauQuery(resolveFixtures('./components/TestVariants6.vue'))
+    it('can push props to component existing type defined withDefaults(defineProps<{ ... }>(), { ... })', async () => {
+      const query = parsePinceauQuery(resolveFixtures('./components/vue/TestVariants6.vue'))
 
       const propDef = `{
     size?: ResponsiveProp<'sm'>
@@ -683,13 +588,13 @@ console.log('hello world')
       transformContext.registerTransforms(styleTransformSuite)
       transformContext.registerTransforms(vueTransformSuite)
 
-      transformContext.transform()
+      await transformContext.transform()
 
       expect(transformContext.result()?.code).contains(`withDefaults(defineProps<${propDef} & { test?: String }>(), {\n  test: 'hello world',\n  ...${defaultsDef}\n})`)
     })
 
-    it('can push props to component existing type defined withDefaults(defineProps<{ ... }>(), { ... })', () => {
-      const query = parsePinceauQuery(resolveFixtures('./components/TestVariants7.vue'))
+    it('can push props to component existing type defined withDefaults(defineProps<{ ... }>(), { ... })', async () => {
+      const query = parsePinceauQuery(resolveFixtures('./components/vue/TestVariants7.vue'))
 
       const propDef = `{
     size?: ResponsiveProp<'sm'>
@@ -708,7 +613,7 @@ console.log('hello world')
       transformContext.registerTransforms(styleTransformSuite)
       transformContext.registerTransforms(vueTransformSuite)
 
-      transformContext.transform()
+      await transformContext.transform()
 
       expect(transformContext.result()?.code).contains(`withDefaults(defineProps<${propDef} & { test?: String }>(), {\n  test: 'hello world',\n  ...${defaultsDef}\n})`)
     })
@@ -716,14 +621,14 @@ console.log('hello world')
 
   describe('transforms/write-style-features.ts', () => {
     let pinceauContext: PinceauContext
-    const baseQuery = parsePinceauQuery(resolveFixtures('./components/TestBase.vue'))
+    const baseQuery = parsePinceauQuery(resolveFixtures('./components/vue/TestBase.vue'))
 
     beforeEach(async () => {
       pinceauContext = usePinceauContext()
       pinceauContext.registerTransformer('vue', PinceauVueTransformer)
     })
 
-    it('can write css content from <script> css() function', () => {
+    it('can write css content from <script> css() function', async () => {
       const transformContext = usePinceauTransformContext(
         '<script>css({ div: { backgroundColor: \'red\' } })</script>',
         baseQuery,
@@ -734,17 +639,18 @@ console.log('hello world')
       transformContext.registerTransforms({
         scripts: [
           transformWriteStyleFeatures,
+          transformWriteScriptFeatures,
         ],
       })
 
-      transformContext.transform()
+      await transformContext.transform()
 
       expect(transformContext.result()?.code).toBe(
         '<script></script>\n'
-        + '<style scoped pinceau-style-function="script0_css0">div{background-color:red;}</style>',
+        + '<style scoped pc-fn="script0_css0">div{background-color:red;}</style>',
       )
     })
-    it('can write css content from <script> styled() function', () => {
+    it('can write css content from <script> styled() function', async () => {
       const transformContext = usePinceauTransformContext(
         '<script>const testStyled = styled({ backgroundColor: \'red\' })</script>',
         baseQuery,
@@ -755,19 +661,20 @@ console.log('hello world')
       transformContext.registerTransforms({
         scripts: [
           transformWriteStyleFeatures,
+          transformWriteScriptFeatures,
         ],
       })
 
-      transformContext.transform()
+      await transformContext.transform()
 
       const className = transformContext.state.styleFunctions?.script0_styled0?.className
 
       expect(transformContext.result()?.code).toBe(
         `<script>const testStyled = \`${className}\`</script>\n`
-        + `<style scoped pinceau-style-function="script0_styled0">.${className}{background-color:red;}</style>`,
+        + `<style scoped pc-fn="script0_styled0">.${className}{background-color:red;}</style>`,
       )
     })
-    it('can write css pointer from <style> styled() function', () => {
+    it('can write css pointer from <style> styled() function', async () => {
       const transformContext = usePinceauTransformContext(
         '<style pctransformed>styled({ backgroundColor: \'red\' })</style>',
         { ...baseQuery, transformed: true },
@@ -781,13 +688,13 @@ console.log('hello world')
         ],
       })
 
-      transformContext.transform()
+      await transformContext.transform()
 
       const styleFunction = transformContext.state.styleFunctions?.style0_styled0
 
-      expect(transformContext.result()?.code).toBe(`<style pctransformed>${styleFunction?.pointer}\n.${styleFunction?.className}{background-color:red;}\n</style>`)
+      expect(transformContext.result()?.code).toBe(`<style pctransformed>/* ${styleFunction?.pointer} */\n.${styleFunction?.className}{background-color:red;}\n</style>`)
     })
-    it('can write css content from <style> css() function', () => {
+    it('can write css content from <style> css() function', async () => {
       const transformContext = usePinceauTransformContext(
         '<style pctransformed>css({ div: { backgroundColor: \'red\' } })</style>',
         { ...baseQuery, transformed: true },
@@ -801,13 +708,13 @@ console.log('hello world')
         ],
       })
 
-      transformContext.transform()
+      await transformContext.transform()
 
       const styleFunction = transformContext.state.styleFunctions?.style0_css0
 
-      expect(transformContext.result()?.code).toBe(`<style pctransformed>${styleFunction?.pointer}\ndiv{background-color:red;}\n</style>`)
+      expect(transformContext.result()?.code).toBe(`<style pctransformed>/* ${styleFunction?.pointer} */\ndiv{background-color:red;}\n</style>`)
     })
-    it('can write css pointers from multiple <style> css() function', () => {
+    it('can write css pointers from multiple <style> css() function', async () => {
       const transformContext = usePinceauTransformContext(
         '<style pctransformed>css({ div: { backgroundColor: \'red\' } })</style>\n'
         + '<style pctransformed>css({ button: { backgroundColor: \'blue\' } })</style>',
@@ -822,17 +729,17 @@ console.log('hello world')
         ],
       })
 
-      transformContext.transform()
+      await transformContext.transform()
 
       const firstStyleFunction = transformContext.state.styleFunctions?.style0_css0
       const secondStyleFunction = transformContext.state.styleFunctions?.style1_css0
 
       expect(transformContext.result()?.code).toBe(
-        `<style pctransformed>${firstStyleFunction?.pointer}\ndiv{background-color:red;}\n</style>\n`
-        + `<style pctransformed>${secondStyleFunction?.pointer}\nbutton{background-color:blue;}\n</style>`,
+        `<style pctransformed>/* ${firstStyleFunction?.pointer} */\ndiv{background-color:red;}\n</style>\n`
+        + `<style pctransformed>/* ${secondStyleFunction?.pointer} */\nbutton{background-color:blue;}\n</style>`,
       )
     })
-    it('can write css contents from multiple <style> css() function on vueQuery', () => {
+    it('can write css contents from multiple <style> css() function on vueQuery', async () => {
       const transformContext = usePinceauTransformContext(
         '<style pctransformed>css({ div: { backgroundColor: \'red\' } })</style>\n'
         + '<style pctransformed>css({ button: { backgroundColor: \'blue\' } })</style>',
@@ -847,17 +754,17 @@ console.log('hello world')
         ],
       })
 
-      transformContext.transform()
+      await transformContext.transform()
 
       const firstStyleFunction = transformContext.state.styleFunctions?.style0_css0
       const secondStyleFunction = transformContext.state.styleFunctions?.style1_css0
 
       expect(transformContext.result()?.code).toBe(
-        `<style pctransformed>${firstStyleFunction?.pointer}\ndiv{background-color:red;}\n</style>\n`
-        + `<style pctransformed>${secondStyleFunction?.pointer}\nbutton{background-color:blue;}\n</style>`,
+        `<style pctransformed>/* ${firstStyleFunction?.pointer} */\ndiv{background-color:red;}\n</style>\n`
+        + `<style pctransformed>/* ${secondStyleFunction?.pointer} */\nbutton{background-color:blue;}\n</style>`,
       )
     })
-    it('can write css content from <template> styled prop', () => {
+    it('can write css content from <template> styled prop', async () => {
       const transformContext = usePinceauTransformContext(
         '<template><div :styled="{ backgroundColor: \'red\' }">Hello World</div></template>',
         { ...baseQuery, transformed: true },
@@ -871,16 +778,16 @@ console.log('hello world')
         ],
       })
 
-      transformContext.transform()
+      await transformContext.transform()
 
       const className = transformContext.state.styleFunctions?.template0_styled0?.className
 
       expect(transformContext.result()?.code).toBe(
         `<template><div class="${className}" pcsp>Hello World</div></template>\n`
-        + `<style scoped pinceau-style-function="template0_styled0">.${className}[pcsp]{background-color:red;}</style>`,
+        + `<style scoped pc-fn="template0_styled0">.${className}[pcsp]{background-color:red;}</style>`,
       )
     })
-    it('can write css content from multiple <template> styled prop', () => {
+    it('can write css content from multiple <template> styled prop', async () => {
       const transformContext = usePinceauTransformContext(
         '<template><div :styled="{ backgroundColor: \'red\' }">Hello World<a :styled="{ color: \'red\' }">Test link</a></div></template>',
         { ...baseQuery, transformed: true },
@@ -894,18 +801,18 @@ console.log('hello world')
         ],
       })
 
-      transformContext.transform()
+      await transformContext.transform()
 
       const className = transformContext.state.styleFunctions?.template0_styled0?.className
       const secondClassName = transformContext.state.styleFunctions?.template0_styled1?.className
 
       expect(transformContext.result()?.code).toBe(
         `<template><div class="${className}" pcsp>Hello World<a class="${secondClassName}" pcsp>Test link</a></div></template>\n`
-        + `<style scoped pinceau-style-function="template0_styled0">.${className}[pcsp]{background-color:red;}</style>\n`
-        + `<style scoped pinceau-style-function="template0_styled1">.${secondClassName}[pcsp]{color:red;}</style>`,
+        + `<style scoped pc-fn="template0_styled0">.${className}[pcsp]{background-color:red;}</style>\n`
+        + `<style scoped pc-fn="template0_styled1">.${secondClassName}[pcsp]{color:red;}</style>`,
       )
     })
-    it('can write css content from all <script>, <style> and <template> tags', () => {
+    it('can write css content from all <script>, <style> and <template> tags', async () => {
       const transformContext = usePinceauTransformContext(
         '<template><div :styled="{ backgroundColor: \'red\' }">Hello World<a :styled="{ color: \'red\' }">Test link</a></div></template>\n'
         + '<script>const testStyled = styled({ backgroundColor: \'red\' })</script>\n'
@@ -922,6 +829,7 @@ console.log('hello world')
         ],
         scripts: [
           transformWriteStyleFeatures,
+          transformWriteScriptFeatures,
         ],
         styles: [
           transformWriteStyleFeatures,
@@ -929,7 +837,7 @@ console.log('hello world')
       })
 
       try {
-        transformContext.transform()
+        await transformContext.transform()
       }
       catch (e) {
         console.log(e)
@@ -946,11 +854,11 @@ console.log('hello world')
         `<template><div class="${className}" pcsp>Hello World<a class="${secondClassName}" pcsp>Test link</a></div></template>\n`
         + `<script>const testStyled = \`${thirdClassName}\`</script>\n`
         + `<script setup>const testStyledSetup = \`${fourthClassName}\`</script>\n`
-        + `<style transformed>${fifthCssFunction?.pointer}\n${sixthCssFunction?.pointer}\ndiv{background-color:red;}\n\ndiv{background-color:green;}\n</style>\n`
-        + `<style scoped pinceau-style-function="template0_styled0">.${className}[pcsp]{background-color:red;}</style>\n`
-        + `<style scoped pinceau-style-function="template0_styled1">.${secondClassName}[pcsp]{color:red;}</style>\n`
-        + `<style scoped pinceau-style-function="script0_styled0">.${thirdClassName}{background-color:red;}</style>\n`
-        + `<style scoped pinceau-style-function="script1_styled0">.${fourthClassName}{background-color:red;}</style>`,
+        + `<style transformed>/* ${fifthCssFunction?.pointer} */\n/* ${sixthCssFunction?.pointer} */\ndiv{background-color:red;}\n\ndiv{background-color:green;}\n</style>\n`
+        + `<style scoped pc-fn="template0_styled0">.${className}[pcsp]{background-color:red;}</style>\n`
+        + `<style scoped pc-fn="template0_styled1">.${secondClassName}[pcsp]{color:red;}</style>\n`
+        + `<style scoped pc-fn="script0_styled0">.${thirdClassName}{background-color:red;}</style>\n`
+        + `<style scoped pc-fn="script1_styled0">.${fourthClassName}{background-color:red;}</style>`,
       )
     })
   })

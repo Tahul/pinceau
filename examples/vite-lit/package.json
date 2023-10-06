@@ -1,0 +1,30 @@
+{
+  "name": "pinceau-lit",
+  "version": "0.0.0",
+  "exports": {
+    ".": "./dist/my-element.es.js"
+  },
+  "main": "dist/my-element.es.js",
+  "types": "types/my-element.d.ts",
+  "files": [
+    "dist",
+    "types"
+  ],
+  "scripts": {
+    "dev": "vite --port=3000",
+    "build": "tsc && vite build"
+  },
+  "dependencies": {
+    "lit": "^2.8.0"
+  },
+  "devDependencies": {
+    "pinceau": "workspace:*",
+    "typescript": "^5.2.2",
+    "vite": "^4.4.9",
+    "@pinceau/configs": "workspace:*"
+  },
+  "stackblitz": {
+    "installDependencies": false,
+    "startCommand": "node .stackblitz.mjs && npm install && npm run dev"
+  }
+}

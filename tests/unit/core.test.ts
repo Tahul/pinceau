@@ -25,8 +25,8 @@ import {
   usePinceauTransformContext,
   usePinceauVirtualContext,
 } from '@pinceau/core/utils'
-import { Pinceau } from 'pinceau/plugin'
-import { createThemeHelper, get, referencesRegex, set, tokensPaths } from '@pinceau/core/runtime'
+import Pinceau from 'pinceau/plugin'
+import { createThemeHelper, get, referencesRegex, set, toHash, tokensPaths } from '@pinceau/core/runtime'
 import type { PinceauContext, PinceauQuery, PinceauTransformContext, PinceauTransforms, PinceauVirtualContext } from '@pinceau/core'
 import { PinceauVueTransformer } from '@pinceau/vue/utils'
 import type { CSSFunctionArgAST } from '@pinceau/style'
@@ -69,13 +69,16 @@ describe('@pinceau/core', () => {
       expect(findCallees(ast, 'styled').length).toEqual(3)
     })
     it('should return the correct character position after the last import statement in an AST with one import statement', () => {
-      const ast = parseAst(`
+      const script = `
         import module from 'module';
-      `)
+      `
+
+      const ast = parseAst(script)
 
       const result = getCharAfterLastImport(ast)
 
-      expect(result).toBe(36)
+      expect(result).toBe(37)
+      expect(script.charAt(result)).toBe('\n')
     })
   })
 
@@ -150,13 +153,13 @@ describe('@pinceau/core', () => {
       context.registerTransformer(id, PinceauVueTransformer)
       expect(context.transformers[id]).toBe(PinceauVueTransformer)
     })
-    it('apply load transformers', () => {
+    it('apply load transformers', async () => {
       const id = 'vue'
       context.registerTransformer(id, PinceauVueTransformer)
-      const componentPath = resolveFixtures('components/TestStyle.vue')
+      const componentPath = resolveFixtures('components/vue/TestStyle.vue')
       const query = parsePinceauQuery(componentPath)
       context.addTransformed(componentPath, query)
-      const code = load(componentPath, context)
+      const code = await load(componentPath, context)
       // Target fixture do have `<style lang="css">`; PinceauVueTransformer should turn this into a PostCSS block
       expect(code).toContain('<style pctransformed>')
     })
@@ -380,9 +383,58 @@ describe('@pinceau/core', () => {
     })
   })
 
+  describe('utils/hash.ts', () => {
+    const css = {
+      'color': 'red',
+      'backgroudColor': 'blue',
+      '&:hover': { color: 'green' },
+      '&:active': { color: 'blue' },
+      '&:before': { content: '\'\'', color: 'red', display: 'block', left: 0, top: 0 },
+    }
+
+    it('can hash declaration', () => {
+      const hash = toHash(css)
+
+      expect(hash).toBeDefined()
+    })
+    it('get two different hashes for two declarations', () => {
+      const hash = toHash(css)
+      const secondHash = toHash({
+        div: css,
+      })
+
+      expect(hash).toBeDefined()
+      expect(secondHash).toBeDefined()
+      expect(hash === secondHash).toBe(false)
+    })
+    it('get same hash when called twice with same declarations', () => {
+      const hash = toHash(css)
+      const secondHash = toHash(css)
+
+      expect(hash).toBeDefined()
+      expect(secondHash).toBeDefined()
+      expect(hash === secondHash).toBe(true)
+    })
+
+    it('can hash giant declarations', () => {
+      const bigCss = {}
+
+      for (let i = 0; i < 10000; i++) {
+        bigCss[`div-${i}`] = css
+      }
+
+      const hash = toHash(bigCss)
+      const secondHash = toHash(bigCss)
+
+      expect(hash).toBeDefined()
+      expect(secondHash).toBeDefined()
+      expect(hash === secondHash).toBe(true)
+    })
+  })
+
   describe('utils/load.ts', () => {
     it('can load files from a query', async () => {
-      const testBasePath = resolveFixtures('components/TestBase.vue')
+      const testBasePath = resolveFixtures('components/vue/TestBase.vue')
       const query = parsePinceauQuery(testBasePath)
       const file = loadFile(query)
       const fileContent = (await import(`${testBasePath}?raw`)).default
@@ -432,7 +484,7 @@ describe('@pinceau/core', () => {
       const options = {}
       const normalized = normalizeOptions(options)
       expect(normalized).toBeDefined()
-      ;['cwd', 'debug', 'dev', 'theme', 'style', 'runtime', 'vue'].forEach(
+      ;['cwd', 'debug', 'dev', 'theme', 'style', 'runtime'].forEach(
         property => expect(normalized).toHaveProperty(property),
       )
     })
@@ -440,7 +492,7 @@ describe('@pinceau/core', () => {
       const options = {}
       const normalized = normalizeOptions(options)
       expect(normalized).toBeDefined()
-      ;['theme', 'style', 'runtime', 'vue'].forEach(
+      ;['theme', 'style', 'runtime'].forEach(
         property => expect(normalized[property]).toEqual(defaults[property]),
       )
     })
@@ -452,7 +504,7 @@ describe('@pinceau/core', () => {
       }
       const normalized = normalizeOptions(options)
       expect(normalized).toBeDefined()
-      ;['theme', 'style', 'vue'].forEach(
+      ;['theme', 'style'].forEach(
         property => expect(normalized[property]).toBe(false),
       )
       expect(normalized.runtime).toEqual(defaults.runtime)
@@ -464,7 +516,7 @@ describe('@pinceau/core', () => {
       const result = parsePinceauQuery('file.tsx?src=true&raw=true')
       expect(result.filename).toBe('file.tsx')
       expect(result.ext).toBe('tsx')
-      expect(result.src).toBe(true)
+      expect(result.src).toBe('true')
       expect(result.raw).toBe(true)
     })
     it('handle Vue-specific query parameters', () => {
@@ -534,6 +586,28 @@ describe('@pinceau/core', () => {
       expect(result.ext).toBe('tsx')
       // Check that non-defined parameters don't affect the object structure
       expect(result).not.toHaveProperty('random')
+    })
+    it('handles unexpected file extensions gracefully', () => {
+      const result = parsePinceauQuery('file.unknownExt')
+      expect(result.ext).toBe('unknownExt')
+      expect(result.transformable).toBeUndefined()
+    })
+    it('handles empty string input gracefully', () => {
+      const result = parsePinceauQuery('')
+      expect(result.filename).toBe('')
+      expect(result.ext).toBe('')
+    })
+    it('handles non-numeric index value gracefully', () => {
+      const result = parsePinceauQuery('file.ts?index=not-a-number')
+      expect(result.index).toBeNaN()
+    })
+    it('prioritizes lang parameter over file extension for determining type', () => {
+      const result = parsePinceauQuery('file.js?lang=css')
+      expect(result.type).toBe('style')
+    })
+    it('handles conflicting query parameters gracefully', () => {
+      const result = parsePinceauQuery('file.js?lang=css&type=script')
+      expect(result.type).toBe('style') // Assuming type parameter takes precedence
     })
   })
 
@@ -699,7 +773,7 @@ describe('@pinceau/core', () => {
       expect(transformContext.transforms.scripts).to.have.lengthOf(1)
       expect(transformContext.transforms.customs).to.have.lengthOf(0)
     })
-    it('handle globals transformations correctly', () => {
+    it('handle globals transformations correctly', async () => {
       transformContext.registerTransforms({
         globals: [
           (ctx) => {
@@ -707,11 +781,11 @@ describe('@pinceau/core', () => {
           },
         ],
       })
-      transformContext.transform()
+      await transformContext.transform()
       const result = transformContext.result()
       expect(typeof result === 'object' ? result?.code : result).toContain('console.log(\'hello test\')')
     })
-    it('return transformed result with SourceMap when modified', () => {
+    it('return transformed result with SourceMap when modified', async () => {
       transformContext.registerTransforms({
         globals: [
           (ctx) => {
@@ -719,7 +793,7 @@ describe('@pinceau/core', () => {
           },
         ],
       })
-      transformContext.transform()
+      await transformContext.transform()
       const result = transformContext.result()
       if (typeof result === 'object') {
         expect(result?.map).toHaveProperty('file')
@@ -741,7 +815,7 @@ describe('@pinceau/core', () => {
     })
 
     it('add files to context transformed on loadInclude', () => {
-      const id = resolveFixtures('components/TestBase.vue')
+      const id = resolveFixtures('components/vue/TestBase.vue')
       loadInclude(id, ctx)
       expect(ctx.transformed[id]).toBeDefined()
     })
@@ -754,27 +828,27 @@ describe('@pinceau/core', () => {
       expect(ctx.transformed[id]).toBeUndefined()
     })
     it('load files', async () => {
-      const id = resolveFixtures('components/TestBase.vue')
+      const id = resolveFixtures('components/vue/TestBase.vue')
       loadInclude(id, ctx)
-      const code = load(id, ctx)
+      const code = await load(id, ctx)
       const fileContent = (await import(`${id}?raw`)).default
       expect(code).toStrictEqual(fileContent)
     })
     it('check if files are included before running transforms', () => {
-      const id = resolveFixtures('components/TestBase.vue')
+      const id = resolveFixtures('components/vue/TestBase.vue')
       const isIncluded = transformInclude(id, ctx)
       expect(isIncluded).toBe(false)
     })
     it('allow files added to transformed in context', () => {
-      const id = resolveFixtures('components/TestBase.vue')
+      const id = resolveFixtures('components/vue/TestBase.vue')
       ctx.addTransformed(id, parsePinceauQuery(id))
       const isIncluded = transformInclude(id, ctx)
       expect(isIncluded).toBe(true)
     })
     it('transforms files', async () => {
-      const id = resolveFixtures('components/TestBase.vue')
+      const id = resolveFixtures('components/vue/TestBase.vue')
       loadInclude(id, ctx)
-      const code = load(id, ctx)
+      const code = await load(id, ctx)
       const suite: PinceauTransforms = {
         globals: [
           (ctx) => {
@@ -782,7 +856,7 @@ describe('@pinceau/core', () => {
           },
         ],
       }
-      const result = transform(code, id, suite, ctx)
+      const result = await transform(code, id, suite, ctx)
       // @ts-ignore
       expect(result.code).toContain('// hello world')
     })

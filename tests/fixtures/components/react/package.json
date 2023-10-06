@@ -1,0 +1,8 @@
+{
+  "name": "@pinceau/react-fixtures",
+  "devDependencies": {
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "@pinceau/jsx": "workspace:*"
+  }
+}

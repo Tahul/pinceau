@@ -50,6 +50,15 @@ export function usePinceauTransformContext(
     },
 
     /**
+     * State from previous transform pass state resolved.
+     *
+     * State for a file only get reset when a new query to the main file, without parameters, is made.
+     */
+    get previousState() {
+      return pinceauContext.transformed?.[this.query.filename]?.previousState as PinceauTransformState
+    },
+
+    /**
      * Current complete MagicString.
      */
     get ms() { return ms },
@@ -63,7 +72,7 @@ export function usePinceauTransformContext(
       return proxyBlock(
         this.ms,
         {
-          index: this.query.index,
+          index: this.query.index || 0,
           type: this.query.type || 'script',
         },
       )
@@ -103,22 +112,32 @@ export function usePinceauTransformContext(
 
       if (sfc) { return sfc }
 
-      // Grab parser from SFC resolved type
-      const parser = pinceauContext?.transformers?.[query.ext]
-      if (!parser) { return }
-
-      // Return a MagicSFC using the apropriate parser
-      sfc = new parser.MagicSFC(ms, { parser: parser.parser, parserOptions: parser?.parserOptions })
-
       return sfc
     },
 
-    transform() {
-      const applyTransforms = (
+    /**
+     * Parse the source code with associated parser if present.
+     */
+    async parse() {
+      // Grab parser from SFC resolved type
+      const transformer = pinceauContext?.transformers?.[query.ext]
+
+      if (!transformer) { return }
+
+      // Return a MagicSFC using the apropriate parser
+      sfc = new transformer.MagicSFC(ms, { parser: transformer.parser, parserOptions: transformer?.parserOptions, lazy: true })
+
+      await sfc.parse()
+    },
+
+    async transform() {
+      if (query.sfc) { await this.parse() }
+
+      const applyTransforms = async (
         transforms: PinceauTransformFunction[],
       ) => {
         for (const transformFn of transforms) {
-          transformFn?.(this, pinceauContext)
+          await transformFn?.(this, pinceauContext)
         }
       }
 
@@ -140,7 +159,7 @@ export function usePinceauTransformContext(
 
             this.target = block
 
-            applyTransforms(transforms[blockType])
+            await applyTransforms(transforms[blockType])
           }
         }
 
@@ -148,20 +167,20 @@ export function usePinceauTransformContext(
 
         // Apply globals transforms
         if (transforms?.globals?.length) {
-          applyTransforms(transforms.globals)
+          await applyTransforms(transforms.globals)
         }
 
         return
       }
 
-      if (transforms?.styles?.length && query.type === 'style') { applyTransforms(transforms.styles) }
-      if (transforms?.templates?.length && query.type === 'template') { applyTransforms(transforms.templates) }
-      if (transforms?.scripts?.length && query.type === 'script') { applyTransforms(transforms.scripts) }
-      if (transforms?.customs?.length && query.type === 'custom') { applyTransforms(transforms.customs) }
+      if (transforms?.styles?.length && query.type === 'style') { await applyTransforms(transforms.styles) }
+      if (transforms?.templates?.length && query.type === 'template') { await applyTransforms(transforms.templates) }
+      if (transforms?.scripts?.length && query.type === 'script') { await applyTransforms(transforms.scripts) }
+      if (transforms?.customs?.length && query.type === 'custom') { await applyTransforms(transforms.customs) }
 
       // Apply globals transforms
       if (transforms?.globals?.length) {
-        applyTransforms(transforms.globals)
+        await applyTransforms(transforms.globals)
       }
     },
 

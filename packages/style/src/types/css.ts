@@ -8,27 +8,33 @@ export type PropertyType = (string & {}) | (number & {}) | undefined
 export type ResponsiveProp<T extends string | number | undefined> = { [key in PinceauMediaQueries]?: T } | T
 
 export type StyledFunctionArg<
+  Source extends Record<string, any> = {},
+  Props extends Record<string, any> = {},
   LocalTokens extends string = (string & {}),
-  TemplateSource = {},
-  > =
-  RawCSS<LocalTokens, TemplateSource, true>
+  TemplateSource extends {} = {},
+> =
+  // Support for variants
+  {
+    variants?: Variants<
+      Source,
+      LocalTokens,
+      TemplateSource
+    >
+  }
+  &
+  RawCSS<LocalTokens, TemplateSource, Props, true>
 
 export type CSSFunctionArg<
   LocalTokens extends string = (string & {}),
-  TemplateSource = {},
-  > =
-  // Support for variants
-  {
-    variants?: Variants
-  }
-  |
-  RawCSS<LocalTokens, TemplateSource, false>
+  TemplateSource extends {} = {}
+> = RawCSS<LocalTokens, TemplateSource, {}, false>
 
 export type RawCSS<
   LocalTokens extends string = (string & {}),
   TemplateSource = {},
+  Props extends Record<string, any> = {},
   HasRoot extends boolean = false,
-  > =
+> =
   // Utils properties
   {
     [K in keyof PinceauUtils]?:
@@ -40,12 +46,12 @@ export type RawCSS<
   |
   // Autocomplete from template source
   {
-    [K in keyof TemplateSource]?: RawCSS<LocalTokens, TemplateSource[K], true>
+    [K in keyof TemplateSource]?: RawCSS<LocalTokens, TemplateSource[K], Props, true>
   }
   |
   // $media queries
   {
-    [K in PinceauMediaQueries]?: RawCSS<LocalTokens, TemplateSource, HasRoot>
+    [K in PinceauMediaQueries]?: RawCSS<LocalTokens, TemplateSource, Props, HasRoot>
   }
   |
   // If the CSS has a root, display all possible properties.
@@ -82,11 +88,12 @@ export type RawCSS<
   |
   // Make this recursive, set root to true past first level
   {
-    [key: string]: RawCSS<LocalTokens, TemplateSource, true>
+    [key: string]: RawCSS<LocalTokens, TemplateSource, Props, true>
   }
 
-interface TestTemplate { div: { button: {}; span: {}; '.test': {} }; '.class-test': { button: {}; span: { a: {} } } }
 /* eslint-disable-next-line unused-imports/no-unused-vars */
-function css(declaration: CSSFunctionArg<'$test.token', TestTemplate>) { return declaration as Readonly<typeof declaration> }
+// interface TestTemplate { div: { button: {}; span: {}; '.test': {} }; '.class-test': { button: {}; span: { a: {} } } }
 /* eslint-disable-next-line unused-imports/no-unused-vars */
-function styled(declaration: StyledFunctionArg<'$test.token', TestTemplate>) { return declaration as Readonly<typeof declaration> }
+// function css(declaration: CSSFunctionArg<'$test.token', TestTemplate>) { return declaration as Readonly<typeof declaration> }
+/* eslint-disable-next-line unused-imports/no-unused-vars */
+// function styled<T extends {}>(declaration: StyledFunctionArg<T, '$test.token', TestTemplate>) { return declaration as Readonly<typeof declaration> }

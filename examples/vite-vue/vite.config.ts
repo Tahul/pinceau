@@ -1,8 +1,9 @@
+import process from 'node:process'
 import { createResolver } from '@nuxt/kit'
 import { defineConfig } from 'vite'
 import Vue from '@vitejs/plugin-vue'
 import Inspect from 'vite-plugin-inspect'
-import { Pinceau } from 'pinceau/plugin'
+import Pinceau from '@pinceau/vue/plugin'
 
 const resolve = (p: string) => createResolver(import.meta.url).resolve(p)
 
@@ -12,9 +13,9 @@ export default defineConfig({
     alias: {
       '@pinceau/stringify': resolve('../../packages/stringify/src/index.ts'),
       '@pinceau/runtime': resolve('../../packages/runtime/src/index.ts'),
-      '@pinceau/vue/runtime': resolve('../../packages/vue/src/runtime.ts'),
       '@pinceau/core/runtime': resolve('../../packages/core/src/runtime.ts'),
       '@pinceau/theme/runtime': resolve('../../packages/theme/src/runtime.ts'),
+      '@pinceau/vue/runtime': resolve('../../integrations/vue/src/runtime.ts'),
     },
   },
   plugins: [

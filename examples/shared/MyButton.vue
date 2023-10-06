@@ -10,7 +10,7 @@ const props = withDefaults(
 </script>
 
 <template>
-  <button class="my-button">
+  <button>
     <span v-if="!$slots?.default">
       Hello Pinceau 1.0
     </span>
@@ -21,33 +21,31 @@ const props = withDefaults(
 </template>
 
 <style lang="ts">
-css({
-  '.my-button': {
-    '$button.bg': () => `$color.${props.color}.5`,
-    '$button.border': () => `$color.${props.color}.6`,
-    '$button.active': () => `$color.${props.color}.4`,
-    color: '$color.white',
-    transition: 'all 333ms ease-out',
+styled({
+  '$button.bg': () => `$color.${props.color}.5`,
+  '$button.border': () => `$color.${props.color}.6`,
+  '$button.active': () => `$color.${props.color}.4`,
+  color: '$color.white',
+  transition: 'all 333ms ease-out',
+  display: 'inline-block',
+  borderRadius: '$radii.xs',
+  backgroundColor: '$button.bg',
+  span: {
+    boxShadow: 'inset 0 0 0 2px $button.border, 0 1px 2px $color.black',
     display: 'inline-block',
-    borderRadius: '$radii.xs',
-    backgroundColor: '$button.bg',
+    fontFamily: '$',
+    borderRadius: '$radii.sm',
+    fontSize: '$fontSize.xl',
+    lineHeight: '0',
+  },
+  '&:hover': {
     span: {
-      boxShadow: 'inset 0 0 0 2px $button.border, 0 1px 2px $color.black',
-      display: 'inline-block',
-      fontFamily: '$',
-      borderRadius: '$radii.xs',
-      fontSize: '$fontSize.xl',
-      lineHeight: '0',
-    },
-    '&:hover': {
-      span: {
-        backgroundColor: `$button.border`,
-      }
-    },
-    '&:active': {
-      span: {
-        boxShadow: 'inset 0 0 0 2px $button.active',
-      }
+      backgroundColor: `$button.border`,
+    }
+  },
+  '&:active': {
+    span: {
+      boxShadow: 'inset 0 0 0 2px $button.active',
     }
   },
   variants: {

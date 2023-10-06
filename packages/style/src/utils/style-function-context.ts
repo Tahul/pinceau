@@ -18,7 +18,7 @@ export const resolveStyleFunctionContext: PinceauTransformFunction<PinceauStyleF
   callee: PathMatch,
   id: string,
 ): PinceauStyleFunctionContext => {
-  const previousState = transformContext?.state?.styleFunctions?.[id]
+  const previousState = transformContext?.state?.styleFunctions?.[id] || transformContext?.previousState?.styleFunctions?.[id]
 
   // Resolve type
   const type = Array.isArray(callee.match) ? 'styled' : 'css'
@@ -34,7 +34,11 @@ export const resolveStyleFunctionContext: PinceauTransformFunction<PinceauStyleF
   const computedStyles: PinceauStyleFunctionContext['computedStyles'] = []
 
   // Create context
-  const loc = createSourceLocationFromOffsets(transformContext.target.toString(), callee.value.start, callee.value.end)
+  const loc = createSourceLocationFromOffsets(
+    transformContext.target.toString(),
+    callee.value.start,
+    callee.value.end,
+  )
 
   // Search for function properties in css() AST
   resolveStyleArg(
@@ -68,16 +72,7 @@ export const resolveStyleFunctionContext: PinceauTransformFunction<PinceauStyleF
     ),
   )
 
-  let pointer: string = `$pinceau:${transformContext.query.filename}:${id}`
-  // If it is a style, replace with comment pointer
-  if (transformContext.target.type === 'style') { pointer = `\n/* ${pointer} */` }
-  // If it is a class, replace with a class name is available, or an empty string
-  if (transformContext.target.type === 'script') {
-  // Check if the style function declaration has a variable declarator
-    const hasVariableDeclarator = callee?.parentPath?.value?.type === 'VariableDeclarator'
-    // Define the pointer to className or empty string if there is a declarator, otherwise no pointer needed for <script> contexts
-    pointer = hasVariableDeclarator ? `\`${className || ''}\`` : ''
-  }
+  const pointer: string = `$pinceau:${transformContext.query.filename}:${id}`
 
   return {
     type,
@@ -91,5 +86,9 @@ export const resolveStyleFunctionContext: PinceauTransformFunction<PinceauStyleF
     variants,
     computedStyles,
     localTokens,
+    applied: {
+      static: false,
+      runtime: false,
+    },
   }
 }

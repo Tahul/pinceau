@@ -1,7 +1,7 @@
 import { createResolver } from '@nuxt/kit'
 import { defineConfig } from 'vite'
 import Vue from '@vitejs/plugin-vue'
-import { Pinceau } from 'pinceau/plugin'
+import Pinceau from 'pinceau/plugin'
 
 const resolve = (p: string) => createResolver(import.meta.url).resolve(p)
 
@@ -29,14 +29,14 @@ export default defineConfig({
         layers: [
           {
             path: resolve('../../packages/palette/'),
-          }
-        ]
+          },
+        ],
       },
       style: {
         excludes: [
           resolve('../../packages'),
         ],
       },
-    })
+    }),
   ],
 })

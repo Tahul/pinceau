@@ -3,8 +3,6 @@ import * as VueRouter from 'vue-router'
 import App from './app.vue'
 import Navigation from './components/Navigation.vue'
 import { PinceauVue } from '$pinceau/vue-plugin'
-import utils from '$pinceau/utils'
-import theme from '$pinceau/theme'
 import './style.css'
 
 export const routes = [

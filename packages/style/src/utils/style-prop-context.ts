@@ -16,7 +16,7 @@ export const resolveStylePropContext: PinceauTransformFunction<PinceauStyleFunct
   prop: PropMatch,
   id: string,
 ): PinceauStyleFunctionContext => {
-  const previousState = transformContext?.state?.styleFunctions?.[id]
+  const previousState = transformContext?.state?.styleFunctions?.[id] || transformContext?.previousState?.styleFunctions?.[id]
 
   const className = previousState?.className || createUniqueClass()
 
@@ -72,5 +72,9 @@ export const resolveStylePropContext: PinceauTransformFunction<PinceauStyleFunct
     variants,
     computedStyles,
     localTokens,
+    applied: {
+      static: false,
+      runtime: false,
+    },
   }
 }

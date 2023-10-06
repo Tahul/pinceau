@@ -1,31 +1,21 @@
-import type { PinceauThemeOptions } from '@pinceau/theme'
-import type { PinceauStyleOptions } from '@pinceau/style'
-import type { PinceauRuntimeOptions } from '@pinceau/runtime'
-import type { PinceauVueOptions } from '@pinceau/vue'
+/**
+ * To be extended by Pinceau plugins.
+ */
+export interface PinceauPluginsOptions {}
 
 /**
  * Options format used from implementation, normalized from PinceauUserOptions.
  */
-export interface PinceauOptions {
+export interface PinceauOptions extends FinalOptionsScope<PinceauPluginsOptions> {
   cwd: string
-
   dev: boolean
-
   debug: boolean | 2
-
-  theme: PinceauThemeOptions
-
-  style: PinceauStyleOptions
-
-  runtime: PinceauRuntimeOptions
-
-  vue: PinceauVueOptions
 }
 
 /**
  * Options format supplied by Pinceau users.
  */
-export interface PinceauUserOptions {
+export interface PinceauUserOptions extends UserOptionsScope<PinceauPluginsOptions> {
   /**
    * The root directory of your project.
    *
@@ -44,38 +34,15 @@ export interface PinceauUserOptions {
   debug?: boolean | 2
 
   /**
-   * Pinceau theming options.
-   *
-   * Using `true` will use default options for theming.
-   *
-   * Using `false` will completely disable theming.
+   * Extendable from integrations and plugins.
    */
-  theme?: Partial<PinceauThemeOptions> | boolean
+  [key: string]: any
+}
 
-  /**
-   * Pinceau style options.
-   *
-   * Using `true` will use default options for style transforms.
-   *
-   * Using `false` will completely disable style transforms.
-   */
-  style?: Partial<PinceauStyleOptions> | boolean
+type UserOptionsScope<T extends object> = {
+  [K in keyof T]?: T[K] extends {} ? Partial<T[K]> : T[K]
+}
 
-  /**
-   * Pinceau runtime options.
-   *
-   * Using `true` will use default options for runtime features.
-   *
-   * Using `false` will completely disable runtime features.
-   */
-  runtime?: Partial<PinceauRuntimeOptions> | boolean
-
-  /**
-   * Pinceau Vue options.
-   *
-   * Using `true` will use default options for Vue transforms.
-   *
-   * Using `false` will completely disable Vue support.
-   */
-  vue?: Partial<PinceauVueOptions> | boolean
+type FinalOptionsScope<T extends object> = {
+  [K in keyof T]: T[K] extends {} ? Required<Exclude<T[K], boolean>> : T[K]
 }

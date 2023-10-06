@@ -22,7 +22,6 @@ css({
     justifyContent: 'space-evenly',
     gap: '$space.2',
     marginBottom: '2rem',
-    color: '$borderWidth.lg   test',
   },
   a: {
     textTransform: 'capitalize',

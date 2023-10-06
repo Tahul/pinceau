@@ -2,9 +2,6 @@ import type { GeneratedPinceauMediaQueries, GeneratedPinceauTheme, GeneratedPinc
 import type { GeneratedPinceauUtils } from '$pinceau/utils'
 
 export type PinceauTheme = GeneratedPinceauTheme
-
 export type PinceauThemePaths = GeneratedPinceauThemePaths
-
 export type PinceauUtils = GeneratedPinceauUtils
-
 export type PinceauMediaQueries = GeneratedPinceauMediaQueries

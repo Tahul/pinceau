@@ -6,7 +6,7 @@ import { helperRegex } from '../utils/helper-regex'
  *
  * Supports `wrapper` to be used in both `<style>` and `<script>` or `<template>` tags.
  */
-export const transformThemeHelper: PinceauTransformFunction = (
+export const transformThemeHelper: PinceauTransformFunction = async (
   transformContext,
   pinceauContext,
   wrapper: string = '',

@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "$pinceau/theme": ["../../packages/palette/output/theme.ts"],
+      "$pinceau/utils": ["../../packages/palette/output/utils.ts"],
+      "$pinceau/schema": ["../../packages/palette/output/schema.js"],
+      "pinceau.css": ["../../packages/palette/output/pinceau.css"]
+    }
+  }
+}

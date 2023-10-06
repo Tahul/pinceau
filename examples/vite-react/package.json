@@ -1,0 +1,30 @@
+{
+  "name": "vite-pinceau-react",
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite --port=3000",
+    "dev-refresh": "cross-env USE_REFRESH=true vite --port=3000",
+    "build": "vite build",
+    "build-refresh": "cross-env USE_REFRESH=true vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@pinceau/jsx": "workspace:*",
+    "@types/node": "20.8.2",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "@vitejs/plugin-react": "^4.1.0",
+    "cross-env": "^7.0.3",
+    "typescript": "^5.2.2",
+    "vite": "^4.4.9",
+    "@pinceau/configs": "workspace:*"
+  },
+  "stackblitz": {
+    "installDependencies": false,
+    "startCommand": "node .stackblitz.mjs && npm install && npm run dev"
+  }
+}

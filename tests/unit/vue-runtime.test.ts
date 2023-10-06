@@ -261,6 +261,7 @@ describe('@pinceau/vue/runtime', () => {
       },
       setup(props) {
         const className = usePinceauRuntime(
+          undefined,
           [
             ['--pc-test', () => `$color.${props.color}.1`],
           ],

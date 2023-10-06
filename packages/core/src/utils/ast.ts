@@ -78,7 +78,8 @@ export function getCharAfterLastImport(ast: ASTNode) {
   recast.visit(ast, {
     visitImportDeclaration(path) {
       // Capture the end position of each import statement
-      lastImportEndPos = path.value.loc.end.column
+      lastImportEndPos = path.value.end
+
       // Continue traversal
       return this.traverse(path)
     },

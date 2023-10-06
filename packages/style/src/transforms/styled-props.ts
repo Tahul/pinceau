@@ -1,17 +1,18 @@
-import type { PinceauContext, PinceauTransformContext } from '@pinceau/core'
+import type { PinceauContext, PinceauTransformContext, PinceauTransformFunction } from '@pinceau/core'
 import { resolveStylePropContext } from '../utils/style-prop-context'
 
-export function transformStyledProps(
+export const transformStyledProps: PinceauTransformFunction = async (
   transformContext: PinceauTransformContext,
   pinceauContext: PinceauContext,
-) {
+) => {
   const { target } = transformContext
 
   if (!transformContext.state.styleFunctions) { transformContext.state.styleFunctions = {} }
 
-  const extractor = pinceauContext.transformers[transformContext.query.ext]?.extractProp
-  if (extractor) {
-    const matchedProps = extractor(transformContext, 'styled')
+  const transformer = pinceauContext.transformers[transformContext.query.ext]
+
+  if (transformer) {
+    const matchedProps = transformer.extractProp(transformContext, 'styled')
 
     for (let i = 0; i < matchedProps.length; i++) {
       const prop = matchedProps[i]
@@ -21,7 +22,7 @@ export function transformStyledProps(
 
       const id = `${target.type}${target.index}_styled${i}`
 
-      const styledPropContext = resolveStylePropContext(
+      const styledPropContext = await resolveStylePropContext(
         transformContext,
         pinceauContext,
         prop,
@@ -34,7 +35,7 @@ export function transformStyledProps(
 
       target.appendRight(
         styledPropContext.loc.start.offset,
-        `class="${styledPropContext?.className || ''}" pcsp`,
+        transformer.classBinding(id, styledPropContext),
       )
 
       transformContext.state.styleFunctions[id] = styledPropContext

@@ -10,7 +10,7 @@ export const suite: PinceauTransforms = {
     transformStyleFunctions,
   ],
   styles: [
-    (transformCtx, pinceauCtx) => {
+    async (transformCtx, pinceauCtx) => {
       // Pick only:
       // - `<style lang="ts">` blocks that has been transformed to `<style transformed=true">`
       // - `<style lang="ts">` blocks that has not been transformed in previous steps
@@ -18,7 +18,7 @@ export const suite: PinceauTransforms = {
         (transformCtx.query.transformed || transformCtx.target?.attrs?.pctransformed)
           || (transformCtx.query.type === 'style' && transformCtx.query.lang === 'ts')
       ) {
-        transformStyleFunctions(transformCtx, pinceauCtx)
+        await transformStyleFunctions(transformCtx, pinceauCtx)
       }
     },
   ],

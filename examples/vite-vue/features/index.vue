@@ -1,5 +1,7 @@
 <template>
-  <div>Hello Index</div>
+  <div>
+    Hello Index
+  </div>
 </template>
 
 <style scoped>

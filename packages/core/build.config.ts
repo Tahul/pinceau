@@ -40,5 +40,10 @@ export default defineBuildConfig({
     'chalk',
     'consola',
     'ultrahtml',
+    '@pinceau',
+    '@pinceau/core/utils',
+    '@pinceau/theme/plugin',
+    '@pinceau/style/plugin',
+    '@pinceau/runtime/plugin',
   ],
 })

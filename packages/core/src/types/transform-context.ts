@@ -24,9 +24,11 @@ export interface PinceauTransformContext {
   target: MagicBlock<{ type: PinceauQueryBlockType; attrs?: { [key: string]: any }; [key: string]: any }>
   code: string
   state: PinceauTransformState
+  previousState?: PinceauTransformState
   transforms: PinceauTransforms
   registerTransforms: (transform: Partial<PinceauTransforms>) => void
-  transform: () => void
+  transform: () => Promise<void>
+  parse: () => Promise<void>
   result: () => PinceauTransformResult
 
   // Optional

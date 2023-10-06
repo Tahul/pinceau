@@ -1,17 +1,13 @@
+<script lang="ts" setup>
+import App from '../shared/App.vue'
+</script>
+
 <template>
   <App class="main">
-    <div 
-      :styled="{
-        width: '100%',
-      }"
-    >
+    <div>
       <Navigation />
     </div>
 
     <RouterView />
   </App>
 </template>
-
-<script lang="ts" setup>
-import App from '../shared/App.vue'
-</script>

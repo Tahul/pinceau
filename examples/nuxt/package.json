@@ -2,23 +2,16 @@
   "name": "pinceau-nuxt",
   "private": true,
   "scripts": {
-    "_prepare": "nuxi prepare",
     "build": "nuxi build",
-    "dev": "nuxi dev",
+    "dev": "nuxi dev --port=3000",
     "preview": "nuxi preview"
   },
   "dependencies": {
-    "@pinceau/nuxt": "workspace:*",
-    "@pinceau/core": "workspace:*",
-    "@pinceau/theme": "workspace:*",
-    "@pinceau/style": "workspace:*",
-    "@pinceau/runtime": "workspace:*",
-    "@pinceau/vue": "workspace:*",
-    "@pinceau/stringify": "workspace:*",
-    "pinceau": "workspace:*"
+    "@pinceau/nuxt": "workspace:*"
   },
   "devDependencies": {
-    "nuxt": "^3.7.3"
+    "nuxt": "^3.7.4",
+    "@pinceau/configs": "workspace:*"
   },
   "stackblitz": {
     "installDependencies": false,

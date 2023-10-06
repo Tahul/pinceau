@@ -1,5 +1,5 @@
 import type { PinceauMediaQueries } from '@pinceau/theme'
-import type { CSSProperties } from '@pinceau/style'
+import type { CSSProperties, RawCSS } from '@pinceau/style'
 
 export interface VariantOptions<T = {}> {
   type?: string
@@ -8,17 +8,29 @@ export interface VariantOptions<T = {}> {
   mediaPrefix?: boolean
 }
 
-export type Variant<T> =
+export type Variant<
+  T extends Record<string, CSSProperties> = {},
+  LocalTokens extends string = (string & {}),
+  TemplateSource extends {} = {}
+> =
   {
     options?: VariantOptions<T>
   }
   &
   {
-    [K in keyof T]?: K extends 'options' ? VariantOptions<T> : CSSProperties<T[K]> & { $class?: string }
+    [K in keyof T]?: K extends 'options' ? VariantOptions<T> : RawCSS<LocalTokens, TemplateSource, {}, true> & { $class?: string }
   }
 
-export type Variants<Source = {}> = {
-  [Key in keyof Source]: Variant<Source[Key]>
+export type Variants<
+  Source extends Record<string, {}> = {},
+  LocalTokens extends string = (string & {}),
+  TemplateSource extends {} = {}
+> = {
+    [Key in keyof Source]: Variant<
+      Source[Key],
+      LocalTokens,
+      TemplateSource
+    >
 }
 
 export interface VariantsProps {
@@ -27,6 +39,7 @@ export interface VariantsProps {
 
 /** Local testing purposes; this ain't exposed nor used anywhere */
 /* eslint-disable-next-line unused-imports/no-unused-vars */
-function variant<T extends {}>(declaration: Variant<T>) { return declaration as Readonly<T> }
+// function variant<T extends {}>(declaration: Variant<T>) { return declaration as Readonly<T> }
 /* eslint-disable-next-line unused-imports/no-unused-vars */
-function variants<T extends {}>(declaration: Variants<T>) { return declaration as Readonly<T> }
+// function variants<T extends {}>(declaration: Variants<T>) { return declaration as Readonly<T> }
+

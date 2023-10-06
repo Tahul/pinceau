@@ -1,4 +1,5 @@
 import type { PinceauTheme, PinceauUtils, Theme, ThemeFunction } from '@pinceau/theme'
+import type { PinceauStyleFunctionContext } from '@pinceau/style'
 import type { PinceauVirtualContext } from './virtual-context'
 import type { PinceauOptions } from './options'
 import type { PinceauQuery } from './query'
@@ -26,7 +27,7 @@ export interface PinceauBuildContext {
   /**
    * A list of transformed files
    */
-  transformed: { [key: string]: PinceauQuery & { state?: PinceauTransformState; previosuState?: PinceauTransformState } }
+  transformed: { [key: string]: PinceauQuery & { state?: PinceauTransformState; previousState?: PinceauTransformState } }
   /**
    * Is a module transformable
    */
@@ -71,6 +72,14 @@ export interface PinceauBuildContext {
    * Add a module query filter.
    */
   registerFilter: (fn: PinceauFilterFunction) => void
+  /**
+   * Check if an id is a style function query.
+   */
+  isStyleFunctionQuery: (id: string) => PinceauQuery | void
+  /**
+   *
+   */
+  getStyleFunction: (id: string) => PinceauStyleFunctionContext | void
 }
 
 /**

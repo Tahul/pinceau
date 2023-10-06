@@ -33,6 +33,10 @@ export interface DesignToken<T extends RawTokenType | ResponsiveToken = RawToken
    */
   raw?: T
   /**
+   * The name of the token, used by dictionnary.
+   */
+  name?: string
+  /**
    * Token extraneous attributes.
    */
   attributes?: {

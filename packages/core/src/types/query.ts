@@ -8,7 +8,7 @@ export interface PinceauQuery {
 
   // Extraneous parameters
   global?: boolean
-  src?: boolean
+  src?: string
   raw?: boolean
 
   // Vue Query parameters
@@ -31,5 +31,5 @@ export interface PinceauQuery {
   transformable?: boolean
 
   // Is target a SFC component?
-  sfc?: 'vue' | false
+  sfc?: 'vue' | 'svelte' | 'astro' | false
 }

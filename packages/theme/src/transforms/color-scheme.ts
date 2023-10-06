@@ -1,4 +1,4 @@
-import type { PinceauContext, PinceauTransformContext } from '@pinceau/core'
+import type { PinceauContext, PinceauTransformContext, PinceauTransformFunction } from '@pinceau/core'
 
 const schemesRegex = /(@(dark|light)\s{)/gm
 
@@ -7,10 +7,10 @@ const schemesRegex = /(@(dark|light)\s{)/gm
 /**
  * Transform media scheme into proper declaration
  */
-export function transformColorScheme(
+export const transformColorScheme: PinceauTransformFunction = (
   transformContext: PinceauTransformContext,
   pinceauContext: PinceauContext,
-) {
+) => {
   transformContext.target.toString().replace(
     schemesRegex,
     (match, ...args) => {

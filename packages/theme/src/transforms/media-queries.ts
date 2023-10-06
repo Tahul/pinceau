@@ -1,12 +1,12 @@
-import type { PinceauContext, PinceauTransformContext } from '@pinceau/core'
+import type { PinceauContext, PinceauTransformContext, PinceauTransformFunction } from '@pinceau/core'
 
 /**
  * Resolve `@{media.xl}` declarations.
  */
-export function transformMediaQueries(
+export const transformMediaQueries: PinceauTransformFunction = (
   transformContext: PinceauTransformContext,
   pinceauContext: PinceauContext,
-) {
+) => {
   const mediaQueries = pinceauContext.$theme('media')
 
   transformContext.target.toString().replace(

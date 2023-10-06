@@ -1,0 +1,38 @@
+{
+  "name": "@pinceau/nuxt",
+  "version": "0.1.0",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./index.cjs"
+    }
+  },
+  "main": "./index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "server",
+    "index.cjs"
+  ],
+  "scripts": {
+    "build": "unbuild",
+    "stub": "unbuild --stub"
+  },
+  "dependencies": {
+    "@nuxt/kit": "^3.7.4",
+    "@pinceau/integration": "workspace:*",
+    "@pinceau/vue": "workspace:*"
+  },
+  "devDependencies": {
+    "@nuxt/test-utils": "^3.7.4",
+    "@nuxthq/studio": "^1.0.0",
+    "@nuxtjs/color-mode": "^3.3.0",
+    "nitropack": "2.6.3",
+    "nuxi": "3.9.0",
+    "nuxt": "3.7.4",
+    "@pinceau/configs": "workspace:*",
+    "nuxt-component-meta": "^0.5.4"
+  }
+}

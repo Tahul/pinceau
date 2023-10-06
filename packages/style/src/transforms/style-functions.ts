@@ -1,12 +1,12 @@
-import type { PinceauContext, PinceauTransformContext } from '@pinceau/core'
+import type { PinceauContext, PinceauTransformContext, PinceauTransformFunction } from '@pinceau/core'
 import { findCallees, parseAst } from '@pinceau/core/utils'
 import { resolveStyleFunctionContext } from '../utils/style-function-context'
 import { elements } from '../utils/html-elements'
 
-export function transformStyleFunctions(
+export const transformStyleFunctions: PinceauTransformFunction = async (
   transformContext: PinceauTransformContext,
   pinceauContext: PinceauContext,
-) {
+) => {
   const { target } = transformContext
 
   if (!transformContext.state.styleFunctions) { transformContext.state.styleFunctions = {} }
@@ -25,7 +25,7 @@ export function transformStyleFunctions(
     const id = `${target.type}${target.index}_${type}${i}`
 
     // Resolve runtime styling context from AST of css() call
-    const styleFunctionContext = resolveStyleFunctionContext(
+    const styleFunctionContext = await resolveStyleFunctionContext(
       transformContext,
       pinceauContext,
       callee,
@@ -34,12 +34,14 @@ export function transformStyleFunctions(
 
     if (!styleFunctionContext) { return }
 
-    // Remove source; this should leave component compilable without caring if the resolved context is consumed elsewhere
-    target.overwrite(
-      callee.value.start,
-      callee.value.end,
-      styleFunctionContext.pointer,
-    )
+    // If target is `<style>`, erase css() function as early as possible to prevent evaluation as CSS.
+    if (target.type === 'style') {
+      target.overwrite(
+        callee.value.start,
+        callee.value.end,
+        `/* ${styleFunctionContext.pointer} */`,
+      )
+    }
 
     transformContext.state.styleFunctions[id] = styleFunctionContext
   }

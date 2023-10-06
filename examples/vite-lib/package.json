@@ -8,16 +8,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@pinceau/core": "workspace:*",
-    "@pinceau/runtime": "workspace:*",
-    "@pinceau/style": "workspace:*",
-    "@pinceau/theme": "workspace:*",
-    "@pinceau/volar": "workspace:*",
-    "@pinceau/vue": "workspace:*",
     "pinceau": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.2.2",
-    "vite": "^4.4.9"
+    "vite": "^4.4.9",
+    "@pinceau/configs": "workspace:*"
   }
 }

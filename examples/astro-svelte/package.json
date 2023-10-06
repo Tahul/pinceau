@@ -1,0 +1,25 @@
+{
+  "name": "pinceau-astro-vue",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev --port=3000",
+    "start": "astro dev --port=3000",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "vue": "^3.3.4"
+  },
+  "devDependencies": {
+    "@astrojs/svelte": "^4.0.2",
+    "astro": "^3.2.2",
+    "@pinceau/astro": "workspace:*",
+    "@pinceau/svelte": "workspace:*",
+    "@pinceau/configs": "workspace:*"
+  },
+  "stackblitz": {
+    "installDependencies": false,
+    "startCommand": "node .stackblitz.mjs && npm install && npm run dev"
+  }
+}

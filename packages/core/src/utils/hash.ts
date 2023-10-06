@@ -1,3 +1,11 @@
+/**
+ * Forked from https://github.com/stitchesjs/stitches/blob/canary/packages/stringify
+ * Authors:
+ * - [Pedro Duarte](https://twitter.com/peduarte)
+ * - [Jonathan Neal](https://twitter.com/jon_neal)
+ * - [Abdulhadi Alhallak](https://twitter.com/hadi_hlk)
+ */
+
 const toAlphabeticChar = (code: number) => String.fromCharCode(code + (code > 25 ? 39 : 97))
 
 function toAlphabeticName(code: number) {

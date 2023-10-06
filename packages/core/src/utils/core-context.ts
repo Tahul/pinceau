@@ -126,6 +126,15 @@ export function usePinceauContext(userOptions?: PinceauUserOptions): PinceauCont
       if (!transformed[id] && query) { transformed[id] = query }
       return transformed
     },
+    isStyleFunctionQuery: (id: string) => {
+      if (!id.startsWith('$pinceau/style-functions')) { return }
+      return parsePinceauQuery(id)
+    },
+    getStyleFunction: (id: string) => {
+      const query = parsePinceauQuery(id)
+      if (!query.src || !query.styleFunction || !transformed[query.src]) { return }
+      return transformed[query.src].state?.styleFunctions?.[query.styleFunction]
+    },
   }
 
   return {

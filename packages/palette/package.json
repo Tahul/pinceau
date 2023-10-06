@@ -16,18 +16,16 @@
     "theme.config.ts"
   ],
   "scripts": {
+    "build": "vite build && rm -rf dist",
     "build:post": "vite build && rm -rf dist"
-  },
-  "peerDependencies": {
-    "pinceau": "workspace:*"
-  },
-  "peerDependenciesMeta": {
-    "pinceau": {
-      "optional": true
-    }
   },
   "devDependencies": {
     "pinceau": "workspace:*",
+    "@pinceau/core": "workspace:*",
+    "@pinceau/runtime": "workspace:*",
+    "@pinceau/style": "workspace:*",
+    "@pinceau/theme": "workspace:*",
+    "@pinceau/configs": "workspace:*",
     "vite": "^4.4.9"
   }
 }

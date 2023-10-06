@@ -3,4 +3,5 @@ packages:
   - docs
   - tests
   - 'packages/*'
+  - 'integrations/*'
   - 'examples/*'

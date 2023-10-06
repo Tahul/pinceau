@@ -1,0 +1,3 @@
+{
+  "extends": "@pinceau/configs/tsconfig.vue.json"
+}

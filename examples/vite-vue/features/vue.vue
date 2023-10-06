@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import MyButton from '@/shared/MyButton.vue'
+import MyButton from '../../shared/MyButton.vue'
 
 const props = defineProps<{
   backgroundColor?: string
   color?: string
 }>()
-
-const backgroundColor = $theme('color.blue.9')
 
 const visible = ref(true)
 
@@ -33,10 +31,10 @@ const toggle = () => (visible.value = !visible.value)
 </script>
 
 <template>
-  <div :style="{ backgroundColor }">
+  <div>
     <MyButton v-if="visible" color="green" />
 
-    <MyButton v-if="visible" color="green" size="xl" />
+    <MyButton v-if="visible" color="green" size="md" />
 
     <div :styled="{ marginTop: '$space.8' }">
       <button @click="toggle">

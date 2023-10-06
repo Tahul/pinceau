@@ -22,4 +22,8 @@ export interface PinceauStyleFunctionContext {
   variants: Variants<any>
   localTokens: { [key: string]: NodePath<namedTypes.StringLiteral | namedTypes.NumericLiteral | namedTypes.FunctionExpression | namedTypes.ArrowFunctionExpression> & ASTNode }
   computedStyles: ComputedStyleContext[]
+  applied: {
+    static: boolean
+    runtime: boolean
+  }
 }

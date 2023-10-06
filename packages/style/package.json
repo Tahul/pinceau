@@ -5,23 +5,23 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "require": "./dist/index.cjs",
-      "import": "./dist/index.mjs"
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
     },
     "./plugin": {
       "types": "./dist/plugin.d.ts",
-      "require": "./dist/plugin.cjs",
-      "import": "./dist/plugin.mjs"
+      "import": "./dist/plugin.mjs",
+      "require": "./dist/plugin.cjs"
     },
     "./transforms": {
       "types": "./dist/transforms.d.ts",
-      "require": "./dist/transforms.cjs",
-      "import": "./dist/transforms.mjs"
+      "import": "./dist/transforms.mjs",
+      "require": "./dist/transforms.cjs"
     },
     "./utils": {
       "types": "./dist/utils.d.ts",
-      "require": "./dist/utils.cjs",
-      "import": "./dist/utils.mjs"
+      "import": "./dist/utils.mjs",
+      "require": "./dist/utils.cjs"
     }
   },
   "main": "./dist/index.cjs",
@@ -37,5 +37,8 @@
     "@pinceau/theme": "workspace:*",
     "acorn": "^8.10.0",
     "ultrahtml": "npm:@pinceau/ultrahtml@1.5.2"
+  },
+  "devDependencies": {
+    "@pinceau/configs": "workspace:*"
   }
 }
