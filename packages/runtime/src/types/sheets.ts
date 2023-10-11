@@ -1,5 +1,6 @@
-import type { DesignToken, PinceauTheme, Theme, ThemeFunction } from '@pinceau/theme'
+import type { DesignToken, Theme, ThemeFunction } from '@pinceau/theme'
 import type { PinceauRuntimePluginOptions } from './plugin'
+import type { GeneratedPinceauTheme as PinceauTheme } from '$pinceau/theme'
 
 export interface PinceauThemeSheetOptions extends PinceauRuntimePluginOptions {
   theme?: Theme<PinceauTheme>

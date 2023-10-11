@@ -32,7 +32,7 @@ const { apply: applyBrush } = useMotion(logo, {
 
 watch(
   useRoute(),
-  // @ts-ignore
+  // @ts-expect-error
   () => applyBrush('tapped').then(() => applyBrush('enter')),
 )
 </script>

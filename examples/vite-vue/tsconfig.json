@@ -1,4 +1,4 @@
 {
-  "extends": "../../tsconfig.json",
-  "include": ["./**/*.vue", "./**/*.ts", "node_modules"]
+  "extends": "@pinceau/configs/tsconfig.vue.json",
+  "include": ["./**/*.vue", "./**/*.ts"]
 }

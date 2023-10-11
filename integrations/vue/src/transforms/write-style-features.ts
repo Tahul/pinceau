@@ -1,5 +1,4 @@
 import type { PinceauTransformFunction } from '@pinceau/core'
-import { hasIdentifier } from '@pinceau/style/utils'
 
 /**
  * Takes variants object and turns it into a `const` inside `<script setup>`

@@ -1,5 +1,6 @@
 import * as recast from 'recast'
-import type { Options as RecastOptions } from 'recast'
+import type { ParserOptions } from '@babel/parser'
+import { parse as babelParse } from '@babel/parser'
 import { parse as tsParse } from 'recast/parsers/typescript.js'
 import { parse as htmlParse, walkSync as walkHtml } from 'ultrahtml'
 import type { File } from '@babel/types'
@@ -10,8 +11,8 @@ import type { PathMatch } from '../types/ast'
 /**
  * Parse AST with TypeScript parser.
  */
-export function parseAst(source: string, options?: Partial<RecastOptions>): File {
-  return recast.parse(source, { ...options, parser: { parse: tsParse, ...(options?.parser || {}) } })
+export function parseAst(source: string, options?: Partial<ParserOptions>): File {
+  return babelParse(source, { plugins: ['typescript', 'jsx'], sourceType: 'unambiguous', ...options })
 }
 
 /**
@@ -55,9 +56,18 @@ export function findCallees(ast: ASTNode, functionName: string | RegExp) {
     ast,
     {
       visitCallExpression(path: PathMatch) {
+        let search: string | undefined
+        if (path?.value?.callee?.type === 'MemberExpression') { search = `${path?.value?.callee?.object?.name}.${path?.value?.callee?.property?.name}` }
+
+        if (path?.value?.callee?.type === 'Identifier') { search = path?.value?.callee?.name }
+
+        if (!search) { return this.traverse(path) }
+
         const isMatch = isRegexMatch
-          ? path?.value?.callee?.name?.match(functionName)
-          : path?.value?.callee?.name === functionName
+          ? search.match(functionName)
+          : search === functionName
+            ? search
+            : false
 
         if (isMatch) {
           path.match = isRegexMatch ? isMatch : functionName

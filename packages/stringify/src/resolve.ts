@@ -1,6 +1,7 @@
 import { pathToVarName, referencesRegex } from '@pinceau/core/runtime'
-import type { ColorSchemeModes, DesignToken, DesignTokens, PinceauUtils, ThemeFunction } from '@pinceau/theme'
+import type { ColorSchemeModes, DesignToken, DesignTokens, ThemeFunction } from '@pinceau/theme'
 import type { StringifyContext } from './types'
+import type { GeneratedPinceauUtils as PinceauUtils } from '$pinceau/utils'
 
 const darkToken = '$dark'
 const lightToken = '$light'
@@ -167,7 +168,6 @@ export function resolveUtilsProperties(ctx: CSSResolverContext) {
   const { property, value } = stringifyContext
 
   if (utils?.[property]) {
-    // @ts-ignore - Custom property is a function, pass value and return result
     if (typeof utils[property] === 'function') { return utils[property](value) }
 
     // Custom property is an object, if value is true, return result

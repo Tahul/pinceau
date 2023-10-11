@@ -1,22 +1,3 @@
 {
-  "compilerOptions": {
-    "lib": ["es2017", "dom", "dom.iterable"],
-    "experimentalDecorators": true,
-    "useDefineForClassFields": false,
-    "module": "esnext",
-    "rootDir": "./src",
-    "moduleResolution": "node",
-    "declaration": true,
-    "emitDeclarationOnly": true,
-    "outDir": "./types",
-    "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitReturns": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true
-  },
-  "include": ["src/**/*.ts"],
-  "exclude": []
+  "extends": "@pinceau/configs/tsconfig.base.json"
 }

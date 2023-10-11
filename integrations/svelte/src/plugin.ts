@@ -1,7 +1,7 @@
 import { createPinceauIntegration } from '@pinceau/integration'
 import PinceauSveltePlugin from './utils/unplugin'
 
-export default createPinceauIntegration(
+const pinceauPlugin: any = createPinceauIntegration(
   [
     ['svelte', PinceauSveltePlugin],
   ],
@@ -9,3 +9,5 @@ export default createPinceauIntegration(
     svelte: true,
   },
 )
+
+export default pinceauPlugin

@@ -2,7 +2,7 @@
  *  Copyright (c) Vu Nguyen. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *-------------------------------------------------------------------------------------------- */
-import * as path from 'path'
+import * as path from 'node:path'
 import process from 'node:process'
 
 import { runTests } from '@vscode/test-electron'

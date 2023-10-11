@@ -1,7 +1,7 @@
 import { createPinceauIntegration } from '@pinceau/integration'
 import PinceauVuePlugin from './utils/unplugin'
 
-export default createPinceauIntegration(
+const pinceauPlugin: any = createPinceauIntegration(
   [
     ['vue', PinceauVuePlugin],
   ],
@@ -9,3 +9,5 @@ export default createPinceauIntegration(
     vue: true,
   },
 )
+
+export default pinceauPlugin

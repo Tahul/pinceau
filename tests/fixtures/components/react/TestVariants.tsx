@@ -2,7 +2,7 @@ const VariantComponent = $styled.a({
   '.test-variants': {
     color: '$color.black',
   },
-  variants: {
+  'variants': {
     size: {
       sm: {
         padding: '$space.3 $space.6',

@@ -1,5 +1,6 @@
 {
   "name": "@pinceau/configs",
+  "type": "module",
   "version": "0.0.0",
   "private": true,
   "license": "MIT",
@@ -9,8 +10,8 @@
   "files": [
     "eslint.base.cjs",
     "tsconfig.base.json",
-    "tsconfig.paths.json",
     "tsconfig.node.json",
+    "tsconfig.paths.json",
     "tsconfig.paths.json",
     "tsconfig.qwik.json",
     "tsconfig.react.json",

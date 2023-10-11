@@ -4,7 +4,7 @@ import { transformAddRuntimeScriptTag, transformWriteScriptFeatures } from './wr
 
 export const suite: PinceauTransforms = {
   globals: [
-    transformAddRuntimeScriptTag
+    transformAddRuntimeScriptTag,
   ],
   scripts: [
     transformWriteScriptFeatures,

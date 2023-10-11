@@ -1,17 +1,21 @@
-import { useThemeSheet, useRuntimeSheet } from '@pinceau/runtime'
+import { useRuntimeSheet, useThemeSheet } from '@pinceau/runtime'
 
-  export const PinceauSvelteOptions = {"dev":true,"colorSchemeMode":"media","computedStyles":true,"variants":true,"ssr":{"theme":true,"runtime":true},"appId":false}
+export const PinceauSvelteOptions = { dev: true, colorSchemeMode: 'media', computedStyles: true, variants: true, ssr: { theme: true, runtime: true }, appId: false }
 
-  let userOptions
+let userOptions
 
-  export let themeSheet
+let themeSheet
 
-  export let runtimeSheet
+let runtimeSheet
 
-  export const pinceauPlugin = (options) => {
-    userOptions = { ...PinceauSvelteOptions, ...options }
-    themeSheet = useThemeSheet(userOptions)
-    runtimeSheet = useRuntimeSheet({ themeSheet, ...userOptions })
-  }
+export const getRuntimeSheet = () => runtimeSheet
 
-  export const ssr = { toString: () => runtimeSheet.toString() }
+export const getThemeSheet = () => themeSheet
+
+export function pinceauPlugin(options) {
+  userOptions = { ...PinceauSvelteOptions, ...options }
+  themeSheet = useThemeSheet(userOptions)
+  runtimeSheet = useRuntimeSheet({ themeSheet, ...userOptions })
+}
+
+export const ssr = { toString: () => runtimeSheet.toString() }

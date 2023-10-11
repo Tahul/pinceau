@@ -15,6 +15,10 @@ export default defineBuildConfig({
       name: 'transforms',
     },
     {
+      input: 'src/runtime.ts',
+      name: 'runtime',
+    },
+    {
       input: 'src/utils.ts',
       name: 'utils',
     },
@@ -28,6 +32,12 @@ export default defineBuildConfig({
   externals: [
     '@pinceau/runtime',
     '@pinceau/theme',
+    '@pinceau/style',
+    '@pinceau/style/utils',
+    'pathe',
+    '$pinceau/react-plugin',
+    '@types/react',
+    'react',
     'csstype',
     'unplugin',
     'magic-string',

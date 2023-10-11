@@ -1,20 +1,8 @@
 {
+  "extends": "@pinceau/configs/tsconfig.base.json",
   "compilerOptions": {
-    "target": "ESNext",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "jsx": "react-jsx",
-    "useDefineForClassFields": true,
-    "module": "ESNext",
-    "moduleResolution": "Node",
-    "resolveJsonModule": true,
-    "allowJs": false,
-    "noEmit": true,
-    "isolatedModules": true,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": false,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "skipLibCheck": false
-  },
-  "include": ["./src"]
+    "paths": {
+      "$pinceau/react-plugin": ["./node_modules/.pinceau/react-plugin.js"]
+    }
+  }
 }

@@ -29,9 +29,7 @@ export function usePinceauVirtualContext(): PinceauVirtualContext {
    */
   function getOutputId(id: string) {
     for (const [virtualPath, importPath] of Object.entries(pathMap)) {
-      if (virtualPath === id || importPath === id) {
-        return importPath
-      }
+      if (virtualPath === id || importPath === id) { return importPath }
     }
   }
 

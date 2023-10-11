@@ -20,7 +20,5 @@ export const transformComputedStyles: PinceauTransformFunction = async (
       .forEach(computedStyle => fns.push(`[\'${computedStyle.variable}\', ${computedStyle.compiled}]`))
   }
 
-  if (fns.length) {
-    target.append(`\nconst $pcExtractedComputedStyles = [\n${fns.join(', \n')}\n]\n`)
-  }
+  if (fns.length) { target.append(`\nconst $pcExtractedComputedStyles = [\n${fns.join(', \n')}\n]\n`) }
 }

@@ -1,9 +1,10 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "./tsconfig.base.json",
-  /*
   "compilerOptions": {
-    "jsx": "react-jsx"
+    "jsx": "react",
+    "paths": {
+      "$pinceau/react-plugin": ["../../packages/palette/output/react-plugin.js"]
+    }
   }
-  */
 }

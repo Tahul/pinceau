@@ -31,9 +31,8 @@ export function setupExtension(
    */
   function getDocumentSettings(): Thenable<PinceauVSCodeSettings> {
     const resource = 'all'
-    if (!hasConfigurationCapability) {
-      return Promise.resolve(globalSettings)
-    }
+    if (!hasConfigurationCapability) { return Promise.resolve(globalSettings) }
+
     let result = documentSettings.get(resource)
     if (!result) {
       result = connection.workspace.getConfiguration('pinceau')
@@ -60,9 +59,7 @@ export function setupExtension(
         )
       }
 
-      if (hasWorkspaceFolderCapability) {
-        connection.workspace.onDidChangeWorkspaceFolders(_event => connection.console.log('Workspace folder change event received.'))
-      }
+      if (hasWorkspaceFolderCapability) { connection.workspace.onDidChangeWorkspaceFolders(_event => connection.console.log('Workspace folder change event received.')) }
 
       const workspaceFolders = await connection.workspace.getWorkspaceFolders()
       const validFolders = workspaceFolders

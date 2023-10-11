@@ -76,12 +76,9 @@ export function useRuntimeSheet(options?: PinceauRuntimeSheetOptions): PinceauRu
     }
 
     // Group rule under `@media` ruleset
-    if (classWrap) {
-      declaration = { '@media': { [`.${className}`]: declaration } }
-    }
-    else {
-      declaration = { '@media': declaration }
-    }
+    if (classWrap) { declaration = { '@media': { [`.${className}`]: declaration } } }
+
+    else { declaration = { '@media': declaration } }
 
     // Adds groups uid in the declaration
     declaration['@media'][HYDRATION_SELECTOR] = {}

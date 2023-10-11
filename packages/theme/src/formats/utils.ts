@@ -61,6 +61,8 @@ export const utilsTypesFormat: PinceauThemeFormat = {
 
     result += 'export type GeneratedPinceauUtils = typeof utils\n\n'
 
+    result += 'declare global { export type PinceauUtils = GeneratedPinceauUtils }\n\n'
+
     // Default export
     result += 'export default utils'
 

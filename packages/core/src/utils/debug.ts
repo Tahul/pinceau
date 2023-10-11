@@ -137,7 +137,7 @@ type Messages = typeof messages
 
 type DropFirst<T extends unknown[]> = T extends [any, ...infer U] ? U : never
 
-function message <T extends keyof Messages>(id: T, options?: DropFirst<Parameters<Messages[T]>>) {
+function message<T extends keyof Messages>(id: T, options?: DropFirst<Parameters<Messages[T]>>) {
   return messages[id].bind(undefined, c().debugLevel, ...options as any)()
 }
 

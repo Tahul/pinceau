@@ -37,10 +37,10 @@
     "stub": "unbuild --stub"
   },
   "dependencies": {
+    "@pinceau/configs": "workspace:*",
     "@pinceau/integration": "workspace:*",
-    "acorn": "^8.10.0",
-    "ultrahtml": "npm:@pinceau/ultrahtml@1.5.2",
     "@sveltejs/vite-plugin-svelte": "^2.4.6",
-    "@pinceau/configs": "workspace:*"
+    "acorn": "^8.10.0",
+    "ultrahtml": "npm:@pinceau/ultrahtml@1.5.2"
   }
 }

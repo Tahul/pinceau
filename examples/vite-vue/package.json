@@ -12,11 +12,11 @@
     "vue-router": "^4.2.5"
   },
   "devDependencies": {
+    "@pinceau/configs": "workspace:*",
     "@pinceau/vue": "workspace:*",
     "@vitejs/plugin-vue": "^4.4.0",
     "typescript": "^5.2.2",
-    "vite": "^4.4.9",
-    "@pinceau/configs": "workspace:*"
+    "vite": "^4.4.11"
   },
   "stackblitz": {
     "installDependencies": false,

@@ -21,5 +21,6 @@ export default defineBuildConfig({
     '@pinceau/runtime',
     '@pinceau/vue',
     'vite',
+    'unplugin',
   ],
 })

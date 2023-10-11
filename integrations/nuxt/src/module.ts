@@ -46,7 +46,7 @@ const module: any = defineNuxtModule<PinceauUserOptions>({
     if (options?.theme?.componentMeta) {
       const cachedTokens: string[] = []
 
-      // @ts-ignore
+      // @ts-expect-error
       nuxt.hook('component-meta:transformers', (transformers: any[]) => {
         transformers.push(
           (component: any, code: string) => {
@@ -145,7 +145,7 @@ const module: any = defineNuxtModule<PinceauUserOptions>({
     ]
 
     // Call options hook
-    // @ts-ignore
+    // @ts-expect-error
     await nuxt.callHook('pinceau:options', options)
 
     // Pinceau runtime config (to be used with Nuxt Studio integration)

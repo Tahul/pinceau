@@ -12,13 +12,13 @@
     "preact": "^10.18.1"
   },
   "devDependencies": {
+    "@pinceau/configs": "workspace:*",
     "@pinceau/jsx": "workspace:*",
     "@preact/preset-vite": "^2.5.0",
     "@prefresh/vite": "^2.4.1",
     "cross-env": "^7.0.3",
     "typescript": "^5.2.2",
-    "vite": "^4.4.9",
-    "@pinceau/configs": "workspace:*"
+    "vite": "^4.4.11"
   },
   "stackblitz": {
     "installDependencies": false,

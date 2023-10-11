@@ -1,4 +1,4 @@
-import { computed, getCurrentInstance } from 'vue'
+import { computed } from 'vue'
 import type { ComponentPublicInstance, Ref } from 'vue'
 import type { ComputedStyleDefinition, Variants } from '@pinceau/style'
 import { useComputedStyles } from './computed-styles'

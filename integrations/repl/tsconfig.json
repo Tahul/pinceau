@@ -1,0 +1,6 @@
+{
+  "extends": "@pinceau/configs/tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["vite/client"]
+  }
+}

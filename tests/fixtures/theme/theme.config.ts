@@ -1,34 +1,34 @@
 import { defineTheme } from 'pinceau'
-import { PropertyValue } from '@pinceau/style'
+import type { PropertyValue } from '@pinceau/style'
 
 export default defineTheme({
   media: {
-    'xs': '(min-width: 475px)',
-    'sm': '(min-width: 640px)',
-    'md': '(min-width: 768px)',
-    'lg': '(min-width: 1024px)',
+    xs: '(min-width: 475px)',
+    sm: '(min-width: 640px)',
+    md: '(min-width: 768px)',
+    lg: '(min-width: 1024px)',
   },
 
   color: {
     white: {
-      value: '#ffffff'
+      value: '#ffffff',
     },
     black: '#0E0D0D',
     responsiveColor: {
       $initial: 'blue',
-      $dark: 'red'
+      $dark: 'red',
     },
     responsiveFullColor: {
       value: {
         $initial: 'green',
-        $dark: 'yellow'
-      }
-    }
+        $dark: 'yellow',
+      },
+    },
   },
 
   utils: {
     fixture: () => ({
-      border: '1px solid blue'
+      border: '1px solid blue',
     }),
     my: (value: PropertyValue<'margin'>) => {
       return {

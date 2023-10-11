@@ -1,6 +1,6 @@
 import { type Sfc, type VueEmbeddedFile } from '@volar/vue-language-core'
 import { castVariantsPropsAst } from '@pinceau/vue/transforms'
-import { expressionToAst, printAst } from '@pinceau/core/utils'
+import { printAst } from '@pinceau/core/utils'
 import type { PinceauVolarFileContext } from '..'
 import { stringsToUnionType } from '../utils'
 
@@ -61,7 +61,5 @@ function pushProps(
     if (stringContent === target) { return true }
     return false
   })
-  if (defineComponentBlockIndex !== -1) {
-    embeddedFile.content.splice(defineComponentBlockIndex + 1, 0, `props: {\n ${props} \n},\n`)
-  }
+  if (defineComponentBlockIndex !== -1) { embeddedFile.content.splice(defineComponentBlockIndex + 1, 0, `props: {\n ${props} \n},\n`) }
 }

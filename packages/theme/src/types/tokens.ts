@@ -1,5 +1,5 @@
 import type { Schema } from 'untyped'
-import type { PinceauMediaQueries } from './theme'
+import type { GeneratedPinceauMediaQueries as PinceauMediaQueries } from '$pinceau/theme'
 
 export type RawTokenType = string | number
 

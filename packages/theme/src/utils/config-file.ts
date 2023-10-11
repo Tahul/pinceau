@@ -62,7 +62,6 @@ export async function resolveFileLayer(
     try { utils = resolveConfigUtils(configAst, config) }
     catch (e) { /* Mitigate utils resolving errors */ }
     finally {
-      // @ts-ignore - Generated type will be read-only
       delete config.utils
     }
   }

@@ -5,13 +5,13 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "require": "./dist/index.cjs",
-      "import": "./dist/index.mjs"
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
     },
     "./plugin": {
       "types": "./dist/plugin.d.ts",
-      "require": "./dist/plugin.cjs",
-      "import": "./dist/plugin.mjs"
+      "import": "./dist/plugin.mjs",
+      "require": "./dist/plugin.cjs"
     }
   },
   "main": "./dist/index.cjs",

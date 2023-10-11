@@ -9,15 +9,15 @@ export default defineNuxtConfig({
   components: [
     {
       path: resolve('../shared'),
-      global: true
-    }
+      global: true,
+    },
   ],
   pinceau: {
     theme: {
       layers: [
         {
           path: resolve('../../packages/palette/'),
-        }
+        },
       ],
     },
     style: {

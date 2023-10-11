@@ -13,8 +13,8 @@
   "types": "./dist/index.d.ts",
   "files": [
     "dist",
-    "server",
-    "index.cjs"
+    "index.cjs",
+    "server"
   ],
   "scripts": {
     "build": "unbuild",
@@ -29,10 +29,10 @@
     "@nuxt/test-utils": "^3.7.4",
     "@nuxthq/studio": "^1.0.0",
     "@nuxtjs/color-mode": "^3.3.0",
+    "@pinceau/configs": "workspace:*",
     "nitropack": "2.6.3",
     "nuxi": "3.9.0",
     "nuxt": "3.7.4",
-    "@pinceau/configs": "workspace:*",
     "nuxt-component-meta": "^0.5.4"
   }
 }

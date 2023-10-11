@@ -39,5 +39,7 @@ export default defineBuildConfig({
     'acorn',
     'scule',
     'nanoid',
+    '$pinceau/theme',
+    '$pinceau/utils',
   ],
 })

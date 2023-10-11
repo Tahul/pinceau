@@ -10,9 +10,8 @@ export function resolveConfigImports(ast: File) {
     {
       visitImportDeclaration(path) {
         const code = printAst(path as any).code
-        if (!['$pinceau', 'pinceau', '@pinceau'].some(path => code.includes(path))) {
-          imports.push(code)
-        }
+        if (!['$pinceau', 'pinceau', '@pinceau'].some(path => code.includes(path))) { imports.push(code) }
+
         return this.traverse(path)
       },
     },

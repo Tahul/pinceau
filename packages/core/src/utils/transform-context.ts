@@ -136,9 +136,7 @@ export function usePinceauTransformContext(
       const applyTransforms = async (
         transforms: PinceauTransformFunction[],
       ) => {
-        for (const transformFn of transforms) {
-          await transformFn?.(this, pinceauContext)
-        }
+        for (const transformFn of transforms) { await transformFn?.(this, pinceauContext) }
       }
 
       // Apply SFC transforms
@@ -166,9 +164,7 @@ export function usePinceauTransformContext(
         currentTarget = undefined
 
         // Apply globals transforms
-        if (transforms?.globals?.length) {
-          await applyTransforms(transforms.globals)
-        }
+        if (transforms?.globals?.length) { await applyTransforms(transforms.globals) }
 
         return
       }
@@ -179,9 +175,7 @@ export function usePinceauTransformContext(
       if (transforms?.customs?.length && query.type === 'custom') { await applyTransforms(transforms.customs) }
 
       // Apply globals transforms
-      if (transforms?.globals?.length) {
-        await applyTransforms(transforms.globals)
-      }
+      if (transforms?.globals?.length) { await applyTransforms(transforms.globals) }
     },
 
     /**

@@ -18,17 +18,17 @@
   "dependencies": {
     "@pinceau/integration": "workspace:*",
     "@vue/compiler-sfc": "^3.3.4",
-    "tinycolor2": "1.6.0",
     "fast-glob": "^3.3.1",
     "jiti": "^1.20.0",
     "line-column": "^1.0.2",
+    "tinycolor2": "1.6.0",
     "vscode-languageserver": "^9.0.1",
     "vscode-languageserver-textdocument": "^1.0.11",
-    "vscode-uri": "^3.0.7"
+    "vscode-uri": "^3.0.8"
   },
   "devDependencies": {
     "@pinceau/configs": "workspace:*",
-    "@types/tinycolor2": "^1.4.4",
-    "@types/line-column": "^1.0.0"
+    "@types/line-column": "^1.0.0",
+    "@types/tinycolor2": "^1.4.4"
   }
 }

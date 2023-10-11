@@ -2,8 +2,9 @@ import type { File, Core as Instance, Named, Transform } from 'style-dictionary-
 import StyleDictionary from 'style-dictionary-esm'
 import { message, referencesRegex } from '@pinceau/core/utils'
 import type { PinceauContext } from '@pinceau/core'
-import type { DesignTokens, PinceauTheme, PinceauThemeFormat, Theme, ThemeGenerationOutput, ThemeLoadingOutput } from '../types'
+import type { DesignTokens, PinceauThemeFormat, Theme, ThemeGenerationOutput, ThemeLoadingOutput } from '../types'
 import { flattenTokens } from './tokens'
+import type { GeneratedPinceauTheme as PinceauTheme } from '$pinceau/theme'
 
 export async function generateTheme(
   loadedTheme: ThemeLoadingOutput,

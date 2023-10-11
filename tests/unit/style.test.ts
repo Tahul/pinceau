@@ -61,10 +61,10 @@ describe('@pinceau/style', () => {
       expect(result.computedStyles[0].variable).toEqual(`--${kebabCase(result.computedStyles[0].id)}`)
       expect(result.computedStyles[1].variable).toEqual(`--${kebabCase(result.computedStyles[1].id)}`)
       expect(result.computedStyles[0].ast.type).toEqual('MemberExpression')
-      expect(result.computedStyles[0].ast.loc.start).toEqual({ column: 26, index: 26, line: 1, token: 11 })
-      expect(result.computedStyles[0].ast.loc.end).toEqual({ column: 37, index: 37, line: 1, token: 14 })
-      expect(result.computedStyles[1].ast.loc.start).toEqual({ column: 62, index: 62, line: 1, token: 20 })
-      expect(result.computedStyles[1].ast.loc.end).toEqual({ column: 83, index: 83, line: 1, token: 23 })
+      expect(result.computedStyles[0].ast.loc.start).toEqual({ column: 26, index: 26, line: 1 })
+      expect(result.computedStyles[0].ast.loc.end).toEqual({ column: 37, index: 37, line: 1 })
+      expect(result.computedStyles[1].ast.loc.start).toEqual({ column: 62, index: 62, line: 1 })
+      expect(result.computedStyles[1].ast.loc.end).toEqual({ column: 83, index: 83, line: 1 })
     })
     it('should resolve declaration', async () => {
       const code = 'css({ div: { color: \'red\' } })'
@@ -203,7 +203,7 @@ describe('@pinceau/style', () => {
       await transformContext.transform()
 
       expect(transformContext.result()).toBeUndefined()
-      expect(transformContext.state?.styleFunctions?.['script0_styled0']).toBeDefined()
+      expect(transformContext.state?.styleFunctions?.script0_styled0).toBeDefined()
     })
     it('should replace styled content with pointer comment in style blocks', async () => {
       const transformContext = usePinceauTransformContext(

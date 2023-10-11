@@ -1,37 +1,38 @@
-<template>
-  <main>
-    <slot />
-  </main>
-</template>
-
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import theme from '$pinceau/theme'
 
 const color = ref('blue')
 
 const colors = Object.keys(theme.color)
 
-const rand = (array: any[]) => array[Math.floor(Math.random() * array.length)];
+const rand = (array: any[]) => array[Math.floor(Math.random() * array.length)]
 
 let interval: NodeJS.Timeout
 onMounted(() => {
-  if (interval) clearInterval(interval)
+  if (interval)
+    clearInterval(interval)
   interval = setInterval(
     () => {
       color.value = rand(colors)
     },
-    1000
+    1000,
   )
 })
 </script>
+
+<template>
+  <main>
+    <slot />
+  </main>
+</template>
 
 <style lang="ts">
 css({
   'html, body, #__nuxt': {
     minHeight: '100vh',
-    minWidth: '100vw'
-  }
+    minWidth: '100vw',
+  },
 })
 </style>
 
@@ -42,7 +43,7 @@ css({
     backgroundColor: '$color.gray.9',
     minHeight: '100vh',
     minWidth: '100vw',
-    padding: '$space.16'
-  }
+    padding: '$space.16',
+  },
 })
 </style>

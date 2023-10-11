@@ -23,7 +23,8 @@ export function getResolvedSelectors(
   /** @type {string[]} Parent selectors */
   parentSelectors,
   /** @type {string[]} Nested selectors (e.g. `["&:hover", "&:focus"]`). */
-  nestedSelectors) {
+  nestedSelectors,
+) {
   return parentSelectors.reduce(
     (resolvedSelectors, parentSelector) => {
       resolvedSelectors.push(
@@ -73,15 +74,11 @@ export function stringify(
       cssText += `${selectors}{`
     }
 
-    if (isAtRuleLike) {
-      name = `${name} `
-    }
-    else if (isVariableLike) {
-      name = `${name}:`
-    }
-    else {
-      name = `${kebabCase(name)}:`
-    }
+    if (isAtRuleLike) { name = `${name} ` }
+
+    else if (isVariableLike) { name = `${name}:` }
+
+    else { name = `${kebabCase(name)}:` }
 
     cssText += `${name + String(data)};`
 

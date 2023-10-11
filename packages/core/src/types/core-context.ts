@@ -1,10 +1,12 @@
-import type { PinceauTheme, PinceauUtils, Theme, ThemeFunction } from '@pinceau/theme'
+import type { Theme, ThemeFunction } from '@pinceau/theme'
 import type { PinceauStyleFunctionContext } from '@pinceau/style'
 import type { PinceauVirtualContext } from './virtual-context'
 import type { PinceauOptions } from './options'
 import type { PinceauQuery } from './query'
 import type { PinceauTransformer } from './transforms'
 import type { PinceauTransformState } from './transform-context'
+import type { GeneratedPinceauTheme as PinceauTheme } from '$pinceau/theme'
+import type { GeneratedPinceauUtils as PinceauUtils } from '$pinceau/utils'
 
 /**
  * Complete Pinceau plugin context used at build time and in development.

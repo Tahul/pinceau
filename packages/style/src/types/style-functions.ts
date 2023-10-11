@@ -4,12 +4,21 @@ import type { NodePath } from 'ast-types/lib/node-path'
 import type { PathMatch, PropMatch } from '@pinceau/core'
 import type { ComputedStyleContext } from './computed-styles'
 import type { Variants } from './variants'
+import type { SupportedHTMLElements } from './dom-elements'
 
 export type CSSFunctionArgAST = NodePath<namedTypes.ObjectExpression> & ASTNode & { loc: namedTypes.SourceLocation }
 
+export interface RuntimeParts {
+  staticClass?: string
+  computedStyles?: string | undefined
+  variants?: string | undefined
+}
+
 export interface PinceauStyleFunctionContext {
   // Source
+  id: string
   type: 'css' | 'styled'
+  element?: SupportedHTMLElements
   pointer: string
   callee: PathMatch | PropMatch
   arg: CSSFunctionArgAST

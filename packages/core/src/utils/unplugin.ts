@@ -26,9 +26,7 @@ export function loadInclude(id: string, ctx: PinceauContext) {
 
 export async function load(id: string, ctx: PinceauContext) {
   // Load style functions
-  if (id.startsWith('$pinceau/style-functions.css')) {
-    return ctx.getStyleFunction(id)?.css
-  }
+  if (id.startsWith('$pinceau/style-functions.css')) { return ctx.getStyleFunction(id)?.css }
 
   // Load virtual outputs
   const output = ctx.getOutput(id)

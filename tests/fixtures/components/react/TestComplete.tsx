@@ -1,4 +1,4 @@
-const MyButton = styled({
+const MyButton = $styled.button<{ color: string }>({
   '--button-primary': ({ color }) => `$color.${color}.6`,
   '--button-secondary': ({ color }) => `$color.${color}.5`,
   'display': 'inline-block',
@@ -26,34 +26,32 @@ const MyButton = styled({
       transform: 'translateY($space.4)',
     },
   },
-  variants: {
-    size: {
-      sm: {
-        span: {
-          padding: '$space.6 $space.12',
-        },
-      },
-      md: {
-        span: {
-          padding: '$space.12 $space.16',
-        },
-      },
-      lg: {
-        span: {
-          padding: '$space.16 $space.24',
-        },
-      },
-      xl: {
-        span: {
-          padding: '$space.32 $space.48',
-        },
-      },
-      options: {
-        default: 'sm',
+}).withVariants({
+  size: {
+    sm: {
+      span: {
+        padding: '$space.6 $space.12',
       },
     },
-  }
+    md: {
+      span: {
+        padding: '$space.12 $space.16',
+      },
+    },
+    lg: {
+      span: {
+        padding: '$space.16 $space.24',
+      },
+    },
+    xl: {
+      span: {
+        padding: '$space.32 $space.48',
+      },
+    },
+    options: {
+      default: 'sm',
+    },
+  },
 })
 
 export default MyButton
-

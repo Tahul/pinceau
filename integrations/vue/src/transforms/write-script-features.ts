@@ -22,7 +22,7 @@ export const transformWriteScriptFeatures: PinceauTransformFunction = (transform
     // Skip already applied functions; usually when having multiple <script> in the same file.
     if (styleFn.applied.runtime) { continue }
 
-    const hasRuntime = styleFn.computedStyles.length || Object.keys(styleFn.variants).length
+    const hasRuntime = !!(styleFn.computedStyles.length || Object.keys(styleFn.variants).length)
 
     // Avoid another hasRuntime check later on
     if (!fileHasRuntime) { fileHasRuntime = !!hasRuntime }
@@ -65,6 +65,7 @@ export const transformWriteScriptFeatures: PinceauTransformFunction = (transform
     // The first `styled` binding made from a `<style>` block will be linked to root template element.
     if (id.startsWith('style') && id.endsWith('styled0')) {
       if (hasRuntime) { target.append(`\nconst \$${id} = usePinceauRuntime(${runtimeParts.staticClass}, ${runtimeParts.computedStyles}, ${runtimeParts.variants})\n`) }
+      else { target.append(`\nconst \$${id} = ${runtimeParts.staticClass}`) }
       continue
     }
 
@@ -103,14 +104,10 @@ export const transformWriteScriptFeatures: PinceauTransformFunction = (transform
   }
 
   // Push variants props
-  if (Object.keys(variantsProps).length) {
-    pushVariantsProps(transformContext, variantsProps)
-  }
+  if (Object.keys(variantsProps).length) { pushVariantsProps(transformContext, variantsProps) }
 
   // If runtime styling has been found, finally prepend the import
-  if (fileHasRuntime) {
-    target.prepend('\nimport { usePinceauRuntime } from \'@pinceau/vue/runtime\'\n')
-  }
+  if (fileHasRuntime) { target.prepend('\nimport { usePinceauRuntime } from \'@pinceau/vue/runtime\'\n') }
 }
 
 /**

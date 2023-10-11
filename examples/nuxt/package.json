@@ -10,8 +10,8 @@
     "@pinceau/nuxt": "workspace:*"
   },
   "devDependencies": {
-    "nuxt": "^3.7.4",
-    "@pinceau/configs": "workspace:*"
+    "@pinceau/configs": "workspace:*",
+    "nuxt": "^3.7.4"
   },
   "stackblitz": {
     "installDependencies": false,

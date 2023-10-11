@@ -17,11 +17,11 @@
     "stub": "unbuild --stub"
   },
   "dependencies": {
+    "@pinceau/configs": "workspace:*",
     "@pinceau/core": "workspace:*",
     "@pinceau/runtime": "workspace:*",
     "@pinceau/stringify": "workspace:*",
     "@pinceau/style": "workspace:*",
-    "@pinceau/theme": "workspace:*",
-    "@pinceau/configs": "workspace:*"
+    "@pinceau/theme": "workspace:*"
   }
 }

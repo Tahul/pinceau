@@ -2,7 +2,7 @@ import { useState } from 'preact/compat'
 
 export function App() {
   const [count, setCount] = useState(0)
-  
+
   return (
     <>
       <div>
@@ -13,14 +13,14 @@ export function App() {
               type="button"
               onClick={() => setCount(count => count + 1)}
             >
-                    count is: {count}
+              count is: {count}
             </button>
 
             <button
               type="button"
               onClick={() => setCount(count => count + 1)}
             >
-                    count is: {count}
+              count is: {count}
             </button>
 
           </p>
@@ -30,7 +30,7 @@ export function App() {
               target="_blank"
               rel="noopener noreferrer"
             >
-          Learn Preact
+              Learn Preact
             </a>
           </p>
         </header>

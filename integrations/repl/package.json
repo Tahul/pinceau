@@ -1,0 +1,70 @@
+{
+  "name": "@vue/repl",
+  "type": "module",
+  "version": "2.5.8",
+  "description": "Pinceau component for editing Pinceau components.",
+  "exports": {
+    ".": {
+      "types": "./dist/repl.d.ts",
+      "import": "./dist/vue-repl.js",
+      "require": "./dist/ssr-stub.js"
+    },
+    "./monaco-editor": {
+      "types": "./dist/editor-types.d.ts",
+      "import": "./dist/monaco-editor.js",
+      "require": null
+    },
+    "./style.css": "./dist/style.css",
+    "./dist/style.css": "./dist/style.css"
+  },
+  "main": "dist/ssr-stub.js",
+  "module": "dist/vue-repl.js",
+  "types": "dist/repl.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite --port 3000",
+    "start": "vite preview --port 3000",
+    "build": "vite build",
+    "build-types": "vue-tsc -p tsconfig.build.json && api-extractor run -c api-extractor.json && node scripts/cleanup.js",
+    "build-preview": "vite build -c vite.preview.config.ts",
+    "prepublishOnly": "npm run build && npm run build-types"
+  },
+  "devDependencies": {
+    "@babel/types": "^7.23.0",
+    "@microsoft/api-extractor": "^7.38.0",
+    "@pinceau/configs": "workspace:*",
+    "@pinceau/palette": "workspace:*",
+    "@pinceau/vue": "workspace:*",
+    "@rollup/plugin-replace": "^5.0.3",
+    "@types/node": "^20.8.4",
+    "@vitejs/plugin-vue": "^4.4.0",
+    "@volar/cdn": "~1.10.4",
+    "@volar/monaco": "~1.10.4",
+    "@volar/typescript": "~1.10.4",
+    "@vue/language-service": "1.8.19",
+    "fflate": "^0.8.1",
+    "hash-sum": "^2.0.0",
+    "monaco-editor": "^0.44.0",
+    "monaco-editor-core": "^0.44.0",
+    "monaco-editor-textmate": "^4.0.0",
+    "monaco-textmate": "^3.0.1",
+    "monaco-volar": "^0.4.0",
+    "onigasm": "^2.2.5",
+    "path-browserify": "^1.0.1",
+    "simple-git-hooks": "^2.9.0",
+    "sucrase": "^3.34.0",
+    "typescript": "^5.2.2",
+    "vite": "^4.4.11",
+    "vue": "^3.3.4",
+    "vue-tsc": "1.8.19",
+    "svelte2tsx": "^0.6.23",
+    "@volar/language-server": "^1.10.4",
+    "svelte": "^4.2.1"
+  },
+  "dependencies": {
+    "monaco-jsx-syntax-highlight": "^1.2.0",
+    "vite-plugin-node-polyfills": "^0.15.0"
+  }
+}

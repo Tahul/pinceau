@@ -17,9 +17,7 @@ export const suite: PinceauTransforms = {
       if (
         (transformCtx.query.transformed || transformCtx.target?.attrs?.pctransformed)
           || (transformCtx.query.type === 'style' && transformCtx.query.lang === 'ts')
-      ) {
-        await transformStyleFunctions(transformCtx, pinceauCtx)
-      }
+      ) { await transformStyleFunctions(transformCtx, pinceauCtx) }
     },
   ],
 }

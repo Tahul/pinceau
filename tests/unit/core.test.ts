@@ -419,9 +419,7 @@ describe('@pinceau/core', () => {
     it('can hash giant declarations', () => {
       const bigCss = {}
 
-      for (let i = 0; i < 10000; i++) {
-        bigCss[`div-${i}`] = css
-      }
+      for (let i = 0; i < 10000; i++) { bigCss[`div-${i}`] = css }
 
       const hash = toHash(bigCss)
       const secondHash = toHash(bigCss)
@@ -857,7 +855,7 @@ describe('@pinceau/core', () => {
         ],
       }
       const result = await transform(code, id, suite, ctx)
-      // @ts-ignore
+      // @ts-expect-error
       expect(result.code).toContain('// hello world')
     })
   })

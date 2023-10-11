@@ -3,7 +3,7 @@
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
     "paths": {
-      "$pinceau/svelte-plugin": ["./packages/palette/output/svelte-plugin.js"]
+      "$pinceau/svelte-plugin": ["../../packages/palette/output/svelte-plugin.js"]
     },
 
     /**
@@ -12,13 +12,13 @@
      */
     "sourceMap": true,
 
+    "forceConsistentCasingInFileNames": true,
     /**
       Svelte Preprocess cannot figure out whether you have a value or a type, so tell TypeScript
       to enforce using `import type` instead of `import` for Types.
      */
-    "verbatimModuleSyntax": true,
-
-    "forceConsistentCasingInFileNames": true
+    "verbatimModuleSyntax": true
   },
-  "include": ["*.svelte"]
+  "include": ["*.js", "*.ts", "*.svelte", "**/*"],
+  "exclude": ["dist", "node_modules"]
 }

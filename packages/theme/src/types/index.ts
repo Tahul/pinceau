@@ -1,6 +1,5 @@
 export * from './helper'
 export * from './config'
-export * from './theme'
 export * from './theme-map'
 export * from './tokens'
 export * from './definitions'

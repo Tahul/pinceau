@@ -1,10 +1,9 @@
 {
-  "eslint.workingDirectories": [{ "mode": "auto"}],
   "peacock.color": "#b8452f",
   "references.preferredLocation": "peek",
   "search.exclude": {
     "**/.output": true,
-    "**/pnpm-lock.yaml": true,
+    "**/pnpm-lock.yaml": true
   },
   "workbench.colorCustomizations": {
     "sash.hoverBorder": "#d15f49",
@@ -25,4 +24,43 @@
     "titleBar.inactiveBackground": "#b8452f99",
     "titleBar.inactiveForeground": "#e7e7e799"
   },
+
+  // Enable the ESlint flat config support
+  "eslint.experimental.useFlatConfig": true,
+  "eslint.workingDirectories": [{ "mode": "auto" }],
+
+  // Disable the default formatter, use eslint instead
+  "prettier.enable": false,
+  "editor.formatOnSave": false,
+
+  // Auto fix
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true,
+    "source.organizeImports": false
+  },
+
+  // Silent the stylistic rules in you IDE, but still auto fix them
+  "eslint.rules.customizations": [
+    { "rule": "style/*", "severity": "off" },
+    { "rule": "*-indent", "severity": "off" },
+    { "rule": "*-spacing", "severity": "off" },
+    { "rule": "*-spaces", "severity": "off" },
+    { "rule": "*-order", "severity": "off" },
+    { "rule": "*-dangle", "severity": "off" },
+    { "rule": "*-newline", "severity": "off" },
+    { "rule": "*quotes", "severity": "off" },
+    { "rule": "*semi", "severity": "off" }
+  ],
+
+  // Enable eslint for all supported languages
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact",
+    "vue",
+    "html",
+    "markdown",
+    "yaml"
+  ]
 }

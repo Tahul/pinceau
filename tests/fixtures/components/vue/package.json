@@ -1,3 +1,6 @@
 {
-  "name": "@pinceau/vue-fixtures"
+  "name": "@pinceau/vue-fixtures",
+  "devDependencies": {
+    "@pinceau/configs": "workspace:*"
+  }
 }

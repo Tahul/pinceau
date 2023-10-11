@@ -6,11 +6,11 @@ import PinceauStylePlugin from '@pinceau/style/plugin'
 import PinceauRuntimePlugin from '@pinceau/runtime/plugin'
 
 describe('pinceau (main)', () => {
-  it('Pinceau plugin export to exist', () => {
+  it('pinceau plugin export to exist', () => {
     expect(Pinceau).toBeDefined()
   })
 
-  it('Expect plugin to return array of Pinceau plugins', () => {
+  it('expect plugin to return array of Pinceau plugins', () => {
     expect(Pinceau().length).toEqual([
       PinceauCorePlugin,
       PinceauThemePlugin,
@@ -19,7 +19,7 @@ describe('pinceau (main)', () => {
     ].length)
   })
 
-  it('Expect plugin to disable plugins set to false', () => {
+  it('expect plugin to disable plugins set to false', () => {
     expect(Pinceau({ runtime: false, style: false, vue: false, svelte: false, jsx: false }).length).toEqual([PinceauCorePlugin, PinceauThemePlugin].length)
   })
 })

@@ -1,6 +1,5 @@
 import { preprocess } from 'svelte/compiler'
 import type { PinceauContext, PinceauQuery } from '@pinceau/core'
-import { autoProcessTS } from './preprocess'
 
 /**
  * Load a specific <style> block from a Vue SFC query.
@@ -17,8 +16,8 @@ export async function loadComponentBlock(
       {
         style: ({ content }) => {
           style = content
-        }
-      }
+        },
+      },
     )
     return style
   }
@@ -30,8 +29,8 @@ export async function loadComponentBlock(
       {
         markup: ({ content }) => {
           template = content
-        }
-      }
+        },
+      },
     )
     return template
   }
@@ -43,8 +42,8 @@ export async function loadComponentBlock(
       {
         script: ({ content }) => {
           script = content
-        }
-      }
+        },
+      },
     )
     return script
   }

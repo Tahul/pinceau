@@ -32,9 +32,7 @@ const PinceauSveltePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
     transform: async (code, id) => {
       const query = ctx.transformed[id]
 
-      if (query.sfc === 'svelte') {
-        return await transform(code, id, suite, ctx)
-      }
+      if (query.sfc === 'svelte') { return await transform(code, id, suite, ctx) }
     },
   }
 })

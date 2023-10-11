@@ -1,3 +1,8 @@
 {
-  "extends": "@pinceau/configs/tsconfig.base.json"
+  "extends": "@pinceau/configs/tsconfig.svelte.json",
+  "compilerOptions": {
+    "paths": {
+      "$pinceau/svelte-plugin": ["../../packages/palette/output/svelte-plugin.js"]
+    }
+  }
 }

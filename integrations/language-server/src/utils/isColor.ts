@@ -172,16 +172,12 @@ function isColor(str: string) {
     return token.includes('%') ? PERCENTAGE_TYPE : NUM_TYPE
   }
 
-  if (!str || typeof str !== 'string') {
-    return false
-  }
+  if (!str || typeof str !== 'string') { return false }
 
   const color = str.replace(/^\s+|\s+$/g, '').toLocaleLowerCase()
 
   // named colors or hex code
-  if ((CSS_COLOR_NAMES.includes(color)) || HEX_PATTERN.test(color)) {
-    return true
-  }
+  if ((CSS_COLOR_NAMES.includes(color)) || HEX_PATTERN.test(color)) { return true }
 
   const result = color.match(RGB_HSL_PATTERN)
   if (result) {
@@ -193,15 +189,12 @@ function isColor(str: string) {
     const a = result[6]
 
     // alpha test
-    if ((alpha === 'a' && !a) || (a && alpha === '')) {
-      return false
-    }
+    if ((alpha === 'a' && !a) || (a && alpha === '')) { return false }
 
     // hsl
     if (flavor === 'hsl') {
-      if (getColorType(rh) !== NUM_TYPE) {
-        return false
-      }
+      if (getColorType(rh) !== NUM_TYPE) { return false }
+
       return (getColorType(gs) & getColorType(bl)) === PERCENTAGE_TYPE
     }
 

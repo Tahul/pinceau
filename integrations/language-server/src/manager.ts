@@ -179,9 +179,7 @@ export function walkTokens(
   }
   else {
     for (const k in obj) {
-      if (obj[k] && typeof obj[k] === 'object') {
-        result[k] = walkTokens(obj[k], cb, [...paths, k])
-      }
+      if (obj[k] && typeof obj[k] === 'object') { result[k] = walkTokens(obj[k], cb, [...paths, k]) }
     }
   }
 

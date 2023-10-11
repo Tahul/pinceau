@@ -1,6 +1,5 @@
-import { walk as walkTemplate } from 'svelte/compiler'
+import { parse, walk as walkTemplate } from 'svelte/compiler'
 import { createSourceLocationFromOffsets } from 'sfc-composer'
-import { parse } from 'svelte/compiler'
 import type { PinceauTransformContext, PropMatch } from '@pinceau/core'
 
 export function extractProp(
@@ -26,7 +25,6 @@ export function extractProp(
     parse(sanitizedComponent).html,
     {
       enter: (node: any) => {
-        // @ts-ignore - I'm looking for Attribute
         if (node.type === 'Attribute' && node.name === prop && node?.value?.[0]?.expression) {
           matched.push(
             {

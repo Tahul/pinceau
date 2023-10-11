@@ -6,6 +6,6 @@ export default () => {
 
 css({
   '.test-base': {
-    fontSize: '16px'
-  }
+    fontSize: '16px',
+  },
 })

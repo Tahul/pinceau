@@ -60,6 +60,7 @@ export const resolveStylePropContext: PinceauTransformFunction<PinceauStyleFunct
   const pointer: string = `class="${className || ''}"`
 
   return {
+    id,
     type: 'styled',
     callee: prop,
     arg,

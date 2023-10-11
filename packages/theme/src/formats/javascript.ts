@@ -58,6 +58,8 @@ export const typescriptFormat: PinceauThemeFormat = {
     if (tokensPaths.length) { result += `export ${arrayToUnionType(pathsId, paths)}\n\n` }
     else { result += `export type ${pathsId} = string\n\n` }
 
+    result += 'declare global { export type PinceauTheme = GeneratedPinceauTheme;  export type PinceauThemePaths = GeneratedPinceauThemePaths; export type PinceauMediaQueries = GeneratedPinceauMediaQueries; }\n\n'
+
     // Default export
     result += 'export default theme'
 

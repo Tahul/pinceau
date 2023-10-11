@@ -32,8 +32,9 @@
     "stub": "unbuild --stub"
   },
   "dependencies": {
-    "acorn": "^8.10.0",
-    "@pinceau/integration": "workspace:*"
+    "@pinceau/integration": "workspace:*",
+    "@pinceau/core": "workspace:*",
+    "acorn": "^8.10.0"
   },
   "devDependencies": {
     "@pinceau/configs": "workspace:*"

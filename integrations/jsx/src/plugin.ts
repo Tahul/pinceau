@@ -1,25 +1,13 @@
-import { getPinceauContext, transform, transformInclude } from '@pinceau/core/utils'
-import type { PinceauContext } from '@pinceau/core'
-import { createUnplugin } from 'unplugin'
-import type { UnpluginInstance } from 'unplugin'
-import { suite } from './transforms/suite'
+import { createPinceauIntegration } from '@pinceau/integration'
+import PinceauJSXPlugin from './utils/unplugin'
 
-export const PinceauJSXPlugin: UnpluginInstance<undefined> = createUnplugin(() => {
-  let ctx: PinceauContext
+const pinceauPlugin: any = createPinceauIntegration(
+  [
+    ['jsx', PinceauJSXPlugin],
+  ],
+  {
+    jsx: true,
+  },
+)
 
-  return {
-    name: 'pinceau:jsx-plugin',
-
-    enforce: 'pre',
-
-    vite: {
-      async configResolved(config) {
-        ctx = getPinceauContext(config)
-      },
-    },
-
-    transformInclude: id => transformInclude(id, ctx),
-
-    transform: async (code, id) => await transform(code, id, suite, ctx),
-  }
-})
+export default pinceauPlugin

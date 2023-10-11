@@ -1,8 +1,9 @@
 {
   "name": "@pinceau/monorepo",
+  "type": "module",
   "version": "1.0.0",
   "private": true,
-  "type": "module",
+  "packageManager": "pnpm@8.6.0",
   "description": "Make your <script> lighter and your <style> smarter.",
   "workspaces": [
     "docs",
@@ -10,6 +11,15 @@
     "packages/*",
     "examples/*"
   ],
+  "license": "MIT",
+  "homepage": "https://github.com/Tahul/pinceau#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tahul/pinceau.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Tahul/pinceau/issues"
+  },
   "keywords": [
     "css-in-js",
     "vue",
@@ -19,15 +29,6 @@
     "nuxt",
     "vite"
   ],
-  "homepage": "https://github.com/Tahul/pinceau#readme",
-  "bugs": {
-    "url": "https://github.com/Tahul/pinceau/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Tahul/pinceau.git"
-  },
-  "license": "MIT",
   "scripts": {
     "build": "pnpm -r --filter=\"./(packages|integrations)/*\" run build && pnpm -r run build:post",
     "build:docs": "pnpm -r --filter=\"./docs\" run build",
@@ -37,6 +38,7 @@
     "dev:nuxt": "pnpm -r --filter=\"./examples/nuxt\" run dev",
     "dev:next": "pnpm -r --filter=\"./examples/next\" run dev",
     "dev:vue": "nodemon --exec 'pnpm --filter=\"./examples/vite-vue\" run dev' --watch 'packages' --watch 'integrations' -e js,ts,vue",
+    "dev:repl": "nodemon --exec 'pnpm --filter=\"./integrations/repl\" run dev' --watch 'packages' --watch 'integrations' -e js,ts,vue",
     "dev:svelte": "nodemon --exec 'pnpm --filter=\"./examples/vite-svelte\" run dev' --watch 'packages' --watch 'integrations' -e js,ts,svelte",
     "dev:sveltekit": "nodemon --exec 'pnpm --filter=\"./examples/sveltekit\" run dev' --watch 'packages' --watch 'integrations' -e js,ts,svelte",
     "dev:lit": "nodemon --exec 'pnpm --filter=\"./examples/vite-lit\" run dev' --watch 'packages' --watch 'integrations' -e js,ts",
@@ -57,13 +59,9 @@
     "test:ui": "pnpm -r --filter=\"./tests\" run test:ui",
     "test:fixtures": "pnpm -r --filter=\"./tests\" run test:fixtures"
   },
-  "resolutions": {
-    "jiti": "npm:@pinceau/jiti@latest",
-    "vue-eslint-parser": "npm:@pinceau/vue-eslint-parser",
-    "unbuild": "npm:@pinceau/unbuild@latest"
-  },
   "devDependencies": {
-    "pinceau": "workspace:*",
+    "@antfu/eslint-config": "^1.0.0-beta.26",
+    "@pinceau/configs": "workspace:*",
     "@pinceau/core": "workspace:*",
     "@pinceau/language-server": "workspace:*",
     "@pinceau/nuxt": "workspace:*",
@@ -74,17 +72,17 @@
     "@pinceau/volar": "workspace:*",
     "@pinceau/vscode": "workspace:*",
     "@pinceau/vue": "workspace:*",
-    "@pinceau/configs": "workspace:*",
+    "eslint": "^8.51.0",
     "nodemon": "^3.0.1",
+    "pinceau": "workspace:*",
     "release-it": "^16.2.1",
     "rollup": "^3.29.4",
     "tsup": "^7.2.0",
     "typescript": "^5.2.2",
-    "unenv": "^1.7.4",
     "unbuild": "^2.0.0",
+    "unenv": "^1.7.4",
     "vite-plugin-inspect": "^0.7.40"
   },
-  "packageManager": "pnpm@8.6.0",
   "pnpm": {
     "peerDependencyRules": {
       "allowedVersions": {
@@ -101,6 +99,11 @@
         "@vitejs/plugin-vue-jsx"
       ]
     }
+  },
+  "resolutions": {
+    "jiti": "npm:@pinceau/jiti@latest",
+    "unbuild": "npm:@pinceau/unbuild@latest",
+    "vue-eslint-parser": "npm:@pinceau/vue-eslint-parser@latest"
   },
   "release-it": {
     "git": {

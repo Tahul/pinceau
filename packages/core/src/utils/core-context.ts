@@ -1,11 +1,12 @@
 import type { ResolvedConfig } from 'vite'
-import type { PinceauTheme, PinceauUtils } from '@pinceau/theme'
 import type { PinceauBuildContext, PinceauContext, PinceauFilterFunction, PinceauOptions, PinceauQuery, PinceauTransformState, PinceauTransformer, PinceauUserOptions } from '../types'
 import { parsePinceauQuery } from './query'
 import { usePinceauVirtualContext } from './virtual-context'
 import { createThemeHelper } from './theme-helper'
 import { isPathIncluded } from './filter'
 import { normalizeOptions } from './options'
+import type { GeneratedPinceauUtils as PinceauUtils } from '$pinceau/utils'
+import type { GeneratedPinceauTheme as PinceauTheme } from '$pinceau/theme'
 
 /**
  * Retrieves previously injected PinceauContext inside ViteDevServer to reuse context across plugins.
@@ -82,9 +83,7 @@ export function usePinceauContext(userOptions?: PinceauUserOptions): PinceauCont
 
       // Apply load transformers
       if (transformer?.loadTransformers?.length) {
-        for (const transform of transformer.loadTransformers) {
-          code = transform(code, query, this as Partial<PinceauContext>)
-        }
+        for (const transform of transformer.loadTransformers) { code = transform(code, query, this as Partial<PinceauContext>) }
       }
 
       return code

@@ -3,23 +3,23 @@
   "extends": "./tsconfig.paths.json",
   "compilerOptions": {
     "target": "ESNext",
+    "jsx": "preserve",
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "useDefineForClassFields": true,
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
-    "noEmit": true,
-    "isolatedModules": true,
+    "allowImportingTsExtensions": true,
     "strict": true,
     "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "skipLibCheck": true,
+    "noEmit": true,
     "esModuleInterop": true,
-    "noImplicitAny": false,
-    "jsx": "preserve"
+    "isolatedModules": true,
+    "skipLibCheck": true
   },
   "references": [{ "path": "./tsconfig.node.json" }],
-  "exclude": ["dist"]
+  "exclude": ["dist", "node_modules"]
 }

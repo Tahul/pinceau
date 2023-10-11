@@ -11,23 +11,13 @@ export function loadComponentBlock(
 ): string | undefined {
   const { descriptor } = sfcParse(file, { filename: query.filename })
 
-  if (typeof query.styleFunction === 'string') {
-    return pinceauContext?.transformed?.[query.filename]?.state?.styleFunctions?.[query.styleFunction]?.css
-  }
+  if (typeof query.styleFunction === 'string') { return pinceauContext?.transformed?.[query.filename]?.state?.styleFunctions?.[query.styleFunction]?.css }
 
-  if (query.type === 'style') {
-    return descriptor?.styles?.[query.index!]?.content
-  }
+  if (query.type === 'style') { return descriptor?.styles?.[query.index!]?.content }
 
-  if (query.type === 'template') {
-    return descriptor?.template?.content
-  }
+  if (query.type === 'template') { return descriptor?.template?.content }
 
-  if (query.type === 'script' && !query.setup) {
-    return descriptor?.script?.content
-  }
+  if (query.type === 'script' && !query.setup) { return descriptor?.script?.content }
 
-  if (query.type === 'script' && query.setup) {
-    return descriptor?.scriptSetup?.content
-  }
+  if (query.type === 'script' && query.setup) { return descriptor?.scriptSetup?.content }
 }

@@ -1,4 +1,4 @@
-import type { DesignToken } from "@pinceau/theme"
+import type { DesignToken } from '@pinceau/theme'
 
 /**
  * Check if a token is responsive expression or not

@@ -7,7 +7,6 @@ import { getGlobContent } from '../utils'
 describe.concurrent(
   'vite',
   () => {
-  
     it('examples/vite-lib', async () => {
       const root = resolve(__dirname, '../../examples/vite-lib/')
 

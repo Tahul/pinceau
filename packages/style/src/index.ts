@@ -1,35 +1,30 @@
-import {
-  PinceauStyleFunctionContext,
+import type {
   CSSFunctionArg,
+  PinceauStyleFunctionContext,
+  PinceauStyleOptions,
+  ThemeTokens as PinceauThemeTokens,
   StyledFunctionArg,
-  ResponsiveProp as PinceauResponsiveProp,
-  ThemeTokens,
-  FilterStartingWith,
-  PinceauStyleOptions
 } from './types'
+import type { GeneratedPinceauThemePaths as PinceauThemePaths } from '$pinceau/theme'
 
 export * from './types'
+
+declare global {
+  // css({ ... })
+  export function css(declaration: CSSFunctionArg): string
+
+  // styled({ ... }) & styled.a({ ... })
+  export const styled: (<T extends {}>(declaration: StyledFunctionArg<T>) => string)
+
+  // Theme tokens helper
+  export type ThemeTokens<T extends PinceauThemePaths & (string & {}) = PinceauThemePaths & (string & {})> = PinceauThemeTokens<T>
+}
 
 declare module '@pinceau/core' {
   interface PinceauTransformState {
     styleFunctions?: { [key: string]: PinceauStyleFunctionContext }
   }
-}
 
-type Test = PinceauTheme
-
-declare global {
-  // css({ ... })
-  export function css(declaration: CSSFunctionArg): string
-  // styled({ ... }) & styled.a({ ... })
-  export const styled: (<T extends object>(declaration: StyledFunctionArg<T>) => string)
-  // Responsive prop, based on genearted `media` tokens
-  export type ResponsiveProp<T extends string | number | undefined> = PinceauResponsiveProp<T>
-  // Token prop, useful to create props scoped on a set of tokens like: `TokenProp<'$color'>` will allow all `$color.*.*` tokens.
-  export type TokenProp<T extends ThemeTokens<PinceauThemePaths | (string & {})>> = PinceauResponsiveProp<FilterStartingWith<PinceauThemePaths, T>>
-}
-
-declare module '@pinceau/core' {
   interface PinceauPluginsOptions {
     /**
      * Pinceau style options.

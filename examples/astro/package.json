@@ -9,9 +9,9 @@
     "astro": "astro"
   },
   "devDependencies": {
-    "astro": "^3.2.2",
-    "canvas-confetti": "^1.7.0",
-    "@pinceau/astro": "workspace:*"
+    "@pinceau/astro": "workspace:*",
+    "astro": "^3.2.4",
+    "canvas-confetti": "^1.9.0"
   },
   "stackblitz": {
     "installDependencies": false,

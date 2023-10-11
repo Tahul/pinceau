@@ -1,11 +1,5 @@
 import type { PropType } from 'vue'
-import type {
-  ResponsiveProp as PinceauResponsiveProp,
-  PropertyType,
-  StyledFunctionArg,
-  ThemeTokens,
-} from '@pinceau/style'
-import type { PinceauThemePaths } from '@pinceau/theme'
+import type { ResponsiveProp as PinceauResponsiveProp, StyledFunctionArg } from '@pinceau/style'
 import type { PinceauVueOptions } from './types'
 
 declare module '@vue/runtime-dom' {
@@ -15,9 +9,8 @@ declare module '@vue/runtime-dom' {
 }
 
 declare global {
-  export type ResponsivePropType<T extends string | number | undefined> = PropType<PinceauResponsiveProp<T>>
+  export type ResponsivePropType<T extends string | number | symbol | undefined> = PropType<PinceauResponsiveProp<T>>
   export type StyledProp = PropType<StyledFunctionArg>
-  export type TokenPropType<T extends PropertyType & ThemeTokens<PinceauThemePaths | (string & {})>> = PropType<TokenProp<T>>
 }
 
 declare module '@pinceau/core' {

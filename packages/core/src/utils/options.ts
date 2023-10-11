@@ -94,9 +94,7 @@ export function normalizeOptions(options?: PinceauUserOptions): PinceauOptions {
   options = merger(options || {}, defaults.base)
 
   for (const [key, keyDefaults] of Object.entries(defaults)) {
-    if (options[key] === true || typeof options[key] === 'object') {
-      options[key] = merger(typeof options[key] === 'object' ? options[key] : {}, keyDefaults) as PinceauRuntimeOptions
-    }
+    if (options[key] === true || typeof options[key] === 'object') { options[key] = merger(typeof options[key] === 'object' ? options[key] : {}, keyDefaults) as PinceauRuntimeOptions }
   }
 
   return Object.assign({}, options) as PinceauOptions

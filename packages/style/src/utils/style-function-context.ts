@@ -4,6 +4,7 @@ import { createSourceLocationFromOffsets } from 'sfc-composer'
 import { resolveCssProperty, stringify } from '@pinceau/stringify'
 import type { PinceauStyleFunctionContext } from '../types/style-functions'
 import type { CSSFunctionSource } from '../types/ast'
+import type { SupportedHTMLElements } from '..'
 import { createUniqueClass } from './create-class'
 import { resolveStyleArg } from './resolve-arg'
 
@@ -16,12 +17,27 @@ export const resolveStyleFunctionContext: PinceauTransformFunction<PinceauStyleF
   transformContext: PinceauTransformContext,
   pinceauContext: PinceauContext,
   callee: PathMatch,
-  id: string,
+  i: number = 0,
 ): PinceauStyleFunctionContext => {
-  const previousState = transformContext?.state?.styleFunctions?.[id] || transformContext?.previousState?.styleFunctions?.[id]
+  const { target } = transformContext
 
-  // Resolve type
-  const type = Array.isArray(callee.match) ? 'styled' : 'css'
+  let type: 'css' | 'styled' = 'css'
+
+  let element: SupportedHTMLElements | undefined
+
+  // $styled.div(...)
+  if (callee.match[0].startsWith('$styled')) {
+    const [, , , tag] = callee.match
+    element = tag as SupportedHTMLElements
+    type = 'styled'
+  }
+
+  // styled(...)
+  if (callee.match[0] === 'styled') { type = 'styled' }
+
+  const id = `${target.type}${target.index}_${type}${i}`
+
+  const previousState = transformContext?.state?.styleFunctions?.[id] || transformContext?.previousState?.styleFunctions?.[id]
 
   let className: string | undefined
   if (type === 'styled') { className = previousState?.className || createUniqueClass() }
@@ -75,6 +91,8 @@ export const resolveStyleFunctionContext: PinceauTransformFunction<PinceauStyleF
   const pointer: string = `$pinceau:${transformContext.query.filename}:${id}`
 
   return {
+    id,
+    element,
     type,
     callee,
     arg,

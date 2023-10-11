@@ -12,11 +12,11 @@
     "vue": "^3.3.4"
   },
   "devDependencies": {
-    "@astrojs/vue": "^3.0.0",
-    "astro": "^3.2.2",
+    "@astrojs/vue": "^3.0.1",
     "@pinceau/astro": "workspace:*",
+    "@pinceau/configs": "workspace:*",
     "@pinceau/vue": "workspace:*",
-    "@pinceau/configs": "workspace:*"
+    "astro": "^3.2.4"
   },
   "stackblitz": {
     "installDependencies": false,

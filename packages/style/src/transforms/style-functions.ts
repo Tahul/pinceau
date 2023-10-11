@@ -3,33 +3,36 @@ import { findCallees, parseAst } from '@pinceau/core/utils'
 import { resolveStyleFunctionContext } from '../utils/style-function-context'
 import { elements } from '../utils/html-elements'
 
+const PRESENCE_REGEX = new RegExp(`(\\$styled\\.(${elements.join('|')})|styled|css)(?:\\()`, 'g')
+
+const IDENTIFIER_REGEX = new RegExp(`^(\$styled\.(${elements.join('|')})|styled|css)`)
+
 export const transformStyleFunctions: PinceauTransformFunction = async (
   transformContext: PinceauTransformContext,
   pinceauContext: PinceauContext,
 ) => {
   const { target } = transformContext
 
+  const code = target.toString()
+
+  // Avoid useless AST traversal as we can guess if the required syntax is present at string level.
+  if (!code.match(PRESENCE_REGEX)) { return }
+
   if (!transformContext.state.styleFunctions) { transformContext.state.styleFunctions = {} }
 
-  const ast = parseAst(target.toString())
-  const cssCallees = findCallees(ast, 'css')
-  const styledCallees = findCallees(ast, new RegExp(`^styled(\\.(${elements.join('|')}))?`))
+  const ast = target?.ast || parseAst(code)
 
-  const callees = cssCallees.concat(styledCallees)
+  const callees = findCallees(ast, IDENTIFIER_REGEX)
 
   for (let i = 0; i < callees.length; i++) {
     const callee = callees[i]
-
-    const type = Array.isArray(callee.match) ? 'styled' : 'css'
-
-    const id = `${target.type}${target.index}_${type}${i}`
 
     // Resolve runtime styling context from AST of css() call
     const styleFunctionContext = await resolveStyleFunctionContext(
       transformContext,
       pinceauContext,
       callee,
-      id,
+      i,
     )
 
     if (!styleFunctionContext) { return }
@@ -43,6 +46,6 @@ export const transformStyleFunctions: PinceauTransformFunction = async (
       )
     }
 
-    transformContext.state.styleFunctions[id] = styleFunctionContext
+    transformContext.state.styleFunctions[styleFunctionContext.id] = styleFunctionContext
   }
 }

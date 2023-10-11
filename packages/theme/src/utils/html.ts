@@ -14,9 +14,7 @@ export function transformIndexHtml(html: string, ctx: PinceauContext, resolveMod
     hmrScript = '<script type="module" data-vite-dev-id="$pinceau/hmr" src="/__pinceau_hmr.js"></script>'
   }
 
-  if (options.theme.preflight) {
-    preflightPath = resolveModule(`@unocss/reset/${typeof options.theme.preflight === 'boolean' ? 'tailwind' : options.theme.preflight}.css`)
-  }
+  if (options.theme.preflight) { preflightPath = resolveModule(`@unocss/reset/${typeof options.theme.preflight === 'boolean' ? 'tailwind' : options.theme.preflight}.css`) }
 
   const preflight = preflightPath ? `<link rel="stylesheet" type="text/css" href="${preflightPath}" />` : ''
 

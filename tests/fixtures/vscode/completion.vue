@@ -14,7 +14,7 @@ css({
   div: {
     color: '',
     height: '',
-    padding: ''
-  }
+    padding: '',
+  },
 })
 </style>

@@ -59,7 +59,7 @@ export function parsePinceauQuery(id: string): PinceauQuery {
   if (ret.lang && PINCEAU_SCRIPTS_EXTENSIONS.includes(ret.lang)) { ret.type = 'script' }
   if (ret.lang && PINCEAU_TEMPLATE_EXTENSIONS.includes(ret.lang)) { ret.type = 'template' }
 
-  if (PINCEAU_SUPPORTED_EXTENSIONS.includes(ret.ext)) { ret.transformable = true }
+  if (PINCEAU_SUPPORTED_EXTENSIONS.includes(ret.ext) && !ret.raw) { ret.transformable = true }
 
   return ret
 }

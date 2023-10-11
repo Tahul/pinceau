@@ -1,17 +1,26 @@
-import { StyledFunctionArg } from '@pinceau/style'
+import type { StyledFunctionArg, SupportedHTMLElements } from '@pinceau/style'
 import type { PinceauJSXOptions } from './types'
-import { SupportedHTMLElements } from '@pinceau/style'
 
 export { version } from '../package.json'
 
 export * from './types'
 
-export type StyledReactComponent<E extends SupportedHTMLElements> = JSX.IntrinsicElements[E]
+export type StyledComponentFactory<Type extends SupportedHTMLElements> = <Props extends Record<string, any>>(declaration: StyledFunctionArg<{}, Props, (string & {}), {}, false>) => StyledReactComponent<Type, Props>
+
+export type StyledReactComponent<
+  Type extends SupportedHTMLElements,
+  Props extends Record<string, any> = {},
+> =
+  React.FC<
+    JSX.IntrinsicElements[Type]
+    &
+    Props
+  >
 
 declare global {
   // $styled.a({ ... })
   const $styled: {
-    [E in SupportedHTMLElements]: (<Props extends { [key: string]: any }>(declaration: StyledFunctionArg<Props>) => StyledReactComponent<E> )
+    [Type in SupportedHTMLElements]: StyledComponentFactory<Type>
   }
 }
 

@@ -1,6 +1,6 @@
 import type { PinceauRuntimeSheet, PinceauThemeSheet } from '@pinceau/runtime'
 import type { ResponsiveProp } from '@pinceau/style'
-import type { Prop } from 'vue'
+import type { Prop, PropType } from 'vue'
 import { inject } from 'vue'
 
 /**
@@ -20,12 +20,12 @@ export function useRuntimeSheet() {
 /**
  * A prop to be used on any component to enable `:css` prop.
  */
-export function responsiveProp<T extends string | number>(
+export function responsiveProp<T extends string | number | symbol>(
   defaultValue: ResponsiveProp<T>,
   required = false,
 ) {
   return {
-    type: [String, Object] as ResponsivePropType<T>,
+    type: [String, Object] as PropType<ResponsiveProp<T>>,
     default: defaultValue,
     required,
   } as Prop<T>

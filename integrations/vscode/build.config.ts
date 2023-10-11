@@ -5,13 +5,13 @@ export default defineBuildConfig({
     {
       input: 'src/index.ts',
       name: 'index',
-      format: 'cjs'
+      format: 'cjs',
     },
     {
       input: 'src/server.ts',
       name: 'server',
-      format: 'cjs'
-    }
+      format: 'cjs',
+    },
   ],
   failOnWarn: false,
   clean: true,
@@ -20,7 +20,7 @@ export default defineBuildConfig({
     emitCJS: true,
     inlineDependencies: true,
     esbuild: {
-      minify: true
-    }
-  }
+      minify: true,
+    },
+  },
 })

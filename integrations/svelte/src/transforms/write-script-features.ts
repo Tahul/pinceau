@@ -109,9 +109,7 @@ export const transformWriteScriptFeatures: PinceauTransformFunction = (transform
   if (Object.keys(variantsProps).length) { pushVariantsProps(transformContext, variantsProps) }
 
   // If runtime styling has been found, finally prepend the import
-  if (fileHasRuntime) {
-    target.prepend('\nimport { usePinceauRuntime } from \'@pinceau/svelte/runtime\'\n')
-  }
+  if (fileHasRuntime) { target.prepend('\nimport { usePinceauRuntime } from \'@pinceau/svelte/runtime\'\n') }
 }
 
 /**

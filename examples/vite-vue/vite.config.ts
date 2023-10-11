@@ -1,4 +1,3 @@
-import process from 'node:process'
 import { createResolver } from '@nuxt/kit'
 import { defineConfig } from 'vite'
 import Vue from '@vitejs/plugin-vue'

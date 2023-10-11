@@ -37,7 +37,13 @@ const PinceauVuePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
 
     transformInclude: id => transformInclude(id, ctx),
 
-    transform: async (code, id) => await transform(code, id, suite, ctx),
+    transform: async (code, id) => {
+      const query = ctx.transformed[id]
+
+      if (query.sfc === 'vue' || query.type === 'style') {
+        return await transform(code, id, suite, ctx)
+      }
+    },
   }
 })
 

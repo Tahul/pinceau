@@ -9,7 +9,7 @@
       "require": "./dist/index.cjs"
     },
     "./plugin": {
-      "types": "./plugin.d.ts",
+      "types": "./dist/plugin.d.ts",
       "import": "./dist/plugin.mjs",
       "require": "./dist/plugin.cjs"
     }
@@ -26,7 +26,8 @@
     "stub": "unbuild --stub"
   },
   "dependencies": {
-    "@pinceau/integration": "workspace:*"
+    "@pinceau/integration": "workspace:*",
+    "@pinceau/core": "workspace:*"
   },
   "devDependencies": {
     "@pinceau/configs": "workspace:*"

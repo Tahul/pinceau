@@ -3,7 +3,7 @@ import type * as CSSType from './csstype'
 export type PseudosProperties = { [key in CSSType.Pseudos]?: CSSProperties }
 
 export type CSSProperties<
-  LocalTokens extends string = (string & {}),
+  LocalTokens extends string | undefined = string & {},
 > =
   CSSType.StandardProperties<LocalTokens> &
   CSSType.StandardShorthandProperties<LocalTokens> &

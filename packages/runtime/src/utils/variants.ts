@@ -20,9 +20,7 @@ export function variantsToDeclaration(
       classes = [...classes, ...variantValue]
       return
     }
-    if (typeof variantValue === 'string') {
-      classes = [...classes, ...variantValue.split(' ')]
-    }
+    if (typeof variantValue === 'string') { classes = [...classes, ...variantValue.split(' ')] }
   }
 
   let declaration = {}
@@ -65,5 +63,5 @@ export function variantsToDeclaration(
     }
   }
 
-  return { classes, declaration }
+  return { classes: classes.join(' '), declaration }
 }

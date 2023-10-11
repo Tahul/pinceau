@@ -9,8 +9,7 @@ const plugins: (PluginOption | PluginOption[])[] = [
 
 if (process.env.USE_REFRESH === 'true')
   plugins.unshift(prefresh())
-else
-  plugins.push(preact())
+else plugins.push(preact())
 
 // https://vitejs.dev/config/
 export default defineConfig({ plugins })

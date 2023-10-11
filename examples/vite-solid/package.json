@@ -8,15 +8,15 @@
     "serve": "vite preview"
   },
   "dependencies": {
-    "solid-js": "^1.7.12"
+    "solid-js": "^1.8.1"
   },
   "devDependencies": {
-    "typescript": "^5.2.2",
-    "vite": "^4.4.9",
-    "vite-plugin-solid": "^2.7.0",
-    "vite-plugin-inspect": "^0.7.40",
+    "@pinceau/configs": "workspace:*",
     "@pinceau/jsx": "workspace:*",
-    "@pinceau/configs": "workspace:*"
+    "typescript": "^5.2.2",
+    "vite": "^4.4.11",
+    "vite-plugin-inspect": "^0.7.40",
+    "vite-plugin-solid": "^2.7.1"
   },
   "stackblitz": {
     "installDependencies": false,

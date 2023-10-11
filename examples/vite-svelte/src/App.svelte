@@ -18,8 +18,6 @@
   })
 
   const main = styled({
-    color: 'red',
-    backgroundColor: '$color.green.1',
   })
 </script>
 

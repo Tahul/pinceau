@@ -18,12 +18,13 @@ export function createSveltePlugin(ctx: PinceauContext) {
 
   let userOptions
 
-  ${ctx.options.theme ? 'export let themeSheet' : ''}
+  ${ctx.options.theme ? 'let themeSheet\nexport const getRuntimeSheet = () => runtimeSheet' : ''}
 
-  ${ctx.options.runtime ? 'export let runtimeSheet' : ''}
+  ${ctx.options.runtime ? 'export let runtimeSheet\nexport const getThemeSheet = () => themeSheet' : ''}
 
   export const pinceauPlugin = (options) => {
     userOptions = { ...PinceauSvelteOptions, ...options }
+    
     ${ctx.options.theme ? 'themeSheet = useThemeSheet(userOptions)' : ''}
     ${ctx.options.runtime ? `runtimeSheet = useRuntimeSheet(${ctx.options.theme ? '{ themeSheet, ...userOptions }' : 'userOptions'})` : ''}
   }

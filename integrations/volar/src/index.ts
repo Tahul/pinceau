@@ -18,9 +18,7 @@ const plugin: VueLanguagePlugin = _ => ({
     const fileNames: string[] = []
     for (let i = 0; i < sfc.styles.length; i++) {
       const style = sfc.styles[i]
-      if (style.lang === 'ts' && style?.content) {
-        fileNames.push(`${fileName}.cssInTs.${i}.ts`)
-      }
+      if (style.lang === 'ts' && style?.content) { fileNames.push(`${fileName}.cssInTs.${i}.ts`) }
     }
     return fileNames
   },
@@ -41,14 +39,10 @@ const plugin: VueLanguagePlugin = _ => ({
     resolveEmbeddedFileContext(sfc, ctx)
 
     // Add variants dynamic props
-    if (isPublicVueFile) {
-      recomposeProps(embeddedFile, sfc, ctx)
-    }
+    if (isPublicVueFile) { recomposeProps(embeddedFile, sfc, ctx) }
 
     // Create css({ }) context
-    if (isCssInTsFile) {
-      recomposeScriptSetup(embeddedFile, sfc, ctx)
-    }
+    if (isCssInTsFile) { recomposeScriptSetup(embeddedFile, sfc, ctx) }
   },
 })
 

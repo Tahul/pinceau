@@ -1,8 +1,9 @@
 import type { DesignToken } from 'style-dictionary-esm'
 import StyleDictionary from 'style-dictionary-esm'
-import type { PinceauMediaQueries, PinceauThemeFormat } from '../types'
+import type { PinceauThemeFormat } from '../types/options'
 import { walkTokens } from '../utils/tokens'
 import { createThemeRule } from '../utils/css-rules'
+import type { GeneratedPinceauMediaQueries as PinceauMediaQueries } from '$pinceau/theme'
 
 export const cssFormat: PinceauThemeFormat = {
   importPath: 'pinceau.css',

@@ -1,8 +1,11 @@
 import fs from 'node:fs'
-import fg from 'fast-glob'
+import type { File } from '@babel/types'
 import type { PinceauContext, PinceauOptions } from '@pinceau/core'
+import { tokensPaths } from '@pinceau/core/runtime'
 import { normalizeOptions, parseAst, parsePinceauQuery, usePinceauContext, usePinceauTransformContext } from '@pinceau/core/utils'
 import type { PinceauConfigContext, PinceauThemeFormat, PinceauThemeTokenTransform } from '@pinceau/theme'
+import { createThemeRule, normalizeTokens, resolveMediaSelector, resolveReponsiveSelectorPrefix, walkTokens } from '@pinceau/theme/runtime'
+import { transformColorScheme, transformMediaQueries, transformThemeHelper } from '@pinceau/theme/transforms'
 import {
   cssFormat,
   definitionsFormat,
@@ -31,17 +34,15 @@ import {
   setupThemeFormats,
   transformIndexHtml,
   typescriptFormat,
-  usePinceauConfigContext, utilsFormat,
+  usePinceauConfigContext,
+  utilsFormat,
 } from '@pinceau/theme/utils'
-import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
-import type { File } from '@babel/types'
-import { tokensPaths } from '@pinceau/core/runtime'
-import { createThemeRule, normalizeTokens, resolveMediaSelector, resolveReponsiveSelectorPrefix, walkTokens } from '@pinceau/theme/runtime'
-import { transformColorScheme, transformMediaQueries, transformThemeHelper } from '@pinceau/theme/transforms'
 import { PinceauVueTransformer } from '@pinceau/vue/utils'
+import fg from 'fast-glob'
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import themeConfig from '../fixtures/theme/theme.config'
-import { findNode, paletteLayer, resolveFixtures, resolveTmp, testFileLayer, testLayer } from '../utils'
 import themeConfigContent from '../fixtures/theme/theme.config.ts?raw'
+import { findNode, paletteLayer, resolveFixtures, resolveTmp, testFileLayer, testLayer } from '../utils'
 
 describe('@pinceau/theme', () => {
   describe('utils/config-context.ts', () => {
@@ -700,33 +701,25 @@ describe('@pinceau/theme', () => {
     it('returns true for valid constant names', () => {
       const names = ['validName', 'VALID_NAME', '_validName', '$validName', 'name2']
 
-      for (const name of names) {
-        expect(isSafeConstName(name)).toBe(true)
-      }
+      for (const name of names) { expect(isSafeConstName(name)).toBe(true) }
     })
 
     it('returns false for invalid starting characters', () => {
       const names = ['9invalid', '!invalid', '-invalid']
 
-      for (const name of names) {
-        expect(isSafeConstName(name)).toBe(false)
-      }
+      for (const name of names) { expect(isSafeConstName(name)).toBe(false) }
     })
 
     it('returns false for names that are reserved words', () => {
       const names = ['break', 'class', 'return', 'var', 'true']
 
-      for (const name of names) {
-        expect(isSafeConstName(name)).toBe(false)
-      }
+      for (const name of names) { expect(isSafeConstName(name)).toBe(false) }
     })
 
     it('returns true for names that resemble reserved words but have different cases', () => {
       const names = ['Break', 'Class', 'Return', 'Var', 'True']
 
-      for (const name of names) {
-        expect(isSafeConstName(name)).toBe(true)
-      }
+      for (const name of names) { expect(isSafeConstName(name)).toBe(true) }
     })
 
     it('returns false for empty string', () => {
@@ -1164,6 +1157,7 @@ describe('@pinceau/theme', () => {
       await transformContext.transform()
 
       expect((transformContext.result() as any).code).toStrictEqual('div { background-color: var(--color-primary-100); }')
+
       expect(console.log).toHaveBeenCalledOnce()
     })
   })

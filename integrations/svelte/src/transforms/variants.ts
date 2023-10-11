@@ -95,9 +95,7 @@ export function castVariantsProps(
       if (value.default) {
         let stringified: string | undefined
         try {
-          if (JSON.parse(value.default)) {
-            stringified = value.default
-          }
+          if (JSON.parse(value.default)) { stringified = value.default }
         }
         catch (_) { stringified = `\`${value.default}\`` }
 

@@ -1,4 +1,4 @@
-import type { DOMAttributes as _DOMAttributes } from 'svelte/elements'
+import 'svelte/elements'
 import type { StyledFunctionArg } from '@pinceau/style'
 import type { PinceauSvelteOptions } from './types'
 
@@ -16,6 +16,7 @@ declare module '@pinceau/core' {
 }
 
 declare module 'svelte/elements' {
+  // eslint-disable-next-line unused-imports/no-unused-vars
   export interface DOMAttributes<T extends EventTarget> {
     styled?: StyledFunctionArg
   }

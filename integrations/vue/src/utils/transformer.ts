@@ -12,9 +12,7 @@ export const PinceauVueTransformer: PinceauTransformer = {
   classBinding: (id, styleFn) => {
     const hasRuntime = styleFn.computedStyles.length || Object.keys(styleFn.variants).length
 
-    if (hasRuntime) {
-      return `:class="$${id}" pcsp`
-    }
+    if (hasRuntime) { return `:class="$${id}" pcsp` }
 
     return `class="${styleFn.className}" pcsp`
   },

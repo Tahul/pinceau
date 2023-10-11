@@ -1,11 +1,9 @@
 export default class CacheManager<T> {
   private cache: Map<string, Map<string, T>> = new Map()
   private allCache: Map<string, T> = new Map()
-  
+
   public get(key: string, filePath?: string) {
-    if (filePath) {
-      return this.cache.get(filePath)?.get(key)
-    }
+    if (filePath) { return this.cache.get(filePath)?.get(key) }
 
     return this.allCache?.get(key)
   }

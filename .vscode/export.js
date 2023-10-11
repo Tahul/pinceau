@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { get, set } from '../packages/core/dist/utils.mjs'
+import { set } from '../packages/core/dist/utils.mjs'
 import { walkTokens } from '../packages/theme/dist/runtime.mjs'
 
 const srcPath = resolve(

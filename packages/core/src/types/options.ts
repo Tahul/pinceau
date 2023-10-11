@@ -10,6 +10,7 @@ export interface PinceauOptions extends FinalOptionsScope<PinceauPluginsOptions>
   cwd: string
   dev: boolean
   debug: boolean | 2
+  [key: string]: any
 }
 
 /**

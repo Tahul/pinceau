@@ -3,7 +3,7 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import * as path from 'path'
+import * as path from 'node:path'
 import vscode from 'vscode'
 import type {
   LanguageClientOptions,

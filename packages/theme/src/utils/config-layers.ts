@@ -1,9 +1,10 @@
-import { resolveSchema as resolveUntypedSchema } from 'untyped'
 import type { PinceauOptions } from '@pinceau/core'
 import { merger } from '@pinceau/core/utils'
-import type { ConfigLayer, PinceauTheme, ResolvedConfigLayer, Theme, ThemeLoadingOutput } from '../types'
+import { resolveSchema as resolveUntypedSchema } from 'untyped'
+import type { ConfigLayer, ResolvedConfigLayer, Theme, ThemeLoadingOutput } from '../types'
 import { resolveFileLayer } from './config-file'
 import { normalizeTokens } from './tokens'
+import type { GeneratedPinceauTheme as PinceauTheme } from '$pinceau/theme'
 
 // Gives an empty layer for a given path or nothing.
 export const getConfigLayer = (path?: string): ResolvedConfigLayer => ({ path: path || '', ext: '', content: '', theme: {}, definitions: {}, utils: {}, imports: [] })
@@ -32,12 +33,9 @@ export async function loadLayers(options: PinceauOptions): Promise<ThemeLoadingO
   for (const layer of sources) {
     // Support tokens passed in `layers: [{ tokens }]`
     let resolvedLayer: ResolvedConfigLayer
-    if (layer.tokens || layer.utils) {
-      resolvedLayer = resolveInlineLayer(layer, options)
-    }
-    else {
-      resolvedLayer = await resolveFileLayer(layer, options)
-    }
+    if (layer.tokens || layer.utils) { resolvedLayer = resolveInlineLayer(layer, options) }
+
+    else { resolvedLayer = await resolveFileLayer(layer, options) }
 
     if (!resolvedLayer) { continue }
 
@@ -82,20 +80,15 @@ export function resolveConfigSources(options: PinceauOptions) {
       }
 
       // Check if the config layer path passed as string in the array
-      if (typeof layerOrPath === 'string') {
-        configLayer = { path: layerOrPath, configFileName: options.theme.configFileName }
-      }
+      if (typeof layerOrPath === 'string') { configLayer = { path: layerOrPath, configFileName: options.theme.configFileName } }
 
       // Only push configLayer in proper scenarios
       if (configLayer) {
         // File layer
-        if (configLayer?.path && !acc.some(layer => layer.path === configLayer?.path)) {
-          acc.unshift(configLayer)
-        }
+        if (configLayer?.path && !acc.some(layer => layer.path === configLayer?.path)) { acc.unshift(configLayer) }
+
         // Inline layer
-        else if (configLayer?.tokens || configLayer?.imports || configLayer?.utils) {
-          acc.unshift(configLayer)
-        }
+        else if (configLayer?.tokens || configLayer?.imports || configLayer?.utils) { acc.unshift(configLayer) }
       }
 
       return acc
@@ -104,9 +97,7 @@ export function resolveConfigSources(options: PinceauOptions) {
   )
 
   // Add CWD as a source if not already in layers
-  if (options.cwd && !sources.some(source => source.path === options.cwd)) {
-    sources.push({ path: options.cwd })
-  }
+  if (options.cwd && !sources.some(source => source.path === options.cwd)) { sources.push({ path: options.cwd }) }
 
   // Dedupe sources
   sources = [...new Set(sources)]
@@ -118,15 +109,11 @@ export function resolveConfigSources(options: PinceauOptions) {
  * Resolve @mediaQueries keys from a tokens configuration.
  */
 export function resolveMediaQueriesKeys(config: Theme | Theme[]) {
-  if (Array.isArray(config)) {
-    return Array.from(new Set<string>([].concat(...config.map(resolveMediaQueriesKeys))))
-  }
+  if (Array.isArray(config)) { return Array.from(new Set<string>([].concat(...config.map(resolveMediaQueriesKeys)))) }
 
   const nativeKeys = ['$dark', '$light', '$initial']
 
-  if (config.media && Object.keys(config.media).length) {
-    return Array.from(new Set(nativeKeys.concat(Object.keys(config.media).map(k => `$${k}`))))
-  }
+  if (config.media && Object.keys(config.media).length) { return Array.from(new Set(nativeKeys.concat(Object.keys(config.media).map(k => `$${k}`)))) }
 
   return nativeKeys
 }

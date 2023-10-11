@@ -10,12 +10,10 @@ function findClosestChar(
   let before = position - 1
   let after = position
   while (before >= 0 || after < source.length) {
-    if (Array.isArray(char) ? char.includes(source[before]) : (source[before] === char)) {
-      return before
-    }
-    if (Array.isArray(char) ? char.includes(source[after]) : (source[after] === char)) {
-      return after
-    }
+    if (Array.isArray(char) ? char.includes(source[before]) : (source[before] === char)) { return before }
+
+    if (Array.isArray(char) ? char.includes(source[after]) : (source[after] === char)) { return after }
+
     before--
     after++
   }

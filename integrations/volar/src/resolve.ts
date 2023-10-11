@@ -29,9 +29,7 @@ export function resolveEmbeddedFileContext(
             const key = path?.value?.key?.name || path?.value?.key?.value
 
             // Store local tokens
-            if (key.startsWith('$') && isPropertyValueType(path)) {
-              ctx.localTokens.push(key)
-            }
+            if (key.startsWith('$') && isPropertyValueType(path)) { ctx.localTokens.push(key) }
           }
 
           // Resolve tokens used in the declaration
@@ -51,9 +49,7 @@ export function resolveEmbeddedFileContext(
     )
   })
 
-  if (ctx.variantsObject && Object.keys(ctx.variantsObject).length) {
-    ctx.variantsProps = resolveVariantsProps(ctx.variantsObject, true)
-  }
+  if (ctx.variantsObject && Object.keys(ctx.variantsObject).length) { ctx.variantsProps = resolveVariantsProps(ctx.variantsObject, true) }
 }
 
 /**

@@ -18,8 +18,6 @@ export function useVariants(
 ) {
   const keys = Object.keys(variants || {})
 
-  console.log({ variants, props, keys })
-
   const variantsProps = Object.entries(props || {}).reduce(
     (acc, [propName, value]) => {
       if (keys.includes(propName)) { acc[propName] = value }
