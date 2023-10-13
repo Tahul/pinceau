@@ -3,7 +3,7 @@ import type { PinceauThemeOptions } from '@pinceau/theme'
 import type { PinceauStyleOptions } from '@pinceau/style'
 import type { PinceauRuntimeOptions } from '@pinceau/runtime'
 import type { PinceauVueOptions } from '@pinceau/vue'
-import type { PinceauJSXOptions } from '@pinceau/jsx'
+import type { PinceauReactOptions } from '@pinceau/react'
 import type { PinceauSvelteOptions } from '@pinceau/svelte'
 import type { PinceauAstroOptions } from '@pinceau/astro'
 import type { PinceauOptions, PinceauUserOptions } from '../types'
@@ -51,7 +51,7 @@ export function getDefaultOptions(): { [key in keyof PinceauUserOptions]: any } 
     /* */
   }
 
-  const jsx: PinceauJSXOptions = {
+  const jsx: PinceauReactOptions = {
     /* */
   }
 

@@ -23,12 +23,10 @@ export function pushVariantsProps(
 
   const scriptAst = target?.ast || parseAst(target.toString())
 
-  const isTs = target?.attrs?.lang === 'ts'
-
   // No `defineProps` found in existing component code, push a new one.
   const importsEnd = getCharAfterLastImport(scriptAst)
 
-  target.appendRight(importsEnd, castVariantsProps(variantsProps, isTs))
+  target.appendRight(importsEnd, castVariantsProps(variantsProps))
 }
 
 /**
@@ -39,8 +37,6 @@ export function resolveVariantsProps(
   isTs?: boolean,
 ) {
   const props: { [key: string]: PropOptions } = {}
-
-  console.log(variants)
 
   Object.entries(variants).forEach(
     ([key, variant]: [string, any]) => {

@@ -1,11 +1,11 @@
 import PinceauThemePlugin from '@pinceau/theme/plugin'
 import PinceauStylePlugin from '@pinceau/style/plugin'
 import PinceauRuntimePlugin from '@pinceau/runtime/plugin'
+import PinceauCorePlugin from '@pinceau/core/plugin'
 import type { UnpluginInstance } from 'unplugin'
 import type { Plugin } from 'vite'
 import type { PinceauUserOptions } from '@pinceau/core'
 import { normalizeOptions } from '@pinceau/core/utils'
-import PinceauCorePlugin from '@pinceau/core/plugin'
 
 export function createPinceauIntegration(
   extensions?: [string, UnpluginInstance<any>][],

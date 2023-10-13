@@ -105,7 +105,7 @@ export const transformWriteScriptFeatures: PinceauTransformFunction = (transform
 
   if (fileHasStyledComponent) { imports.push('usePinceauComponent') }
 
-  if (imports.length) { target.prepend(`\nimport { ${imports.join(', ')} } from '@pinceau/jsx/runtime'\n`) }
+  if (imports.length) { target.prepend(`\nimport { ${imports.join(', ')} } from '@pinceau/react/runtime'\n`) }
 }
 
 /**

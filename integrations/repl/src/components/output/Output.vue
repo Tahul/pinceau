@@ -51,6 +51,10 @@ css({
     height: '100%',
     overflow: 'hidden',
     position: 'relative',
+    width: '100%',
+    backgroundImage: 'linear-gradient(0deg, transparent 24%, rgba(255, 255, 255, .03) 25%, rgba(255, 255, 255, .03) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, .03) 75%, rgba(255, 255, 255, .03) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(255, 255, 255, .03) 25%, rgba(255, 255, 255, .03) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, .03) 75%, rgba(255, 255, 255, .03) 76%, transparent 77%, transparent)',
+    backgroundSize: '50px 50px',
+    backgroundPosition: '-38px -38px'
   },
 })
 </style>

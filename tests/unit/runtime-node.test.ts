@@ -143,7 +143,7 @@ describe('@pinceau/runtime', () => {
 
       const { classes, declaration } = variantsToDeclaration(variants, variantProps)
 
-      expect(classes).toEqual([])
+      expect(classes).toEqual('')
       expect(declaration).toEqual({
         span: {
           padding: '{space.3} {space.6}',
@@ -161,7 +161,7 @@ describe('@pinceau/runtime', () => {
 
       const { classes, declaration } = variantsToDeclaration(variants, variantProps)
 
-      expect(classes).toEqual([])
+      expect(classes).toEqual('')
       expect(declaration).toEqual({
         span: {
           padding: '{space.6} {space.8}',
@@ -194,7 +194,7 @@ describe('@pinceau/runtime', () => {
 
       const { classes, declaration } = variantsToDeclaration(variantsWithClass, variantProps)
 
-      expect(classes).toEqual(['sm-class'])
+      expect(classes).toEqual('sm-class')
       expect(declaration).toEqual({
         span: {
           padding: '{space.3} {space.6}',
@@ -220,7 +220,7 @@ describe('@pinceau/runtime', () => {
 
       const { classes, declaration } = variantsToDeclaration(variantsWithArray, variantProps)
 
-      expect(classes).toEqual(['array-class1', 'array-class2'])
+      expect(classes).toEqual('array-class1 array-class2')
       expect(declaration).toEqual({})
     })
 
@@ -231,7 +231,7 @@ describe('@pinceau/runtime', () => {
 
       const { classes, declaration } = variantsToDeclaration(variants, variantProps)
 
-      expect(classes).toEqual([])
+      expect(classes).toEqual('')
       expect(declaration).toEqual({})
     })
 
@@ -253,7 +253,7 @@ describe('@pinceau/runtime', () => {
         variantProps,
       )
 
-      expect(classes).toEqual(['another-class'])
+      expect(classes).toEqual('another-class')
       expect(declaration).toEqual({
         span: {
           padding: '{space.3} {space.6}',
@@ -268,7 +268,7 @@ describe('@pinceau/runtime', () => {
 
       const { classes, declaration } = variantsToDeclaration(variants, variantProps as any)
 
-      expect(classes).toEqual([])
+      expect(classes).toEqual('')
       expect(declaration).toEqual({})
     })
 
@@ -279,7 +279,7 @@ describe('@pinceau/runtime', () => {
 
       const { classes, declaration } = variantsToDeclaration(variants, variantProps as any)
 
-      expect(classes).toEqual([])
+      expect(classes).toEqual('')
       expect(declaration).toEqual({})
     })
 
@@ -288,7 +288,7 @@ describe('@pinceau/runtime', () => {
 
       const { classes, declaration } = variantsToDeclaration(variants, variantProps)
 
-      expect(classes).toEqual([])
+      expect(classes).toEqual('')
       expect(declaration).toEqual({})
     })
   })

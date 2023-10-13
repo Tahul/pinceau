@@ -1,7 +1,7 @@
 import type { ASTNode } from 'ast-types'
 import type { PinceauTransformContext, PinceauTransformFunction } from '@pinceau/core'
 import { astTypes, expressionToAst, printAst } from '@pinceau/core/utils'
-import { findSelfBindingFunction } from '@pinceau/style/utils'
+import { findSelfBindingFunction, hasRuntimeStyling } from '@pinceau/style/utils'
 
 /**
  * Adds `$pinceau` to the root element class via transform
@@ -22,7 +22,13 @@ export const transformAddPinceauClass: PinceauTransformFunction = async (
   const selfBindingFn = findSelfBindingFunction(transformContext)
   if (!selfBindingFn) { return }
 
-  const identifier = `$${selfBindingFn}`
+  const styleFn = transformContext.state.styleFunctions?.[selfBindingFn]
+  if (!styleFn) { return }
+
+  // Grab runtime identifier if the function has runtime, otherwise use the className.
+  const identifier = styleFn.computedStyles.length > 0 || Object.keys(styleFn.variants).length > 0
+    ? `$${selfBindingFn}`
+    : `\`${styleFn.className}\``
 
   const { target } = transformContext
 

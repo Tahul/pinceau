@@ -1,3 +1,11 @@
 import type { PinceauStyleFunctionContext } from '../types'
 
-export const hasIdentifier = (styleFn: PinceauStyleFunctionContext) => styleFn.callee?.parentPath?.value?.type === 'VariableDeclarator' || styleFn.callee?.parentPath?.value?.type === 'AssignmentExpression'
+export function hasIdentifier(styleFn: PinceauStyleFunctionContext) {
+  const calleeType = styleFn.callee?.parentPath?.value?.type
+
+  return (
+    calleeType === 'VariableDeclarator'
+    || calleeType === 'AssignmentExpression'
+    || calleeType === 'JSXExpressionContainer'
+  )
+}

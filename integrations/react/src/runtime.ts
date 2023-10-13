@@ -46,7 +46,9 @@ export function useVariants(variants?: Variants, props?: React.FC['propTypes']) 
 }
 
 export function usePinceauComponent<T extends {}>(staticClass?: string | undefined, computedStyles?: [string, ComputedStyleDefinition][], variants?: Variants, type?: SupportedHTMLElements) {
-  return (props: T) => {
+  const component = (
+    props: T,
+  ) => {
     const pinceauClasses = usePinceauRuntime(staticClass, computedStyles, variants, props)
 
     return createElement(
@@ -57,6 +59,13 @@ export function usePinceauComponent<T extends {}>(staticClass?: string | undefin
       },
     )
   }
+
+  component.withVariants = (_variants) => {
+    variants = { ...variants, ..._variants }
+    return component
+  }
+
+  return component
 }
 
 export function usePinceauRuntime(

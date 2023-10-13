@@ -1,16 +1,19 @@
 import type { CSSProperties, PseudosProperties } from './properties'
 import type { ComputedStyleDefinition } from './computed-styles'
 import type { Variants } from './variants'
-import type { GeneratedPinceauMediaQueries as PinceauMediaQueries } from '$pinceau/theme'
-import type { GeneratedPinceauUtils as PinceauUtils } from '$pinceau/utils'
+import type { PinceauUtils } from '$pinceau/utils'
+import type { PinceauMediaQueries } from '$pinceau/theme'
 
 export type PropertyType = (string & {}) | (number & {}) | undefined
+
+export type ExtractVariantsProps<V extends Variants> = {
+  [K in keyof V]?: keyof V[K]
+}
 
 export type ResponsiveProp<T extends string | number | symbol | undefined> = { [key in PinceauMediaQueries]?: T } | T
 
 export type StyledFunctionArg<
-  Source extends Record<string, any> = {},
-  Props extends Record<string, any> = {},
+  Props extends {} = {},
   LocalTokens extends string | undefined = undefined,
   TemplateSource extends {} = {},
   SupportVariants extends boolean = true,
@@ -18,16 +21,12 @@ export type StyledFunctionArg<
   // Support for variants
   (
     SupportVariants extends true ?
-    {
-      variants?: Variants<
-        Source,
-        LocalTokens,
-        TemplateSource
-      >
-    } :
-    {
-      variants?: undefined
-    }
+        {
+          variants?: Variants<LocalTokens, TemplateSource, Props>
+        } :
+        {
+          variants?: undefined
+        }
   )
   &
   RawCSS<LocalTokens, TemplateSource, Props, true>
@@ -40,7 +39,7 @@ export type CSSFunctionArg<
 export type RawCSS<
   LocalTokens extends string | undefined = undefined,
   TemplateSource = {},
-  Props extends Record<string, any> = {},
+  Props = {},
   HasRoot extends boolean = false,
 > =
   // Utils properties
@@ -49,7 +48,7 @@ export type RawCSS<
     // `utils: { mx: (value: string) => ... }`, grab the type of `value` and inject it.
     | Parameters<PinceauUtils[K]>[0]
     // Same but as Computed Style
-    | ComputedStyleDefinition
+    | ComputedStyleDefinition<Props>
   }
   |
   // Autocomplete from template source
@@ -66,37 +65,37 @@ export type RawCSS<
   (
     HasRoot extends true ?
     // CSS Properties
-    {
-      [K in keyof CSSProperties]?: CSSProperties<LocalTokens>[K] | ComputedStyleDefinition
-    }
-    |
-    // Pseudos properties
-    {
-      [K in keyof PseudosProperties]?: RawCSS<LocalTokens, TemplateSource, Props, true>
-    }
-    |
-    // Local tokens overwriting
-    (
-      LocalTokens extends string ?
-      {
-        [K in LocalTokens]?: PropertyType | ComputedStyleDefinition<Props>
-      }
+        {
+          [K in keyof CSSProperties]?: CSSProperties<LocalTokens>[K] | ComputedStyleDefinition<Props>
+        }
+        |
+        // Pseudos properties
+        {
+          [K in keyof PseudosProperties]?: RawCSS<LocalTokens, TemplateSource, Props, true>
+        }
+        |
+        // Local tokens overwriting
+        (
+          LocalTokens extends string ?
+              {
+                [K in LocalTokens]?: PropertyType | ComputedStyleDefinition<Props>
+              }
+            :
+              {}
+        )
+        |
+        // Support for custom properties
+        (
+          {
+            [K in `$${string}`]?: PropertyType | ComputedStyleDefinition<Props>
+          }
+          &
+          {
+            [K in `--${string}`]?: PropertyType | ComputedStyleDefinition<Props>
+          }
+        )
       :
-      {}
-    )
-    |
-    // Support for custom properties
-    (
-      {
-        [K in `$${string}`]?: PropertyType | ComputedStyleDefinition<Props>
-      }
-      &
-      {
-        [K in `--${string}`]?: PropertyType | ComputedStyleDefinition<Props>
-      }
-    )
-    :
-    {}
+        {}
   )
   |
   // Make this recursive, set root to true past first level

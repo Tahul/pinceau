@@ -1,8 +1,8 @@
 import type { DesignToken, DesignTokens, ThemeFunction } from '@pinceau/theme'
 import { get } from './data'
 import type {
-  GeneratedPinceauTheme as PinceauTheme,
-  GeneratedPinceauThemePaths as PinceauThemePaths,
+  PinceauTheme,
+  PinceauThemePaths,
 } from '$pinceau/theme'
 
 /**

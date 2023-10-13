@@ -5,11 +5,11 @@ import type { PinceauSvelteOptions } from './types'
 declare module '@pinceau/core' {
   interface PinceauPluginsOptions {
     /**
-     * Pinceau JSX options.
+     * Pinceau Svelte options.
      *
-     * Using `true` will use default options for JSX transforms.
+     * Using `true` will use default options for Svelte transforms.
      *
-     * Using `false` will completely disable JSX support.
+     * Using `false` will completely disable Svelte support.
      */
     svelte: Partial<PinceauSvelteOptions> | boolean
   }

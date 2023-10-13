@@ -16,7 +16,7 @@
   "dependencies": {
     "@pinceau/astro": "workspace:*",
     "@pinceau/core": "workspace:*",
-    "@pinceau/jsx": "workspace:*",
+    "@pinceau/react": "workspace:*",
     "@pinceau/language-server": "workspace:*",
     "@pinceau/nuxt": "workspace:*",
     "@pinceau/runtime": "workspace:*",

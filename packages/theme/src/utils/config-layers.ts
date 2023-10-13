@@ -4,7 +4,7 @@ import { resolveSchema as resolveUntypedSchema } from 'untyped'
 import type { ConfigLayer, ResolvedConfigLayer, Theme, ThemeLoadingOutput } from '../types'
 import { resolveFileLayer } from './config-file'
 import { normalizeTokens } from './tokens'
-import type { GeneratedPinceauTheme as PinceauTheme } from '$pinceau/theme'
+import type { PinceauTheme } from '$pinceau/theme'
 
 // Gives an empty layer for a given path or nothing.
 export const getConfigLayer = (path?: string): ResolvedConfigLayer => ({ path: path || '', ext: '', content: '', theme: {}, definitions: {}, utils: {}, imports: [] })

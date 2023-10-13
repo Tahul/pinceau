@@ -4,7 +4,7 @@ import Message from '../Message.vue'
 import { debounce } from '../../utils'
 import type { Store } from '../../store'
 import FileSelector from './FileSelector.vue'
-import MessageToggle from './MessageToggle.vue'
+import Toolbar from './Toolbar.vue'
 import type { EditorComponentType } from './types'
 
 const props = defineProps<{
@@ -43,14 +43,14 @@ watch(showMessage, () => {
       @change="onChange"
     />
     <Message v-show="showMessage" :err="store.state.errors[0]" />
-    <MessageToggle v-model="showMessage" />
   </div>
+  <Toolbar />
 </template>
 
 <style lang="ts" scoped>
 css({
   '.editor-container': {
-    height: 'calc(100% - var(--header-height))',
+    height: 'calc(100% - calc(var(--header-height) * 2))',
     overflow: 'hidden',
     position: 'relative',
   },

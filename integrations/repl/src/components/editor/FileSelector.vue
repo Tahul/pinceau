@@ -12,13 +12,13 @@ const store = inject('store') as Store
  * of cancel.
  */
 const pending = ref<boolean | string>(false)
+
 /**
  * Text shown in the input box when editing a file's name
  * This is a display name so it should always strip off the `src/` prefix.
  */
 const pendingFilename = ref(`Comp.${store.transformer.name}`)
-const showTsConfig = inject<Ref<boolean>>('tsconfig')
-const showImportMap = inject<Ref<boolean>>('import-map')
+
 const files = computed(() => Object.entries(store.state.files)
   .filter(
     ([name, file]) => {
@@ -30,14 +30,19 @@ const files = computed(() => Object.entries(store.state.files)
 
 function startAddFile() {
   let i = 0
-  let name = 'Comp.vue'
+  const ext = ({
+    react: 'tsx',
+    vue: 'vue',
+    svelte: 'svelte',
+  })[store.transformer?.name || 'vue']
+  let name = `Comp.${ext}`
 
   while (true) {
     let hasConflict = false
     for (const filename in store.state.files) {
       if (stripSrcPrefix(filename) === name) {
         hasConflict = true
-        name = `Comp${++i}.vue`
+        name = `Comp${++i}.${ext}`
         break
       }
     }
@@ -58,14 +63,12 @@ function focus({ el }: VNode) {
 
 function doneNameFile() {
   if (!pending.value) { return }
-  // add back the src prefix
+  // Add back the src prefix
   const filename = `src/${pendingFilename.value}`
   const oldFilename = pending.value === true ? '' : pending.value
 
   if (!/\.(vue|js|ts|css|json|jsx|tsx|svelte)$/.test(filename)) {
-    store.state.errors = [
-      'Playground only supports *.vue, *.js, *.ts, *.css, *.json files.',
-    ]
+    store.state.errors = ['Playground only supports  *.vue, *.svelte, *.tsx, *.jsx, *.js, *.ts, *.css, *.json files.']
     return
   }
 
@@ -105,7 +108,6 @@ function horizontalScroll(e: WheelEvent) {
   <div
     ref="fileSel"
     class="file-selector"
-    :class="{ 'has-import-map': showImportMap }"
     @wheel="horizontalScroll"
   >
     <template v-for="(file, i) in files">
@@ -143,25 +145,6 @@ function horizontalScroll(e: WheelEvent) {
     <button class="add" @click="startAddFile">
       +
     </button>
-
-    <div class="import-map-wrapper">
-      <div
-        v-if="showTsConfig"
-        class="file"
-        :class="{ active: store.state.activeFile.filename === tsconfigFile }"
-        @click="store.setActive(tsconfigFile)"
-      >
-        <span class="label">tsconfig.json</span>
-      </div>
-      <div
-        v-if="showImportMap"
-        class="file"
-        :class="{ active: store.state.activeFile.filename === importMapFile }"
-        @click="store.setActive(importMapFile)"
-      >
-        <span class="label">Import Map</span>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -196,23 +179,29 @@ css({
   },
 
   '.file': {
-    'display': 'inline-block',
-    'fontSize': '13px',
+    'display': 'inline-flex',
+    'alignItems': 'center',
+    'fontSize': '12px',
     'fontFamily': 'var(--font-code)',
     'cursor': 'pointer',
     'color': 'var(--text-light)',
     'boxSizing': 'border-box',
+    'padding': '$space.1',
+    'transition': 'box-shadow 0.05s ease-in-out',
 
     '&.active': {
       color: 'var(--color-branding)',
-      borderBottom: '3px solid var(--color-branding)',
       cursor: 'text',
+      boxShadow: 'inset 0 0 11px $color.red.9',
+
+      span: {
+        fontWeight: '$fontWeight.bold',
+      },
     },
 
     'span': {
-      display: 'inline-block',
+      display: 'inline-flex',
       padding: '8px 10px 6px',
-      lineHeight: '20px',
     },
 
     'input': {
@@ -245,27 +234,6 @@ css({
     verticalAlign: 'middle',
     marginLeft: '6px',
     position: 'relative',
-    top: '-1px',
-  },
-
-  '.icon': {
-    marginTop: '-1px',
-  },
-
-  '.import-map-wrapper': {
-    position: 'sticky',
-    marginLeft: 'auto',
-    top: '0',
-    right: '0',
-    paddingLeft: '30px',
-    backgroundColor: 'var(--bg)',
-    background: 'linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 25%)',
-  },
-
-  '$dark': {
-    '.import-map-wrapper': {
-      background: 'linear-gradient(90deg, rgba(26, 26, 26, 0) 0%, rgba(26, 26, 26, 1) 25%)',
-    },
   },
 })
 </style>

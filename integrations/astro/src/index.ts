@@ -6,11 +6,11 @@ export * from './types'
 declare module '@pinceau/core' {
   interface PinceauPluginsOptions {
     /**
-     * Pinceau JSX options.
+     * Pinceau Astro options.
      *
-     * Using `true` will use default options for JSX transforms.
+     * Using `true` will use default options for Astro transforms.
      *
-     * Using `false` will completely disable JSX support.
+     * Using `false` will completely disable Astro support.
      */
     astro?: PinceauAstroOptions | boolean
   }

@@ -33,7 +33,7 @@
   },
   "peerDependencies": {
     "@pinceau/astro": "workspace:*",
-    "@pinceau/jsx": "workspace:*",
+    "@pinceau/react": "workspace:*",
     "@pinceau/runtime": "workspace:*",
     "@pinceau/style": "workspace:*",
     "@pinceau/svelte": "workspace:*",
@@ -60,7 +60,7 @@
     "@pinceau/svelte": {
       "optional": true
     },
-    "@pinceau/jsx": {
+    "@pinceau/react": {
       "optional": true
     },
     "@pinceau/astro": {

@@ -28,13 +28,7 @@ export function createReactPlugin(ctx: PinceauContext) {
     ${ctx.options.runtime ? `const runtimeSheet = useRuntimeSheet(${ctx.options.theme ? '{ themeSheet, ...userOptions }' : 'userOptions'})` : ''}
     ${ctx.options.runtime && !!runtimeOptions?.ssr ? 'const ssr = { toString: () => runtimeSheet.toString() }' : ''}
 
-    return React.createElement(
-      PinceauContext.Provider,
-      { 
-        value: { themeSheet, runtimeSheet, ssr },
-        children
-      }
-    )
+    return React.createElement(PinceauContext.Provider, {  value: { themeSheet, runtimeSheet, ssr }, children })
   }
 `
 }

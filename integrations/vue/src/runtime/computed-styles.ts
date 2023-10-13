@@ -15,7 +15,7 @@ export function useComputedStyles(
   const className = ref<string | undefined>()
 
   watch(
-    () => fns.map(([varName, fn]) => [varName, fn()] as [string, ReturnType<ComputedStyleDefinition>]),
+    () => fns.map(([varName, fn]) => [varName, fn({})] as [string, ReturnType<ComputedStyleDefinition>]),
     (results: [string, ReturnType<ComputedStyleDefinition>][]) => {
       if (!runtimeSheet) { return }
       className.value = runtimeSheet.getRule(computedStylesToDeclaration(results), className.value)

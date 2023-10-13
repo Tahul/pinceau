@@ -1,6 +1,4 @@
 <script lang="ts">
-  export const test: string = 'test'
-
   css({
     'body,#app': {
       height: '100vh',
@@ -17,8 +15,7 @@
     },
   })
 
-  const main = styled({
-  })
+  const main = styled({})
 </script>
 
 <main class={main}>Hello world</main>

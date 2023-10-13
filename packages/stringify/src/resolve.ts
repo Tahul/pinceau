@@ -1,7 +1,7 @@
 import { pathToVarName, referencesRegex } from '@pinceau/core/runtime'
 import type { ColorSchemeModes, DesignToken, DesignTokens, ThemeFunction } from '@pinceau/theme'
 import type { StringifyContext } from './types'
-import type { GeneratedPinceauUtils as PinceauUtils } from '$pinceau/utils'
+import type { PinceauUtils } from '$pinceau/utils'
 
 const darkToken = '$dark'
 const lightToken = '$light'
@@ -120,6 +120,13 @@ export function resolveCustomDirectives(ctx: CSSResolverContext) {
 
   // Only handle `{ $mq: { ... } }`
   if (property.startsWith('$')) {
+    // $localToken: ''
+    if (['string', 'number'].includes(typeof value)) {
+      return {
+        [property.replace('$', '--')]: resolveValue(ctx),
+      }
+    }
+
     const resolveColorScheme = (scheme: string) => {
       scheme = mode === 'class'
         ? `:root.${scheme}`
@@ -130,13 +137,13 @@ export function resolveCustomDirectives(ctx: CSSResolverContext) {
       }
     }
 
-    // @dark
+    // $dark
     if (property === darkToken) { return resolveColorScheme('dark') }
 
-    // @light
+    // $light
     if (property === lightToken) { return resolveColorScheme('light') }
 
-    // @initial
+    // $initial
     if (property === initialToken) { return { '@media': value } }
 
     // Support custom theme queries

@@ -1,5 +1,5 @@
 import type { ColorSchemeModes } from '../types'
-import type { GeneratedPinceauMediaQueries as PinceauMediaQueries } from '$pinceau/theme'
+import type { PinceauMediaQueries } from '$pinceau/theme'
 
 /**
  * Resolve a responsive selector for a set media query, a color scheme mode and a theme.

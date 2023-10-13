@@ -1,5 +1,5 @@
 import { createPinceauIntegration } from '@pinceau/integration'
-import PinceauSveltePlugin from './utils/unplugin'
+import { PinceauSveltePlugin } from './utils/unplugin'
 
 const pinceauPlugin: any = createPinceauIntegration(
   [

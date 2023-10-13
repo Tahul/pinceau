@@ -54,7 +54,8 @@ onMounted(async () => {
     ...(props.readonly
       ? { value: props.value, language: lang.value }
       : { model: null }),
-    'fontSize': 13,
+    'fontSize': 12,
+    'fontFamily': '\'JetBrains Mono\', monospace',
     'theme': replTheme.value === 'light' ? theme.light : theme.dark,
     'readOnly': props.readonly,
     'automaticLayout': true,
@@ -162,6 +163,12 @@ onBeforeUnmount(() => {
 </template>
 
 <style lang="ts">
+css({
+  '@import': 'url(\'https://fonts.cdnfonts.com/css/jetbrains-mono\');',
+})
+</style>
+
+<style scoped lang="ts">
 styled({
   position: 'relative',
   height: '100%',

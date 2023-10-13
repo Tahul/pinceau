@@ -25,6 +25,10 @@
     "@pinceau/runtime": "workspace:*",
     "@pinceau/style": "workspace:*",
     "@pinceau/theme": "workspace:*",
+    "@pinceau/vue": "workspace:*",
+    "@pinceau/svelte": "workspace:*",
+    "@pinceau/react": "workspace:*",
+    "@pinceau/astro": "workspace:*",
     "pinceau": "workspace:*",
     "vite": "^4.4.11"
   }

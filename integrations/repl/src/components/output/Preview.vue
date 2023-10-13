@@ -72,7 +72,7 @@ function createSandbox() {
       'allow-popups',
       'allow-same-origin',
       'allow-scripts',
-      'allow-top-navigation-by-user-activation',
+      'allow-top-navigation-by-user-activation'
     ].join(' ')
   )
 
@@ -187,7 +187,6 @@ css({
     width: '100%',
     height: '100%',
     border: 'none',
-    backgroundColor: '#fff',
   }
 })
 </style>

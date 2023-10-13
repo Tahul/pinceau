@@ -1,7 +1,7 @@
 import { resolve } from 'node:path'
 import { defineConfig } from 'vite'
 import React from '@vitejs/plugin-react'
-import Pinceau from '@pinceau/jsx/plugin'
+import Pinceau from '@pinceau/react/plugin'
 
 const root = resolve('../../')
 

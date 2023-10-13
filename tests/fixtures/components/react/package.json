@@ -2,7 +2,7 @@
   "name": "@pinceau/react-fixtures",
   "devDependencies": {
     "@pinceau/configs": "workspace:*",
-    "@pinceau/jsx": "workspace:*",
+    "@pinceau/react": "workspace:*",
     "@types/react": "latest",
     "@types/react-dom": "latest"
   }

@@ -41,11 +41,11 @@
     "@types/node": "^20.8.4",
     "@vitejs/plugin-vue": "^4.4.0",
     "@volar/cdn": "~1.10.4",
+    "@volar/language-server": "^1.10.4",
     "@volar/monaco": "~1.10.4",
     "@volar/typescript": "~1.10.4",
     "@vue/language-service": "1.8.19",
     "fflate": "^0.8.1",
-    "hash-sum": "^2.0.0",
     "monaco-editor": "^0.44.0",
     "monaco-editor-core": "^0.44.0",
     "monaco-editor-textmate": "^4.0.0",
@@ -55,16 +55,18 @@
     "path-browserify": "^1.0.1",
     "simple-git-hooks": "^2.9.0",
     "sucrase": "^3.34.0",
+    "svelte": "^4.2.1",
+    "svelte2tsx": "^0.6.23",
     "typescript": "^5.2.2",
     "vite": "^4.4.11",
     "vue": "^3.3.4",
-    "vue-tsc": "1.8.19",
-    "svelte2tsx": "^0.6.23",
-    "@volar/language-server": "^1.10.4",
-    "svelte": "^4.2.1"
+    "vue-tsc": "1.8.19"
   },
   "dependencies": {
+    "@iconify/json": "^2.2.128",
     "monaco-jsx-syntax-highlight": "^1.2.0",
+    "splitpanes": "^3.1.5",
+    "unplugin-icons": "^0.17.0",
     "vite-plugin-node-polyfills": "^0.15.0"
   }
 }

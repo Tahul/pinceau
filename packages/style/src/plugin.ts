@@ -15,6 +15,22 @@ const PinceauStylePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
     vite: {
       async configResolved(config) {
         ctx = getPinceauContext(config)
+
+        ctx.addTypes({
+          imports: [
+            'import { CSSFunctionArg } from \'@pinceau/style\'',
+            'import { StyledFunctionArg } from \'@pinceau/style\'',
+            'import { ThemeTokens } from \'@pinceau/style\'',
+          ],
+          global: [
+            // css({ ... })
+            'export const css: ((declaration: CSSFunctionArg) => string)',
+            // styled({ ... }) & styled.a({ ... })
+            'export const styled: (<Props extends {} = {}>(declaration: StyledFunctionArg<Props>) => string)',
+            // Theme tokens helper
+            'export type ThemeTokens<T extends PinceauThemePaths & (string & {}) = PinceauThemePaths & (string & {})> = PinceauThemeTokens<T>',
+          ],
+        })
       },
     },
 

@@ -1,12 +1,8 @@
-import type { PinceauThemeOptions, ThemeFunction } from './types'
+import type { PinceauThemeOptions } from './types'
 
 export * from './types'
 
 export { version } from '../package.json'
-
-declare global {
-  export const $theme: ThemeFunction
-}
 
 declare module '@pinceau/core' {
   interface PinceauPluginsOptions {

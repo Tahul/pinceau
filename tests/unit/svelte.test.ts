@@ -73,8 +73,10 @@ describe('@pinceau/svelte', () => {
       expect(plugin).toContain('export const PinceauSvelteOptions = {"dev":true,"colorSchemeMode":"media","computedStyles":true,"variants":true,"ssr":{"theme":true,"runtime":true},"appId":false}')
       expect(plugin).toContain('import { useThemeSheet, useRuntimeSheet } from \'@pinceau/runtime\'')
       expect(plugin).toContain('let userOptions')
-      expect(plugin).toContain('export let themeSheet')
-      expect(plugin).toContain('export let runtimeSheet')
+      expect(plugin).toContain('let themeSheet')
+      expect(plugin).toContain('export const getThemeSheet')
+      expect(plugin).toContain('let runtimeSheet')
+      expect(plugin).toContain('export const getRuntimeSheet')
       expect(plugin).toContain('export const pinceauPlugin = (options) => {')
       expect(plugin).toContain('userOptions = { ...PinceauSvelteOptions, ...options }')
       expect(plugin).toContain('themeSheet = useThemeSheet(userOptions)')
@@ -138,7 +140,7 @@ describe('@pinceau/svelte', () => {
       })
     })
 
-    it('registers and write vue virtual outputs', () => {
+    it('registers and write svelte virtual outputs', () => {
       vi.spyOn(fs, 'writeFileSync').mockImplementationOnce(() => { })
 
       registerVirtualOutputs(pinceauContext)
@@ -203,7 +205,7 @@ describe('@pinceau/svelte', () => {
       const result = transformContext.result()?.code
 
       expect(result).toContain('import { usePinceauRuntime } from \'@pinceau/svelte/runtime\'')
-      expect(result).toContain('() => \'red\'')
+      expect(result).toContain('() => \"red\"')
       expect(result).toContain('() => \'blue\'')
       expect(result).toContain('usePinceauRuntime(`')
     })
@@ -225,8 +227,6 @@ describe('@pinceau/svelte', () => {
       await transformContext.transform()
 
       const result = transformContext.result()?.code
-
-      console.log(result)
 
       const className = transformContext?.state?.styleFunctions?.script0_styled0.className
 
@@ -295,7 +295,7 @@ describe('@pinceau/svelte', () => {
       expect(transformContext.state?.styleFunctions?.script0_styled0?.variants?.size).toBeDefined()
     })
 
-    it('can push $pcExtractedVariants to component code', async () => {
+    it('can push variants to component code', async () => {
       const query = parsePinceauQuery(resolveFixtures('./components/svelte/TestVariants2.svelte'))
 
       pinceauContext.addTransformed(query.filename, query)
@@ -363,7 +363,7 @@ describe('@pinceau/svelte', () => {
       await transformContext.transform()
 
       expect(transformContext.result()?.code).toBe(
-        '<script>\nimport \'$pinceau/style-functions.css?src=/Users/yaelguilloux/Code/sandbox/pinceau/tests/fixtures/components/svelte/TestBase.svelte&pc-fn=script0_css0\'\n</script>',
+        `<script>\nimport \'$pinceau/style-functions.css?src=${transformContext.query.filename}&pc-fn=script0_css0\'\n</script>`,
       )
     })
     it('can write styled static class from <script>', async () => {
@@ -386,7 +386,7 @@ describe('@pinceau/svelte', () => {
       const className = transformContext.state.styleFunctions?.script0_styled0?.className
 
       expect(transformContext.result()?.code).toBe(
-        `<script>\nimport '$pinceau/style-functions.css?src=/Users/yaelguilloux/Code/sandbox/pinceau/tests/fixtures/components/svelte/TestBase.svelte&pc-fn=script0_styled0'\n\nconst testStyled = \`${className}\`\n</script>`,
+        `<script>\nimport '$pinceau/style-functions.css?src=${transformContext.query.filename}&pc-fn=script0_styled0'\n\nconst testStyled = \`${className}\`\n</script>`,
       )
     })
     it('can write styled dynamic and static contexts from <script>', async () => {
@@ -399,8 +399,8 @@ describe('@pinceau/svelte', () => {
       transformContext.registerTransforms(styleTransformSuite)
       transformContext.registerTransforms({
         scripts: [
-          transformWriteStyleFeatures,
           transformWriteScriptFeatures,
+          transformWriteStyleFeatures,
         ],
       })
 
@@ -411,7 +411,7 @@ describe('@pinceau/svelte', () => {
       const computedStyleKey = transformContext.state.styleFunctions?.script0_styled0?.computedStyles?.[0]?.variable
 
       expect(transformContext.result()?.code).toBe(
-        `<script>\nimport { usePinceauRuntime } from \'\@pinceau/svelte/runtime'\n\nimport '$pinceau/style-functions.css?src=/Users/yaelguilloux/Code/sandbox/pinceau/tests/fixtures/components/svelte/TestBase.svelte&pc-fn=script0_styled0'\n\nconst testStyled = usePinceauRuntime(\`${className}\`, [[\'${computedStyleKey}\', () => 'red']], undefined, {  })\n\n</script>`,
+        `<script>\nimport '$pinceau/style-functions.css?src=${transformContext.query.filename}&pc-fn=script0_styled0'\n\nimport { usePinceauRuntime } from \'\@pinceau/svelte/runtime'\n\nconst testStyled = usePinceauRuntime(\`${className}\`, [[\'${computedStyleKey}\', () => "red"]], undefined, {  })\n\n</script>`,
       )
     })
     it('can write css content from both <script> and styled props', async () => {
@@ -432,15 +432,13 @@ describe('@pinceau/svelte', () => {
 
       await transformContext.transform()
 
-      console.log(transformContext.sfc)
-
       const className = transformContext.state.styleFunctions?.template0_styled0?.className
       const secondClassName = transformContext.state.styleFunctions?.template0_styled1?.className
       const thirdClassName = transformContext.state.styleFunctions?.script0_styled0?.className
 
-      const importPath = 'import \'$pinceau/style-functions.css?src=/Users/yaelguilloux/Code/sandbox/pinceau/tests/fixtures/components/svelte/TestBase.svelte&pc-fn=template0_styled0\''
-      const secondImportPath = 'import \'$pinceau/style-functions.css?src=/Users/yaelguilloux/Code/sandbox/pinceau/tests/fixtures/components/svelte/TestBase.svelte&pc-fn=template0_styled1\''
-      const thirdImportPath = 'import \'$pinceau/style-functions.css?src=/Users/yaelguilloux/Code/sandbox/pinceau/tests/fixtures/components/svelte/TestBase.svelte&pc-fn=script0_styled0\''
+      const importPath = `import \'$pinceau/style-functions.css?src=${transformContext.query.filename}&pc-fn=template0_styled0\'`
+      const secondImportPath = `import \'$pinceau/style-functions.css?src=${transformContext.query.filename}&pc-fn=template0_styled1\'`
+      const thirdImportPath = `import \'$pinceau/style-functions.css?src=${transformContext.query.filename}&pc-fn=script0_styled0\'`
 
       expect(transformContext.result()?.code).toBe(
         `<div class="${className}" pcsp>Hello World<a class="${secondClassName}" pcsp>Test link</a></div>\n`

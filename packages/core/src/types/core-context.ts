@@ -1,12 +1,12 @@
-import type { Theme, ThemeFunction } from '@pinceau/theme'
+import type { PinceauConfigContext, Theme, ThemeFunction } from '@pinceau/theme'
 import type { PinceauStyleFunctionContext } from '@pinceau/style'
 import type { PinceauVirtualContext } from './virtual-context'
 import type { PinceauOptions } from './options'
 import type { PinceauQuery } from './query'
 import type { PinceauTransformer } from './transforms'
 import type { PinceauTransformState } from './transform-context'
-import type { GeneratedPinceauTheme as PinceauTheme } from '$pinceau/theme'
-import type { GeneratedPinceauUtils as PinceauUtils } from '$pinceau/utils'
+import type { PinceauTheme } from '$pinceau/theme'
+import type { PinceauUtils } from '$pinceau/utils'
 
 /**
  * Complete Pinceau plugin context used at build time and in development.
@@ -22,6 +22,10 @@ export interface PinceauBuildContext {
    * Any kind of dev server like ViteDevServer.
    */
   devServer: any
+  /**
+   *
+   */
+  configContext?: PinceauConfigContext
   /**
    * Pinceau user options passed from Vite plugin options or Nuxt config key.
    */
@@ -79,9 +83,23 @@ export interface PinceauBuildContext {
    */
   isStyleFunctionQuery: (id: string) => PinceauQuery | void
   /**
-   *
+   * Returns the context of a parsed style function from its id.
    */
   getStyleFunction: (id: string) => PinceauStyleFunctionContext | void
+
+  /**
+   * Push declarations inside `$pinceau/types` format.
+   */
+  types: {
+    imports: string []
+    raw: string[]
+    global: string[]
+  }
+
+  /**
+   * Push new types in `$pinceau/types` format and merge them with previous ones.
+   */
+  addTypes: (types: Partial<PinceauBuildContext['types']>) => void
 }
 
 /**

@@ -2,11 +2,15 @@ import { jsDelivrUriBase } from '@volar/cdn'
 import * as volar from '@volar/monaco'
 import { Uri, editor, languages } from 'monaco-editor-core'
 import * as onigasm from 'onigasm'
+
+// @ts-ignore
 import onigasmWasm from 'onigasm/lib/onigasm.wasm?url'
 import { watchEffect } from 'vue'
 import type { Store } from '../../store'
 import { getOrCreateModel } from './utils'
 import type { CreateData } from './volar.worker'
+
+// @ts-ignore
 import volarWorker from './volar.worker?worker'
 
 let initted = false

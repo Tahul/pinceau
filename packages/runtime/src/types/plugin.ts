@@ -1,7 +1,7 @@
 import type { ColorSchemeModes, Theme } from '@pinceau/theme'
 import type { PinceauRuntimeOptions } from '.'
-import type { GeneratedPinceauTheme as PinceauTheme } from '$pinceau/theme'
-import type { GeneratedPinceauUtils as PinceauUtils } from '$pinceau/utils'
+import type { PinceauTheme } from '$pinceau/theme'
+import type { PinceauUtils } from '$pinceau/utils'
 
 export interface PinceauRuntimePluginOptions extends Partial<PinceauRuntimeOptions> {
   /**

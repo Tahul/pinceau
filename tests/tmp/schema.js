@@ -1,6 +1,6 @@
 export const schema = {
-  properties: {},
-  default: {},
+  "properties": {},
+  "default": {}
 }
 
 export default schema

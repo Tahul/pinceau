@@ -53,7 +53,7 @@ export default defineBuildConfig({
     '@pinceau/core',
     '@pinceau/runtime/plugin',
     '@pinceau/svelte',
-    '@pinceau/jsx',
+    '@pinceau/react',
     '@pinceau/astro',
     '@babel/parser',
   ],

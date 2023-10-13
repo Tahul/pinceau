@@ -9,6 +9,9 @@ export function resolveId(id: string, ctx: PinceauContext) {
 }
 
 export function loadInclude(id: string, ctx: PinceauContext) {
+  // Skip weird paths
+  if (id.startsWith('\x00')) { return }
+
   // Style function direct import
   if (id.startsWith('$pinceau/style-functions.css')) { return true }
 

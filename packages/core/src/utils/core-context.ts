@@ -1,28 +1,36 @@
 import type { ResolvedConfig } from 'vite'
+import type { PinceauConfigContext } from '@pinceau/theme'
 import type { PinceauBuildContext, PinceauContext, PinceauFilterFunction, PinceauOptions, PinceauQuery, PinceauTransformState, PinceauTransformer, PinceauUserOptions } from '../types'
 import { parsePinceauQuery } from './query'
 import { usePinceauVirtualContext } from './virtual-context'
 import { createThemeHelper } from './theme-helper'
 import { isPathIncluded } from './filter'
 import { normalizeOptions } from './options'
-import type { GeneratedPinceauUtils as PinceauUtils } from '$pinceau/utils'
-import type { GeneratedPinceauTheme as PinceauTheme } from '$pinceau/theme'
+import type { PinceauUtils } from '$pinceau/utils'
+import type { PinceauTheme } from '$pinceau/theme'
 
 /**
  * Retrieves previously injected PinceauContext inside ViteDevServer to reuse context across plugins.
  */
-export function getPinceauContext(config: ResolvedConfig) {
-  if (!config.plugins) { return }
-
+export function getPinceauContext(config: ResolvedConfig): PinceauContext {
   const plugin = config.plugins.find(plugin => plugin && plugin.name === 'pinceau:core-plugin')
 
-  if (!plugin) { return }
-
-  const ctx = plugin.api.getPinceauContext()
+  const ctx = plugin?.api?.getPinceauContext()
 
   if (ctx) { return ctx }
 
   throw new Error('You tried to use a Pinceau plugin without previously injecting the @pinceau/core plugin.')
+}
+
+/**
+ * Retrieves previously injected PinceauConfigContext inside ViteDevServer to reuse context across plugins.
+ */
+export function getPinceauConfigContext(config: ResolvedConfig): PinceauConfigContext {
+  const pinceauContext = getPinceauContext(config)
+
+  if (pinceauContext?.configContext) { return pinceauContext?.configContext }
+
+  throw new Error('You tried to use a Pinceau theme plugin without previously injecting the @pinceau/theme plugin.')
 }
 
 /**
@@ -55,6 +63,17 @@ export function usePinceauContext(userOptions?: PinceauUserOptions): PinceauCont
   const filters: PinceauFilterFunction[] = []
 
   /**
+   * Typings store for `$pinceau/types` output paths.
+   *
+   * This can be extended by plugins to add additional global or local typings.
+   */
+  const types: PinceauContext['types'] = {
+    imports: [],
+    global: [],
+    raw: [],
+  }
+
+  /**
    * Current dev server.
    */
   let devServer: any
@@ -73,7 +92,19 @@ export function usePinceauContext(userOptions?: PinceauUserOptions): PinceauCont
    * Build-time context.
    */
   const buildContext: PinceauBuildContext = {
+    get options() { return options },
+
+    /**
+     * Child contexts
+     */
+
+    configContext: undefined,
     get devServer() { return devServer },
+
+    /**
+     * Transformers
+     */
+
     transformers,
     registerTransformer(key: string, transformer: PinceauTransformer) { transformers[key] = transformer },
     applyTransformers(query: PinceauQuery, code: string) {
@@ -88,7 +119,11 @@ export function usePinceauContext(userOptions?: PinceauUserOptions): PinceauCont
 
       return code
     },
-    get options() { return options },
+
+    /**
+     * Configuration store
+     */
+
     get theme() { return theme },
     updateTheme(_theme: any) {
       if (_theme) { theme = _theme }
@@ -99,9 +134,27 @@ export function usePinceauContext(userOptions?: PinceauUserOptions): PinceauCont
       if (_utils) { utils = _utils }
       return utils
     },
+
+    /**
+     * Typings store
+     */
+
+    get types() {
+      return types
+    },
+    addTypes(newTypes) {
+      Object.entries(newTypes).forEach(
+        ([key, typings]) => {
+          if (types[key]) { types[key] = Array.from(new Set([...types[key], ...typings])) }
+        },
+      )
+    },
+
+    /**
+     * Transformed files store
+     */
+
     get transformed() { return transformed },
-    get filters() { return filters },
-    registerFilter(fn: PinceauFilterFunction) { filters.push(fn) },
     isTransformable(id: string): PinceauQuery | void {
       // Skip excluded paths
       if (!isPathIncluded(id, options)) { return }
@@ -125,6 +178,18 @@ export function usePinceauContext(userOptions?: PinceauUserOptions): PinceauCont
       if (!transformed[id] && query) { transformed[id] = query }
       return transformed
     },
+
+    /**
+     * Queries filters
+     */
+
+    get filters() { return filters },
+    registerFilter(fn: PinceauFilterFunction) { filters.push(fn) },
+
+    /**
+     * Style functions store
+     */
+
     isStyleFunctionQuery: (id: string) => {
       if (!id.startsWith('$pinceau/style-functions')) { return }
       return parsePinceauQuery(id)

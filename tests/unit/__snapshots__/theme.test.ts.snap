@@ -1,23 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`@pinceau/theme > formats/ > css.ts > build format 1`] = `
-{
-  "buildDir": undefined,
-  "outputs": {
-    "pinceau.css": "@media {:root {--pinceau-mq: $initial;--primary: red;}}",
-  },
-  "theme": {
-    "color": {
-      "primary": {
-        "value": "red",
-        "variable": undefined,
-      },
-    },
-  },
-}
-`;
-
-exports[`@pinceau/theme > formats/ > definitions.ts > build format 1`] = `
+exports[`@pinceau/theme > formats/ > $pinceau/definitions > build format 1`] = `
 {
   "buildDir": undefined,
   "outputs": {
@@ -36,7 +19,7 @@ export default definitions",
 }
 `;
 
-exports[`@pinceau/theme > formats/ > hmr.ts > build format 1`] = `
+exports[`@pinceau/theme > formats/ > $pinceau/hmr > build format 1`] = `
 {
   "buildDir": undefined,
   "outputs": {
@@ -54,7 +37,7 @@ if (import.meta.hot) {
   // CSS Functions updates
   import.meta.hot.on(
     'pinceau:style-function',
-    ({ filename, id, css, selector }) => {
+    ({ css, selector }) => {
       // Find the target node
       const node = document.querySelector(\`style\${selector}\`)
       if (!node) return
@@ -80,38 +63,7 @@ if (import.meta.hot) {
 }
 `;
 
-exports[`@pinceau/theme > formats/ > javascript.ts > build format 1`] = `
-{
-  "buildDir": undefined,
-  "outputs": {
-    "$pinceau/theme-types": "export const theme = {
-  \\"color\\": {
-    \\"primary\\": {
-      \\"value\\": \\"red\\"
-    }
-  }
-} as const
-
-export type GeneratedPinceauTheme = typeof theme
-
-export type GeneratedPinceauMediaQueries = \\"$dark\\" | \\"$light\\" | \\"$initial\\";
-
-export type GeneratedPinceauThemePaths = \\"$color.primary\\";
-
-export default theme",
-  },
-  "theme": {
-    "color": {
-      "primary": {
-        "value": "red",
-        "variable": undefined,
-      },
-    },
-  },
-}
-`;
-
-exports[`@pinceau/theme > formats/ > schema.ts > build format 1`] = `
+exports[`@pinceau/theme > formats/ > $pinceau/schema > build format 1`] = `
 {
   "buildDir": undefined,
   "outputs": {
@@ -133,13 +85,128 @@ export default schema",
 }
 `;
 
-exports[`@pinceau/theme > formats/ > utils.ts > build format 1`] = `
+exports[`@pinceau/theme > formats/ > $pinceau/theme > build format (js) 1`] = `
+{
+  "buildDir": undefined,
+  "outputs": {
+    "$pinceau/theme": "export const theme = {
+  \\"color\\": {
+    \\"primary\\": {
+      \\"value\\": \\"red\\"
+    }
+  }
+}
+
+export default theme",
+  },
+  "theme": {
+    "color": {
+      "primary": {
+        "value": "red",
+        "variable": undefined,
+      },
+    },
+  },
+}
+`;
+
+exports[`@pinceau/theme > formats/ > $pinceau/theme > build format (ts) 1`] = `
+{
+  "buildDir": undefined,
+  "outputs": {
+    "$pinceau/theme-types": "export const theme = {
+  \\"color\\": {
+    \\"primary\\": {
+      \\"value\\": \\"red\\"
+    }
+  }
+} as const
+
+export type PinceauTheme = typeof theme
+
+export type PinceauMediaQueries = \\"$dark\\" | \\"$light\\" | \\"$initial\\";
+
+export type PinceauThemePaths = \\"$color.primary\\";
+
+export default theme",
+  },
+  "theme": {
+    "color": {
+      "primary": {
+        "value": "red",
+        "variable": undefined,
+      },
+    },
+  },
+}
+`;
+
+exports[`@pinceau/theme > formats/ > $pinceau/types > build format 1`] = `
+{
+  "buildDir": undefined,
+  "outputs": {
+    "$pinceau/types": "declare global {
+  
+}
+
+export {}",
+  },
+  "theme": {
+    "color": {
+      "primary": {
+        "value": "red",
+        "variable": undefined,
+      },
+    },
+  },
+}
+`;
+
+exports[`@pinceau/theme > formats/ > $pinceau/utils types > build format (types) 1`] = `
+{
+  "buildDir": undefined,
+  "outputs": {
+    "$pinceau/utils-types": "export const utils = {}
+
+export type PinceauUtils = typeof utils
+
+export default utils",
+  },
+  "theme": {
+    "color": {
+      "primary": {
+        "value": "red",
+        "variable": undefined,
+      },
+    },
+  },
+}
+`;
+
+exports[`@pinceau/theme > formats/ > $pinceau/utils types > build format 1`] = `
 {
   "buildDir": undefined,
   "outputs": {
     "$pinceau/utils": "export const utils = {}
 
 export default utils",
+  },
+  "theme": {
+    "color": {
+      "primary": {
+        "value": "red",
+        "variable": undefined,
+      },
+    },
+  },
+}
+`;
+
+exports[`@pinceau/theme > formats/ > pinceau.css > build format 1`] = `
+{
+  "buildDir": undefined,
+  "outputs": {
+    "pinceau.css": "@media {:root {--pinceau-mq: $initial;--primary: red;}}",
   },
   "theme": {
     "color": {

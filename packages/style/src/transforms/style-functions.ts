@@ -1,11 +1,11 @@
 import type { PinceauContext, PinceauTransformContext, PinceauTransformFunction } from '@pinceau/core'
-import { findCallees, parseAst } from '@pinceau/core/utils'
+import { findCallees, parseAst, printAst } from '@pinceau/core/utils'
 import { resolveStyleFunctionContext } from '../utils/style-function-context'
 import { elements } from '../utils/html-elements'
 
-const PRESENCE_REGEX = new RegExp(`(\\$styled\\.(${elements.join('|')})|styled|css)(?:\\()`, 'g')
+const PRESENCE_REGEX = new RegExp(`(\\$styled\\.(${elements.join('|')})|styled|css)(?:\())`, 'g')
 
-const IDENTIFIER_REGEX = new RegExp(`^(\$styled\.(${elements.join('|')})|styled|css)`)
+const IDENTIFIER_REGEX = new RegExp(`^(\\$styled\\.(${elements.join('|')})|styled|css)`)
 
 export const transformStyleFunctions: PinceauTransformFunction = async (
   transformContext: PinceauTransformContext,

@@ -6,7 +6,7 @@ import { suite } from '../transforms/suite'
 import { registerVirtualOutputs } from './virtual'
 import { PinceauVueTransformer } from './transformer'
 
-const PinceauVuePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
+export const PinceauVuePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
   let ctx: PinceauContext
 
   return {
@@ -31,6 +31,21 @@ const PinceauVuePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
           },
         )
 
+        ctx.addTypes({
+          imports: [
+            'import { ResponsiveProp } from \'@pinceau/style\'',
+            'import { StyledFunctionArg } from \'@pinceau/style\'',
+            'import { PropType } from \'vue\'',
+          ],
+          global: [
+            'export type ResponsivePropType<T extends string | number | symbol | undefined> = PropType<ResponsiveProp<T>>',
+            'export type StyledProp = PropType<StyledFunctionArg>',
+          ],
+          raw: [
+            'declare module \'@vue/runtime-dom\' { interface HTMLAttributes { styled?: StyledFunctionArg } }',
+          ],
+        })
+
         registerVirtualOutputs(ctx)
       },
     },
@@ -46,5 +61,3 @@ const PinceauVuePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
     },
   }
 })
-
-export default PinceauVuePlugin

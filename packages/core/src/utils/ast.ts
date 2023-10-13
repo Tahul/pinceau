@@ -46,7 +46,7 @@ export function findDefaultExport(node: File): NodePath<namedTypes.ExportDefault
 }
 
 /**
- * Find all calls of css() and call a callback on each.
+ * Find all calls of css(), styled and $styled and call a callback on each.
  */
 export function findCallees(ast: ASTNode, functionName: string | RegExp) {
   const isRegexMatch = !(typeof functionName === 'string')
@@ -57,8 +57,11 @@ export function findCallees(ast: ASTNode, functionName: string | RegExp) {
     {
       visitCallExpression(path: PathMatch) {
         let search: string | undefined
+
+        // Finds $styled.a()
         if (path?.value?.callee?.type === 'MemberExpression') { search = `${path?.value?.callee?.object?.name}.${path?.value?.callee?.property?.name}` }
 
+        // Finds `styled` & `css`
         if (path?.value?.callee?.type === 'Identifier') { search = path?.value?.callee?.name }
 
         if (!search) { return this.traverse(path) }
@@ -68,6 +71,8 @@ export function findCallees(ast: ASTNode, functionName: string | RegExp) {
           : search === functionName
             ? search
             : false
+
+        // console.log({ search, isMatch })
 
         if (isMatch) {
           path.match = isRegexMatch ? isMatch : functionName

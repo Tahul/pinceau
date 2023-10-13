@@ -1,5 +1,5 @@
 import type { PathMatch, PinceauContext, PinceauTransformContext, PinceauTransformFunction } from '@pinceau/core'
-import { evalDeclaration } from '@pinceau/core/utils'
+import { evalDeclaration, printAst, visitAst } from '@pinceau/core/utils'
 import { createSourceLocationFromOffsets } from 'sfc-composer'
 import { resolveCssProperty, stringify } from '@pinceau/stringify'
 import type { PinceauStyleFunctionContext } from '../types/style-functions'
@@ -21,15 +21,17 @@ export const resolveStyleFunctionContext: PinceauTransformFunction<PinceauStyleF
 ): PinceauStyleFunctionContext => {
   const { target } = transformContext
 
-  let type: 'css' | 'styled' = 'css'
+  const helpers: PinceauStyleFunctionContext['helpers'] = []
+
+  let type: 'css' | 'styled' | '$styled' = 'css'
 
   let element: SupportedHTMLElements | undefined
 
   // $styled.div(...)
   if (callee.match[0].startsWith('$styled')) {
-    const [, , , tag] = callee.match
+    const [, , tag] = callee.match
     element = tag as SupportedHTMLElements
-    type = 'styled'
+    type = '$styled'
   }
 
   // styled(...)
@@ -40,7 +42,9 @@ export const resolveStyleFunctionContext: PinceauTransformFunction<PinceauStyleF
   const previousState = transformContext?.state?.styleFunctions?.[id] || transformContext?.previousState?.styleFunctions?.[id]
 
   let className: string | undefined
-  if (type === 'styled') { className = previousState?.className || createUniqueClass() }
+
+  // Set className if `$styled` or `styled` has been used
+  if (['$styled', 'styled'].includes(type)) { className = previousState?.className || createUniqueClass() }
 
   // Grab `*` in `css(*)`
   const arg = callee.value.arguments[0] as CSSFunctionSource
@@ -68,15 +72,53 @@ export const resolveStyleFunctionContext: PinceauTransformFunction<PinceauStyleF
   const declaration = evalDeclaration(arg)
 
   // Store variants and remove them from declarations as they are not part of stringifying process.
+  // - Variants coming from `styled({ variants: { ... } })`
   if (declaration && declaration?.variants) {
     Object.assign(variants, { ...declaration.variants })
     delete declaration.variants
   }
 
+  // - Variants coming from `$styled.a({}).withVariants({ ... })`
+  if (callee.parent && type === '$styled') {
+    visitAst(
+      callee?.parent,
+      {
+        visitCallExpression(path) {
+          // Filter out anything that has not a `MemberExpression`
+          if (path.parentPath.value.type !== 'MemberExpression') {
+            return this.traverse(path)
+          }
+
+          // Same pattern for all sub calls
+          const propName = path?.parentPath?.value?.property?.name
+          const propContent = path?.parentPath?.parentPath?.value?.arguments?.[0]
+
+          // Skip empty cases
+          if (!propName || !propContent) { return this.traverse(path) }
+
+          // Grab `withVariants` content
+          if (propName === 'withVariants') {
+            // Set local variants content from helper
+            const variantsDeclaration = evalDeclaration(propContent)
+            Object.assign(variants, variantsDeclaration)
+            helpers.push('withVariants')
+          }
+
+          // Grab `withProps` content
+          if (propName === 'withProps') { helpers.push('withProps') }
+
+          // Grab `withAttrs` content
+          if (propName === 'withAttrs') { helpers.push('withAttrs') }
+
+          return this.traverse(path)
+        },
+      },
+    )
+  }
   // Transform css() declaration to string
   const css = stringify(
     // Scope `declaration` in `className` when using `styled`
-    type === 'styled' && className ? { [`.${className}`]: declaration } : declaration,
+    ['$styled', 'styled'].includes(type) && className ? { [`.${className}`]: declaration } : declaration,
     stringifyContext => resolveCssProperty(
       {
         localTokens: Object.keys(localTokens),
@@ -93,6 +135,7 @@ export const resolveStyleFunctionContext: PinceauTransformFunction<PinceauStyleF
   return {
     id,
     element,
+    helpers,
     type,
     callee,
     arg,

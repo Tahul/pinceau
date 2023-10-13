@@ -5,7 +5,7 @@ import MonacoEditor from '../src/components/editor/MonacoEditor.vue'
 
 const query = new URLSearchParams(location.search)
 
-const framework = ref<'vue' | 'react' | 'svelte'>('svelte')
+const framework = ref<'vue' | 'react' | 'svelte'>('vue')
 
 const store = shallowRef(
   new ReplStore({

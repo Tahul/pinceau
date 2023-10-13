@@ -7,7 +7,7 @@ export function useComputedStyles(
   fns: [string, ComputedStyleDefinition][],
   className?: Writable<string | undefined> | undefined,
 ) {
-  const results = fns.map(([varName, fn]) => [varName, fn()] as [string, ReturnType<ComputedStyleDefinition>])
+  const results = fns.map(([varName, fn]) => [varName, fn({})] as [string, ReturnType<ComputedStyleDefinition>])
   return runtimeSheet.getRule(computedStylesToDeclaration(results), className)
 }
 

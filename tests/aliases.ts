@@ -55,12 +55,12 @@ export const alias = {
   '@pinceau/astro/utils': resolve(__dirname, '../integrations/astro/src/utils.ts'),
   '@pinceau/astro': resolve(__dirname, '../integrations/astro/src/index.ts'),
 
-  // @pinceau/jsx
-  '@pinceau/jsx/plugin': resolve(__dirname, '../integrations/jsx/src/plugin.ts'),
-  '@pinceau/jsx/transforms': resolve(__dirname, '../integrations/jsx/src/transforms.ts'),
-  '@pinceau/jsx/runtime': resolve(__dirname, '../integrations/jsx/src/runtime.ts'),
-  '@pinceau/jsx/utils': resolve(__dirname, '../integrations/jsx/src/utils.ts'),
-  '@pinceau/jsx': resolve(__dirname, '../integrations/jsx/src/index.ts'),
+  // @pinceau/react
+  '@pinceau/react/plugin': resolve(__dirname, '../integrations/react/src/plugin.ts'),
+  '@pinceau/react/transforms': resolve(__dirname, '../integrations/react/src/transforms.ts'),
+  '@pinceau/react/runtime': resolve(__dirname, '../integrations/react/src/runtime.ts'),
+  '@pinceau/react/utils': resolve(__dirname, '../integrations/react/src/utils.ts'),
+  '@pinceau/react': resolve(__dirname, '../integrations/react/src/index.ts'),
 
   // @pinceau/language-server
   '@pinceau/language-server': resolve(__dirname, '../integrations/language-server/src/index.ts'),

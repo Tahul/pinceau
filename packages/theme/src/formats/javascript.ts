@@ -2,7 +2,6 @@ import { astTypes, printAst } from '@pinceau/core/utils'
 import { tokensPaths } from '@pinceau/core/runtime'
 import { flattenTokens } from '../utils/tokens'
 import type { PinceauThemeFormat } from '../types'
-
 import { resolveMediaQueriesKeys } from '../utils'
 
 export const javascriptFormat: PinceauThemeFormat = {
@@ -44,26 +43,40 @@ export const typescriptFormat: PinceauThemeFormat = {
     else { result += 'export const theme = {} as const\n\n' }
 
     // Theme type
-    result += 'export type GeneratedPinceauTheme = typeof theme\n\n'
+    result += 'export type PinceauTheme = typeof theme\n\n'
 
     // Media queries type
     const mqKeys = resolveMediaQueriesKeys(flattenedTokens)
-    const mqId = 'GeneratedPinceauMediaQueries'
+    const mqId = 'PinceauMediaQueries'
     if (mqKeys.length) { result += `export ${arrayToUnionType(mqId, mqKeys)}\n\n` }
     else { result += `export type ${mqId} = \'$initial\' | \'$dark\' | \'$light\'\n\n` }
 
     // Tokens paths type
     const paths = tokensPaths(tokens, mqKeys).map(([keyPath]) => keyPath)
-    const pathsId = 'GeneratedPinceauThemePaths'
+    const pathsId = 'PinceauThemePaths'
     if (tokensPaths.length) { result += `export ${arrayToUnionType(pathsId, paths)}\n\n` }
     else { result += `export type ${pathsId} = string\n\n` }
-
-    result += 'declare global { export type PinceauTheme = GeneratedPinceauTheme;  export type PinceauThemePaths = GeneratedPinceauThemePaths; export type PinceauMediaQueries = GeneratedPinceauMediaQueries; }\n\n'
 
     // Default export
     result += 'export default theme'
 
     return result
+  },
+}
+
+export const declarationFormat: PinceauThemeFormat = {
+  destination: 'pinceau.d.ts',
+  virtualPath: '/__pinceau_types_d_ts.d.ts',
+  importPath: '$pinceau/types',
+  formatter({ ctx }) {
+    return [
+      ctx.types.imports.join('\n'),
+      ctx.types.raw.join('\n'),
+      `declare global {
+  ${ctx.types.global.join('\n  ')}
+}`,
+      'export {}',
+    ].filter(Boolean).join('\n\n')
   },
 }
 

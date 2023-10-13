@@ -1,29 +1,27 @@
+import { PinceauTheme } from '$pinceau/theme'
 import { useState } from 'react'
 
-const TestComponent = $styled.a({
-  color: props => props?.color,
-  fontSize: props => props.fontSize,
-  variants: {
-    size: {
-      sm: {
-        padding: '1rem',
-      },
-      options: {
-        default: 'sm',
-      },
-    },
-  },
+const TestComponent = $styled
+.a<{
+  color?: keyof PinceauTheme['color'];
+  fontSize?: keyof PinceauTheme['fontSize'];
+}>({
+  $primaryColor: ({ color }) => `$color.${color}.1`,
+  $secondaryColor: ({ color }) => `$color.${color}.2`,
+  color: '$primaryColor'
 })
-  .withProps<{ color: ThemeTokens<'$color'>; fontSize: ThemeTokens<'$fontSize'> }>({
-    color: '',
-    fontSize: 16,
-  })
-  .withAttrs({
-    // ...attrs
-  })
-
-const testSecond = styled({
-  color: 'red',
+.withVariants({
+  size: {
+    sm: {
+      fontSize: '$fontSize.sm'
+    },
+    md: {
+      fontSize: '$fontSize.base'
+    },
+    lg: {
+      fontSize: '$fontSize.5xl'
+    }
+  }
 })
 
 css({
@@ -38,12 +36,15 @@ function App() {
   return (
     <div>
       <header>
-        <TestComponent color="blue" fontSize={count}>
-          Hello World {count}
+        <TestComponent color="magenta" size="lg">
+          ???
         </TestComponent>
-        <br />
-        <button onClick={() => setCount(p => p + 1)}>
-          Up
+
+        <button
+          onClick={() => setCount(p => p + 1)}
+          className={styled({ backgroundColor: '$color.blue.5', padding: () => count })}
+        >
+          Move it
         </button>
       </header>
     </div>

@@ -1,24 +1,9 @@
 import type {
-  CSSFunctionArg,
   PinceauStyleFunctionContext,
   PinceauStyleOptions,
-  ThemeTokens as PinceauThemeTokens,
-  StyledFunctionArg,
 } from './types'
-import type { GeneratedPinceauThemePaths as PinceauThemePaths } from '$pinceau/theme'
 
 export * from './types'
-
-declare global {
-  // css({ ... })
-  export function css(declaration: CSSFunctionArg): string
-
-  // styled({ ... }) & styled.a({ ... })
-  export const styled: (<T extends {}>(declaration: StyledFunctionArg<T>) => string)
-
-  // Theme tokens helper
-  export type ThemeTokens<T extends PinceauThemePaths & (string & {}) = PinceauThemePaths & (string & {})> = PinceauThemeTokens<T>
-}
 
 declare module '@pinceau/core' {
   interface PinceauTransformState {

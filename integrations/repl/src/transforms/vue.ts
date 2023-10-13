@@ -3,7 +3,7 @@ import type {
   CompilerOptions,
   SFCDescriptor,
 } from 'vue/compiler-sfc'
-import hashId from 'hash-sum'
+import { toHash } from '@pinceau/core/utils'
 import type { File, Store } from '..'
 import { transformTS } from './typescript'
 import { COMP_IDENTIFIER } from '.'
@@ -12,7 +12,7 @@ export async function compileVueFile(
   store: Store,
   { filename, code, compiled }: File,
 ) {
-  const id = hashId(filename)
+  const id = toHash(filename)
 
   const { errors, descriptor } = store.transformer.compiler.parse(code, {
     filename,

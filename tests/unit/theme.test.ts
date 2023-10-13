@@ -8,6 +8,7 @@ import { createThemeRule, normalizeTokens, resolveMediaSelector, resolveReponsiv
 import { transformColorScheme, transformMediaQueries, transformThemeHelper } from '@pinceau/theme/transforms'
 import {
   cssFormat,
+  declarationFormat,
   definitionsFormat,
   generateTheme,
   getConfigLayer,
@@ -18,6 +19,7 @@ import {
   isResponsiveToken,
   isSafeConstName,
   isTokenNode,
+  javascriptFormat,
   loadLayers,
   pinceauNameTransformer,
   pinceauVariableTransformer,
@@ -36,6 +38,7 @@ import {
   typescriptFormat,
   usePinceauConfigContext,
   utilsFormat,
+  utilsTypesFormat,
 } from '@pinceau/theme/utils'
 import { PinceauVueTransformer } from '@pinceau/vue/utils'
 import fg from 'fast-glob'
@@ -562,6 +565,7 @@ describe('@pinceau/theme', () => {
       expect(fileNames).toContain('theme.css')
       expect(themeOutput.outputs).toHaveProperty('$pinceau/theme')
       expect(themeOutput.outputs).toHaveProperty('$pinceau/theme-types')
+      expect(themeOutput.outputs).toHaveProperty('$pinceau/types')
       expect(fileNames).toContain('theme.ts')
       expect(fileNames).toContain('theme.js')
       expect(themeOutput.outputs).toHaveProperty('$pinceau/utils')
@@ -871,7 +875,7 @@ describe('@pinceau/theme', () => {
       pinceauContext.options.theme.outputFormats = []
     })
 
-    describe('css.ts', () => {
+    describe('pinceau.css', () => {
       beforeEach(() => {
         pinceauContext.options.theme.outputFormats.push(cssFormat)
       })
@@ -883,7 +887,7 @@ describe('@pinceau/theme', () => {
       })
     })
 
-    describe('definitions.ts', () => {
+    describe('$pinceau/definitions', () => {
       beforeEach(() => {
         pinceauContext.options.theme.outputFormats.push(definitionsFormat)
       })
@@ -895,7 +899,7 @@ describe('@pinceau/theme', () => {
       })
     })
 
-    describe('hmr.ts', () => {
+    describe('$pinceau/hmr', () => {
       beforeEach(() => {
         pinceauContext.options.theme.outputFormats.push(hmrFormat)
       })
@@ -907,7 +911,7 @@ describe('@pinceau/theme', () => {
       })
     })
 
-    describe('schema.ts', () => {
+    describe('$pinceau/schema', () => {
       beforeEach(() => {
         pinceauContext.options.theme.outputFormats.push(schemaFormat)
       })
@@ -919,9 +923,27 @@ describe('@pinceau/theme', () => {
       })
     })
 
-    describe('javascript.ts', () => {
-      beforeEach(() => {
+    describe('$pinceau/theme', () => {
+      it('build format (js)', async () => {
+        pinceauContext.options.theme.outputFormats.push(javascriptFormat)
+
+        const output = await configCtx.buildTheme()
+
+        expect(output).toMatchSnapshot()
+      })
+
+      it('build format (ts)', async () => {
         pinceauContext.options.theme.outputFormats.push(typescriptFormat)
+
+        const output = await configCtx.buildTheme()
+
+        expect(output).toMatchSnapshot()
+      })
+    })
+
+    describe('$pinceau/types', () => {
+      beforeEach(() => {
+        pinceauContext.options.theme.outputFormats.push(declarationFormat)
       })
 
       it('build format', async () => {
@@ -931,12 +953,18 @@ describe('@pinceau/theme', () => {
       })
     })
 
-    describe('utils.ts', () => {
-      beforeEach(() => {
+    describe('$pinceau/utils types', () => {
+      it('build format', async () => {
         pinceauContext.options.theme.outputFormats.push(utilsFormat)
+
+        const output = await configCtx.buildTheme()
+
+        expect(output).toMatchSnapshot()
       })
 
-      it('build format', async () => {
+      it('build format (types)', async () => {
+        pinceauContext.options.theme.outputFormats.push(utilsTypesFormat)
+
         const output = await configCtx.buildTheme()
 
         expect(output).toMatchSnapshot()

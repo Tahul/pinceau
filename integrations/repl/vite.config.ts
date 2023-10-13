@@ -5,6 +5,8 @@ import Pinceau from '@pinceau/vue/plugin'
 import vue from '@vitejs/plugin-vue'
 import replace from '@rollup/plugin-replace'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
+import Icons from 'unplugin-icons/vite'
+
 
 const resolve = (p: string) => createResolver(import.meta.url).resolve(p)
 
@@ -36,6 +38,7 @@ export default defineConfig({
   plugins: [
     genStub,
     nodePolyfills(),
+    Icons({ compiler: 'vue3' }),
     Pinceau({
       style: {
         excludes: [

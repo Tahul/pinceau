@@ -1,7 +1,7 @@
 export default () => {
   console.log('hello world')
 
-  return <><div className="test-style">css() style component</div></>
+  return <div className="test-style">css() style component</div>
 }
 
 css({

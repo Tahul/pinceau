@@ -6,7 +6,7 @@ import { suite } from '../transforms/suite'
 import { PinceauSvelteTransformer } from './transformer'
 import { registerVirtualOutputs } from './virtual'
 
-const PinceauSveltePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
+export const PinceauSveltePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
   let ctx: PinceauContext
 
   return {
@@ -36,5 +36,3 @@ const PinceauSveltePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
     },
   }
 })
-
-export default PinceauSveltePlugin

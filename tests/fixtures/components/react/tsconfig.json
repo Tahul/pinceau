@@ -1,6 +1,3 @@
 {
-  "extends": "@pinceau/configs/tsconfig.react.json",
-  "compilerOptions": {
-    "types": ["@pinceau/jsx", "@pinceau/style", "@pinceau/theme"]
-  }
+  "extends": "@pinceau/configs/tsconfig.base.json"
 }

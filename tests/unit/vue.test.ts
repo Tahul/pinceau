@@ -485,7 +485,7 @@ console.log('hello world')
       expect(transformContext.state?.styleFunctions?.style0_css0?.variants?.size).toBeDefined()
     })
 
-    it('can push $pcExtractedVariants to component code', async () => {
+    it('can push variants to component code', async () => {
       const query = parsePinceauQuery(resolveFixtures('./components/vue/TestVariants2.vue'))
 
       pinceauContext.addTransformed(query.filename, query)

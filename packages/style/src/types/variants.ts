@@ -1,38 +1,34 @@
 import type { CSSProperties, RawCSS } from '@pinceau/style'
-import type { GeneratedPinceauMediaQueries as PinceauMediaQueries } from '$pinceau/theme'
+import type { PinceauMediaQueries } from '$pinceau/theme'
 
-export interface VariantOptions<T = {}> {
+export interface VariantOptions<PropType = {}> {
   type?: string
   required?: boolean
-  default?: Exclude<keyof T, 'options'> | { [key in PinceauMediaQueries]?: Exclude<keyof T, 'options'> }
+  default?: PropType | { [key in PinceauMediaQueries]?: PropType }
   mediaPrefix?: boolean
 }
 
 export type Variant<
-  T extends Record<string, CSSProperties> = {},
+  PropValue,
   LocalTokens extends string | undefined = undefined,
   TemplateSource extends {} = {},
   > =
 (
   {
-    options?: VariantOptions<T>
+    options?: VariantOptions<PropValue>
   }
 )
-|
+&
 {
-  [K in keyof T]?: K extends 'options' ? VariantOptions<T> : RawCSS<LocalTokens, TemplateSource, {}, true> & { $class?: string }
+  [K in string]?: K extends 'options' ? VariantOptions<PropValue> : RawCSS<LocalTokens, TemplateSource, {}, true> & { $class?: string }
 }
 
 export type Variants<
-  Source extends Record<string, {}> = {},
   LocalTokens extends string | undefined = undefined,
   TemplateSource extends {} = {},
+  Props = {},
 > = {
-  [Key in keyof Source]: Variant<
-      Source[Key],
-      LocalTokens,
-      TemplateSource
-    >
+  [K in string]: K extends keyof Props ? Variant<Props[K], LocalTokens, TemplateSource> : Variant<string | undefined, LocalTokens, TemplateSource>
 }
 
 export interface VariantsProps {

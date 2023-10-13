@@ -33,6 +33,23 @@ const PinceauThemePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
 
         configCtx = usePinceauConfigContext(ctx)
 
+        ctx.configContext = configCtx
+
+        ctx.addTypes({
+          imports: [
+            'import type { ThemeFunction } from \'@pinceau/theme\'',
+            'import type { PinceauTheme as GeneratedPinceauTheme, PinceauMediaQueries as GeneratedPinceauMediaQueries, PinceauThemePaths as GeneratedPinceauThemePaths } from \'./theme\'',
+            'import type { PinceauUtils as GeneratedPinceauUtils } from \'./utils.ts\'',
+          ],
+          global: [
+            'export const $theme: ThemeFunction',
+            'export type PinceauTheme = GeneratedPinceauTheme',
+            'export type PinceauUtils = GeneratedPinceauUtils',
+            'export type PinceauMediaQueries = GeneratedPinceauMediaQueries',
+            'export type PinceauThemePaths = GeneratedPinceauThemePaths',
+          ],
+        })
+
         await configCtx.buildTheme()
       },
 

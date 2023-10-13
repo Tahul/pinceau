@@ -1,11 +1,13 @@
 <script setup lang="ts">
+import { Pane, Splitpanes } from 'splitpanes'
+import 'splitpanes/dist/splitpanes.css'
 import { provide, ref, toRef } from 'vue'
 import type { Store } from '../store'
 import { ReplStore } from '../store'
-import SplitPane from './SplitPane.vue'
 import Output from './output/Output.vue'
 import type { EditorComponentType } from './editor/types'
 import EditorContainer from './editor/EditorContainer.vue'
+import FilesOutputContainer from './output/FilesOutputContainer.vue'
 
 export interface Props {
   theme?: 'dark' | 'light'
@@ -15,6 +17,7 @@ export interface Props {
   showCompileOutput?: boolean
   showImportMap?: boolean
   showTsConfig?: boolean
+  showTheme?: boolean
   clearConsole?: boolean
   transformerOptions?: any
   layout?: 'horizontal' | 'vertical'
@@ -37,6 +40,7 @@ const props = withDefaults(defineProps<Props>(), {
   showCompileOutput: true,
   showImportMap: true,
   showTsConfig: true,
+  shoTheme: true,
   clearConsole: true,
   ssr: false,
   previewOptions: () => ({
@@ -74,6 +78,7 @@ provide('store', store)
 provide('autoresize', props.autoResize)
 provide('import-map', toRef(props, 'showImportMap'))
 provide('tsconfig', toRef(props, 'showTsConfig'))
+provide('theme', toRef(props, 'showTheme'))
 provide('clear-console', toRef(props, 'clearConsole'))
 provide('preview-options', props.previewOptions)
 provide('theme', toRef(props, 'theme'))
@@ -88,49 +93,58 @@ defineExpose({ reload })
 </script>
 
 <template>
-  <div class="vue-repl">
-    <SplitPane :layout="layout">
-      <template #left>
-        <EditorContainer :editor-component="editor" />
-      </template>
-      <template #right>
+  <div class="pinceau-repl">
+    <Splitpanes>
+      <Pane>
+        <Splitpanes horizontal>
+          <Pane>
+            <EditorContainer :editor-component="editor" />
+          </Pane>
+          <Pane size="0">
+            <FilesOutputContainer />
+          </Pane>
+        </Splitpanes>
+      </Pane>
+      <Pane>
         <Output
           ref="outputRef"
           :editor-component="editor"
           :show-compile-output="props.showCompileOutput"
           :ssr="!!props.ssr"
         />
-      </template>
-    </SplitPane>
+      </Pane>
+    </Splitpanes>
   </div>
 </template>
 
 <style lang="ts" scoped>
 css({
-  '.vue-repl': {
-    '--bg': '#fff',
+  '@import': 'url(\'https://fonts.googleapis.com/css2?family=Onest:wght@400;700;900&display=swap\')',
+
+  '.pinceau-repl': {
+    '--bg': '$color.white',
     '--bg-soft': '#f8f8f8',
     '--border': '#ddd',
     '--text-light': '#888',
-    '--font-code': 'Menlo, Monaco, Consolas, \'Courier New\', monospace',
-    '--color-branding': '#42b883',
-    '--color-branding-dark': '#416f9c',
-    '--header-height': '38px',
+    '--font-code': '\'JetBrains Mono\', monospace',
+    '--color-branding': '$color.red.5',
+    '--color-branding-dark': '$color.blue.5',
+    '--header-height': '$space.12',
     'height': '100%',
     'margin': '0',
     'overflow': 'hidden',
-    'fontSize': '13px',
-    'fontFamily': '-apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Oxygen, Ubuntu, Cantarell, \'Open Sans\', \'Helvetica Neue\', sans-serif',
+    'fontSize': '12px',
+    'fontFamily': '\'Onest\', sans-serif',
     'backgroundColor': 'var(--bg-soft)',
   },
 
-  '.dark .vue-repl': {
-    '--bg': '#1a1a1a',
+  '.dark .pinceau-repl': {
+    '--bg': '$color.black',
     '--bg-soft': '#242424',
     '--border': '#383838',
     '--text-light': '#aaa',
-    '--color-branding': '#42d392',
-    '--color-branding-dark': '#89ddff',
+    '--color-branding': '$color.red.6',
+    '--color-branding-dark': '$color.blue.6',
   },
 
   ':deep(button)': {
@@ -139,6 +153,42 @@ css({
     cursor: 'pointer',
     margin: '0',
     backgroundColor: 'transparent',
+  },
+
+  '.main-pane': {
+
+  },
+})
+</style>
+
+<style lang="ts">
+css({
+  '.splitpanes': {
+    // background: 'linear-gradient(-45deg, #EE7752, #E73C7E, #23A6D5, #23D5AB)'
+  },
+
+  '.splitpanes__pane': {
+    boxShadow: '0 0 5px rgba(0, 0, 0, .2) inset',
+  },
+
+  '.splitpanes--vertical > .splitpanes__splitter': {
+    'minWidth': '6px',
+    'backgroundColor': '$color.red.5',
+    'opacity': '0.5',
+    'transition': 'color 300ms, opacity 300ms',
+    '&:hover': {
+      opacity: '1',
+    },
+  },
+
+  '.splitpanes--horizontal > .splitpanes__splitter': {
+    'minHeight': '6px',
+    'backgroundColor': '$color.red.5',
+    'opacity': '0.5',
+    'transition': 'color 300ms, opacity 300ms',
+    '&:hover': {
+      opacity: '1',
+    },
   },
 })
 </style>

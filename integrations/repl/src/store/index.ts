@@ -10,6 +10,7 @@ import { ReplSvelteTransformer } from './svelte'
 
 export const importMapFile = 'import-map.json'
 export const tsconfigFile = 'tsconfig.json'
+export const themeFile = 'theme.config.ts'
 
 const supportedTransformers = {
   vue: ReplVueTransformer,

@@ -17,8 +17,9 @@ export interface RuntimeParts {
 export interface PinceauStyleFunctionContext {
   // Source
   id: string
-  type: 'css' | 'styled'
+  type: 'css' | 'styled' | '$styled'
   element?: SupportedHTMLElements
+  helpers: ('withVariants' | 'withAttrs' | 'withProps')[]
   pointer: string
   callee: PathMatch | PropMatch
   arg: CSSFunctionArgAST
