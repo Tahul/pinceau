@@ -32,25 +32,25 @@ function getItem() {
 watch(showMessage, () => {
   setItem()
 })
+
 </script>
 
 <template>
   <FileSelector />
   <div class="editor-container">
     <props.editorComponent
-      :value="store.state.activeFile.code"
+      :value="store.state.activeFile.code || ''"
       :filename="store.state.activeFile.filename"
       @change="onChange"
     />
     <Message v-show="showMessage" :err="store.state.errors[0]" />
   </div>
-  <Toolbar />
 </template>
 
 <style lang="ts" scoped>
 css({
   '.editor-container': {
-    height: 'calc(100% - calc(var(--header-height) * 2))',
+    height: 'calc(100% - calc(var(--header-height)))',
     overflow: 'hidden',
     position: 'relative',
   },

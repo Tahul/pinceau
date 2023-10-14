@@ -15,6 +15,7 @@ import volarWorker from './volar.worker?worker'
 
 let initted = false
 export function initMonaco(store: Store) {
+  store.editor = editor
   if (initted) { return }
   loadMonacoEnv(store)
   loadWasm()
@@ -33,7 +34,6 @@ export function initMonaco(store: Store) {
 
     for (const filename in store.transformer.shims) {
       const file = store.transformer.shims[filename]
-      if (editor.getModel(Uri.parse(`file:///${file.filename}`))) { continue }
       getOrCreateModel(
         Uri.parse(`file:///${file.filename}`),
         file.language,
@@ -81,7 +81,7 @@ export async function reloadLanguageTools(store: Store, lang?: 'vue' | 'svelte' 
     ...store.state.dependencyVersion,
   }
 
-  if (store.transformer && store.transformer.targetVersion) {
+  if (store.transformer) {
     dependencies = {
       ...dependencies,
       ...store.transformer.getTypescriptDependencies(),
@@ -97,7 +97,7 @@ export async function reloadLanguageTools(store: Store, lang?: 'vue' | 'svelte' 
 
   const worker = editor.createWebWorker<any>({
     moduleId: 'vs/language/volar/volarWorker',
-    label: lang,
+    label: 'vue',
     host: new WorkerHost(),
     createData: {
       tsconfig: store.getTsConfig?.() || {},
@@ -115,17 +115,14 @@ export async function reloadLanguageTools(store: Store, lang?: 'vue' | 'svelte' 
     return Uri.parse(`file:///${filename}`)
   })
 
-  let disposeMarkers: () => void | undefined
-  if (lang === 'vue' || lang === 'svelte') {
-    const { dispose: _disposeMarkers } = volar.editor.activateMarkers(
-      worker,
-      languageId,
-      'vue',
-      getSyncUris,
-      editor,
-    )
-    disposeMarkers = _disposeMarkers
-  }
+
+  const { dispose: disposeMarkers } = volar.editor.activateMarkers(
+    worker,
+    languageId,
+    lang || 'vue',
+    getSyncUris,
+    editor,
+  )
 
   const { dispose: disposeAutoInsertion } = volar.editor.activateAutoInsertion(
     worker,
@@ -145,7 +142,6 @@ export async function reloadLanguageTools(store: Store, lang?: 'vue' | 'svelte' 
     disposeMarkers?.()
     disposeAutoInsertion?.()
     disposeProvides?.()
-    worker?.dispose()
   }
 }
 
@@ -158,7 +154,7 @@ export interface WorkerMessage {
 
 export function loadMonacoEnv(store: Store) {
   // eslint-disable-next-line no-restricted-globals
-  ;(self as any).MonacoEnvironment = {
+  ; (self as any).MonacoEnvironment = {
     async getWorker(_: any, label: string) {
       const worker = new volarWorker()
       const init = new Promise<void>((resolve) => {
@@ -178,15 +174,13 @@ export function loadMonacoEnv(store: Store) {
   }
   languages.register({ id: 'vue', extensions: ['.vue'] })
   languages.register({ id: 'javascript', extensions: ['.js'] })
-  languages.register({ id: 'typescript', extensions: ['.ts'] })
-  languages.register({ id: 'jsx', extensions: ['.jsx', '.tsx'] })
+  languages.register({ id: 'typescript', extensions: ['.ts', '.jsx', '.tsx'] })
   languages.register({ id: 'svelte', extensions: ['.svelte'] })
 
   store.reloadLanguageTools = (lang?: 'vue' | 'react' | 'svelte' | 'typescript') => reloadLanguageTools(store, lang)
 
   languages.onLanguage('vue', () => store.reloadLanguageTools!('vue'))
   languages.onLanguage('typescript', () => store.reloadLanguageTools!('typescript'))
-  languages.onLanguage('jsx', () => store.reloadLanguageTools!('react'))
   languages.onLanguage('svelte', () => store.reloadLanguageTools!('svelte'))
 }
 

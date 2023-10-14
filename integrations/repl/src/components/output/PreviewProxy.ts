@@ -32,7 +32,7 @@ export class PreviewProxy {
 
       this.pending_cmds.set(cmd_id, { resolve, reject })
 
-      this.iframe.contentWindow!.postMessage({ action, cmd_id, args }, '*')
+      this.iframe?.contentWindow?.postMessage({ action, cmd_id, args }, '*')
     })
   }
 

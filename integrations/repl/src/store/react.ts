@@ -17,6 +17,7 @@ const defaultVersion = '18.2.0'
 
 const localImports = {
   'react': (version = defaultVersion) => `https://cdn.jsdelivr.net/npm/react@${version}/umd/react.development.js`,
+  'react/jsx-runtime': (version = defaultVersion) => `https://cdn.jsdelivr.net/npm/react@${version}/jsx-runtime.js`,
   'react-dom': (version = defaultVersion) => `https://cdn.jsdelivr.net/npm/react-dom@${version}/umd/react-dom.development.js`,
   'react-dom/client': (version = defaultVersion) => `https://cdn.jsdelivr.net/npm/react-dom@${version}/client.js`,
   'react-dom/server': (version = defaultVersion) => `https://cdn.jsdelivr.net/npm/react-dom@${version}/umd/react-dom-server.browser.development.js`,
@@ -24,7 +25,7 @@ const localImports = {
   '@types/react-dom': (version = defaultVersion) => `https://cdn.jsdelivr.net/npm/@types/react-dom@${version}/index.d.ts`,
 }
 
-export class ReplReactTransformer implements ReplTransformer {
+export class ReplReactTransformer implements ReplTransformer<null, {}> {
   name: string = 'react'
   store: ReplStore
   defaultMainFile: string = defaultMainFile
@@ -32,7 +33,7 @@ export class ReplReactTransformer implements ReplTransformer {
   defaultVersion: string = defaultVersion
   targetVersion?: string
   compiler = null
-  options: {} = {}
+  compilerOptions: {} = {}
   pendingCompiler: Promise<any> | null = null
   imports: typeof localImports = localImports
   shims = {
@@ -65,37 +66,47 @@ declare global {
       isolatedModules: true,
       noEmit: true,
       jsx: 'react-jsx',
-      paths: {
-        react: ['./node_modules/@types/react'],
-      },
       types: ['@types/react', '@types/react-dom'],
     },
   }
 
   constructor({ store }: { store: ReplStore }) {
     this.store = store
+
+    store?.editor?.getModels().forEach((model) => {
+      if (
+        (
+          model.uri.path.includes('/npm/vue') ||
+          model.uri.path.includes('/npm/@vue')
+        )
+        && !model.isDisposed()
+      ) {
+        model.dispose()
+      }
+    })
   }
 
   getTypescriptDependencies() {
     return {
-      '@types/react': this.targetVersion || this.defaultVersion || '18.2.0',
-      '@types/react-dom': this.targetVersion || this.defaultVersion || '18.2.0',
+      '@types/react': this.targetVersion || this.defaultVersion,
+      '@types/react-dom': this.targetVersion || this.defaultVersion,
     }
   }
 
   async setVersion(version: string) {
     this.targetVersion = version
 
-    const runtimeUrl = this.imports.react(version)
-    const runtimDomUrl = this.imports['react-dom'](version)
-    const ssrUrl = this.imports['react-dom/server'](version)
-
     const importMap = this.store.getImportMap()
-    const imports = importMap.imports || (importMap.imports = {})
 
-    imports.react = runtimeUrl
-    imports['react-dom'] = runtimDomUrl
-    imports['react-dom/server'] = ssrUrl
+    const newImports = Object.entries({ ...importMap, ...this.imports }).reduce<{ [key in keyof typeof localImports]?: string }>((acc, [key, version]) => {
+      acc[key] = version
+      if (typeof version === 'function') {
+        acc[key] = version(this.targetVersion)
+      }
+      return acc
+    }, {})
+
+    importMap.imports = newImports
 
     this.store.setImportMap(importMap)
     this.store.forceSandboxReset()
@@ -108,13 +119,16 @@ declare global {
     this.targetVersion = undefined
 
     const importMap = this.store.getImportMap()
-    const _imports = importMap.imports || (importMap.imports = {})
 
-    _imports.react = this.imports.react(defaultVersion)
-    _imports['react-dom'] = this.imports['react-dom'](defaultVersion)
-    _imports['react-dom/server'] = this.imports['react-dom/server'](defaultVersion)
+    const newImports = Object.entries({ ...(importMap?.imports || {}), ...this.imports }).reduce<{ [key in keyof typeof localImports]?: string }>((acc, [key, version]) => {
+      acc[key] = version
+      if (typeof version === 'function') {
+        acc[key] = version(this.defaultVersion)
+      }
+      return acc
+    }, {})
 
-    this.store.setImportMap(importMap)
+    this.store.setImportMap({ imports: newImports })
     this.store.forceSandboxReset()
 
     console.info('[@pinceau/repl] Has been reset to React mode.')
@@ -143,7 +157,7 @@ declare global {
     proxy: PreviewProxy,
     previewOptions: any,
   ) {
-    if (import.meta.env.PROD && clearConsole.value) { console.clear() }
+    if ((import.meta as any).env.PROD && clearConsole.value) { console.clear() }
     runtimeError.value = null
     runtimeWarning.value = null
 

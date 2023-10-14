@@ -16,7 +16,7 @@ function onChange(code: string) {
 <template>
   <Monaco
     :filename="filename"
-    :value="value"
+    :value="value || ''"
     :readonly="readonly"
     :mode="mode"
     @change="onChange"

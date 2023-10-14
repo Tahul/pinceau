@@ -152,7 +152,6 @@ function horizontalScroll(e: WheelEvent) {
 css({
   '.file-selector': {
     'display': 'flex',
-    'boxSizing': 'border-box',
     'borderBottom': '1px solid var(--border)',
     'backgroundColor': 'var(--bg)',
     'overflowY': 'hidden',
@@ -172,10 +171,6 @@ css({
     '&::-webkit-scrollbar-thumb': {
       backgroundColor: 'var(--color-branding)',
     },
-
-    '&.has-import-map .add': {
-      marginRight: '10px',
-    },
   },
 
   '.file': {
@@ -191,7 +186,6 @@ css({
 
     '&.active': {
       color: 'var(--color-branding)',
-      cursor: 'text',
       boxShadow: 'inset 0 0 11px $color.red.9',
 
       span: {

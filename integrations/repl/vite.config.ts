@@ -7,7 +7,6 @@ import replace from '@rollup/plugin-replace'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import Icons from 'unplugin-icons/vite'
 
-
 const resolve = (p: string) => createResolver(import.meta.url).resolve(p)
 
 const genStub: Plugin = {
@@ -55,7 +54,11 @@ export default defineConfig({
         ],
       },
     }) as any,
-    vue(),
+    vue({
+      script: {
+        defineModel: true
+      }
+    }),
   ],
   optimizeDeps: {
     // avoid late discovered deps
@@ -65,9 +68,10 @@ export default defineConfig({
       'typescript',
       '@volar/cdn',
       '@vue/language-service',
-      'monaco-editor/esm/vs/editor/editor.worker',
+      'monaco-editor-core/esm/vs/editor/editor.worker',
       '@volar/monaco/worker',
       'vue/server-renderer',
+      'vue',
       'svelte',
       'react',
     ],
@@ -91,7 +95,7 @@ export default defineConfig({
       output: {
         chunkFileNames: 'chunks/[name]-[hash].js',
       },
-      external: ['vue', 'vue/compiler-sfc'],
+      external: ['vue', 'vue/compiler-sfc', 'react', 'svelte'],
     },
     worker: {
       format: 'es',

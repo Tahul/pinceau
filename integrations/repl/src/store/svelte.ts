@@ -1,4 +1,5 @@
 import type { Ref } from 'vue'
+import * as defaultCompiler from 'svelte/compiler'
 import { compileFile } from '../transforms'
 import { compileModulesForPreview } from '../compiler'
 import type { PreviewProxy } from '../components/output/PreviewProxy'
@@ -8,7 +9,7 @@ import { File } from '.'
 const defaultMainFile = 'src/App.svelte'
 
 const welcomeCode = `
-<script>
+<script lang="ts">
 	let name = 'world';
 </script>
 
@@ -19,6 +20,9 @@ const defaultVersion = '4.2.1'
 
 const localImports = {
   'svelte': (version = defaultVersion) => `https://cdn.jsdelivr.net/npm/svelte@${version}/src/runtime/index.js`,
+  'estree': (version = defaultVersion) => `https://cdn.jsdelivr.net/npm/estree-walker@${version}/src/index.js`,
+  'estree-walker': (version = defaultVersion) => `https://cdn.jsdelivr.net/npm/estree-walker@${version}/src/index.js`,
+  '@types/estree': (version = defaultVersion) => `https://cdn.jsdelivr.net/npm/@types/estree@${version}/index.d.ts`,
   'svelte/internal': (version = defaultVersion) => `https://cdn.jsdelivr.net/npm/svelte@${version}/src/runtime/internal/index.js`,
   'svelte/compiler': (version = defaultVersion) => `https://cdn.jsdelivr.net/npm/svelte@${version}/src/compiler/index.js`,
   'svelte/animate': (version = defaultVersion) => `https://cdn.jsdelivr.net/npm/svelte@${version}/src/runtime/animate/index.js`,
@@ -35,13 +39,14 @@ export class ReplSvelteTransformer implements ReplTransformer {
   defaultMainFile: string = defaultMainFile
   welcomeCode: string = welcomeCode
   defaultVersion: string = defaultVersion
+  defaultCompiler: typeof defaultCompiler = defaultCompiler
   targetVersion?: string
-  compiler = null
-  options: {} = {}
+  compiler: typeof defaultCompiler = defaultCompiler
+  compilerOptions: {} = {}
   pendingCompiler: Promise<any> | null = null
   imports: typeof localImports = localImports
   shims = {
-    'globals.d.ts': new File('globals.d.ts', ''),
+    'globals.d.ts': new File('globals.d.ts', 'declare module \'svelte\';'),
   }
 
   tsconfig: any = {
@@ -76,12 +81,21 @@ export class ReplSvelteTransformer implements ReplTransformer {
   async setVersion(version: string) {
     this.targetVersion = version
 
-    const runtimeUrl = this.imports.svelte(version)
-
     const importMap = this.store.getImportMap()
-    const imports = importMap.imports || (importMap.imports = {})
 
-    imports.svelte = runtimeUrl
+    const newImports = Object.entries({ ...importMap, ...this.imports }).reduce<{ [key in keyof typeof localImports]?: string }>((acc, [key, version]) => {
+      acc[key] = version
+      if (typeof version === 'function') {
+        acc[key] = version(this.targetVersion)
+      }
+      return acc
+    }, {})
+
+    this.pendingCompiler = newImports?.['svelte/compiler'] ? import(/* @vite-ignore */ newImports?.['svelte/compiler']) : new Promise(() => defaultCompiler)
+    this.compiler = await this.pendingCompiler
+    this.pendingCompiler = null
+
+    importMap.imports = newImports
 
     this.store.setImportMap(importMap)
     this.store.forceSandboxReset()
@@ -92,13 +106,19 @@ export class ReplSvelteTransformer implements ReplTransformer {
 
   resetVersion() {
     this.targetVersion = undefined
+    this.compiler = defaultCompiler
 
     const importMap = this.store.getImportMap()
-    const _imports = importMap.imports || (importMap.imports = {})
 
-    _imports.svelte = this.imports.svelte(defaultVersion)
+    const newImports = Object.entries({ ...(importMap?.imports || {}), ...this.imports }).reduce<{ [key in keyof typeof localImports]?: string }>((acc, [key, version]) => {
+      acc[key] = version
+      if (typeof version === 'function') {
+        acc[key] = version(this.defaultVersion)
+      }
+      return acc
+    }, {})
 
-    this.store.setImportMap(importMap)
+    this.store.setImportMap({ imports: newImports })
     this.store.forceSandboxReset()
 
     console.info('[@pinceau/repl] Has been reset to Svelte mode.')
@@ -127,7 +147,7 @@ export class ReplSvelteTransformer implements ReplTransformer {
     proxy: PreviewProxy,
     previewOptions: any,
   ) {
-    if (import.meta.env.PROD && clearConsole.value) {
+    if ((import.meta as any).env.PROD && clearConsole.value) {
       console.clear()
     }
     runtimeError.value = null
@@ -180,11 +200,7 @@ export class ReplSvelteTransformer implements ReplTransformer {
 
           const rootEl = document.getElementById('app')
 
-          console.log({ document })
-
           const rootComp = new AppComponent({ target: rootEl })
-
-          console.log({ rootEl, rootComp })
           
           ${previewOptions?.customCode?.useCode || ''}
         }
@@ -192,8 +208,6 @@ export class ReplSvelteTransformer implements ReplTransformer {
         mount()`,
         )
       }
-
-      console.log(codeToEval)
 
       // eval code in sandbox
       await proxy.eval(codeToEval)

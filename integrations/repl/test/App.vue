@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, shallowRef, watchEffect } from 'vue'
+import { ref, shallowRef, watchEffect, onMounted } from 'vue'
 import { Repl, ReplStore } from '../src'
 import MonacoEditor from '../src/components/editor/MonacoEditor.vue'
 
@@ -18,12 +18,12 @@ const store = shallowRef(
 
 watchEffect(() => history.replaceState({}, '', store.value.serialize()))
 
-async function _setFramework(newFramework: 'vue' | 'react' | 'svelte') {
-  store.value = await store.value.reset({ transformer: newFramework })
-  framework.value = newFramework
-}
-
 const _Editor: any = MonacoEditor
+
+onMounted(() => {
+  // @ts-ignore
+  window.__replStore__ = store.value
+})
 </script>
 
 <template>

@@ -14,7 +14,7 @@ import type { File, ReplStore, ReplTransformer } from '.'
 const defaultMainFile = 'src/App.vue'
 
 const welcomeCode = `
-<script setup>
+<script lang="ts" setup>
 import { ref } from 'vue'
 
 const msg = ref('Hello World!')
@@ -39,7 +39,7 @@ const localImports = {
   'vue/server-renderer': (version = defaultVersion) => `https://cdn.jsdelivr.net/npm/@vue/server-renderer@${version}/dist/server-renderer.esm-browser.js`,
 }
 
-export class ReplVueTransformer implements ReplTransformer {
+export class ReplVueTransformer implements ReplTransformer<typeof defaultCompiler, SFCOptions> {
   name: string = 'vue'
   store: ReplStore
   defaultMainFile: string = defaultMainFile
@@ -47,7 +47,7 @@ export class ReplVueTransformer implements ReplTransformer {
   defaultVersion: string = defaultVersion
   targetVersion?: string
   compiler: typeof defaultCompiler = defaultCompiler
-  options: SFCOptions = {}
+  compilerOptions: SFCOptions = {}
   pendingCompiler: Promise<any> | null = null
   imports: typeof localImports = localImports
   shims = {}
@@ -148,7 +148,7 @@ export class ReplVueTransformer implements ReplTransformer {
     proxy: PreviewProxy,
     previewOptions: any,
   ) {
-    if (import.meta.env.PROD && clearConsole.value) {
+    if ((import.meta as any).env.PROD && clearConsole.value) {
       console.clear()
     }
     runtimeError.value = null
@@ -174,9 +174,7 @@ export class ReplVueTransformer implements ReplTransformer {
       if (isSSR && mainFile.endsWith('.vue')) {
         const ssrModules = compileModulesForPreview(this.store, true)
 
-        console.log(
-        `[@pinceau/repl] successfully compiled ${ssrModules.length} modules for SSR.`,
-        )
+        console.log(`[@pinceau/repl] successfully compiled ${ssrModules.length} modules for SSR.`)
 
         await proxy.eval([
           'const __modules__ = {};',

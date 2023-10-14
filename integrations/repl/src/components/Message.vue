@@ -69,7 +69,7 @@ css({
     left: '8px',
     right: '8px',
     zIndex: '10',
-    border: '2px solid transparent',
+    border: '1px solid transparent',
     borderRadius: '6px',
     fontFamily: 'var(--font-code)',
     whiteSpace: 'pre-wrap',

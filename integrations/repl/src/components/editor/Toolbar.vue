@@ -73,10 +73,10 @@ styled({
     'flexDirection': 'column',
     'cursor': 'pointer',
     'fontWeight': '$fontWeight.bold',
-    'color': 'white',
+    'color': 'var(--text-light)',
     'transition': 'box-shadow 0.05s ease-in-out',
     'svg': {
-      fontSize: '$fontSize.md',
+      fontSize: '$fontSize.lg',
     },
     '&.active': {
       color: 'var(--color-branding)',

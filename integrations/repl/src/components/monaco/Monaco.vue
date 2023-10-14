@@ -48,7 +48,7 @@ onMounted(async () => {
   ready.value = true
   await nextTick()
 
-  if (!containerRef.value) { throw new Error('Cannot find containerRef') }
+  if (!containerRef.value) { return }
 
   const editorInstance = monaco.editor.create(containerRef.value, {
     ...(props.readonly

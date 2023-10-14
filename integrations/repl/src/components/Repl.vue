@@ -1,25 +1,26 @@
 <script setup lang="ts">
 import { Pane, Splitpanes } from 'splitpanes'
 import 'splitpanes/dist/splitpanes.css'
-import { provide, ref, toRef } from 'vue'
+import { provide, ref, toRef, watch } from 'vue'
 import type { Store } from '../store'
 import { ReplStore } from '../store'
 import Output from './output/Output.vue'
 import type { EditorComponentType } from './editor/types'
 import EditorContainer from './editor/EditorContainer.vue'
-import FilesOutputContainer from './output/FilesOutputContainer.vue'
+import TopBar from './TopBar.vue'
 
 export interface Props {
   theme?: 'dark' | 'light'
   editor: EditorComponentType
   store?: Store
+  topBar?: boolean
+  compilerOptions?: any
   autoResize?: boolean
   showCompileOutput?: boolean
   showImportMap?: boolean
   showTsConfig?: boolean
   showTheme?: boolean
   clearConsole?: boolean
-  transformerOptions?: any
   layout?: 'horizontal' | 'vertical'
   ssr?: boolean
   previewOptions?: {
@@ -36,13 +37,15 @@ export interface Props {
 const props = withDefaults(defineProps<Props>(), {
   theme: 'light',
   store: () => new ReplStore(),
+  topBar: true,
   autoResize: true,
   showCompileOutput: true,
   showImportMap: true,
   showTsConfig: true,
-  shoTheme: true,
+  showTheme: true,
   clearConsole: true,
   ssr: false,
+  compilerOptions: () => ({}),
   previewOptions: () => ({
     headHTML: '',
     bodyHTML: '',
@@ -58,10 +61,10 @@ if (!props.editor) { throw new Error('The "editor" prop is now required.') }
 
 const outputRef = ref<InstanceType<typeof Output>>()
 const { store } = props
-const sfcOptions = (store.transformer.options = props.transformerOptions || {})
-if (!sfcOptions.script) { sfcOptions.script = {} }
+const compilerOptions = (store.transformer.compilerOptions = props.compilerOptions || {})
+if (!compilerOptions.script) { compilerOptions.script = {} }
 
-sfcOptions.script.fs = {
+compilerOptions.script.fs = {
   fileExists(file: string) {
     if (file.startsWith('/')) { file = file.slice(1) }
     return !!store.state.files[file]
@@ -82,6 +85,7 @@ provide('theme', toRef(props, 'showTheme'))
 provide('clear-console', toRef(props, 'clearConsole'))
 provide('preview-options', props.previewOptions)
 provide('theme', toRef(props, 'theme'))
+
 /**
  * Reload the preview iframe
  */
@@ -93,17 +97,11 @@ defineExpose({ reload })
 </script>
 
 <template>
-  <div class="pinceau-repl">
-    <Splitpanes>
+  <div :key="store.resetFlip.value" class="pinceau-repl-container">
+    <TopBar v-if="props.topBar" />
+    <Splitpanes :class="['pinceau-repl', { 'has-topbar': props.topBar }]">
       <Pane>
-        <Splitpanes horizontal>
-          <Pane>
-            <EditorContainer :editor-component="editor" />
-          </Pane>
-          <Pane size="0">
-            <FilesOutputContainer />
-          </Pane>
-        </Splitpanes>
+        <EditorContainer :editor-component="editor" />
       </Pane>
       <Pane>
         <Output
@@ -121,31 +119,47 @@ defineExpose({ reload })
 css({
   '@import': 'url(\'https://fonts.googleapis.com/css2?family=Onest:wght@400;700;900&display=swap\')',
 
-  '.pinceau-repl': {
+  '.pinceau-repl-container': {
     '--bg': '$color.white',
-    '--bg-soft': '#f8f8f8',
-    '--border': '#ddd',
-    '--text-light': '#888',
+    '--bg-soft': '$color.gray.1',
+    '--border': '$color.gray.2',
+    '--text-light': '$color.gray.9',
     '--font-code': '\'JetBrains Mono\', monospace',
     '--color-branding': '$color.red.5',
     '--color-branding-dark': '$color.blue.5',
     '--header-height': '$space.12',
+
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%',
+    color: '$color.gray.9'
+  },
+
+  $dark: {
+    '.pinceau-repl-container': {
+      '--bg': '$color.gray.9',
+      '--bg-soft': '$color.gray.9',
+      '--border': '$color.gray.8',
+      '--text-light': '$color.gray.1',
+      '--color-branding': '$color.red.6',
+      '--color-branding-dark': '$color.blue.6',
+      color: '$color.gray.1'
+    },
+  },
+
+  '.pinceau-repl': {
     'height': '100%',
     'margin': '0',
     'overflow': 'hidden',
     'fontSize': '12px',
     'fontFamily': '\'Onest\', sans-serif',
     'backgroundColor': 'var(--bg-soft)',
+    '&.has-topbar': {
+      'height': 'calc(100% - var(--header-height))',
+    },
   },
 
-  '.dark .pinceau-repl': {
-    '--bg': '$color.black',
-    '--bg-soft': '#242424',
-    '--border': '#383838',
-    '--text-light': '#aaa',
-    '--color-branding': '$color.red.6',
-    '--color-branding-dark': '$color.blue.6',
-  },
+  
 
   ':deep(button)': {
     border: 'none',

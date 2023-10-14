@@ -1,8 +1,7 @@
 import * as worker from 'monaco-editor-core/esm/vs/editor/editor.worker'
+import * as typescriptService from 'volar-service-typescript'
 import type * as monaco from 'monaco-editor-core'
-import {
-  decorateServiceEnvironment,
-} from '@volar/cdn'
+import { decorateServiceEnvironment } from '@volar/cdn'
 import type { VueCompilerOptions } from '@vue/language-service'
 import { resolveConfig } from '@vue/language-service'
 import {
@@ -16,6 +15,7 @@ import {
 } from './cdn'
 import type { WorkerHost, WorkerMessage } from './env'
 import { svelteLanguage } from './languages/svelte'
+import { typescriptLanguage } from './languages/typescript'
 
 export interface CreateData {
   language?: 'vue' | 'svelte' | 'react' | 'typescript'
@@ -78,6 +78,7 @@ self.onmessage = async (msg: MessageEvent<WorkerMessage>) => {
         'vue/toggleVBind': () => ({}),
         'vue/visualizeHiddenCallbackParam': () => ({}),
         'vue/twoslash-queries': () => ({}),
+        'typescript': typescriptService.default()
       }
 
       const serviceConfig = resolveConfig(
@@ -86,7 +87,6 @@ self.onmessage = async (msg: MessageEvent<WorkerMessage>) => {
             'pug': () => ({}),
             'emmet': () => ({}),
             'pug-beautify': () => ({}),
-            ...(language === 'vue' ? {} : noopVue),
           },
         },
         compilerOptions,
@@ -94,9 +94,14 @@ self.onmessage = async (msg: MessageEvent<WorkerMessage>) => {
         ts as any,
       )
 
+      console.log(language)
+
       if (language === 'svelte') {
         // @ts-ignore
         serviceConfig.languages[0] = svelteLanguage
+      } else if (language !== 'vue') {
+        // @ts-ignore
+        serviceConfig.languages[0] = typescriptLanguage
       }
 
       return createLanguageService(

@@ -1,5 +1,4 @@
 import { MagicSFC } from 'sfc-composer/svelte'
-import { compile, preprocess } from 'svelte/compiler'
 import type { File, Store } from '..'
 import { transformTS } from './typescript'
 
@@ -7,7 +6,7 @@ export async function compileSvelteFile(
   store: Store,
   { filename, code, compiled }: File,
 ) {
-  const sfc = new MagicSFC(code, { parser: preprocess })
+  const sfc = new MagicSFC(code, { parser: store.transformer.compiler.preprocess })
 
   await sfc.parse()
 
@@ -29,13 +28,13 @@ export async function compileSvelteFile(
   // eslint-disable-next-line node/prefer-global/process
   process.cwd = () => 'src/'
 
-  const result = compile(sfc.toString(), {
+  const result = store.transformer.compiler.compile(sfc.toString(), {
     filename,
     discloseVersion: false,
     dev: true,
   })
 
-  const resultSsr = compile(sfc.toString(), {
+  const resultSsr = store.transformer.compiler.compile(sfc.toString(), {
     filename,
     generate: 'ssr',
     discloseVersion: false,

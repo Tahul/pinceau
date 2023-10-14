@@ -1,5 +1,5 @@
-import { nextTick, reactive, watch, watchEffect } from 'vue'
-import type { Ref } from 'vue'
+import { reactive, watch, watchEffect, ref, nextTick } from 'vue'
+import type { Ref, WatchStopHandle } from 'vue'
 import type { editor } from 'monaco-editor-core'
 import { atou, utoa } from '../utils'
 import type { OutputModes } from '../components/output/types'
@@ -59,8 +59,6 @@ export interface StoreState {
   errors: (string | Error)[]
   typescriptVersion: string
   locale?: string | undefined
-  // used to force reset the sandbox
-  resetFlip: number
   /** \{ dependencyName: version \} */
   dependencyVersion?: Record<string, string>
 }
@@ -68,6 +66,9 @@ export interface StoreState {
 export interface Store {
   state: StoreState
   transformer: ReplTransformer
+  editor: typeof editor | undefined
+  effects: WatchStopHandle[]
+  resetFlip: Ref<number>
   init: () => void
   setActive: (filename: string) => void
   addFile: (filename: string | File) => void
@@ -89,7 +90,10 @@ export interface StoreOptions {
   outputMode?: OutputModes | string
 }
 
-export interface ReplTransformer {
+export interface ReplTransformer<
+  CompilerType = any,
+  CompilerOptions = any,
+> {
   name: string
   store: ReplStore
   defaultVersion: string
@@ -99,9 +103,9 @@ export interface ReplTransformer {
   tsconfig: any
   shims: Record<string, File>
   getTypescriptDependencies: (version?: string) => Record<string, string>
-  options: any
-  compiler: any
-  pendingCompiler: Promise<any> | null
+  compilerOptions: CompilerOptions
+  compiler: CompilerType
+  pendingCompiler: Promise<CompilerType> | null
   imports: { [key: string]: string | ((version: string) => string) }
   setVersion: (version: string) => Promise<void>
   resetVersion: () => void
@@ -119,11 +123,13 @@ export interface ReplTransformer {
 
 export class ReplStore implements Store {
   state: StoreState
+  effects: WatchStopHandle[] = []
   transformer: ReplTransformer
   initialShowOutput: boolean
   initialOutputMode: OutputModes
   reloadLanguageTools: undefined | ((lang?: keyof typeof supportedTransformers) => void)
-  editor: editor.IStandaloneCodeEditor | undefined = undefined
+  editor: typeof editor | undefined = undefined
+  resetFlip: Ref<number> = ref(0)
 
   constructor({
     transformer,
@@ -131,19 +137,20 @@ export class ReplStore implements Store {
     showOutput = false,
     outputMode = 'preview',
   }: StoreOptions = {}) {
+    let serializedFiles: { [key: string]: string } | undefined = undefined
+    if (serializedState) {
+      const { files, transformer: serializedTransformer } = JSON.parse(atou(serializedState))
+      if (files) { serializedFiles = files }
+      if (serializedTransformer) { transformer = serializedTransformer }
+    }
+
     if (transformer) { this.transformer = new supportedTransformers[transformer]({ store: this }) }
     else { throw new Error('You must provide a transformer for the Repl to boot properly.') }
 
     const files: StoreState['files'] = {}
 
-    // Restore serialized session or default session from transformer
-    if (serializedState) {
-      const saved = JSON.parse(atou(serializedState))
-      for (const filename in saved) { setFile(files, filename, saved[filename]) }
-    }
-    else {
-      setFile(files, this.transformer.defaultMainFile, this.transformer.welcomeCode)
-    }
+    if (serializedFiles) { for (const filename in serializedFiles) { setFile(files, filename, serializedFiles[filename]) } }
+    else { setFile(files, this.transformer.defaultMainFile, this.transformer.welcomeCode) }
 
     this.initialShowOutput = showOutput
     this.initialOutputMode = outputMode as OutputModes
@@ -167,48 +174,45 @@ export class ReplStore implements Store {
 
   async reset({
     transformer,
-    serializedState = '',
     showOutput = false,
     outputMode = 'preview',
   }: StoreOptions) {
     if (transformer) { this.transformer = new supportedTransformers[transformer]({ store: this }) }
     else { throw new Error('You must provide a transformer for the Repl to boot properly.') }
 
-    await nextTick(() => {
-      const files: StoreState['files'] = {}
+    this.effects.forEach(cancel => cancel())
 
-      serializedState = ''
+    const files: StoreState['files'] = {}
 
-      // Restore serialized session or default session from transformer
-      if (serializedState) {
-        const saved = JSON.parse(atou(serializedState))
-        for (const filename in saved) { setFile(files, filename, saved[filename]) }
-      }
-      else {
-        setFile(files, this.transformer.defaultMainFile, this.transformer.welcomeCode)
-      }
+    setFile(files, this.transformer.defaultMainFile, this.transformer.welcomeCode)
 
-      this.initialShowOutput = showOutput
-      this.initialOutputMode = outputMode as OutputModes
+    this.initialShowOutput = showOutput
+    this.initialOutputMode = outputMode as OutputModes
 
-      // Set main file
-      let mainFile = this.transformer?.defaultMainFile
-      if (!files[mainFile]) { mainFile = Object.keys(files)[0] }
+    // Set main file
+    let mainFile = this.transformer?.defaultMainFile
+    if (!files[mainFile]) { mainFile = Object.keys(files)[0] }
 
-      this.state = reactive({
-        mainFile,
-        files,
-        activeFile: files[mainFile],
-        errors: [],
-        typescriptVersion: 'latest',
-        resetFlip: 0,
-      })
+    const newState = {
+      mainFile,
+      files,
+      activeFile: files[mainFile],
+      errors: [],
+      typescriptVersion: 'latest',
+    }
 
-      this.initImportMap(true)
-      this.initTsConfig(true)
-      this.forceSandboxReset()
-      this.reloadLanguageTools?.(transformer)
-      this.init()
+    for (const key in newState) {
+      this.state[key] = newState[key]
+    }
+
+    this.initImportMap(true)
+    this.initTsConfig(true)
+    this.reloadLanguageTools?.(transformer)
+    this.init()
+    this.forceSandboxReset()
+
+    nextTick(() => {
+      window?.location?.reload()
     })
 
     return this
@@ -216,13 +220,13 @@ export class ReplStore implements Store {
 
   // Don't start compiling until the options are set
   init() {
-    watchEffect(() =>
+    const stopCompilerEffect = watchEffect(() =>
       this.transformer.compileFile(this.state.activeFile).then(
         errs => (this.state.errors = errs),
       ),
     )
 
-    watch(
+    const stopLanguageToolsEffect = watch(
       () => [
         this.state.files[tsconfigFile]?.code,
         this.state.typescriptVersion,
@@ -241,6 +245,8 @@ export class ReplStore implements Store {
         )
       }
     }
+
+    this.effects = [stopCompilerEffect, stopLanguageToolsEffect]
   }
 
   initTsConfig(reset: boolean = false) {
@@ -264,6 +270,7 @@ export class ReplStore implements Store {
   }
 
   setActive(filename: string) {
+    if (!this.state.files[filename]) { return }
     this.state.activeFile = this.state.files[filename]
   }
 
@@ -321,6 +328,7 @@ export class ReplStore implements Store {
   serialize() {
     const files = this.getFiles()
     const importMap = files[importMapFile]
+
     if (importMap) {
       const defaultImports = this.transformer.getDefaultImports()
 
@@ -333,7 +341,8 @@ export class ReplStore implements Store {
       if (!Object.keys(imports).length) { delete files[importMapFile] }
       else { files[importMapFile] = JSON.stringify({ imports }, null, 2) }
     }
-    return `#${utoa(JSON.stringify(files))}`
+
+    return `#${utoa(JSON.stringify({ files, transformer: this?.transformer?.name || 'vue' }))}`
   }
 
   getFiles() {
@@ -368,7 +377,7 @@ export class ReplStore implements Store {
   }
 
   forceSandboxReset() {
-    this.state.resetFlip = this.state.resetFlip++
+    this.resetFlip.value = this.resetFlip.value + 1
   }
 
   initImportMap(reset: boolean = false) {
@@ -441,8 +450,8 @@ function setFile(
   // for cleaner Volar path completion when using Monaco editor
   const normalized
     = filename !== importMapFile
-    && filename !== tsconfigFile
-    && !filename.startsWith('src/')
+      && filename !== tsconfigFile
+      && !filename.startsWith('src/')
       ? `src/${filename}`
       : filename
   files[normalized] = new File(normalized, content)

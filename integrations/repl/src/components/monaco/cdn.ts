@@ -292,5 +292,11 @@ export function getPackageName(path: string) {
     }
     pkgName += `/${parts[2]}`
   }
+
+  // hardcode known broken package names
+  if (pkgName === 'estree') {
+    return 'estree-walker'
+  }
+  
   return pkgName
 }
