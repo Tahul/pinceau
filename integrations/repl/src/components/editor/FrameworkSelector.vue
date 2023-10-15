@@ -1,14 +1,12 @@
-<template>
-  <div>
-  </div>
-</template>
-
 <script lang="ts" setup>
-import Logo from '../Logo.vue'
 </script>
+
+<template>
+  <div />
+</template>
 
 <style lang="ts">
 styled({
-  
+
 })
 </style>

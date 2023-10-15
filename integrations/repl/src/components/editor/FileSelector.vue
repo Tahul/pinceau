@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Ref, VNode } from 'vue'
+import type { VNode } from 'vue'
 import { computed, inject, ref } from 'vue'
 import type { Store } from '../../store'
 import { importMapFile, stripSrcPrefix, tsconfigFile } from '../../store'

@@ -2,7 +2,6 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
     "baseUrl": "./",
-    "types": ["../../packages/palette/output/pinceau.d.ts"],
     "paths": {
       "$pinceau/types": ["../../packages/palette/output/pinceau.d.ts"],
       "$pinceau/theme": ["../../packages/palette/output/theme.ts"],
@@ -12,6 +11,7 @@
       "$pinceau/react-plugin": ["../../packages/palette/output/react-plugin.js"],
       "$pinceau/svelte-plugin": ["../../packages/palette/output/svelte-plugin.js"],
       "$pinceau/vue-plugin": ["../../packages/palette/output/vue-plugin.js"]
-    }
+    },
+    "types": ["../../packages/palette/output/pinceau.d.ts"]
   }
 }

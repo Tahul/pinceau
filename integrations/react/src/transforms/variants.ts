@@ -1,5 +1,3 @@
-import type { PinceauTransformContext } from '@pinceau/core'
-import { getCharAfterLastImport, parseAst } from '@pinceau/core/utils'
 import type { Variants } from '@pinceau/style'
 
 export interface PropOptions {

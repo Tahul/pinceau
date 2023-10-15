@@ -4,7 +4,6 @@ import Message from '../Message.vue'
 import { debounce } from '../../utils'
 import type { Store } from '../../store'
 import FileSelector from './FileSelector.vue'
-import Toolbar from './Toolbar.vue'
 import type { EditorComponentType } from './types'
 
 const props = defineProps<{
@@ -32,7 +31,6 @@ function getItem() {
 watch(showMessage, () => {
   setItem()
 })
-
 </script>
 
 <template>

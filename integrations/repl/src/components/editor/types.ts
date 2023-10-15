@@ -1,4 +1,4 @@
-import { type FunctionalComponent } from 'vue'
+import type { FunctionalComponent } from 'vue'
 
 export type PreviewMode = 'js' | 'css' | 'ssr'
 

@@ -2,6 +2,14 @@
   "name": "@pinceau/repl",
   "type": "module",
   "version": "1.0.0-beta.3",
+  "homepage": "https://github.com/Tahul/pinceau#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tahul/pinceau.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Tahul/pinceau/issues"
+  },
   "description": "Pinceau component for editing Pinceau components.",
   "exports": {
     ".": {

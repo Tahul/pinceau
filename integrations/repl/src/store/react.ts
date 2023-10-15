@@ -76,8 +76,8 @@ declare global {
     store?.editor?.getModels().forEach((model) => {
       if (
         (
-          model.uri.path.includes('/npm/vue') ||
-          model.uri.path.includes('/npm/@vue')
+          model.uri.path.includes('/npm/vue')
+          || model.uri.path.includes('/npm/@vue')
         )
         && !model.isDisposed()
       ) {

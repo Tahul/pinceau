@@ -9,6 +9,10 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
+    "types": [
+      "vite/client",
+      "vitest/importMeta"
+    ],
     "allowImportingTsExtensions": true,
     "strict": true,
     "noFallthroughCasesInSwitch": true,
@@ -18,16 +22,12 @@
     "noEmit": true,
     "esModuleInterop": true,
     "isolatedModules": true,
-    "skipLibCheck": true,
-    "types": [
-      "vite/client",
-      "vitest/importMeta"
-    ]
+    "skipLibCheck": true
   },
   "references": [{ "path": "./tsconfig.node.json" }],
   "exclude": ["dist", "node_modules"],
   "vueCompilerOptions": {
     "plugins": ["@pinceau/volar"]
-  },
-  
+  }
+
 }

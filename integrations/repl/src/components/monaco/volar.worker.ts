@@ -78,7 +78,7 @@ self.onmessage = async (msg: MessageEvent<WorkerMessage>) => {
         'vue/toggleVBind': () => ({}),
         'vue/visualizeHiddenCallbackParam': () => ({}),
         'vue/twoslash-queries': () => ({}),
-        'typescript': typescriptService.default()
+        'typescript': typescriptService.default(),
       }
 
       const serviceConfig = resolveConfig(
@@ -97,7 +97,8 @@ self.onmessage = async (msg: MessageEvent<WorkerMessage>) => {
       if (language === 'svelte') {
         // @ts-ignore
         serviceConfig.languages[0] = svelteLanguage
-      } else if (language !== 'vue') {
+      }
+      else if (language !== 'vue') {
         // @ts-ignore
         serviceConfig.languages[0] = typescriptLanguage
       }

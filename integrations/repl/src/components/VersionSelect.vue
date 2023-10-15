@@ -2,14 +2,14 @@
 import { onMounted, ref } from 'vue'
 import Dropdown from './Dropdown.vue'
 
-const versions = ref<{ value: string; title: string; }[]>()
-
-const version = defineModel<string>()
 const props = defineProps<{
   pkg: string
   label: string
 }>()
 
+const versions = ref<{ value: string; title: string }[]>()
+
+const version = defineModel<string>()
 async function fetchVersions(): Promise<string[]> {
   const res = await fetch(`https://data.jsdelivr.com/v1/package/npm/${props.pkg}`)
   const { versions } = (await res.json()) as { versions: string[] }
@@ -24,7 +24,8 @@ async function fetchVersions(): Promise<string[]> {
         if (isInPreRelease) {
           filteredVersions.push(v)
         }
-      } else {
+      }
+      else {
         filteredVersions.push(v)
         isInPreRelease = false
       }
@@ -33,11 +34,14 @@ async function fetchVersions(): Promise<string[]> {
       }
     }
     return filteredVersions
-  } else if (props.pkg === 'typescript') {
+  }
+  else if (props.pkg === 'typescript') {
     return ['latest', ...versions.filter(v => !v.includes('dev') && !v.includes('insiders'))]
-  } else if (props.pkg === 'react') {
+  }
+  else if (props.pkg === 'react') {
     return versions.filter(v => !v.includes('experimental') && !v.includes('canary') && !v.includes('next') && !v.includes('beta') && !v.includes('alpha') && !v.includes('0.0.0'))
-  } else if (props.pkg === 'pinceau') {
+  }
+  else if (props.pkg === 'pinceau') {
     return ['latest', ...versions]
   }
   return versions
@@ -48,7 +52,7 @@ onMounted(() => {
     versions.value = fetchedVersions.map((v) => {
       return {
         title: v,
-        value: v
+        value: v,
       }
     })
   })
@@ -57,6 +61,6 @@ onMounted(() => {
 
 <template>
   <div class="version" @click.stop>
-    <Dropdown @update:model-value="(v) => $emit('update:modelValue', v)" :model-value="version" :options="versions"  />
+    <Dropdown :model-value="version" :options="versions" @update:model-value="(v) => $emit('update:modelValue', v)" />
   </div>
 </template>

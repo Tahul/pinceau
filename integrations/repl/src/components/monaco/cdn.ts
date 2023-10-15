@@ -297,6 +297,6 @@ export function getPackageName(path: string) {
   if (pkgName === 'estree') {
     return 'estree-walker'
   }
-  
+
   return pkgName
 }

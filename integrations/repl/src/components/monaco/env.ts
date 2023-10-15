@@ -115,7 +115,6 @@ export async function reloadLanguageTools(store: Store, lang?: 'vue' | 'svelte' 
     return Uri.parse(`file:///${filename}`)
   })
 
-
   const { dispose: disposeMarkers } = volar.editor.activateMarkers(
     worker,
     languageId,

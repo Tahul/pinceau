@@ -3,11 +3,15 @@
   "name": "@pinceau/vscode",
   "displayName": "Pinceau",
   "version": "1.0.0-beta.3",
-  "description": "IntelliSense integration for Pinceau features.",
+  "homepage": "https://github.com/Tahul/pinceau#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Tahul/pinceau-vscode.git"
+    "url": "git+https://github.com/Tahul/pinceau.git"
   },
+  "bugs": {
+    "url": "https://github.com/Tahul/pinceau/issues"
+  },
+  "description": "IntelliSense integration for Pinceau features.",
   "keywords": [
     "pinceau",
     "vscode-ext",

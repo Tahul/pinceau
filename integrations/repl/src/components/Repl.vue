@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Pane, Splitpanes } from 'splitpanes'
 import 'splitpanes/dist/splitpanes.css'
-import { provide, ref, toRef, watch } from 'vue'
+import { provide, ref, toRef } from 'vue'
 import type { Store } from '../store'
 import { ReplStore } from '../store'
 import Output from './output/Output.vue'
@@ -99,7 +99,7 @@ defineExpose({ reload })
 <template>
   <div :key="store.resetFlip.value" class="pinceau-repl-container">
     <TopBar v-if="props.topBar" />
-    <Splitpanes :class="['pinceau-repl', { 'has-topbar': props.topBar }]">
+    <Splitpanes class="pinceau-repl" :class="[{ 'has-topbar': props.topBar }]">
       <Pane>
         <EditorContainer :editor-component="editor" />
       </Pane>
@@ -129,13 +129,13 @@ css({
     '--color-branding-dark': '$color.blue.5',
     '--header-height': '$space.12',
 
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100%',
-    color: '$color.gray.9'
+    'display': 'flex',
+    'flexDirection': 'column',
+    'height': '100%',
+    'color': '$color.gray.9',
   },
 
-  $dark: {
+  '$dark': {
     '.pinceau-repl-container': {
       '--bg': '$color.gray.9',
       '--bg-soft': '$color.gray.9',
@@ -143,7 +143,7 @@ css({
       '--text-light': '$color.gray.1',
       '--color-branding': '$color.red.6',
       '--color-branding-dark': '$color.blue.6',
-      color: '$color.gray.1'
+      'color': '$color.gray.1',
     },
   },
 
@@ -155,11 +155,9 @@ css({
     'fontFamily': '\'Onest\', sans-serif',
     'backgroundColor': 'var(--bg-soft)',
     '&.has-topbar': {
-      'height': 'calc(100% - var(--header-height))',
+      height: 'calc(100% - var(--header-height))',
     },
   },
-
-  
 
   ':deep(button)': {
     border: 'none',

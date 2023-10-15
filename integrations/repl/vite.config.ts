@@ -56,8 +56,8 @@ export default defineConfig({
     }) as any,
     vue({
       script: {
-        defineModel: true
-      }
+        defineModel: true,
+      },
     }),
   ],
   optimizeDeps: {

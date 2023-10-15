@@ -1,4 +1,4 @@
-import { reactive, watch, watchEffect, ref, nextTick } from 'vue'
+import { nextTick, reactive, ref, watch, watchEffect } from 'vue'
 import type { Ref, WatchStopHandle } from 'vue'
 import type { editor } from 'monaco-editor-core'
 import { atou, utoa } from '../utils'
@@ -137,7 +137,7 @@ export class ReplStore implements Store {
     showOutput = false,
     outputMode = 'preview',
   }: StoreOptions = {}) {
-    let serializedFiles: { [key: string]: string } | undefined = undefined
+    let serializedFiles: { [key: string]: string } | undefined
     if (serializedState) {
       const { files, transformer: serializedTransformer } = JSON.parse(atou(serializedState))
       if (files) { serializedFiles = files }

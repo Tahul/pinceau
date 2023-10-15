@@ -1,6 +1,6 @@
 import type { CSSProperties, PseudosProperties } from './properties'
 import type { ComputedStyleDefinition } from './computed-styles'
-import type { Variants, VariantsProps } from './variants'
+import type { Variants } from './variants'
 import type { PinceauUtils } from '$pinceau/utils'
 import type { PinceauMediaQueries } from '$pinceau/theme'
 

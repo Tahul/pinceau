@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, shallowRef, watchEffect, onMounted } from 'vue'
+import { onMounted, ref, shallowRef, watchEffect } from 'vue'
 import { Repl, ReplStore } from '../src'
 import MonacoEditor from '../src/components/editor/MonacoEditor.vue'
 
