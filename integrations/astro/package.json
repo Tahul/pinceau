@@ -2,7 +2,7 @@
   "name": "@pinceau/astro",
   "type": "module",
   "private": true,
-  "version": "1.0.0-beta.5",
+  "version": "1.0.0-beta.6",
   "homepage": "https://github.com/Tahul/pinceau#readme",
   "repository": {
     "type": "git",
