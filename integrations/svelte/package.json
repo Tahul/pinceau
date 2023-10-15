@@ -1,7 +1,7 @@
 {
   "name": "@pinceau/svelte",
   "type": "module",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0-beta.2",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -38,10 +38,12 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@pinceau/configs": "workspace:*",
     "@pinceau/integration": "workspace:*",
-    "@sveltejs/vite-plugin-svelte": "^2.4.6",
     "acorn": "^8.10.0",
     "ultrahtml": "npm:@pinceau/ultrahtml@1.5.2"
+  },
+  "devDependencies": {
+    "@pinceau/configs": "workspace:*",
+    "@sveltejs/vite-plugin-svelte": "^2.4.6"
   }
 }
