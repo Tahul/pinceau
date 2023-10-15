@@ -35,9 +35,9 @@
   "scripts": {
     "dev": "vite --port 3000",
     "start": "vite preview --port 3000",
-    "build:repl": "vite build",
-    "build:repl-types": "vue-tsc -p tsconfig.build.json && api-extractor run -c api-extractor.json && node scripts/cleanup.js",
-    "build:repl-preview": "vite build -c vite.preview.config.ts",
+    "build:playground": "vite build",
+    "build:playground-types": "vue-tsc -p tsconfig.build.json && api-extractor run -c api-extractor.json && node scripts/cleanup.js",
+    "build:playground-preview": "vite build -c vite.preview.config.ts",
     "prepublishOnly": "npm run build && npm run build-types",
     "clean": "rm -rf dist"
   },
