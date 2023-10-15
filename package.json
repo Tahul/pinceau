@@ -1,7 +1,7 @@
 {
   "name": "@pinceau/monorepo",
   "type": "module",
-  "version": "1.0.0",
+  "version": "1.0.0-beta.1",
   "private": true,
   "packageManager": "pnpm@8.9.0",
   "description": "Make your <script> lighter and your <style> smarter.",
@@ -61,7 +61,8 @@
     "test": "pnpm -r --filter=\"./tests\" run test",
     "test:run": "pnpm -r --filter=\"./tests\" run test",
     "test:ui": "pnpm -r --filter=\"./tests\" run test:ui",
-    "test:fixtures": "pnpm -r --filter=\"./tests\" run test:fixtures"
+    "test:fixtures": "pnpm -r --filter=\"./tests\" run test:fixtures",
+    "release": "bumpp -r"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^1.0.0-beta.27",
