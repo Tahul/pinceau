@@ -1,7 +1,7 @@
 {
   "name": "@pinceau/runtime",
   "type": "module",
-  "version": "1.0.0-beta.3",
+  "version": "1.0.0-beta.4",
   "homepage": "https://github.com/Tahul/pinceau#readme",
   "repository": {
     "type": "git",
