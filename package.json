@@ -88,7 +88,8 @@
     "unenv": "^1.7.4",
     "vite-plugin-inspect": "^0.7.40",
     "turbo": "^1.10.15",
-    "changelogithub": "^0.13.1"
+    "changelogithub": "^0.13.1",
+    "bumpp": "^9.2.0"
   },
   "pnpm": {
     "peerDependencyRules": {
