@@ -4,6 +4,7 @@ import type { ResolvedConfig } from 'vite'
 import type { PinceauConfigContext, ThemeGenerationOutput, ThemeLoadingOutput } from '../types'
 import { loadLayers } from './config-layers'
 import { generateTheme } from './generate'
+import { createThemeHelper } from './theme-helper'
 
 /**
  * Retrieves previously injected PinceauConfigContext inside ViteDevServer to reuse context across plugins.
@@ -19,6 +20,8 @@ export function getPinceauConfigContext(config: ResolvedConfig): PinceauConfigCo
 export function usePinceauConfigContext(ctx: PinceauContext): PinceauConfigContext {
   let config: ThemeLoadingOutput
   let ready: Promise<any>
+
+  ctx.setThemeFunction(createThemeHelper)
 
   /**
    * Fully reloads the configuration context.

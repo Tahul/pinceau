@@ -212,8 +212,8 @@ export function usePinceauContext(userOptions?: PinceauUserOptions): PinceauCont
       return themeFunction(
         theme,
         {
-          cb(_ctx) {
-            // if (!ctx?.token) { console.log('token not found!', ctx.query) }
+          cb(ctx) {
+            if (!ctx?.token) { console.log('token not found!', ctx.query) }
           },
         },
       )
