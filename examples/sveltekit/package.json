@@ -1,9 +1,9 @@
 {
-  "name": "pinceau-sveltekit",
+  "name": "@pinceau/sveltekit-example",
   "type": "module",
   "scripts": {
     "dev": "vite dev --port=3000",
-    "build": "vite build",
+    "build:example": "vite build",
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"

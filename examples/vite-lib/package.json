@@ -1,9 +1,9 @@
 {
-  "name": "vite-lib",
+  "name": "@pinceau/vite-lib-example",
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "vite build",
+    "build:example": "vite build",
     "dev": "vite --port=3000",
     "preview": "vite preview"
   },

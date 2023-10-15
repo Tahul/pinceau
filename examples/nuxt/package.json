@@ -1,8 +1,8 @@
 {
-  "name": "pinceau-nuxt",
+  "name": "@pinceau/nuxt-example",
   "private": true,
   "scripts": {
-    "build": "nuxi build",
+    "build:example": "nuxi build",
     "dev": "nuxi dev --port=3000",
     "preview": "nuxi preview"
   },

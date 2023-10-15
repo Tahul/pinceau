@@ -3,7 +3,7 @@
   "type": "module",
   "version": "1.0.0",
   "private": true,
-  "packageManager": "pnpm@8.6.0",
+  "packageManager": "pnpm@8.9.0",
   "description": "Make your <script> lighter and your <style> smarter.",
   "workspaces": [
     "docs",
@@ -30,7 +30,7 @@
     "vite"
   ],
   "scripts": {
-    "build": "pnpm -r --filter=\"./(packages|integrations)/*\" run build && pnpm -r run build:post",
+    "build": "turbo run build",
     "build:docs": "pnpm -r --filter=\"./docs\" run build",
     "build:vscode": "pnpm -r --filter=\"./integrations/(language-server|vscode)\" run build",
     "clean:snapshots": "rm -rf ./tests/__snapshots__",
@@ -82,7 +82,9 @@
     "typescript": "^5.2.2",
     "unbuild": "^2.0.0",
     "unenv": "^1.7.4",
-    "vite-plugin-inspect": "^0.7.40"
+    "vite-plugin-inspect": "^0.7.40",
+    "turbo": "^1.10.15",
+    "changelogithub": "^0.13.1"
   },
   "pnpm": {
     "peerDependencyRules": {

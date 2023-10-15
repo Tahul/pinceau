@@ -1,10 +1,11 @@
 {
-  "name": "vite-pinceau-svelte",
+  "name": "@pinceau/vite-svelte-example",
+  "private": true,
   "type": "module",
   "version": "0.0.0",
   "scripts": {
     "dev": "vite --port=3000",
-    "build": "vite build",
+    "build:example": "vite build",
     "serve": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json"
   },

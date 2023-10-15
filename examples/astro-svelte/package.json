@@ -1,10 +1,10 @@
 {
-  "name": "pinceau-astro-vue",
+  "name": "@pinceau/astro-svelte-example",
   "private": true,
   "scripts": {
     "dev": "astro dev --port=3000",
     "start": "astro dev --port=3000",
-    "build": "astro build",
+    "build:example": "astro build",
     "preview": "astro preview",
     "astro": "astro"
   },

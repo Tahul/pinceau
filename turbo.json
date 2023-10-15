@@ -5,16 +5,6 @@
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
     },
-    "dev": {
-      "cache": false
-    },
-    "test": {
-      "dependsOn": ["build"],
-      "inputs": ["src/**/*.ts", "testFixture/**"]
-    },
-    "lint": {
-      "outputs": []
-    },
     "package": {
       "outputs": []
     },
