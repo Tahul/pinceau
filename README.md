@@ -2,68 +2,89 @@
 
 # Pinceau
 
-[![NPM version](https://img.shields.io/npm/v/pinceau?color=a1b858&label=)](https://www.npmjs.com/package/pinceau)
+[![NPM version](https://img.shields.io/npm/v/pinceau?color=a1b858&label=)](https://www.npmjs.com/package/@pinceau/core)
 
 > Make your `<script>` lighter and your `<style>` smarter.
 
 [🎨 play.pinceau.dev](https://play.pinceau.dev) • [🧑‍🎨 Documentation](https://pinceau.dev)
 
-- Ships **0kb** of JavaScript to the client
-- [Design tokens](https://github.com/design-tokens/community-group) compatible configuration
-- **Fully-typed** styling API
-- **Opt-in** runtime engine
-- Developer Experience that feels like a native [Vue](https://vuejs.org) feature
-- Plug & play with [Nuxt 3](https://v3.nuxtjs.org) and [Vite](https://vitejs.org)
-- Ready for [Nuxt Studio](https://nuxt.studio)
-- [Pinceau VSCode extension](https://marketplace.visualstudio.com/items?itemName=yaelguilloux.pinceau-vscode) for **DX Sugar**
+- 🪄 Fully-typed styling API inspired from the tools you already [_love_](https://stitches.dev)
+
+- 🎨 [Design tokens](https://github.com/design-tokens/community-group) compatible configuration
+
+- 🧑‍🔬 Smart hybrid output engine that uses [static CSS](https://developer.mozilla.org/en-US/docs/Web/CSS) or [CSSOM](https://developer.mozilla.org/en-US/docs/Web/API/CSS_Object_Model) when you need it
+
+- ⚡ [Vite](https://vitejs.dev)-native, plug & play support for any Vite-based framework:
+  - [Vue](./integrations/vue), [React](./integrations/vue), [Svelte](./integrations/vue), [Nuxt](./integrations/nuxt), [Astro](./integrations/astro)
+  - 🧑‍🔬 Planned support for: [Qwik](https://qwik.builder.io), [SolidJS](https://www.solidjs.com), [Preact](https://preactjs.com), [Lit](https://lit.dev), [_yours ?_](https://github.com/Tahul/pinceau/issues)
+
+- 🍦 [Pinceau VSCode extension](https://marketplace.visualstudio.com/items?itemName=yaelguilloux.pinceau-vscode) for **DX Sugar**
 
 ## ⚙️ Install
 
 ```bash
-npm i pinceau
+npm i @pinceau/vue
 ```
 
 <details>
-<summary>Nuxt</summary><br>
-
-```ts
-// nuxt.config.js
-export default defineNuxtConfig({
-  modules: [
-    'pinceau/nuxt',
-  ],
-  pinceau: {
-    ...PinceauOptions
-  }
-})
-```
-
-Example: [`playground/`](./playground/nuxt.config.ts)
-
-> This module only works with [Nuxt 3](https://v3.nuxtjs.org).
-
-</details>
-
-<details>
-<summary>Vite</summary><br>
+<summary>Vue</summary><br>
 
 ```ts
 // vite.config.ts
-import Pinceau from 'pinceau/vite'
+import Pinceau from '@pinceau/vue/plugin'
 
 export default defineConfig({
   plugins: [
-    Pinceau(PinceauOptions),
+    Pinceau(),
+    ...yourPlugins
   ],
 })
 ```
 
-Example: [`playground/_vite.config.ts`](./playground/_vite.config.ts)
+Example: [`examples/vite-vue/vite.config.ts`](./examples/vite-vue/vite.config.ts)
 
 </details>
 
 <details>
-<summary>Create your theme</summary><br>
+<summary>Svelte</summary><br>
+
+```ts
+// vite.config.ts
+import Pinceau from '@pinceau/svelte/plugin'
+
+export default defineConfig({
+  plugins: [
+    Pinceau(),
+    ...yourPlugins
+  ],
+})
+```
+
+Example: [`examples/vite-svelte/vite.config.ts`](./examples/vite-svelte/vite.config.ts)
+
+</details>
+
+<details>
+<summary>React</summary><br>
+
+```ts
+// vite.config.ts
+import Pinceau from '@pinceau/react/plugin'
+
+export default defineConfig({
+  plugins: [
+    Pinceau(),
+    ...yourPlugins
+  ],
+})
+```
+
+Example: [`examples/vite-react/vite.config.ts`](./examples/vite-react/vite.config.ts)
+
+</details>
+
+<details>
+<summary>Use our theme or create yours</summary><br>
 
 ```ts
 // theme.config.ts
@@ -114,19 +135,9 @@ Example: [`playground/theme/theme.config.ts`](./playground/theme/theme.config.ts
 
 </details>
 
-Learn more about Pinceau in the [documentation](https://pinceau.dev/get-started/what-is-pinceau)].
+Learn more on the [documentation](https://pinceau.dev/get-started/what-is-pinceau).
 
 ## 💖 Credits
-
-Thanks to these amazing people that helped me along the way:
-
-- [Sébastien Chopin](https://github.com/Atinux)
-- [NuxtLabs](https://github.com/nuxtlabs)
-- [Daniel Roe](https://github.com/danielroe)
-- [Anthony Fu](https://github.com/antfu)
-- [Johnson Chu](https://github.com/johnsoncodehk)
-- [@patak](https://github.com/patak-dev)
-- [Serhii Bedrytskyi](https://github.com/bdrtsky)
 
 This package takes a lot of inspiration from these amazing projects:
 
