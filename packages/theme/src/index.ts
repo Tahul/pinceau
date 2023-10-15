@@ -1,9 +1,13 @@
-import type { PinceauConfigContext, PinceauThemeOptions, ThemeFunction } from './types'
+import type { PinceauConfigContext, PinceauThemeOptions, Theme, ThemeFunction } from './types'
 import type { PinceauTheme } from '$pinceau/theme'
 
 export * from './types'
 
 export { version } from '../package.json'
+
+export function defineTheme(config: Theme<PinceauTheme>) {
+  return config
+}
 
 declare module '@pinceau/core' {
   interface PinceauPluginsOptions {

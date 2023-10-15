@@ -67,7 +67,7 @@ Example: [`playground/_vite.config.ts`](./playground/_vite.config.ts)
 
 ```ts
 // theme.config.ts
-import { defineTheme } from 'pinceau'
+import { defineTheme } from '@pinceau/theme'
 
 export default defineTheme({
   // Media queries

@@ -1,4 +1,4 @@
-import { defineTheme } from 'pinceau'
+import { defineTheme } from '@pinceau/theme'
 
 export default defineTheme({
   media: {

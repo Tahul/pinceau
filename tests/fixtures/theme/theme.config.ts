@@ -1,4 +1,4 @@
-import { defineTheme } from 'pinceau'
+import { defineTheme } from '@pinceau/theme'
 import type { PropertyValue } from '@pinceau/style'
 
 export default defineTheme({

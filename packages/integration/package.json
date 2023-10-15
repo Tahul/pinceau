@@ -30,7 +30,8 @@
     "@pinceau/runtime": "workspace:*",
     "@pinceau/stringify": "workspace:*",
     "@pinceau/style": "workspace:*",
-    "@pinceau/theme": "workspace:*"
+    "@pinceau/theme": "workspace:*",
+    "pinceau": "workspace:*"
   },
   "devDependencies": {
     "@pinceau/configs": "workspace:*"
