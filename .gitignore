@@ -93,3 +93,6 @@ packages/*/dist
 
 # vite
 vite.config.ts.timestamp-*
+
+# TurboPack
+.turbo
