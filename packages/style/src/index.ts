@@ -1,15 +1,9 @@
-import type {
-  PinceauStyleFunctionContext,
-  PinceauStyleOptions,
-} from './types'
+import { PinceauPluginsOptions } from '@pinceau/core'
+import type { PinceauStyleOptions } from './types'
 
 export * from './types'
 
 declare module '@pinceau/core' {
-  interface PinceauTransformState {
-    styleFunctions?: { [key: string]: PinceauStyleFunctionContext }
-  }
-
   interface PinceauPluginsOptions {
     /**
      * Pinceau style options.

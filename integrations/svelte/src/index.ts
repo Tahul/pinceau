@@ -1,3 +1,4 @@
+import { PinceauPluginsOptions } from '@pinceau/core'
 import type { PinceauSvelteOptions } from './types'
 
 declare module '@pinceau/core' {

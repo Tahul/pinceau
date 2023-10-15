@@ -1,6 +1,7 @@
 import type MagicString from 'magic-string'
 import type { MagicBlock, MagicSFC, SourceLocation } from 'sfc-composer'
 import type { Thenable, TransformResult } from 'unplugin'
+import type { PinceauStyleFunctionContext } from '@pinceau/style'
 import type { PinceauQuery, PinceauQueryBlockType } from './query'
 import type { PinceauTransformResult, PinceauTransforms } from './transforms'
 import type { PinceauContext } from './core-context'
@@ -11,6 +12,7 @@ import type { PinceauContext } from './core-context'
  * This can be extended by plugins like @pinceau/vue or @pinceau/style.
  */
 export interface PinceauTransformState {
+  styleFunctions?: { [key: string]: PinceauStyleFunctionContext }
   [key: string]: any
 }
 

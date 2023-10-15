@@ -1,3 +1,4 @@
+import { PinceauPluginsOptions } from '@pinceau/core'
 import type { PinceauRuntimeOptions } from './types'
 
 export * from './utils'

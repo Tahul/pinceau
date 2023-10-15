@@ -1,6 +1,5 @@
+import { PinceauPluginsOptions } from '@pinceau/core'
 import type { PinceauAstroOptions } from './types'
-
-export * from './types'
 
 declare module '@pinceau/core' {
   interface PinceauPluginsOptions {
@@ -14,5 +13,7 @@ declare module '@pinceau/core' {
     astro?: PinceauAstroOptions | boolean
   }
 }
+
+export * from './types'
 
 export { version } from '../package.json'
