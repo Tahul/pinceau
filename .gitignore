@@ -22,6 +22,9 @@ coverage
 # nyc test coverage
 .nyc_output
 
+# tests
+.vscode-test
+
 # Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
 .grunt
 
@@ -70,6 +73,7 @@ typings/
 
 # Nuxt generate
 dist
+packages/*/dist
 
 # vuepress build output
 .vuepress/dist
@@ -86,3 +90,9 @@ dist
 
 # vite-plugin-inspect
 .vite-inspect
+
+# vite
+vite.config.ts.timestamp-*
+
+# TurboPack
+.turbo

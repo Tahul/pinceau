@@ -1,0 +1,4 @@
+{
+  "extends": "./.nuxt/tsconfig.json",
+  "references": [{ "path": "@pinceau/configs/tsconfig.base.json" }]
+}

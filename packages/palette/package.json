@@ -1,0 +1,39 @@
+{
+  "name": "@pinceau/palette",
+  "type": "module",
+  "version": "0.1.0",
+  "exports": {
+    ".": {
+      "types": "./theme.config.ts",
+      "import": "./theme.config.ts",
+      "require": "./theme.config.ts"
+    }
+  },
+  "main": "./theme.config.ts",
+  "module": "./theme.config.ts",
+  "types": "./theme.config.ts",
+  "files": [
+    "theme.config.ts"
+  ],
+  "scripts": {
+    "build": "vite build -c vite.config.base.ts && rm -rf dist",
+    "build:vue": "vite build -c vite.config.vue.ts && rm -rf dist",
+    "build:svelte": "vite build -c vite.config.svelte.ts && rm -rf dist",
+    "build:react": "vite build -c vite.config.react.ts && rm -rf dist",
+    "build:post": "vite build && rm -rf dist",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "@pinceau/configs": "workspace:*",
+    "@pinceau/core": "workspace:*",
+    "@pinceau/runtime": "workspace:*",
+    "@pinceau/style": "workspace:*",
+    "@pinceau/theme": "workspace:*",
+    "@pinceau/vue": "workspace:*",
+    "@pinceau/svelte": "workspace:*",
+    "@pinceau/react": "workspace:*",
+    "@pinceau/astro": "workspace:*",
+    "pinceau": "workspace:*",
+    "vite": "^4.4.11"
+  }
+}

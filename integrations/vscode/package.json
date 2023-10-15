@@ -1,0 +1,121 @@
+{
+  "publisher": "yaelguilloux",
+  "name": "@pinceau/vscode",
+  "displayName": "Pinceau",
+  "version": "0.1.0",
+  "description": "IntelliSense integration for Pinceau features.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Tahul/pinceau-vscode.git"
+  },
+  "keywords": [
+    "pinceau",
+    "vscode-ext",
+    "intellisense",
+    "design-tokens",
+    "design-hints"
+  ],
+  "categories": [
+    "Other"
+  ],
+  "main": "./dist/index.js",
+  "icon": "icon/pinceau.png",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "configuration": {
+      "title": "Pinceau",
+      "properties": {
+        "pinceau.buildDir": {
+          "type": "string",
+          "markdownDescription": "Configure glob patterns for including files and folders. Read more about glob patterns [here](https://code.visualstudio.com/docs/editor/codebasics#_advanced-search-options).",
+          "default": "/node_modules/.pinceau",
+          "scope": 3
+        },
+        "pinceau.blacklistFolders": {
+          "type": "array",
+          "markdownDescription": "Configure glob patterns for excluding files and folders. The extension will not scan variables in these files and folders. Read more about glob patterns [here](https://code.visualstudio.com/docs/editor/codebasics#_advanced-search-options).",
+          "default": [
+            "**/.git",
+            "**/.svn",
+            "**/.hg",
+            "**/CVS",
+            "**/.DS_Store",
+            "**/.git",
+            "**/node_modules",
+            "**/bower_components",
+            "**/tmp",
+            "**/dist",
+            "**/tests"
+          ],
+          "scope": 3,
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "array",
+                "properties": {
+                  "when": {
+                    "type": "string",
+                    "pattern": "\\w*\\$\\(basename\\)\\w*",
+                    "default": "$(basename).ext",
+                    "description": "Additional check on the siblings of a matching file. Use $(basename) as variable for the matching file name."
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "pinceau.missingTokenHintSeverity": {
+          "default": "warning",
+          "markdownDescription": "Changes the severity of the missing token hint.",
+          "enum": [
+            "disable",
+            "hint",
+            "information",
+            "warning",
+            "error"
+          ],
+          "scope": 3
+        },
+        "pinceau.debug": {
+          "type": "boolean",
+          "markdownDescription": "Toggles debug logging for the extension.",
+          "default": false,
+          "scope": 3
+        },
+        "pinceau.trace.server": {
+          "scope": "window",
+          "type": "string",
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
+          "default": "off",
+          "description": "Traces the communication between VS Code and the language server."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "stub": "unbuild --stub",
+    "vscode:prepublish": "pnpm build",
+    "build": "unbuild",
+    "clean": "rm -rf dist && rm -rf out && rm -rf .vscode-test",
+    "deploy": "vsce publish --no-dependencies",
+    "package": "vsce package --pre-release --no-dependencies"
+  },
+  "devDependencies": {
+    "@pinceau/configs": "workspace:*",
+    "@pinceau/language-server": "workspace:*",
+    "@types/node": "^20.8.5",
+    "@types/vscode": "^1.83.0",
+    "@vscode/test-electron": "^2.3.5",
+    "@vscode/vsce": "^2.21.1",
+    "vscode-languageclient": "^9.0.1"
+  }
+}

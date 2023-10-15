@@ -1,7 +1,0 @@
-export * from './add-class'
-export * from './computed'
-export * from './lang-ts'
-export * from './props-key'
-export * from './sfc'
-export * from './style'
-export * from './variants'

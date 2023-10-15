@@ -22,68 +22,68 @@
 <style scoped lang="ts">
 css({
   '.main-hero': {
-    marginTop: '{space.16}',
+    marginTop: '$space.16',
     display: 'flex',
     flexDirection: 'column',
-    gap: '{space.16}'
+    gap: '$space.16',
   },
 
   '.main-cta': {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: '{space.4}'
+    gap: '$space.4',
   },
 
   '.main-title': {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'column-reverse',
-    gap: '{space.8}',
+    'display': 'flex',
+    'alignItems': 'center',
+    'justifyContent': 'center',
+    'flexDirection': 'column-reverse',
+    'gap': '$space.8',
     '@lg': {
       flexDirection: 'row',
-      gap: '{space.24}',
+      gap: '$space.24',
     },
 
     ':deep(svg)': {
       minWidth: '200px',
     },
 
-    h1: {
-      fontFamily: '{typography.font.display}',
-      fontSize: '{fontSize.4xl}',
-      textAlign: 'center',
+    'h1': {
+      'fontFamily': '$typography.font.display',
+      'fontSize': '$fontSize.4xl',
+      'textAlign': 'center',
 
       '@md': {
-        fontSize: '{fontSize.5xl}',
-      }
+        fontSize: '$fontSize.5xl',
+      },
     },
 
-    code: {
-      fontFamily: '{typography.font.display}',
-      padding: 0,
-      fontSize: '{fontSize.4xl}',
-      backgroundColor: 'transparent !important',
-      color: 'inherit',
+    'code': {
+      'fontFamily': '$typography.font.display',
+      'padding': 0,
+      'fontSize': '$fontSize.4xl',
+      'backgroundColor': 'transparent !important',
+      'color': 'inherit',
 
       '@md': {
-        fontSize: '{fontSize.5xl}',
+        fontSize: '$fontSize.5xl',
       },
 
-      pre: {
+      'pre': {
         backgroundColor: 'transparent !important',
       },
 
-      span: {
+      'span': {
         '&:first-child, &:span:last-child': {
-          color: '{color.primary.100} !important',
+          color: '$color.primary.100 !important',
         },
         '&:nth-child(2)': {
-          color: '{color.primary.500} !important',
-        }
+          color: '$color.primary.500 !important',
+        },
       },
-    }
-  }
+    },
+  },
 })
 </style>

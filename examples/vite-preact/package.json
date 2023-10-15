@@ -1,0 +1,29 @@
+{
+  "name": "@pinceau/vite-preact-example",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite --port=3000",
+    "dev-refresh": "cross-env USE_REFRESH=true vite --port=3000",
+    "build:example": "vite build",
+    "build:example-refresh": "cross-env USE_REFRESH=true vite build",
+    "preview": "vite preview",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "preact": "^10.18.1"
+  },
+  "devDependencies": {
+    "@pinceau/configs": "workspace:*",
+    "@pinceau/react": "workspace:*",
+    "@preact/preset-vite": "^2.5.0",
+    "@prefresh/vite": "^2.4.1",
+    "cross-env": "^7.0.3",
+    "typescript": "^5.2.2",
+    "vite": "^4.4.11"
+  },
+  "stackblitz": {
+    "installDependencies": false,
+    "startCommand": "node .stackblitz.mjs && npm install && npm run dev"
+  }
+}

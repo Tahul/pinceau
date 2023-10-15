@@ -1,16 +1,24 @@
 {
+  "name": "@pinceau/docs",
   "private": true,
-  "packageManager": "pnpm@7.20.0",
+  "type": "module",
   "scripts": {
-    "dev": "nuxi dev",
-    "build": "nuxi generate",
-    "prepare": "nuxi prepare"
+    "build:docs": "nuxt build",
+    "prepare:docs": "nuxt prepare",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "clean": "rm -rf dist"
   },
   "devDependencies": {
-    "@nuxt-themes/docus": "^1.14.6",
-    "@vueuse/motion": "^2.0.0"
-  },
-  "resolutions": {
-    "pinceau": "workspace:*"
+    "@nuxt/content": "^2.8.5",
+    "@nuxt/devtools": "latest",
+    "@pinceau/nuxt": "workspace:*",
+    "@pinceau/palette": "workspace:*",
+    "@vueuse/motion": "^2.0.0",
+    "nuxt": "^3.7.4",
+    "nuxt-icon": "^0.5.0",
+    "vue": "^3.3.4",
+    "vue-router": "^4.2.5"
   }
 }

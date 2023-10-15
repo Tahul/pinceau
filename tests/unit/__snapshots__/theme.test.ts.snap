@@ -1,0 +1,220 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`@pinceau/theme > formats/ > $pinceau/definitions > build format 1`] = `
+{
+  "buildDir": undefined,
+  "outputs": {
+    "$pinceau/definitions": "export const definitions = {}
+
+export default definitions",
+  },
+  "theme": {
+    "color": {
+      "primary": {
+        "value": "red",
+        "variable": undefined,
+      },
+    },
+  },
+}
+`;
+
+exports[`@pinceau/theme > formats/ > $pinceau/hmr > build format 1`] = `
+{
+  "buildDir": undefined,
+  "outputs": {
+    "$pinceau/hmr": "import { updateStyle } from '/@vite/client'
+
+if (import.meta.hot) {
+  // Theme updates
+  import.meta.hot.on(
+    'pinceau:theme',
+    theme => {
+      theme?.css && updateStyle('pinceau.css', theme.css)
+    }
+  )
+
+  // CSS Functions updates
+  import.meta.hot.on(
+    'pinceau:style-function',
+    ({ css, selector }) => {
+      // Find the target node
+      const node = document.querySelector(\`style\${selector}\`)
+      if (!node) return
+      
+      // Find the target node data-vite-dev-id
+      const nodeId = node?.attributes?.['data-vite-dev-id']?.value
+      if (!nodeId) return
+
+      // Update that node style
+      updateStyle(nodeId, css)
+    }
+  )
+}",
+  },
+  "theme": {
+    "color": {
+      "primary": {
+        "value": "red",
+        "variable": undefined,
+      },
+    },
+  },
+}
+`;
+
+exports[`@pinceau/theme > formats/ > $pinceau/schema > build format 1`] = `
+{
+  "buildDir": undefined,
+  "outputs": {
+    "$pinceau/schema": "export const schema = {
+  \\"properties\\": {},
+  \\"default\\": {}
+}
+
+export default schema",
+  },
+  "theme": {
+    "color": {
+      "primary": {
+        "value": "red",
+        "variable": undefined,
+      },
+    },
+  },
+}
+`;
+
+exports[`@pinceau/theme > formats/ > $pinceau/theme > build format (js) 1`] = `
+{
+  "buildDir": undefined,
+  "outputs": {
+    "$pinceau/theme": "export const theme = {
+  \\"color\\": {
+    \\"primary\\": {
+      \\"value\\": \\"red\\"
+    }
+  }
+}
+
+export default theme",
+  },
+  "theme": {
+    "color": {
+      "primary": {
+        "value": "red",
+        "variable": undefined,
+      },
+    },
+  },
+}
+`;
+
+exports[`@pinceau/theme > formats/ > $pinceau/theme > build format (ts) 1`] = `
+{
+  "buildDir": undefined,
+  "outputs": {
+    "$pinceau/theme-types": "export const theme = {
+  \\"color\\": {
+    \\"primary\\": {
+      \\"value\\": \\"red\\"
+    }
+  }
+} as const
+
+export type PinceauTheme = typeof theme
+
+export type PinceauMediaQueries = \\"$dark\\" | \\"$light\\" | \\"$initial\\";
+
+export type PinceauThemePaths = \\"$color.primary\\";
+
+export default theme",
+  },
+  "theme": {
+    "color": {
+      "primary": {
+        "value": "red",
+        "variable": undefined,
+      },
+    },
+  },
+}
+`;
+
+exports[`@pinceau/theme > formats/ > $pinceau/types > build format 1`] = `
+{
+  "buildDir": undefined,
+  "outputs": {
+    "$pinceau/types": "declare global {
+  
+}
+
+export {}",
+  },
+  "theme": {
+    "color": {
+      "primary": {
+        "value": "red",
+        "variable": undefined,
+      },
+    },
+  },
+}
+`;
+
+exports[`@pinceau/theme > formats/ > $pinceau/utils types > build format (types) 1`] = `
+{
+  "buildDir": undefined,
+  "outputs": {
+    "$pinceau/utils-types": "export const utils = {}
+
+export type PinceauUtils = typeof utils
+
+export default utils",
+  },
+  "theme": {
+    "color": {
+      "primary": {
+        "value": "red",
+        "variable": undefined,
+      },
+    },
+  },
+}
+`;
+
+exports[`@pinceau/theme > formats/ > $pinceau/utils types > build format 1`] = `
+{
+  "buildDir": undefined,
+  "outputs": {
+    "$pinceau/utils": "export const utils = {}
+
+export default utils",
+  },
+  "theme": {
+    "color": {
+      "primary": {
+        "value": "red",
+        "variable": undefined,
+      },
+    },
+  },
+}
+`;
+
+exports[`@pinceau/theme > formats/ > pinceau.css > build format 1`] = `
+{
+  "buildDir": undefined,
+  "outputs": {
+    "pinceau.css": "@media {:root {--pinceau-mq: $initial;--primary: red;}}",
+  },
+  "theme": {
+    "color": {
+      "primary": {
+        "value": "red",
+        "variable": undefined,
+      },
+    },
+  },
+}
+`;

@@ -5,17 +5,23 @@
       "type": "npm",
       "script": "build",
       "group": "build",
-      "problemMatcher": [],
-      "label": "Build",
-      "detail": "Build package"
+      "presentation": {
+        "panel": "dedicated",
+        "reveal": "never"
+      }
     },
     {
-      "type": "shell",
-      "command": "refresh",
-      "group": "none",
-      "problemMatcher": [],
-      "label": "Refresh dependencies",
-      "detail": "Refresh"
+      "type": "npm",
+      "script": "dev",
+      "isBackground": true,
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "panel": "dedicated",
+        "reveal": "never"
+      }
     }
   ]
 }

@@ -1,0 +1,12 @@
+<button>
+	<slot />
+</button>
+
+<script>
+	import confetti from 'canvas-confetti';
+	const button = document.body.querySelector('button');
+
+	if (button) {
+		button.addEventListener('click', () => confetti());
+	}
+</script>

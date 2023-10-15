@@ -1,32 +1,55 @@
-import process from 'node:process'
-import { resolve } from 'pathe'
+import { createResolver } from '@nuxt/kit'
+import { defineNuxtConfig } from 'nuxt/config'
 
-// Enforce local Pinceau
-process.env.THEME_DEV_PINCEAU_PATH = resolve(__dirname, '../src/nuxt.ts')
+const resolve = (p: string) => createResolver(import.meta.url).resolve(p)
 
-// @ts-ignore
+// https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  extends: '@nuxt-themes/docus',
-  alias: {
-    'pinceau/runtime': resolve(__dirname, '../src/runtime.ts'),
-    'pinceau': resolve(__dirname, '../src/index.ts'),
-    'pinceau/nuxt': resolve(__dirname, '../src/nuxt.ts'),
-  },
-  studio: {
-    enabled: 'production',
-  },
-  pinceau: {
-    followSymbolicLinks: false,
-  },
-  components: [
-    {
-      path: '~/components',
-      global: true,
+  app: {
+    head: {
+      link: [
+        {
+          rel: 'icon',
+          type: 'image/png',
+          href: '/favicon.png',
+        },
+        {
+          rel: 'icon',
+          type: 'image/svg+xml',
+          href: '/favicon.svg',
+        },
+      ],
     },
+  },
+
+  devtools: { enabled: true },
+
+  typescript: {
+    includeWorkspace: false,
+  },
+
+  modules: [
+    '@nuxt/content',
+    '@pinceau/nuxt',
   ],
-  css: [
-    '~/main.postcss',
-  ],
+
+  pinceau: {
+    debug: 2,
+    style: {
+      excludes: [
+        resolve('../../packages'),
+      ],
+    },
+    theme: {
+      buildDir: resolve('./node_modules/.pinceau'),
+      layers: [
+        {
+          path: resolve('../../packages/palette/'),
+        },
+      ],
+    },
+  },
+
   content: {
     highlight: {
       theme: {

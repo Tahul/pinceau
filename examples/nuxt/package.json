@@ -1,0 +1,21 @@
+{
+  "name": "@pinceau/nuxt-example",
+  "private": true,
+  "scripts": {
+    "build:example": "nuxi build",
+    "dev": "nuxi dev --port=3000",
+    "preview": "nuxi preview",
+    "clean": "rm -rf dist && rm -rf .output && rm -rf .nuxt"
+  },
+  "dependencies": {
+    "@pinceau/nuxt": "workspace:*"
+  },
+  "devDependencies": {
+    "@pinceau/configs": "workspace:*",
+    "nuxt": "^3.7.4"
+  },
+  "stackblitz": {
+    "installDependencies": false,
+    "startCommand": "node .stackblitz.mjs && npm install && npm run dev"
+  }
+}

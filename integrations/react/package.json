@@ -1,0 +1,50 @@
+{
+  "name": "@pinceau/react",
+  "type": "module",
+  "version": "0.1.0",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./plugin": {
+      "types": "./dist/plugin.d.ts",
+      "import": "./dist/plugin.mjs",
+      "require": "./dist/plugin.cjs"
+    },
+    "./transforms": {
+      "types": "./dist/transforms.d.ts",
+      "import": "./dist/transforms.mjs",
+      "require": "./dist/transforms.cjs"
+    },
+    "./runtime": {
+      "types": "./dist/runtime.d.ts",
+      "import": "./dist/runtime.mjs",
+      "require": "./dist/runtime.cjs"
+    },
+    "./utils": {
+      "types": "./dist/utils.d.ts",
+      "import": "./dist/utils.mjs",
+      "require": "./dist/utils.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "unbuild",
+    "stub": "unbuild --stub",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@pinceau/integration": "workspace:*",
+    "@pinceau/core": "workspace:*",
+    "acorn": "^8.10.0",
+    "jsx-ast-utils": "^3.3.5",
+    "ultrahtml": "npm:@pinceau/ultrahtml@1.5.2"
+  },
+  "devDependencies": {
+    "@pinceau/configs": "workspace:*"
+  }
+}

@@ -1,15 +1,37 @@
 {
-  // Use IntelliSense to learn about possible attributes.
-  // Hover to view descriptions of existing attributes.
-  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
+  // List of configurations. Add new configurations or edit existing ones.
   "configurations": [
     {
-      "type": "chrome",
+      "type": "extensionHost",
       "request": "launch",
-      "name": "Launch Chrome against localhost",
-      "url": "http://localhost:5173",
-      "webRoot": "${workspaceFolder}"
+      "name": "Launch Client",
+      "runtimeExecutable": "${execPath}",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceRoot}/packages/vscode",
+        "/Users/yaelguilloux/Code/sandbox/pinceau/examples/vite-vue"
+      ],
+      "sourceMaps": true,
+      "outFiles": ["${workspaceRoot}/packages/vscode/dist/**/*.js"],
+      "preLaunchTask": "npm: build:vscode"
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Attach to Server 6011",
+      "address": "localhost",
+      "port": 6011,
+      "sourceMaps": true,
+      "outFiles": ["${workspaceRoot}/packages/vscode/dist/**/*.js"]
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Attach to Server 6012",
+      "address": "localhost",
+      "port": 6012,
+      "sourceMaps": true,
+      "outFiles": ["${workspaceRoot}/packages/vscode/dist/**/*.js"]
     }
   ]
 }

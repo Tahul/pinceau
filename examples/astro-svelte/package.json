@@ -1,0 +1,26 @@
+{
+  "name": "@pinceau/astro-svelte-example",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev --port=3000",
+    "start": "astro dev --port=3000",
+    "build:example": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "vue": "^3.3.4"
+  },
+  "devDependencies": {
+    "@astrojs/svelte": "^4.0.3",
+    "@pinceau/astro": "workspace:*",
+    "@pinceau/configs": "workspace:*",
+    "@pinceau/svelte": "workspace:*",
+    "astro": "^3.3.0"
+  },
+  "stackblitz": {
+    "installDependencies": false,
+    "startCommand": "node .stackblitz.mjs && npm install && npm run dev"
+  }
+}

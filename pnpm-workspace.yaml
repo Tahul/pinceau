@@ -1,3 +1,7 @@
-- packages
+packages:
+  - 'packages/*'
+  - 'integrations/*'
+  - 'examples/*'
   - playground
   - docs
+  - tests

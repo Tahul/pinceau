@@ -1,0 +1,1 @@
+import '@pinceau/language-server'

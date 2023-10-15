@@ -1,0 +1,19 @@
+{
+  "name": "@pinceau/vite-lib-example",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build:example": "vite build",
+    "dev": "vite --port=3000",
+    "preview": "vite preview",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "pinceau": "workspace:*"
+  },
+  "devDependencies": {
+    "@pinceau/configs": "workspace:*",
+    "typescript": "^5.2.2",
+    "vite": "^4.4.11"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "@pinceau/vite-vue-example",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build:example": "vite build",
+    "dev": "vite --port=3000",
+    "preview": "vite preview",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "vue": "^3.3.4",
+    "vue-router": "^4.2.5"
+  },
+  "devDependencies": {
+    "@pinceau/configs": "workspace:*",
+    "@pinceau/vue": "workspace:*",
+    "@vitejs/plugin-vue": "^4.4.0",
+    "typescript": "^5.2.2",
+    "vite": "^4.4.11"
+  },
+  "stackblitz": {
+    "installDependencies": false,
+    "startCommand": "node .stackblitz.js && npm install && npm run dev"
+  }
+}

@@ -9,13 +9,13 @@
 <style scoped lang="ts">
 css({
   div: {
-    maxHeight: '{docus.header.height}',
+    maxHeight: '$docus.header.height',
     display: 'flex',
     alignItems: 'center',
     p: {
-      marginLeft: '{space.2}',
-      fontFamily: '{typography.font.display}'
-    }
-  }
+      marginLeft: '$space.2',
+      fontFamily: '$typography.font.display',
+    },
+  },
 })
 </style>

@@ -1,0 +1,27 @@
+{
+  "name": "@pinceau/vite-solid-example",
+  "private": true,
+  "version": "0.0.0",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite --port=3000",
+    "build:example": "vite build",
+    "serve": "vite preview",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "solid-js": "^1.8.1"
+  },
+  "devDependencies": {
+    "@pinceau/configs": "workspace:*",
+    "@pinceau/react": "workspace:*",
+    "typescript": "^5.2.2",
+    "vite": "^4.4.11",
+    "vite-plugin-inspect": "^0.7.40",
+    "vite-plugin-solid": "^2.7.1"
+  },
+  "stackblitz": {
+    "installDependencies": false,
+    "startCommand": "node .stackblitz.mjs && npm install && npm run dev"
+  }
+}

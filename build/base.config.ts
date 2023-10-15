@@ -2,7 +2,7 @@ import { copyFile, mkdir } from 'node:fs/promises'
 import { createResolver } from '@nuxt/kit'
 import { defineBuildConfig } from 'unbuild'
 
-// @ts-ignore
+// @ts-expect-error
 const { resolve } = createResolver(import.meta.url)
 
 export default defineBuildConfig({
@@ -22,7 +22,7 @@ export default defineBuildConfig({
     },
   },
   failOnWarn: false,
-  clean: false,
+  clean: true,
   declaration: true,
   rollup: {
     emitCJS: true,
@@ -44,9 +44,9 @@ export default defineBuildConfig({
     'tinycolor2',
     'pinceau',
     'pinceau/types',
-    '#pinceau',
-    '#pinceau/theme',
-    '#pinceau/utils',
+    '$pinceau',
+    '$pinceau/theme',
+    '$pinceau/utils',
     'pinceau.css',
     '#imports',
     '#internal',
@@ -57,7 +57,6 @@ export default defineBuildConfig({
     '#build/pinceau/utils',
     'nitropack',
     'nanoid',
-    'chroma-js',
     'untyped',
     '@volar/language-core',
     '@volar/source-map',

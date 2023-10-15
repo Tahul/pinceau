@@ -1,0 +1,22 @@
+{
+  "name": "@pinceau/configs",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "eslint.base.cjs",
+    "tsconfig.base.json",
+    "tsconfig.node.json",
+    "tsconfig.paths.json",
+    "tsconfig.paths.json",
+    "tsconfig.qwik.json",
+    "tsconfig.react.json",
+    "tsconfig.solid.json",
+    "tsconfig.svelte.json",
+    "tsconfig.vue.json"
+  ]
+}

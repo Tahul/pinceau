@@ -1,0 +1,36 @@
+{
+  "name": "pinceau",
+  "type": "module",
+  "version": "0.1.0",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./plugin": {
+      "types": "./dist/plugin.d.ts",
+      "import": "./dist/plugin.mjs",
+      "require": "./dist/plugin.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "plugin.d.ts"
+  ],
+  "scripts": {
+    "build": "unbuild",
+    "stub": "unbuild --stub",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@pinceau/integration": "workspace:*",
+    "@pinceau/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@pinceau/configs": "workspace:*"
+  }
+}

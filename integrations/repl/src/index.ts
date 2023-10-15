@@ -1,0 +1,7 @@
+export { default as Repl } from './components/Repl.vue'
+export { default as Preview } from './components/output/Preview.vue'
+export { ReplStore, File } from './store'
+export { compileFile } from './transforms'
+export type { Props as ReplProps } from './components/Repl.vue'
+export type { Store, StoreOptions, StoreState } from './store'
+export type { OutputModes } from './components/output/types'

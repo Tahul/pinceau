@@ -1,0 +1,26 @@
+{
+  "name": "@pinceau/volar",
+  "type": "module",
+  "version": "0.1.0",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "unbuild",
+    "stub": "unbuild --stub",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@pinceau/configs": "workspace:*",
+    "@pinceau/integration": "workspace:*",
+    "@pinceau/vue": "workspace:*",
+    "@volar/vue-language-core": "^1.6.5"
+  }
+}

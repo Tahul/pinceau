@@ -1,0 +1,21 @@
+{
+  "$schema": "https://turborepo.org/schema.json",
+  "pipeline": {
+    "stub": {
+      "outputs": ["dist/**"]
+    },
+    "build": {
+      "dependsOn": ["stub", "^build"],
+      "outputs": ["dist/**"]
+    },
+    "clean": {
+      "outputs": []
+    },
+    "package": {
+      "outputs": []
+    },
+    "deploy": {
+      "outputs": []
+    }
+  }
+}
