@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build:docs": "nuxt build",
-    "stub": "nuxt prepare",
+    "prepare:docs": "nuxt prepare",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
