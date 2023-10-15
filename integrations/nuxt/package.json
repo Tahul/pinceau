@@ -1,6 +1,7 @@
 {
   "name": "@pinceau/nuxt",
   "version": "0.1.0",
+  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",

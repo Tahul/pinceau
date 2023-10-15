@@ -1,6 +1,7 @@
 {
   "name": "@pinceau/language-server",
   "version": "0.1.0",
+  "type": "module",
   "description": "Pinceau language server providing hints on tokens values and other features.",
   "author": "Tahul <yael.guilloux@gmail.com>",
   "license": "MIT",
