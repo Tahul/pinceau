@@ -15,6 +15,7 @@
   "devDependencies": {
     "@pinceau/configs": "workspace:*",
     "@pinceau/vue": "workspace:*",
+    "@pinceau/palette": "workspace:*",
     "@vitejs/plugin-vue": "^4.4.0",
     "typescript": "^5.2.2",
     "vite": "^4.4.11"

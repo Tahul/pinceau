@@ -391,6 +391,9 @@ importers:
       '@pinceau/configs':
         specifier: workspace:*
         version: link:../../packages/configs
+      '@pinceau/palette':
+        specifier: workspace:*
+        version: link:../../packages/palette
       '@pinceau/vue':
         specifier: workspace:*
         version: link:../../integrations/vue
@@ -905,6 +908,9 @@ importers:
       '@unocss/reset':
         specifier: ^0.56.5
         version: 0.56.5
+      local-pkg:
+        specifier: ^0.5.0
+        version: 0.5.0
       style-dictionary-esm:
         specifier: ^1.8.4
         version: 1.8.4
@@ -930,6 +936,9 @@ importers:
       '@pinceau/nuxt':
         specifier: workspace:*
         version: link:../integrations/nuxt
+      '@pinceau/palette':
+        specifier: workspace:*
+        version: link:../packages/palette
       '@pinceau/react':
         specifier: workspace:*
         version: link:../integrations/react
@@ -2938,6 +2947,7 @@ packages:
     dependencies:
       is-glob: 4.0.3
       micromatch: 4.0.5
+      napi-wasm: 1.1.0
     dev: true
     bundledDependencies:
       - napi-wasm
@@ -9208,7 +9218,6 @@ packages:
     dependencies:
       mlly: 1.4.2
       pkg-types: 1.0.3
-    dev: true
 
   /locate-character@3.0.0:
     resolution: {integrity: sha512-SW13ws7BjaeJ6p7Q6CO2nchbYEc3X3J6WrmTTDto7yMPqVSZTUyY5Tjbid+Ab8gLnATtygYtiDIJGQRRn2ZOiA==}
@@ -10494,6 +10503,10 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /napi-wasm@1.1.0:
+    resolution: {integrity: sha512-lHwIAJbmLSjF9VDRm9GoVOy9AGp3aIvkjv+Kvz9h16QR3uSVYH78PNQUnT2U4X53mhlnV2M7wrhibQ3GHicDmg==}
+    dev: true
 
   /natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}

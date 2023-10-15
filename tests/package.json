@@ -26,6 +26,7 @@
     "@pinceau/volar": "workspace:*",
     "@pinceau/vscode": "workspace:*",
     "@pinceau/vue": "workspace:*",
+    "@pinceau/palette": "workspace:*",
     "pinceau": "workspace:*"
   },
   "devDependencies": {

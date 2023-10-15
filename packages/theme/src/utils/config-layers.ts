@@ -1,6 +1,8 @@
+import { dirname, extname } from 'node:path'
 import type { PinceauOptions } from '@pinceau/core'
 import { merger } from '@pinceau/core/utils'
 import { resolveSchema as resolveUntypedSchema } from 'untyped'
+import { resolveModule } from 'local-pkg'
 import type { ConfigLayer, ResolvedConfigLayer, Theme, ThemeLoadingOutput } from '../types'
 import { resolveFileLayer } from './config-file'
 import { normalizeTokens } from './tokens'
@@ -90,7 +92,23 @@ export function resolveConfigSources(options: PinceauOptions) {
       }
 
       // Check if the config layer path passed as string in the array
-      if (typeof layerOrPath === 'string') { configLayer = { path: layerOrPath, configFileName: options.theme.configFileName } }
+      if (typeof layerOrPath === 'string') {
+        // Supports passing a package like `@pinceau/palette`
+        if (!layerOrPath.startsWith('/')) {
+          const resolvedModule = resolveModule(layerOrPath, { paths: [options.cwd] })
+
+          if (resolvedModule) {
+            const dir = dirname(resolvedModule)
+            const filename = resolvedModule.replace(`${dir}/`, '')
+            const ext = extname(filename)
+            if (dir && filename) { configLayer = { path: `${dir}/`, configFileName: filename.replace(ext, '') } }
+          }
+        }
+
+        if (!configLayer) {
+          configLayer = { path: layerOrPath, configFileName: options.theme.configFileName }
+        }
+      }
 
       // Only push configLayer in proper scenarios
       if (configLayer) {

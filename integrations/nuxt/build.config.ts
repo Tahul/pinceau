@@ -26,5 +26,7 @@ export default defineBuildConfig({
     '@pinceau/theme',
     '#internal',
     '#internal/nitro',
+    '@pinceau/theme/runtime',
+    '@pinceau/core/utils',
   ],
 })

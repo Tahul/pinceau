@@ -334,6 +334,18 @@ describe('@pinceau/theme', () => {
         'imports',
       ].forEach(prop => expect(layer).toHaveProperty(prop))
     })
+    it('resolveConfigSources() - resolve pkg source', () => {
+      const options = normalizeOptions()
+
+      options.theme.layers = ['@pinceau/palette']
+
+      const result = resolveConfigSources(options)
+
+      expect(result.length).toBe(1)
+
+      expect(result[0].path).toBeDefined()
+      expect(result[0].configFileName).toBeDefined()
+    })
     it('resolveConfigSources() - resolve sources from an user config layers key', () => {
       const options = normalizeOptions()
 
