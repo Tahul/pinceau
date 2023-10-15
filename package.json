@@ -9,6 +9,7 @@
     "docs",
     "tests",
     "packages/*",
+    "integrations/*",
     "examples/*"
   ],
   "license": "MIT",
