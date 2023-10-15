@@ -1,7 +1,8 @@
 import { createPinceauIntegration } from '@pinceau/integration'
+import type { PinceauIntegration } from '@pinceau/integration'
 import { PinceauReactPlugin } from './utils/unplugin'
 
-const pinceauPlugin = createPinceauIntegration(
+const pinceauPlugin: PinceauIntegration = createPinceauIntegration(
   [
     ['react', PinceauReactPlugin],
   ],

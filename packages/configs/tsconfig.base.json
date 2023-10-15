@@ -18,8 +18,16 @@
     "noEmit": true,
     "esModuleInterop": true,
     "isolatedModules": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": [
+      "vite/client",
+      "vitest/importMeta"
+    ]
   },
   "references": [{ "path": "./tsconfig.node.json" }],
-  "exclude": ["dist", "node_modules"]
+  "exclude": ["dist", "node_modules"],
+  "vueCompilerOptions": {
+    "plugins": ["@pinceau/volar"]
+  },
+  
 }

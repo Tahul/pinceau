@@ -1,8 +1,3 @@
 {
-  "extends": "@pinceau/configs/tsconfig.react.json",
-  "compilerOptions": {
-    "paths": {
-      "$pinceau/react-plugin": ["../../packages/palette/output/react-plugin.js"]
-    }
-  }
+  "extends": "@pinceau/configs/tsconfig.base.json"
 }

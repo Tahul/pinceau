@@ -21,14 +21,16 @@ export function pushVariantsProps(
 ) {
   const { target } = transformContext
 
-  const scriptAst = target?.ast || parseAst(target.toString())
+  const scriptAst = target?.ast || parseAst(target._source.toString())
 
   const isTs = target?.attrs?.lang === 'ts'
 
-  // No `defineProps` found in existing component code, push a new one.
   const importsEnd = getCharAfterLastImport(scriptAst)
 
-  target.appendRight(importsEnd, castVariantsProps(variantsProps, isTs))
+  const castedVariants = castVariantsProps(variantsProps, isTs)
+
+  if (importsEnd === 0) { target.prepend(castedVariants) }
+  else { target.appendRight(importsEnd, castedVariants) }
 }
 
 /**
@@ -49,14 +51,14 @@ export function resolveVariantsProps(
       const isBooleanVariant = Object.keys(variant).some(key => (key === 'true' || key === 'false'))
       if (isBooleanVariant) {
         // Type gets written as string as it gets casted to AST later on.
-        prop.type = isTs ? 'ResponsivePropType<boolean>' : ''
+        prop.type = isTs ? 'ResponsiveProp<boolean>' : ''
         prop.possibleValues = [true, false]
         prop.default = false
       }
       else {
         prop.possibleValues = Object.keys(variant).filter(key => key !== 'options')
         // Type gets written as string as it gets casted to AST later on.
-        prop.type = isTs ? ` ResponsivePropType<\'${prop.possibleValues.join('\' | \'')}\'>` : ''
+        prop.type = isTs ? ` ResponsiveProp<\'${prop.possibleValues.join('\' | \'')}\'>` : ''
         prop.default = undefined
       }
 
@@ -88,9 +90,7 @@ export function castVariantsProps(
       let result = `export let ${key}`
 
       if (isTs && value.type) {
-        if (!value.required) { result += '?:' }
-        else { result += ':' }
-        result += `${value.type}`
+        result += `: ${value.type}${value.required ? '' : ' | undefined'}`
       }
       if (value.default) {
         let stringified: string | undefined

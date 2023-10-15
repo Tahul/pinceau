@@ -1,7 +1,7 @@
 import type { Sfc } from '@volar/vue-language-core'
-import { evalDeclaration, findCallees, parseAst, pathToVarName, referencesRegex, visitAst } from '@pinceau/core/utils'
+import { REFERENCES_REGEX, evalDeclaration, findCallees, parseAst, pathToVarName, visitAst } from '@pinceau/core/utils'
 import type { CSSFunctionArgAST } from '@pinceau/style'
-import { isPropertyValueType } from '@pinceau/style/utils'
+import { IDENTIFIER_REGEX, isPropertyValueType, isSelfBindingFunction, resolveStyleFunctionTypeIdElement } from '@pinceau/style/utils'
 import { defu } from 'defu'
 import type { PathMatch } from '@pinceau/core'
 import { resolveVariantsProps } from '@pinceau/vue/transforms'
@@ -11,8 +11,20 @@ import type { PinceauVolarFileContext } from './index'
 export function resolveEmbeddedFileContext(
   sfc: Sfc,
   ctx: PinceauVolarFileContext,
+  i: number = 0,
 ) {
-  resolveCallees(sfc, (callee, argAst, cssContent) => {
+  resolveCallees(sfc, (callee, argAst, cssContent, fnIndex) => {
+    const { id } = resolveStyleFunctionTypeIdElement(
+      callee,
+      {
+        type: 'style',
+        index: i,
+      },
+      fnIndex,
+    )
+
+    const isSelfBinding = isSelfBindingFunction({ id })
+
     // Resolve variants as object
     if (cssContent?.variants) {
       ctx.variantsObject = defu(ctx?.variantsObject || {}, cssContent?.variants || {})
@@ -35,7 +47,7 @@ export function resolveEmbeddedFileContext(
           // Resolve tokens used in the declaration
           if (path?.value?.value?.type === 'StringLiteral') {
             path.value.value.value.replace(
-              referencesRegex,
+              REFERENCES_REGEX,
               (_, tokenPath) => {
                 ctx.usedTokens.push(pathToVarName(tokenPath, '$', '.', '.'))
                 return _
@@ -47,9 +59,9 @@ export function resolveEmbeddedFileContext(
         },
       },
     )
-  })
 
-  if (ctx.variantsObject && Object.keys(ctx.variantsObject).length) { ctx.variantsProps = resolveVariantsProps(ctx.variantsObject, true) }
+    if (isSelfBinding && ctx.variantsObject && Object.keys(ctx.variantsObject).length) { ctx.variantsProps = resolveVariantsProps(ctx.variantsObject, true) }
+  })
 }
 
 /**
@@ -57,7 +69,7 @@ export function resolveEmbeddedFileContext(
  */
 function resolveCallees(
   sfc: Sfc,
-  cb?: (callee: PathMatch, argAst: CSSFunctionArgAST, content: any) => void,
+  cb?: (callee: PathMatch, argAst: CSSFunctionArgAST, content: any, fnIndex: number) => void,
 ) {
   for (let i = 0; i < sfc.styles.length; i++) {
     const style = sfc.styles[i]
@@ -66,13 +78,13 @@ function resolveCallees(
       // Check if <style> tag is `lang="ts"`
       if (style.lang === 'ts') {
         const ast = parseAst(style.content)
-        const callees = findCallees(ast, 'css')
+        const callees = findCallees(ast, IDENTIFIER_REGEX)
 
         for (let i = 0; i <= callees.length; i++) {
           const callee = callees[i]
           const ast = callee.value.arguments[0] as CSSFunctionArgAST
           const cssContent = evalDeclaration(ast)
-          if (cb) { (cb(callee, ast, cssContent)) }
+          if (cb) { (cb(callee, ast, cssContent, i)) }
         }
       }
     }

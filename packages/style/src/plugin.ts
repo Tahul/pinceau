@@ -18,9 +18,11 @@ const PinceauStylePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
 
         ctx.addTypes({
           imports: [
-            'import { CSSFunctionArg } from \'@pinceau/style\'',
-            'import { StyledFunctionArg } from \'@pinceau/style\'',
-            'import { ThemeTokens } from \'@pinceau/style\'',
+            'import type { StyledComponentFactory } from \'@pinceau/style\'',
+            'import type { SupportedHTMLElements } from \'@pinceau/style\'',
+            'import type { CSSFunctionArg } from \'@pinceau/style\'',
+            'import type { StyledFunctionArg } from \'@pinceau/style\'',
+            'import type { ThemeTokens } from \'@pinceau/style\'',
           ],
           global: [
             // css({ ... })

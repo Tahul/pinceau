@@ -6,7 +6,7 @@ import createJITI from 'jiti'
 import type { PinceauUserOptions } from '@pinceau/core'
 import { walkTokens } from '@pinceau/theme/runtime'
 import type { ConfigLayer } from '@pinceau/theme'
-import { normalizeOptions, referencesRegex } from '@pinceau/core/utils'
+import { REFERENCES_REGEX, normalizeOptions } from '@pinceau/core/utils'
 import Pinceau from '@pinceau/vue/plugin'
 
 export interface ModuleHooks {
@@ -22,7 +22,7 @@ const module: any = defineNuxtModule<PinceauUserOptions>({
   defaults: _ => ({}),
   async setup(_options, nuxt) {
     // Normalize options as soon as module gets loaded.
-    const options = normalizeOptions(_options)
+    const options = normalizeOptions({ ..._options, vue: _options.vue || true })
 
     // Set theme buildDir from Nuxt context
     options.theme.buildDir = resolve(nuxt.options.buildDir, 'pinceau')
@@ -60,7 +60,7 @@ const module: any = defineNuxtModule<PinceauUserOptions>({
 
             // Parse tokens in component code
             if (cachedTokens.length) {
-              const matches: any = code.match(referencesRegex) || []
+              const matches: any = code.match(REFERENCES_REGEX) || []
               matches.forEach(
                 (match: string) => {
                   const _match = match.replace('{', '').replace('}', '')

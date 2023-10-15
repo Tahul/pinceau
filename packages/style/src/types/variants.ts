@@ -1,7 +1,7 @@
-import type { CSSProperties, RawCSS } from '@pinceau/style'
+import type { RawCSS } from '@pinceau/style'
 import type { PinceauMediaQueries } from '$pinceau/theme'
 
-export interface VariantOptions<PropType = {}> {
+export interface VariantOptions<PropType = string | number> {
   type?: string
   required?: boolean
   default?: PropType | { [key in PinceauMediaQueries]?: PropType }
@@ -9,26 +9,22 @@ export interface VariantOptions<PropType = {}> {
 }
 
 export type Variant<
-  PropValue,
   LocalTokens extends string | undefined = undefined,
   TemplateSource extends {} = {},
   > =
-(
   {
-    options?: VariantOptions<PropValue>
+    options?: VariantOptions
   }
-)
-&
-{
-  [K in string]?: K extends 'options' ? VariantOptions<PropValue> : RawCSS<LocalTokens, TemplateSource, {}, true> & { $class?: string }
-}
+  &
+  {
+    [key: string]: RawCSS<LocalTokens, TemplateSource, {}, true>
+  }
 
-export type Variants<
+export interface Variants<
   LocalTokens extends string | undefined = undefined,
   TemplateSource extends {} = {},
-  Props = {},
-> = {
-  [K in string]: K extends keyof Props ? Variant<Props[K], LocalTokens, TemplateSource> : Variant<string | undefined, LocalTokens, TemplateSource>
+> {
+  [key: string]: Variant<LocalTokens, TemplateSource>
 }
 
 export interface VariantsProps {

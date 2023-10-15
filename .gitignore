@@ -90,3 +90,6 @@ packages/*/dist
 
 # vite-plugin-inspect
 .vite-inspect
+
+# vite
+vite.config.ts.timestamp-*

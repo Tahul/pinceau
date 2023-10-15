@@ -231,7 +231,7 @@ describe('@pinceau/svelte', () => {
       const className = transformContext?.state?.styleFunctions?.script0_styled0.className
 
       expect(result).toContain('import { usePinceauRuntime } from \'@pinceau/svelte/runtime\'')
-      expect(result).toContain(`$: testStyled = usePinceauRuntime(\`${className}\`, undefined, {"size":{"sm":{"width":"32px"}}}, { size })`)
+      expect(result).toContain(`$: testStyled = usePinceauRuntime(\`${className}\`, undefined, {"size":{"sm":{"width":"32px"}}}, $$props)`)
       expect(result).toContain('export let size')
     })
   })
@@ -311,9 +311,10 @@ describe('@pinceau/svelte', () => {
 
       await transformContext.transform()
 
-      const className = transformContext.state.styleFunctions?.script0_styled0?.className
+      const result = transformContext.result()?.code
 
-      expect(transformContext.result()?.code).contains(`usePinceauRuntime(\`${className}\`, undefined, {"size":{"sm":{"padding":"1rem"}}}, { size })`)
+      expect(result).contains('export let size')
+      expect(result).contains('usePinceauRuntime(undefined, undefined, {"size":{"sm":{"padding":"1rem"}}}, $$props)')
     })
 
     it('can push props to component existing script with props and imports', async () => {
@@ -411,7 +412,7 @@ describe('@pinceau/svelte', () => {
       const computedStyleKey = transformContext.state.styleFunctions?.script0_styled0?.computedStyles?.[0]?.variable
 
       expect(transformContext.result()?.code).toBe(
-        `<script>\nimport '$pinceau/style-functions.css?src=${transformContext.query.filename}&pc-fn=script0_styled0'\n\nimport { usePinceauRuntime } from \'\@pinceau/svelte/runtime'\n\nconst testStyled = usePinceauRuntime(\`${className}\`, [[\'${computedStyleKey}\', () => "red"]], undefined, {  })\n\n</script>`,
+        `<script>\nimport '$pinceau/style-functions.css?src=${transformContext.query.filename}&pc-fn=script0_styled0'\n\nimport { usePinceauRuntime } from \'\@pinceau/svelte/runtime'\n\nconst testStyled = usePinceauRuntime(\`${className}\`, [[\'${computedStyleKey}\', () => "red"]], undefined, $$props)\n\n</script>`,
       )
     })
     it('can write css content from both <script> and styled props', async () => {

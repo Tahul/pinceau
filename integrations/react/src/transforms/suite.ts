@@ -8,9 +8,6 @@ export const suite: PinceauTransforms = {
   scripts: [
     transformWriteScriptFeatures,
     transformWriteStyleFeatures,
-    (_transformContext, _pinceauContext) => {
-      // console.log(transformContext.ms.toString())
-    },
   ],
   styles: [
   ],

@@ -1,4 +1,4 @@
-import { pathToVarName, referencesRegex } from '@pinceau/core/runtime'
+import { REFERENCES_REGEX, pathToVarName } from '@pinceau/core/runtime'
 import type { ColorSchemeModes, DesignToken, DesignTokens, ThemeFunction } from '@pinceau/theme'
 import type { StringifyContext } from './types'
 import type { PinceauUtils } from '$pinceau/utils'
@@ -81,7 +81,7 @@ export function resolveReferences(ctx: CSSResolverContext) {
   if (typeof stringifyContext.value !== 'string') { return stringifyContext.value }
 
   stringifyContext.value = stringifyContext.value.replace(
-    referencesRegex,
+    REFERENCES_REGEX,
     (_, tokenPath) => {
       const varName = pathToVarName(tokenPath)
 
@@ -149,7 +149,7 @@ export function resolveCustomDirectives(ctx: CSSResolverContext) {
     // Support custom theme queries
     if ($theme) {
       // Handle all user supplied @directives
-      const mediaQueries = $theme('media' as any)
+      const mediaQueries = $theme('media')
       if (mediaQueries) {
         const query = property.replace('$', '')
         if (mediaQueries[query]) {

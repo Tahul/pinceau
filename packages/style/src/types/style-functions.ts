@@ -12,6 +12,7 @@ export interface RuntimeParts {
   staticClass?: string
   computedStyles?: string | undefined
   variants?: string | undefined
+  propNames?: string[]
 }
 
 export interface PinceauStyleFunctionContext {
@@ -29,6 +30,7 @@ export interface PinceauStyleFunctionContext {
   // Compiled
   className?: string
   css: string
+  propNames: string[]
   variants: Variants<any>
   localTokens: { [key: string]: NodePath<namedTypes.StringLiteral | namedTypes.NumericLiteral | namedTypes.FunctionExpression | namedTypes.ArrowFunctionExpression> & ASTNode }
   computedStyles: ComputedStyleContext[]

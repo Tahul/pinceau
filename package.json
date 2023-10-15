@@ -34,6 +34,7 @@
     "build:docs": "pnpm -r --filter=\"./docs\" run build",
     "build:vscode": "pnpm -r --filter=\"./integrations/(language-server|vscode)\" run build",
     "clean:snapshots": "rm -rf ./tests/__snapshots__",
+    "dev:docs": "pnpm -r --filter=\"docs\" run dev",
     "dev:lib": "nodemon --exec 'pnpm --filter=\"./examples/vite-lib\" run dev' --watch 'packages' --watch 'integrations' -e js,ts,vue",
     "dev:nuxt": "pnpm -r --filter=\"./examples/nuxt\" run dev",
     "dev:next": "pnpm -r --filter=\"./examples/next\" run dev",
@@ -60,7 +61,7 @@
     "test:fixtures": "pnpm -r --filter=\"./tests\" run test:fixtures"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^1.0.0-beta.26",
+    "@antfu/eslint-config": "^1.0.0-beta.27",
     "@pinceau/configs": "workspace:*",
     "@pinceau/core": "workspace:*",
     "@pinceau/language-server": "workspace:*",

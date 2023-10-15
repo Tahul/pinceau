@@ -7,10 +7,12 @@ import type { Plugin } from 'vite'
 import type { PinceauUserOptions } from '@pinceau/core'
 import { normalizeOptions } from '@pinceau/core/utils'
 
+export type PinceauIntegration = (userOptions?: PinceauUserOptions) => (Plugin[] | Plugin)[]
+
 export function createPinceauIntegration(
   extensions?: [string, UnpluginInstance<any>][],
   defaultOptions: PinceauUserOptions = {},
-): (userOptions?: PinceauUserOptions) => (Plugin[] | Plugin)[] {
+): PinceauIntegration {
   const getPlugins = (userOptions: PinceauUserOptions = {}) => {
     const options = normalizeOptions({ ...defaultOptions, ...userOptions })
 

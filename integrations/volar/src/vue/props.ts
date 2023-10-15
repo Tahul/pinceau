@@ -1,4 +1,4 @@
-import { type Sfc, type VueEmbeddedFile } from '@volar/vue-language-core'
+import type { Sfc, VueEmbeddedFile } from '@volar/vue-language-core'
 import { castVariantsPropsAst } from '@pinceau/vue/transforms'
 import { printAst } from '@pinceau/core/utils'
 import type { PinceauVolarFileContext } from '..'

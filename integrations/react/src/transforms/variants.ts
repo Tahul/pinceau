@@ -11,25 +11,6 @@ export interface PropOptions {
 }
 
 /**
- * Push variants object to components props.
- *
- * Only work with `defineProps()`.
- */
-export function pushVariantsProps(
-  transformContext: PinceauTransformContext,
-  variantsProps: any,
-) {
-  const { target } = transformContext
-
-  const scriptAst = target?.ast || parseAst(target.toString())
-
-  // No `defineProps` found in existing component code, push a new one.
-  const importsEnd = getCharAfterLastImport(scriptAst)
-
-  target.appendRight(importsEnd, castVariantsProps(variantsProps))
-}
-
-/**
  * Resolve a Vue component props object from css() variant.
  */
 export function resolveVariantsProps(
@@ -47,14 +28,14 @@ export function resolveVariantsProps(
       const isBooleanVariant = Object.keys(variant).some(key => (key === 'true' || key === 'false'))
       if (isBooleanVariant) {
         // Type gets written as string as it gets casted to AST later on.
-        prop.type = isTs ? 'ResponsivePropType<boolean>' : ''
+        prop.type = isTs ? 'ResponsiveProp<boolean>' : ''
         prop.possibleValues = [true, false]
         prop.default = false
       }
       else {
         prop.possibleValues = Object.keys(variant).filter(key => key !== 'options')
         // Type gets written as string as it gets casted to AST later on.
-        prop.type = isTs ? ` ResponsivePropType<\'${prop.possibleValues.join('\' | \'')}\'>` : ''
+        prop.type = isTs ? ` ResponsiveProp<\'${prop.possibleValues.join('\' | \'')}\'>` : ''
         prop.default = undefined
       }
 

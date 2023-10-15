@@ -1,4 +1,8 @@
 {
-  "extends": "@pinceau/configs/tsconfig.vue.json",
-  "include": ["./**/*.vue", "./**/*.ts"]
+  "extends": "@pinceau/configs/tsconfig.base.json",
+  "compilerOptions": {
+    "paths": {
+      "$pinceau/types": ["./node_modules/.pinceau/pinceau.d.ts"]
+    }
+  }
 }

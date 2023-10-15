@@ -36,7 +36,11 @@ const plugin: VueLanguagePlugin = _ => ({
 
     if (!isPublicVueFile && !isCssInTsFile) { return }
 
-    resolveEmbeddedFileContext(sfc, ctx)
+    // Grab block index
+    let i = 0
+    if (isCssInTsFile) { i = Number(embeddedFile.fileName.split('.cssInTs.')[1].split('.')[0]) }
+
+    resolveEmbeddedFileContext(sfc, ctx, i)
 
     // Add variants dynamic props
     if (isPublicVueFile) { recomposeProps(embeddedFile, sfc, ctx) }

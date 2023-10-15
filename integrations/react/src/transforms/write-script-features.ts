@@ -1,7 +1,7 @@
 import type { PinceauTransformFunction } from '@pinceau/core'
 import { usePinceauTransformContext } from '@pinceau/core/utils'
-import { hasIdentifier, hasRuntimeStyling } from '@pinceau/style/utils'
-import type { PinceauStyleFunctionContext, RuntimeParts } from '@pinceau/style'
+import { generatePinceauRuntimeFunction, generateStyledComponent, hasIdentifier, hasRuntimeStyling } from '@pinceau/style/utils'
+import type { RuntimeParts } from '@pinceau/style'
 import type { PropOptions } from './variants'
 import { resolveVariantsProps, sanitizeVariantsDeclaration } from './variants'
 
@@ -19,9 +19,9 @@ export const transformWriteScriptFeatures: PinceauTransformFunction = (transform
 
   let fileHasStyledComponent: boolean = false
 
-  let variantsProps: { [key: string]: PropOptions } = {}
-
   for (const [id, styleFn] of Object.entries(transformContext?.state?.styleFunctions || {})) {
+    let variantsProps: { [key: string]: PropOptions } = {}
+
     // Skip already applied functions; usually when having multiple <script> in the same file.
     if (styleFn.applied.runtime) { continue }
 
@@ -77,7 +77,7 @@ export const transformWriteScriptFeatures: PinceauTransformFunction = (transform
         target.overwrite(
           styleFn.callee.value.start,
           styleFn.callee.value.end,
-        `usePinceauRuntime(${runtimeParts.staticClass}, ${runtimeParts.computedStyles}, ${runtimeParts.variants}, { ${Object.keys(variantsProps).join(', ')} })\n`,
+        `${generatePinceauRuntimeFunction(variantsProps, runtimeParts, true)}\n`,
         )
         continue
       }
@@ -102,9 +102,7 @@ export const transformWriteScriptFeatures: PinceauTransformFunction = (transform
   // If runtime styling has been found, finally prepend the import
   const imports: string[] = []
   if (fileHasRuntime) { imports.push('usePinceauRuntime') }
-
   if (fileHasStyledComponent) { imports.push('usePinceauComponent') }
-
   if (imports.length) { target.prepend(`\nimport { ${imports.join(', ')} } from '@pinceau/react/runtime'\n`) }
 }
 
@@ -139,11 +137,4 @@ export const transformAddRuntimeScriptTag: PinceauTransformFunction = async (
     // Append proxy block content as a <script setup> tag
     transformContext.ms.append(`\n\n<script lang="ts">${proxyContext?.result()?.code || ''}\n</script>`)
   }
-}
-
-export function generateStyledComponent(
-  styleFn: PinceauStyleFunctionContext,
-  runtimeParts: RuntimeParts,
-) {
-  return `usePinceauComponent(${runtimeParts?.staticClass || 'undefined'}, ${runtimeParts?.computedStyles || 'undefined'}, ${runtimeParts?.variants || 'undefined'}, \'${styleFn?.element || 'div'}\')`
 }

@@ -22,12 +22,12 @@ export const transformAddPinceauClass: PinceauTransformFunction = async (
   const selfBindingFn = findSelfBindingFunction(transformContext)
   if (!selfBindingFn) { return }
 
-  const styleFn = transformContext.state.styleFunctions?.[selfBindingFn]
+  const styleFn = transformContext.state.styleFunctions?.[selfBindingFn.id]
   if (!styleFn) { return }
 
   // Grab runtime identifier if the function has runtime, otherwise use the className.
   const identifier = styleFn.computedStyles.length > 0 || Object.keys(styleFn.variants).length > 0
-    ? `$${selfBindingFn}`
+    ? `$${selfBindingFn.id}`
     : `\`${styleFn.className}\``
 
   const { target } = transformContext

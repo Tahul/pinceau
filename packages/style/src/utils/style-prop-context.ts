@@ -61,8 +61,10 @@ export const resolveStylePropContext: PinceauTransformFunction<PinceauStyleFunct
 
   return {
     id,
+    propNames: [],
     type: 'styled',
     callee: prop,
+    helpers: [],
     arg,
     loc: prop.loc,
     pointer,

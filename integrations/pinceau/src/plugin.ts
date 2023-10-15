@@ -1,7 +1,6 @@
+import type { PinceauIntegration } from '@pinceau/integration'
 import { createPinceauIntegration } from '@pinceau/integration'
-import type { Plugin } from 'vite'
-import type { PinceauUserOptions } from '@pinceau/core'
 
-const pinceauPlugin: (userOptions?: PinceauUserOptions) => (Plugin[] | Plugin)[] = createPinceauIntegration()
+const pinceauPlugin: PinceauIntegration = createPinceauIntegration()
 
 export default pinceauPlugin

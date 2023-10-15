@@ -19,7 +19,6 @@ export default defineConfig({
   },
   plugins: [
     Pinceau({
-      vue: false,
       debug: 2,
       style: {
         excludes: [

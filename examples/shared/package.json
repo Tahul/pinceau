@@ -1,0 +1,7 @@
+{
+  "name": "@pinceau/examples-shared",
+  "private": "true",
+  "devDependencies": {
+    "@pinceau/configs": "workspace:*"
+  }
+}

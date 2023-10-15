@@ -1,6 +1,6 @@
 import type { PinceauTransformFunction } from '@pinceau/core'
 import { usePinceauTransformContext } from '@pinceau/core/utils'
-import { hasIdentifier, hasRuntimeStyling } from '@pinceau/style/utils'
+import { generatePinceauRuntimeFunction, generateStyledComponent, hasIdentifier, hasRuntimeStyling, isSelfBindingFunction } from '@pinceau/style/utils'
 import type { PropOptions } from './variants'
 import { pushVariantsProps, resolveVariantsProps, sanitizeVariantsDeclaration } from './variants'
 
@@ -16,7 +16,9 @@ export const transformWriteScriptFeatures: PinceauTransformFunction = (transform
 
   let fileHasRuntime: boolean = false
 
-  let variantsProps: { [key: string]: PropOptions } = {}
+  let selfBindingProps: { [key: string]: PropOptions } = {}
+
+  let fileHasStyledComponent: boolean = false
 
   for (const [id, styleFn] of Object.entries(transformContext?.state?.styleFunctions || {})) {
     // Skip already applied functions; usually when having multiple <script> in the same file.
@@ -28,8 +30,9 @@ export const transformWriteScriptFeatures: PinceauTransformFunction = (transform
     if (!fileHasRuntime) { fileHasRuntime = !!hasRuntime }
 
     // Every arguments resolved from `usePinceauRuntime`
-    const runtimeParts: { staticClass: string; computedStyles: string | undefined; variants: string | undefined } = {
+    const runtimeParts: { staticClass: string; computedStyles: string | undefined; variants: string | undefined; propNames: string[] } = {
       staticClass: styleFn.className ? `\`${styleFn.className}\`` : 'undefined',
+      propNames: styleFn.propNames,
       computedStyles: undefined,
       variants: undefined,
     }
@@ -44,12 +47,16 @@ export const transformWriteScriptFeatures: PinceauTransformFunction = (transform
     }
 
     // Resolve variants
+    const localVariantsProps: undefined | { [key: string]: PropOptions } = undefined
     if (Object.keys(styleFn?.variants || {}).length) {
       const localVariantsProps = resolveVariantsProps(styleFn.variants, target?.attrs?.lang === 'ts')
 
       // Append `useVariants({ ...sanitizedVariants })` for runtime usage
       if (Object.keys(localVariantsProps).length) {
-        variantsProps = { ...variantsProps, ...(localVariantsProps || {}) }
+        if (isSelfBindingFunction({ id })) {
+          selfBindingProps = { ...selfBindingProps, ...(localVariantsProps || {}) }
+        }
+
         runtimeParts.variants = JSON.stringify(sanitizeVariantsDeclaration(styleFn.variants))
       }
     }
@@ -58,30 +65,39 @@ export const transformWriteScriptFeatures: PinceauTransformFunction = (transform
 
     // <template> runtime styles
     if (id.startsWith('template')) {
-      if (hasRuntime) { target.append(`\nconst \$${id} = usePinceauRuntime(${runtimeParts.staticClass}, ${runtimeParts.computedStyles}, ${runtimeParts.variants})\n`) }
+      if (hasRuntime) { target.append(`\nconst \$${id} = ${generatePinceauRuntimeFunction(localVariantsProps, runtimeParts)}\n`) }
       continue
     }
 
     // The first `styled` binding made from a `<style>` block will be linked to root template element.
     if (id.startsWith('style') && id.endsWith('styled0')) {
-      if (hasRuntime) { target.append(`\nconst \$${id} = usePinceauRuntime(${runtimeParts.staticClass}, ${runtimeParts.computedStyles}, ${runtimeParts.variants})\n`) }
+      if (hasRuntime) { target.append(`\nconst \$${id} = ${generatePinceauRuntimeFunction(localVariantsProps, runtimeParts)}\n`) }
       else { target.append(`\nconst \$${id} = ${runtimeParts.staticClass}`) }
       continue
     }
 
     // <style> runtime styles
     if (id.startsWith('style')) {
-      if (hasRuntime) { target.append(`\nusePinceauRuntime(${runtimeParts.staticClass}, ${runtimeParts.computedStyles}, ${runtimeParts.variants})\n`) }
+      if (hasRuntime) { target.append(`\n${generatePinceauRuntimeFunction(localVariantsProps, runtimeParts)}\n`) }
       continue
     }
 
     // <script> runtime styles; if no runtime style is detected, use a raw string for the classname.
     if (id.startsWith('script')) {
+      if (styleFn.element) {
+        fileHasStyledComponent = true
+        target.overwrite(
+          styleFn.callee.value.start,
+          styleFn.callee.value.end,
+          generateStyledComponent(styleFn, runtimeParts, true),
+        )
+        continue
+      }
       if (hasRuntime) {
         target.overwrite(
           styleFn.callee.value.start,
           styleFn.callee.value.end,
-        `usePinceauRuntime(${runtimeParts.staticClass}, ${runtimeParts.computedStyles}, ${runtimeParts.variants})\n`,
+        `${generatePinceauRuntimeFunction(localVariantsProps, runtimeParts)}\n`,
         )
         continue
       }
@@ -104,10 +120,13 @@ export const transformWriteScriptFeatures: PinceauTransformFunction = (transform
   }
 
   // Push variants props
-  if (Object.keys(variantsProps).length) { pushVariantsProps(transformContext, variantsProps) }
+  if (Object.keys(selfBindingProps).length) { pushVariantsProps(transformContext, selfBindingProps) }
 
   // If runtime styling has been found, finally prepend the import
-  if (fileHasRuntime) { target.prepend('\nimport { usePinceauRuntime } from \'@pinceau/vue/runtime\'\n') }
+  const imports: string[] = []
+  if (fileHasRuntime) { imports.push('usePinceauRuntime') }
+  if (fileHasStyledComponent) { imports.push('usePinceauComponent') }
+  if (imports.length) { target.prepend(`\nimport { ${imports.join(', ')} } from '@pinceau/vue/runtime'\n`) }
 }
 
 /**

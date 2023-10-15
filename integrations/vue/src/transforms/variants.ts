@@ -120,7 +120,8 @@ export function pushVariantsProps(
 
   const definePropsContent = printAst(castVariantsPropsAst(variantsProps)).code
 
-  transformContext.target.appendLeft(importsEnd, `\ndefineProps(${definePropsContent})`)
+  if (importsEnd !== 0) { transformContext.target.appendRight(importsEnd, `\ndefineProps(${definePropsContent})`) }
+  else { transformContext.target.prepend(`\n\ndefineProps(${definePropsContent})`) }
 }
 
 /**
@@ -141,14 +142,14 @@ export function resolveVariantsProps(
       const isBooleanVariant = Object.keys(variant).some(key => (key === 'true' || key === 'false'))
       if (isBooleanVariant) {
         // Type gets written as string as it gets casted to AST later on.
-        prop.type = isTs ? ' [Boolean, Object] as ResponsivePropType<boolean>' : ' [Boolean, Object]'
+        prop.type = isTs ? ' [Boolean, Object] as ResponsiveProp<boolean>' : ' [Boolean, Object]'
         prop.possibleValues = [true, false]
         prop.default = false
       }
       else {
         prop.possibleValues = Object.keys(variant).filter(key => key !== 'options')
         // Type gets written as string as it gets casted to AST later on.
-        prop.type = isTs ? ` [String, Object] as ResponsivePropType<\'${prop.possibleValues.join('\' | \'')}\'>` : ' [String, Object]'
+        prop.type = isTs ? ` [String, Object] as ResponsiveProp<\'${prop.possibleValues.join('\' | \'')}\'>` : ' [String, Object]'
         prop.default = undefined
       }
 
@@ -232,8 +233,8 @@ export function sanitizeVariantsDeclaration(variants: Variants) {
   )
 }
 
-export function sanitizeVariantsProps(variants: Variants) {
-  return Object.entries(variants).reduce(
+export function sanitizeVariantsProps(variantsProps: { [key: string]: PropOptions }) {
+  return Object.entries(variantsProps).reduce(
     (acc, [key, variant]: any) => {
       delete variant.possibleValues
       acc[key] = variant

@@ -1,9 +1,6 @@
 import type { PinceauTransforms } from '@pinceau/core'
 import { transformAddPinceauClass } from './add-class'
-import {
-  transformAddRuntimeScriptTag,
-  transformWriteScriptFeatures,
-} from './write-script-features'
+import { transformAddRuntimeScriptTag, transformWriteScriptFeatures } from './write-script-features'
 import { transformWriteStyleFeatures } from './write-style-features'
 
 /**

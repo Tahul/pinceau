@@ -20,7 +20,9 @@ export const PinceauReactPlugin: UnpluginInstance<undefined> = createUnplugin(()
         registerVirtualOutputs(ctx)
 
         ctx.addTypes({
-          imports: ['import type { StyledComponentFactory as ReactStyledComponentFactory } from \'@pinceau/react\''],
+          imports: [
+            'import type { StyledComponentFactory as ReactStyledComponentFactory } from \'@pinceau/react\'',
+          ],
           global: [
             'export const $styled: { [Type in SupportedHTMLElements]: ReactStyledComponentFactory<Type> }',
           ],
@@ -32,6 +34,10 @@ export const PinceauReactPlugin: UnpluginInstance<undefined> = createUnplugin(()
 
     transformInclude: id => transformInclude(id, ctx),
 
-    transform: async (code, id) => await transform(code, id, suite, ctx),
+    transform: async (code, id) => {
+      const result = await transform(code, id, suite, ctx)
+
+      return result
+    },
   }
 })

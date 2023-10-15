@@ -1,6 +1,6 @@
 import type { TextDocument } from 'vscode-languageserver-textdocument'
 import { parse as parseVueSFC } from '@vue/compiler-sfc'
-import { referencesRegex } from '@pinceau/core/runtime'
+import { REFERENCES_REGEX } from '@pinceau/core/runtime'
 import type { DesignToken } from '@pinceau/theme'
 import type { ColorInformation, Position, Range } from 'vscode-languageserver'
 import { helperRegex } from '@pinceau/theme/utils'
@@ -61,7 +61,7 @@ export function setupTokensHelpers(
 
     const text = doc.getText()
     const dtMatches = findAll(helperRegex('$theme'), text)
-    const tokenMatches = findAll(referencesRegex, text)
+    const tokenMatches = findAll(REFERENCES_REGEX, text)
 
     const globalStart: Position = { line: 0, character: 0 }
 

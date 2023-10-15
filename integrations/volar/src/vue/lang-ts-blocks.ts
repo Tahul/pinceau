@@ -9,7 +9,7 @@ export function recomposeScriptSetup(
   ctx: PinceauVolarFileContext,
 ) {
   // Push imports
-  embeddedFile.content.unshift('\nimport type { CSSFunctionArg } from \'@pinceau/style\'')
+  embeddedFile.content.unshift('\nimport type { CSSFunctionArg, StyledFunctionArg } from \'@pinceau/style\'\n')
 
   // Add <script setup> context
   if (sfc?.scriptSetup) { embeddedFile.content.push(sfc.scriptSetup.content) }
@@ -20,8 +20,11 @@ export function recomposeScriptSetup(
   // Setup `css()` function context
   const localTokensType = ctx.localTokens.length
     ? stringsToUnionType(ctx.localTokens)
-    : '(string & {})'
-  embeddedFile.content.push(`\nfunction css (declaration: CSSFunctionArg<${localTokensType}, ${hasHtml ? 'PinceauTemplateStructure' : 'any'}>) { return declaration }\n`)
+    : 'undefined'
+
+  embeddedFile.content.push(`\nconst css = (declaration: CSSFunctionArg<${localTokensType}, ${hasHtml ? 'PinceauTemplateStructure' : '{}'}>) => { return declaration }\n`)
+
+  embeddedFile.content.push(`\nconst styled = <Props = {}>(declaration: StyledFunctionArg<Props, ${localTokensType}, ${hasHtml ? 'PinceauTemplateStructure' : '{}'}, true>) => { return declaration }\n`)
 
   const index = Number(embeddedFile.fileName.split('.').slice(-2)[0])
   const style = sfc.styles[index]

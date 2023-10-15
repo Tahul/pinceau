@@ -1,5 +1,5 @@
 import type { PathMatch, PinceauContext, PinceauTransformContext, PinceauTransformFunction } from '@pinceau/core'
-import { evalDeclaration, printAst, visitAst } from '@pinceau/core/utils'
+import { evalDeclaration, visitAst } from '@pinceau/core/utils'
 import { createSourceLocationFromOffsets } from 'sfc-composer'
 import { resolveCssProperty, stringify } from '@pinceau/stringify'
 import type { PinceauStyleFunctionContext } from '../types/style-functions'
@@ -23,28 +23,9 @@ export const resolveStyleFunctionContext: PinceauTransformFunction<PinceauStyleF
 
   const helpers: PinceauStyleFunctionContext['helpers'] = []
 
-  let type: 'css' | 'styled' | '$styled' = 'css'
-
-  let element: SupportedHTMLElements | undefined
-
-  // $styled.div(...)
-  if (callee.match[0].startsWith('$styled')) {
-    const [, , tag] = callee.match
-    element = tag as SupportedHTMLElements
-    type = '$styled'
-  }
-
-  // styled(...)
-  if (callee.match[0] === 'styled') { type = 'styled' }
-
-  const id = `${target.type}${target.index}_${type}${i}`
+  const { id, type, element } = resolveStyleFunctionTypeIdElement(callee, target, i)
 
   const previousState = transformContext?.state?.styleFunctions?.[id] || transformContext?.previousState?.styleFunctions?.[id]
-
-  let className: string | undefined
-
-  // Set className if `$styled` or `styled` has been used
-  if (['$styled', 'styled'].includes(type)) { className = previousState?.className || createUniqueClass() }
 
   // Grab `*` in `css(*)`
   const arg = callee.value.arguments[0] as CSSFunctionSource
@@ -68,18 +49,47 @@ export const resolveStyleFunctionContext: PinceauTransformFunction<PinceauStyleF
     computedStyles,
   )
 
+  let className: string | undefined
+
+  // Set className if `$styled` or `styled` has been used
+  if (['$styled', 'styled'].includes(type)) {
+    className = previousState?.className || createUniqueClass()
+  }
+
   // Handle variants and remove them from declaration
   const declaration = evalDeclaration(arg)
 
+  // Prop names resolved from $styled.a<{ propName: ..., secondPropName: ... }>
+  const propNames: string[] = []
+
   // Store variants and remove them from declarations as they are not part of stringifying process.
+
   // - Variants coming from `styled({ variants: { ... } })`
   if (declaration && declaration?.variants) {
     Object.assign(variants, { ...declaration.variants })
     delete declaration.variants
   }
 
-  // - Variants coming from `$styled.a({}).withVariants({ ... })`
+  const declarationHasContent = Object.keys(declaration).length
+
+  // No declaration content means no static styling, we do not need a static className in this case.
+  if (!declarationHasContent) { className = undefined }
+
   if (callee.parent && type === '$styled') {
+    // Resolve type arugment props if some is present.
+    if (callee?.value?.typeParameters?.params?.[0]) {
+      visitAst(
+        callee.value.typeParameters.params[0],
+        {
+          visitTSPropertySignature(path) {
+            if (path?.value?.key?.name) { propNames.push(path.value.key.name) }
+            return this.traverse(path)
+          },
+        },
+      )
+    }
+
+    // - Variants coming from `$styled.a({}).withVariants({ ... })`
     visitAst(
       callee?.parent,
       {
@@ -115,20 +125,24 @@ export const resolveStyleFunctionContext: PinceauTransformFunction<PinceauStyleF
       },
     )
   }
+
   // Transform css() declaration to string
-  const css = stringify(
+  let css: string = ''
+  if (declarationHasContent) {
+    css = stringify(
     // Scope `declaration` in `className` when using `styled`
-    ['$styled', 'styled'].includes(type) && className ? { [`.${className}`]: declaration } : declaration,
-    stringifyContext => resolveCssProperty(
-      {
-        localTokens: Object.keys(localTokens),
-        stringifyContext,
-        $theme: pinceauContext.$theme,
-        colorSchemeMode: pinceauContext.options.theme.colorSchemeMode,
-        utils: pinceauContext.utils,
-      },
-    ),
-  )
+      ['$styled', 'styled'].includes(type) && className ? { [`.${className}`]: declaration } : declaration,
+      stringifyContext => resolveCssProperty(
+        {
+          localTokens: Object.keys(localTokens),
+          stringifyContext,
+          $theme: pinceauContext.$theme,
+          colorSchemeMode: pinceauContext.options.theme.colorSchemeMode,
+          utils: pinceauContext.utils,
+        },
+      ),
+    )
+  }
 
   const pointer: string = `$pinceau:${transformContext.query.filename}:${id}`
 
@@ -142,6 +156,7 @@ export const resolveStyleFunctionContext: PinceauTransformFunction<PinceauStyleF
     loc,
     pointer,
     className,
+    propNames,
     css,
     declaration,
     variants,
@@ -152,4 +167,28 @@ export const resolveStyleFunctionContext: PinceauTransformFunction<PinceauStyleF
       runtime: false,
     },
   }
+}
+
+export function resolveStyleFunctionTypeIdElement(
+  callee: PathMatch,
+  { type: targetType, index: blockIndex }: Partial<PinceauTransformContext['target']>,
+  fnIndex: number = 0,
+) {
+  let type: 'css' | 'styled' | '$styled' = 'css'
+
+  let element: SupportedHTMLElements | undefined
+
+  // $styled.div(...)
+  if (callee.match[0].startsWith('$styled')) {
+    const [, , tag] = callee.match
+    element = tag as SupportedHTMLElements
+    type = '$styled'
+  }
+
+  // styled(...)
+  if (callee.match[0] === 'styled') { type = 'styled' }
+
+  const id = `${targetType}${blockIndex}_${type}${fnIndex}`
+
+  return { type, id, element }
 }

@@ -14,3 +14,5 @@ declare module '@pinceau/core' {
 }
 
 export * from './types'
+
+export { version } from '../package.json'

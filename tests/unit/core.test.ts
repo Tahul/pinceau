@@ -26,7 +26,7 @@ import {
   usePinceauVirtualContext,
 } from '@pinceau/core/utils'
 import Pinceau from 'pinceau/plugin'
-import { createThemeHelper, get, referencesRegex, set, toHash, tokensPaths } from '@pinceau/core/runtime'
+import { REFERENCES_REGEX, createThemeHelper, get, set, toHash, tokensPaths } from '@pinceau/core/runtime'
 import type { PinceauContext, PinceauQuery, PinceauTransformContext, PinceauTransforms, PinceauVirtualContext } from '@pinceau/core'
 import { PinceauVueTransformer } from '@pinceau/vue/utils'
 import type { CSSFunctionArgAST } from '@pinceau/style'
@@ -612,30 +612,30 @@ describe('@pinceau/core', () => {
   describe('utils/regexes.ts', () => {
     it('match single token within a string', () => {
       const str = 'background-color: $color.primary.100'
-      const matches = Array.from(str.matchAll(referencesRegex))
+      const matches = Array.from(str.matchAll(REFERENCES_REGEX))
       expect(matches).toHaveLength(1)
       expect(matches[0][0]).toBe('$color.primary.100')
     })
     it('match multiple tokens within a string', () => {
       const str = 'background: linear-gradient($color.primary.100, $color.secondary.200)'
-      const matches = Array.from(str.matchAll(referencesRegex))
+      const matches = Array.from(str.matchAll(REFERENCES_REGEX))
       expect(matches).toHaveLength(2)
       expect(matches[0][0]).toBe('$color.primary.100')
       expect(matches[1][0]).toBe('$color.secondary.200')
     })
     it('match root tokens', () => {
       const str = 'backgroundColor: $color'
-      const matches = Array.from(str.matchAll(referencesRegex))
+      const matches = Array.from(str.matchAll(REFERENCES_REGEX))
       expect(matches[0][0]).toBe('$color')
     })
     it('not match tokens without content', () => {
       const str = 'backgroundColor: $'
-      const matches = Array.from(str.matchAll(referencesRegex))
+      const matches = Array.from(str.matchAll(REFERENCES_REGEX))
       expect(matches).toHaveLength(0)
     })
     it('match tokens with diverse content', () => {
       const str = 'padding: $spacing.4 $spacing.medium $10px'
-      const matches = Array.from(str.matchAll(referencesRegex))
+      const matches = Array.from(str.matchAll(REFERENCES_REGEX))
       expect(matches).toHaveLength(3)
       expect(matches[0][0]).toBe('$spacing.4')
       expect(matches[1][0]).toBe('$spacing.medium')

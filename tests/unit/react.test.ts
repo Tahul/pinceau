@@ -137,9 +137,11 @@ describe('@pinceau/react', () => {
 
       const result = transformContext.result()?.code
 
+      console.log(result)
+
       expect(result).toContain('import { usePinceauRuntime, usePinceauComponent } from \'@pinceau/react/runtime\'')
       expect(result).toContain('() => \"red\"')
-      expect(result).toContain('usePinceauComponent(`')
+      expect(result).toContain('usePinceauComponent(\'')
     })
 
     it('can write style variants features', async () => {
@@ -224,9 +226,7 @@ describe('@pinceau/react', () => {
 
       await transformContext.transform()
 
-      const className = transformContext.state.styleFunctions?.script0_styled0?.className
-
-      expect(transformContext.result()?.code).contains(`const test = usePinceauRuntime(\`${className}\`, undefined, {"size":{"sm":{"padding":"1rem"}}}, { size })`)
+      expect(transformContext.result()?.code).contains('const test = usePinceauRuntime(undefined, undefined, {"size":{"sm":{"padding":"1rem"}}}, { size })')
     })
   })
 

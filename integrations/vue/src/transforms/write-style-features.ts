@@ -36,6 +36,16 @@ export const transformWriteStyleFeatures: PinceauTransformFunction = async (
     // If `ws` server present, send an event updating that specific `css` function style with HMR
     // This can't be done in `handleHotUpdate` as HMR event is triggered before `<style>` is appended to the component
     if (pinceauContext?.devServer?.ws && (target.type === 'script' || target.type === 'template')) {
+      console.log({
+        type: target.type,
+        data: {
+          id,
+          filename: transformContext.query.filename,
+          css: styleFunction.css,
+          selector: `[data-vite-dev-id*="pc-fn"][data-vite-dev-id*="${id}"]`,
+        },
+      })
+
       pinceauContext.devServer.ws.send({
         type: 'custom',
         event: 'pinceau:style-function',
@@ -43,7 +53,7 @@ export const transformWriteStyleFeatures: PinceauTransformFunction = async (
           id,
           filename: transformContext.query.filename,
           css: styleFunction.css,
-          selector: `[data-vite-dev-id*="pc-fn"][data-vite-dev-id*="${id}"]`,
+          selector: `[data-vite-dev-id*="pc-fn"][data-vite-dev-id*="${id.replace('$', '%24')}"]`,
         },
       })
     }

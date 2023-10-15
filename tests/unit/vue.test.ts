@@ -183,6 +183,7 @@ console.log('hello world')
       // Add mocked runtime styleFunction
       transformContext.state.styleFunctions = transformContext.state.styleFunctions || {}
       transformContext.state.styleFunctions.style0_styled0 = {
+        id: 'style0_styled0',
         computedStyles: [{}],
       } as any
 
@@ -214,6 +215,7 @@ console.log('hello world')
       // Add mocked runtime styleFunction
       transformContext.state.styleFunctions = transformContext.state.styleFunctions || {}
       transformContext.state.styleFunctions.style0_styled0 = {
+        id: 'style0_styled0',
         computedStyles: [{}],
       } as any
 
@@ -246,6 +248,7 @@ console.log('hello world')
       // Add mocked runtime styleFunction
       transformContext.state.styleFunctions = transformContext.state.styleFunctions || {}
       transformContext.state.styleFunctions.style0_styled0 = {
+        id: 'style0_styled0',
         computedStyles: [{}],
       } as any
 
@@ -278,6 +281,7 @@ console.log('hello world')
       // Add mocked runtime styleFunction
       transformContext.state.styleFunctions = transformContext.state.styleFunctions || {}
       transformContext.state.styleFunctions.style0_styled0 = {
+        id: 'style0_styled0',
         computedStyles: [{}],
       } as any
 
@@ -310,6 +314,7 @@ console.log('hello world')
       // Add mocked runtime styleFunction
       transformContext.state.styleFunctions = transformContext.state.styleFunctions || {}
       transformContext.state.styleFunctions.style0_styled0 = {
+        id: 'style0_styled0',
         computedStyles: [{}],
       } as any
 
@@ -343,6 +348,7 @@ console.log('hello world')
       // Add mocked runtime styleFunction
       transformContext.state.styleFunctions = transformContext.state.styleFunctions || {}
       transformContext.state.styleFunctions.style0_styled0 = {
+        id: 'style0_styled0',
         computedStyles: [{}],
       } as any
 
@@ -410,10 +416,10 @@ console.log('hello world')
 
       const result = transformContext.result()?.code
 
-      const className = transformContext?.state?.styleFunctions?.style0_styled0.className
+      console.log(result)
 
       expect(result).toContain('import { usePinceauRuntime } from \'@pinceau/vue/runtime\'')
-      expect(result).toContain(`const $style0_styled0 = usePinceauRuntime(\`${className}\`, undefined, {"size":{"sm":{"width":"32px"}}})`)
+      expect(result).toContain('const $style0_styled0 = usePinceauRuntime(undefined, undefined, {"size":{"sm":{"width":"32px"}}}, undefined)')
       expect(result).toContain('defineProps({"size":{"required":false,"type":[String, Object]}})')
     })
   })
@@ -491,7 +497,7 @@ console.log('hello world')
       pinceauContext.addTransformed(query.filename, query)
 
       const transformContext = usePinceauTransformContext(
-        '<style pctransformed>\ncss({ variants: { size: { sm: { padding: \'1rem\' } } } })\n</style>',
+        '<style pctransformed>\nstyled({ variants: { size: { sm: { padding: \'1rem\' } } } })\n</style>',
         query,
         pinceauContext,
       )
@@ -501,18 +507,18 @@ console.log('hello world')
 
       await transformContext.transform()
 
-      expect(transformContext.result()?.code).contains('usePinceauRuntime(undefined, undefined, {"size":{"sm":{"padding":"1rem"}}})')
+      expect(transformContext.result()?.code).contains('usePinceauRuntime(undefined, undefined, {"size":{"sm":{"padding":"1rem"}}}, undefined)')
     })
 
     it('can push props to component existing empty defineProps()', async () => {
       const query = parsePinceauQuery(resolveFixtures('./components/vue/TestVariants3.vue'))
 
-      const propDef = '{"size":{"required":false,"type":[String, Object] as ResponsivePropType<\'sm\'>}}'
+      const propDef = '{"size":{"required":false,"type":[String, Object] as ResponsiveProp<\'sm\'>}}'
 
       pinceauContext.addTransformed(query.filename, query)
 
       const transformContext = usePinceauTransformContext(
-        '<script setup lang="ts">defineProps()</script>\n<style pctransformed>\ncss({ variants: { size: { sm: { padding: \'1rem\' } } } })\n</style>',
+        '<script setup lang="ts">defineProps()</script>\n<style pctransformed>\nstyled({ variants: { size: { sm: { padding: \'1rem\' } } } })\n</style>',
         query,
         pinceauContext,
       )
@@ -528,12 +534,12 @@ console.log('hello world')
     it('can push props to component existing object defined defineProps({ ... })', async () => {
       const query = parsePinceauQuery(resolveFixtures('./components/vue/TestVariants4.vue'))
 
-      const propDef = '{"size":{"required":false,"type":[String, Object] as ResponsivePropType<\'sm\'>}}'
+      const propDef = '{"size":{"required":false,"type":[String, Object] as ResponsiveProp<\'sm\'>}}'
 
       pinceauContext.addTransformed(query.filename, query)
 
       const transformContext = usePinceauTransformContext(
-        '<script setup lang="ts">defineProps({ test: { type: String, required: false } })</script>\n<style pctransformed>\ncss({ variants: { size: { sm: { padding: \'1rem\' } } } })\n</style>',
+        '<script setup lang="ts">defineProps({ test: { type: String, required: false } })</script>\n<style pctransformed>\nstyled({ variants: { size: { sm: { padding: \'1rem\' } } } })\n</style>',
         query,
         pinceauContext,
       )
@@ -556,7 +562,7 @@ console.log('hello world')
       pinceauContext.addTransformed(query.filename, query)
 
       const transformContext = usePinceauTransformContext(
-        '<script setup lang="ts">defineProps<{ test?: String }>()</script>\n<style pctransformed>\ncss({ variants: { size: { sm: { padding: \'1rem\' } } } })\n</style>',
+        '<script setup lang="ts">defineProps<{ test?: String }>()</script>\n<style pctransformed>\nstyled({ variants: { size: { sm: { padding: \'1rem\' } } } })\n</style>',
         query,
         pinceauContext,
       )
@@ -581,7 +587,7 @@ console.log('hello world')
       pinceauContext.addTransformed(query.filename, query)
 
       const transformContext = usePinceauTransformContext(
-        '<script setup lang="ts">withDefaults(defineProps<{ test?: String }>(), { test: \'hello world\' })</script>\n<style pctransformed>\ncss({ variants: { size: { sm: { padding: \'1rem\' }, options: { default: \'sm\' } } } })\n</style>',
+        '<script setup lang="ts">withDefaults(defineProps<{ test?: String }>(), { test: \'hello world\' })</script>\n<style pctransformed>\nstyled({ variants: { size: { sm: { padding: \'1rem\' }, options: { default: \'sm\' } } } })\n</style>',
         query,
         pinceauContext,
       )

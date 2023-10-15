@@ -1,6 +1,6 @@
 import type { DefaultThemeMap } from '@pinceau/theme'
 import type * as Utils from './format-utils'
-import type { PinceauUtils } from '$pinceau/utils'
+import type { PinceauThemePaths } from '$pinceau/theme'
 
 /**
  * Takes a supported key from the ThemeMap and returns a list of tokens supporting that key.

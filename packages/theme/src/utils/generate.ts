@@ -1,6 +1,6 @@
 import type { File, Core as Instance, Named, Transform } from 'style-dictionary-esm'
 import StyleDictionary from 'style-dictionary-esm'
-import { message, referencesRegex } from '@pinceau/core/utils'
+import { REFERENCES_REGEX, message } from '@pinceau/core/utils'
 import type { PinceauContext } from '@pinceau/core'
 import type { DesignTokens, PinceauThemeFormat, Theme, ThemeGenerationOutput, ThemeLoadingOutput } from '../types'
 import { flattenTokens } from './tokens'
@@ -89,7 +89,7 @@ export async function generateTheme(
           outputReferences: true,
         },
         referencesOptions: {
-          regex: referencesRegex,
+          regex: REFERENCES_REGEX,
           openingChar: '$',
           closingChar: '\b',
         },

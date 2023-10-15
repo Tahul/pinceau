@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "@nuxt/test-utils": "^3.7.4",
-    "@nuxthq/studio": "^1.0.0",
+    "@nuxthq/studio": "^1.0.1",
     "@nuxtjs/color-mode": "^3.3.0",
     "@pinceau/configs": "workspace:*",
     "nitropack": "2.6.3",

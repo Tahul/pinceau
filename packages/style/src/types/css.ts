@@ -1,16 +1,16 @@
 import type { CSSProperties, PseudosProperties } from './properties'
 import type { ComputedStyleDefinition } from './computed-styles'
-import type { Variants } from './variants'
+import type { Variants, VariantsProps } from './variants'
 import type { PinceauUtils } from '$pinceau/utils'
 import type { PinceauMediaQueries } from '$pinceau/theme'
 
 export type PropertyType = (string & {}) | (number & {}) | undefined
 
 export type ExtractVariantsProps<V extends Variants> = {
-  [K in keyof V]?: keyof V[K]
+  [K in keyof V]?: ResponsiveProp<Exclude<keyof V[K], 'options'>>
 }
 
-export type ResponsiveProp<T extends string | number | symbol | undefined> = { [key in PinceauMediaQueries]?: T } | T
+export type ResponsiveProp<T> = { [key in PinceauMediaQueries]?: T } | T
 
 export type StyledFunctionArg<
   Props extends {} = {},
@@ -22,13 +22,13 @@ export type StyledFunctionArg<
   (
     SupportVariants extends true ?
         {
-          variants?: Variants<LocalTokens, TemplateSource, Props>
+          variants?: Variants<LocalTokens, TemplateSource>
         } :
         {
           variants?: undefined
         }
   )
-  &
+  |
   RawCSS<LocalTokens, TemplateSource, Props, true>
 
 export type CSSFunctionArg<
@@ -85,15 +85,13 @@ export type RawCSS<
         )
         |
         // Support for custom properties
-        (
-          {
-            [K in `$${string}`]?: PropertyType | ComputedStyleDefinition<Props>
-          }
-          &
-          {
-            [K in `--${string}`]?: PropertyType | ComputedStyleDefinition<Props>
-          }
-        )
+        {
+          [K in `$${string}`]?: PropertyType | ComputedStyleDefinition<Props>
+        }
+        |
+        {
+          [K in `--${string}`]?: PropertyType | ComputedStyleDefinition<Props>
+        }
       :
         {}
   )

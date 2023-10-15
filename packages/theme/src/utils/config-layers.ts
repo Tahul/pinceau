@@ -7,7 +7,17 @@ import { normalizeTokens } from './tokens'
 import type { PinceauTheme } from '$pinceau/theme'
 
 // Gives an empty layer for a given path or nothing.
-export const getConfigLayer = (path?: string): ResolvedConfigLayer => ({ path: path || '', ext: '', content: '', theme: {}, definitions: {}, utils: {}, imports: [] })
+export function getConfigLayer(path?: string): ResolvedConfigLayer {
+  return {
+    path: path || '',
+    ext: '',
+    content: '',
+    theme: { media: {} },
+    definitions: {},
+    utils: {},
+    imports: [],
+  }
+}
 
 /**
  * Resolves all `layers` from Pinceau options and returns a LoadConfigResult object.

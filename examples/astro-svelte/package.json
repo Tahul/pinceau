@@ -16,7 +16,7 @@
     "@pinceau/astro": "workspace:*",
     "@pinceau/configs": "workspace:*",
     "@pinceau/svelte": "workspace:*",
-    "astro": "^3.2.4"
+    "astro": "^3.3.0"
   },
   "stackblitz": {
     "installDependencies": false,
