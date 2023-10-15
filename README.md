@@ -1,33 +1,42 @@
 ![Pinceau Cover](./.github/banner.png)
 
-# Pinceau
-
-[![NPM version](https://img.shields.io/npm/v/pinceau?color=a1b858&label=)](https://www.npmjs.com/package/@pinceau/core)
+# Pinceau [![NPM version](https://img.shields.io/npm/v/pinceau?color=a1b858&label=)](https://www.npmjs.com/package/@pinceau/core)
 
 > Make your `<script>` lighter and your `<style>` smarter.
 
-[🎨 play.pinceau.dev](https://play.pinceau.dev) • [🧑‍🎨 Documentation](https://pinceau.dev)
+> [🕹️ Try it online](https://play.pinceau.dev) • [📖 Documentation](https://pinceau.dev)
 
 - 🪄 Fully-typed styling API inspired from the tools you already [_love_](https://stitches.dev)
+  - `$styled.el()`, `styled()` and `css()`
 
-- 🎨 [Design tokens](https://github.com/design-tokens/community-group) compatible configuration
+- 🎨 Multi-layers [Design Tokens compatible](https://github.com/design-tokens/community-group) theming
 
-- 🧑‍🔬 Smart hybrid output engine that uses [static CSS](https://developer.mozilla.org/en-US/docs/Web/CSS) or [CSSOM](https://developer.mozilla.org/en-US/docs/Web/API/CSS_Object_Model) when you need it
-
-- ⚡ [Vite](https://vitejs.dev)-native, plug & play support for any Vite-based framework:
+- ⚡ Plug & play support for any [Vite](https://vitejs.dev)-based framework:
   - [Vue](./integrations/vue), [React](./integrations/vue), [Svelte](./integrations/vue), [Nuxt](./integrations/nuxt), [Astro](./integrations/astro)
-  - 🧑‍🔬 Planned support for: [Qwik](https://qwik.builder.io), [SolidJS](https://www.solidjs.com), [Preact](https://preactjs.com), [Lit](https://lit.dev), [_yours ?_](https://github.com/Tahul/pinceau/issues)
+  - Planned support for: [Qwik](https://qwik.builder.io), [SolidJS](https://www.solidjs.com), [Preact](https://preactjs.com), [Lit](https://lit.dev), [_yours ?_](https://github.com/Tahul/pinceau/issues)
+
+- 💅 Comes with everything you need to build a robust design system:
+  - Smart output engine that uses [static CSS](https://developer.mozilla.org/en-US/docs/Web/CSS) or [CSSOM](https://developer.mozilla.org/en-US/docs/Web/API/CSS_Object_Model) when you need it
+  - Style colocation
+  - Style composition
+  - Responsive variants API
+  - Theming tokens
+  - Runtime theme swapping
+
+- 🌐 SSR-ready with optimized hydration and no _JS/CSS_ theme duplication
+
+- ✅ **300+** tests covering every core packages and integrations
 
 - 🍦 [Pinceau VSCode extension](https://marketplace.visualstudio.com/items?itemName=yaelguilloux.pinceau-vscode) for **DX Sugar**
 
 ## ⚙️ Install
 
-```bash
-npm i @pinceau/vue
-```
-
 <details>
 <summary>Vue</summary><br>
+
+```bash
+pnpm install @pinceau/vue
+```
 
 ```ts
 // vite.config.ts
@@ -48,6 +57,10 @@ Example: [`examples/vite-vue/vite.config.ts`](./examples/vite-vue/vite.config.ts
 <details>
 <summary>Svelte</summary><br>
 
+```bash
+pnpm install @pinceau/svelte
+```
+
 ```ts
 // vite.config.ts
 import Pinceau from '@pinceau/svelte/plugin'
@@ -67,6 +80,10 @@ Example: [`examples/vite-svelte/vite.config.ts`](./examples/vite-svelte/vite.con
 <details>
 <summary>React</summary><br>
 
+```bash
+pnpm install @pinceau/react
+```
+
 ```ts
 // vite.config.ts
 import Pinceau from '@pinceau/react/plugin'
@@ -85,6 +102,23 @@ Example: [`examples/vite-react/vite.config.ts`](./examples/vite-react/vite.confi
 
 <details>
 <summary>Use our theme or create yours</summary><br>
+
+Use our default theme, [🎨 Palette](./packages/palette):
+
+```ts
+// vite.config.ts
+export default defineConfig({
+  plugins: [
+    Pinceau({
+      theme: {
+        layers: ['@pinceau/palette']
+      }
+    })
+  ]
+})
+```
+
+Or build your in `theme.config.ts`:
 
 ```ts
 // theme.config.ts
@@ -131,20 +165,15 @@ export default defineTheme({
 })
 ```
 
-Example: [`playground/theme/theme.config.ts`](./playground/theme/theme.config.ts)
+Example: [`examples/theme/theme.config.ts`](./playground/theme/theme.config.ts)
 
 </details>
-
-Learn more on the [documentation](https://pinceau.dev/get-started/what-is-pinceau).
 
 ## 💖 Credits
 
 This package takes a lot of inspiration from these amazing projects:
 
-- [Stitches](https://stitches.dev)
-- [vanilla-extract](https://vanilla-extract.style/)
-- [unocss](https://github.com/unocss/unocss)
-- [style-dictionary](https://github.com/amzn/style-dictionary)
+> [Stitches](https://stitches.dev) • [vanilla-extract](https://vanilla-extract.style/) • [unocss](https://github.com/unocss/unocss) • [style-dictionary](https://github.com/amzn/style-dictionary)
 
 ## License
 
