@@ -7,7 +7,8 @@
     "dev-refresh": "cross-env USE_REFRESH=true vite --port=3000",
     "build:example": "vite build",
     "build:example-refresh": "cross-env USE_REFRESH=true vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "clean": "rm -rf dist"
   },
   "dependencies": {
     "react": "^18.2.0",

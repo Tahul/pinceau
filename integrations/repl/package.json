@@ -29,7 +29,8 @@
     "build": "vite build",
     "build-types": "vue-tsc -p tsconfig.build.json && api-extractor run -c api-extractor.json && node scripts/cleanup.js",
     "build-preview": "vite build -c vite.preview.config.ts",
-    "prepublishOnly": "npm run build && npm run build-types"
+    "prepublishOnly": "npm run build && npm run build-types",
+    "clean": "rm -rf dist"
   },
   "devDependencies": {
     "@babel/types": "^7.23.0",

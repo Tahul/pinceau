@@ -1,9 +1,6 @@
 import type { DesignToken, DesignTokens, ThemeFunction } from '@pinceau/theme'
-import { get } from './data'
-import type {
-  PinceauTheme,
-  PinceauThemePaths,
-} from '$pinceau/theme'
+import { get } from '@pinceau/core/runtime'
+import type { PinceauTheme, PinceauThemePaths } from '$pinceau/theme'
 
 /**
  * Creates the $theme helper usable both at build or runtime.
@@ -27,18 +24,4 @@ export function createThemeHelper(
 
     return _token
   }
-}
-
-/**
- * Resolve a variable from a path.
- */
-export function pathToVarName(
-  path: string | string[],
-  prefix: string = '--',
-  splitPoint: string = '.',
-  separator: string = '-',
-) {
-  if (Array.isArray(path)) { path = path.join(separator) }
-  if (path.charAt(0) === '$') { path = path.substring(1) }
-  return `${prefix}${path.split(splitPoint).join(separator)}`
 }

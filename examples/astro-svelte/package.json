@@ -6,7 +6,8 @@
     "start": "astro dev --port=3000",
     "build:example": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "clean": "rm -rf dist"
   },
   "dependencies": {
     "vue": "^3.3.4"

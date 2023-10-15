@@ -25,7 +25,7 @@ export const transformThemeHelper: PinceauTransformFunction = async (
 
       // Use $token and arg if exist
       if (arg) {
-        const themeToken = pinceauContext.$theme(path)
+        const themeToken = pinceauContext.$theme?.(path)
         if (themeToken) { token = wrap(themeToken?.variable || path) }
       }
 

@@ -19,7 +19,8 @@
   ],
   "scripts": {
     "build": "unbuild",
-    "stub": "unbuild --stub"
+    "stub": "unbuild --stub",
+    "clean": "rm -rf dist"
   },
   "dependencies": {
     "@nuxt/kit": "^3.7.4",

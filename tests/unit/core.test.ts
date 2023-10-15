@@ -26,7 +26,8 @@ import {
   usePinceauVirtualContext,
 } from '@pinceau/core/utils'
 import Pinceau from 'pinceau/plugin'
-import { REFERENCES_REGEX, createThemeHelper, get, set, toHash, tokensPaths } from '@pinceau/core/runtime'
+import { createThemeHelper } from '@pinceau/theme/runtime'
+import { REFERENCES_REGEX, get, set, toHash, tokensPaths } from '@pinceau/core/runtime'
 import type { PinceauContext, PinceauQuery, PinceauTransformContext, PinceauTransforms, PinceauVirtualContext } from '@pinceau/core'
 import { PinceauVueTransformer } from '@pinceau/vue/utils'
 import type { CSSFunctionArgAST } from '@pinceau/style'

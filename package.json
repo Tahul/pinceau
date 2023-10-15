@@ -31,8 +31,11 @@
   ],
   "scripts": {
     "build": "turbo run build",
-    "build:docs": "pnpm -r --filter=\"./docs\" run build",
+    "build:force": "turbo run build --force",
+    "build:docs": "pnpm -r --filter=\"./docs\" run build:docs",
+    "build:examples": "pnpm -r --filter=\"./examples\" run build:example",
     "build:vscode": "pnpm -r --filter=\"./integrations/(language-server|vscode)\" run build",
+    "clean": "turbo run clean",
     "clean:snapshots": "rm -rf ./tests/__snapshots__",
     "dev:docs": "pnpm -r --filter=\"docs\" run dev",
     "dev:lib": "nodemon --exec 'pnpm --filter=\"./examples/vite-lib\" run dev' --watch 'packages' --watch 'integrations' -e js,ts,vue",

@@ -1,16 +1,9 @@
 import process from 'node:process'
-import type { PinceauThemeOptions } from '@pinceau/theme'
-import type { PinceauStyleOptions } from '@pinceau/style'
-import type { PinceauRuntimeOptions } from '@pinceau/runtime'
-import type { PinceauVueOptions } from '@pinceau/vue'
-import type { PinceauReactOptions } from '@pinceau/react'
-import type { PinceauSvelteOptions } from '@pinceau/svelte'
-import type { PinceauAstroOptions } from '@pinceau/astro'
 import type { PinceauOptions, PinceauUserOptions } from '../types'
 import { merger } from './merger'
 
 export function getDefaultOptions(): { [key in keyof PinceauUserOptions]: any } & { base: any } {
-  const theme: PinceauThemeOptions = {
+  const theme: PinceauUserOptions['theme'] = {
     layers: [],
     configFileName: 'theme.config',
     configExtensions: ['.js', '.ts', '.mjs', '.cjs', '.json'],
@@ -28,12 +21,12 @@ export function getDefaultOptions(): { [key in keyof PinceauUserOptions]: any } 
     imports: true,
   }
 
-  const style: PinceauStyleOptions = {
+  const style: PinceauUserOptions['style'] = {
     includes: [],
     excludes: ['**/node_modules/**'],
   }
 
-  const runtime: PinceauRuntimeOptions = {
+  const runtime: PinceauUserOptions['runtime'] = {
     computedStyles: true,
     variants: true,
     ssr: {
@@ -43,19 +36,19 @@ export function getDefaultOptions(): { [key in keyof PinceauUserOptions]: any } 
     appId: false,
   }
 
-  const vue: PinceauVueOptions = {
+  const vue: PinceauUserOptions['vue'] = {
     /* */
   }
 
-  const astro: PinceauAstroOptions = {
+  const astro: PinceauUserOptions['astro'] = {
     /* */
   }
 
-  const jsx: PinceauReactOptions = {
+  const react: PinceauUserOptions['react'] = {
     /* */
   }
 
-  const svelte: PinceauSvelteOptions = {
+  const svelte: PinceauUserOptions['svelte'] = {
     /* */
   }
 
@@ -84,7 +77,7 @@ export function getDefaultOptions(): { [key in keyof PinceauUserOptions]: any } 
     base,
     svelte,
     astro,
-    jsx,
+    react,
   }
 }
 
@@ -94,7 +87,9 @@ export function normalizeOptions(options?: PinceauUserOptions): PinceauOptions {
   options = merger(options || {}, defaults.base)
 
   for (const [key, keyDefaults] of Object.entries(defaults)) {
-    if (options[key] === true || typeof options[key] === 'object') { options[key] = merger(typeof options[key] === 'object' ? options[key] : {}, keyDefaults) as PinceauRuntimeOptions }
+    if (options[key] === true || typeof options[key] === 'object') {
+      options[key] = merger(typeof options[key] === 'object' ? options[key] : {}, keyDefaults)
+    }
   }
 
   return Object.assign({}, options) as PinceauOptions

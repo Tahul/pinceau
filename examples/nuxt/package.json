@@ -4,7 +4,8 @@
   "scripts": {
     "build:example": "nuxi build",
     "dev": "nuxi dev --port=3000",
-    "preview": "nuxi preview"
+    "preview": "nuxi preview",
+    "clean": "rm -rf dist && rm -rf .output && rm -rf .nuxt"
   },
   "dependencies": {
     "@pinceau/nuxt": "workspace:*"

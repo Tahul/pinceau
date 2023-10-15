@@ -9,6 +9,7 @@ import { transformIndexHtml } from './utils/html'
 import { usePinceauConfigContext } from './utils/config-context'
 import { suite } from './transforms/suite'
 import { setupThemeFormats } from './utils/setup'
+import { createThemeHelper } from './utils/theme-helper'
 
 const _require = createRequire(import.meta.url)
 
@@ -34,6 +35,8 @@ const PinceauThemePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
         configCtx = usePinceauConfigContext(ctx)
 
         ctx.configContext = configCtx
+
+        ctx.setThemeFunction(createThemeHelper)
 
         ctx.addTypes({
           imports: [

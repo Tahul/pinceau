@@ -29,7 +29,8 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "unbuild",
-    "stub": "unbuild --stub"
+    "stub": "unbuild --stub",
+    "clean": "rm -rf dist"
   },
   "peerDependencies": {
     "@pinceau/astro": "workspace:*",

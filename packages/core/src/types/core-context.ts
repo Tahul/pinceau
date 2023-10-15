@@ -1,4 +1,4 @@
-import type { PinceauConfigContext, Theme, ThemeFunction } from '@pinceau/theme'
+import type { PinceauConfigContext, Theme } from '@pinceau/theme'
 import type { PinceauStyleFunctionContext } from '@pinceau/style'
 import type { PinceauVirtualContext } from './virtual-context'
 import type { PinceauOptions } from './options'
@@ -8,13 +8,17 @@ import type { PinceauTransformState } from './transform-context'
 import type { PinceauTheme } from '$pinceau/theme'
 import type { PinceauUtils } from '$pinceau/utils'
 
+export interface PinceauExtendedContext {
+  [key: string]: any
+}
+
 /**
  * Complete Pinceau plugin context used at build time and in development.
  */
 export interface PinceauContext extends
   PinceauVirtualContext,
-  PinceauBuildContext {
-  $theme: ThemeFunction
+  PinceauBuildContext,
+  PinceauExtendedContext {
 }
 
 export interface PinceauBuildContext {
@@ -23,7 +27,7 @@ export interface PinceauBuildContext {
    */
   devServer: any
   /**
-   *
+   * ConfigContext injected by @pinceau/theme when present.
    */
   configContext?: PinceauConfigContext
   /**
@@ -58,6 +62,10 @@ export interface PinceauBuildContext {
    * Update Pinceau utils properties.
    */
   updateUtils: (utils?: any) => PinceauUtils
+  /**
+   * Allows setting the theme function from a plugin.
+   */
+  setThemeFunction: (fn: any) => void
   /**
    * Available custom transformers for SFC formats support.
    */

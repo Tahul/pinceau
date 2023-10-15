@@ -1,7 +1,20 @@
 import type { PinceauContext, PinceauOptions } from '@pinceau/core'
+import { getPinceauContext } from '@pinceau/core/utils'
+import type { ResolvedConfig } from 'vite'
 import type { PinceauConfigContext, ThemeGenerationOutput, ThemeLoadingOutput } from '../types'
 import { loadLayers } from './config-layers'
 import { generateTheme } from './generate'
+
+/**
+ * Retrieves previously injected PinceauConfigContext inside ViteDevServer to reuse context across plugins.
+ */
+export function getPinceauConfigContext(config: ResolvedConfig): PinceauConfigContext {
+  const pinceauContext = getPinceauContext(config)
+
+  if (pinceauContext?.configContext) { return pinceauContext?.configContext }
+
+  throw new Error('You tried to use a Pinceau theme plugin without previously injecting the @pinceau/theme plugin.')
+}
 
 export function usePinceauConfigContext(ctx: PinceauContext): PinceauConfigContext {
   let config: ThemeLoadingOutput

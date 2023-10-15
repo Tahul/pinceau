@@ -1,9 +1,7 @@
 import type { ResolvedConfig } from 'vite'
-import type { PinceauConfigContext } from '@pinceau/theme'
 import type { PinceauBuildContext, PinceauContext, PinceauFilterFunction, PinceauOptions, PinceauQuery, PinceauTransformState, PinceauTransformer, PinceauUserOptions } from '../types'
 import { parsePinceauQuery } from './query'
 import { usePinceauVirtualContext } from './virtual-context'
-import { createThemeHelper } from './theme-helper'
 import { isPathIncluded } from './filter'
 import { normalizeOptions } from './options'
 import type { PinceauUtils } from '$pinceau/utils'
@@ -20,17 +18,6 @@ export function getPinceauContext(config: ResolvedConfig): PinceauContext {
   if (ctx) { return ctx }
 
   throw new Error('You tried to use a Pinceau plugin without previously injecting the @pinceau/core plugin.')
-}
-
-/**
- * Retrieves previously injected PinceauConfigContext inside ViteDevServer to reuse context across plugins.
- */
-export function getPinceauConfigContext(config: ResolvedConfig): PinceauConfigContext {
-  const pinceauContext = getPinceauContext(config)
-
-  if (pinceauContext?.configContext) { return pinceauContext?.configContext }
-
-  throw new Error('You tried to use a Pinceau theme plugin without previously injecting the @pinceau/theme plugin.')
 }
 
 /**
@@ -89,6 +76,18 @@ export function usePinceauContext(userOptions?: PinceauUserOptions): PinceauCont
   let utils: PinceauUtils
 
   /**
+   * Theme function injected by @pinceau/theme hen present?
+   */
+  let themeFunction: undefined | (
+    (
+      theme: any,
+      options?: {
+        cb?: ((ctx: { query: string; token?: any; theme: PinceauTheme }) => void)
+      }
+    ) => any
+  )
+
+  /**
    * Build-time context.
    */
   const buildContext: PinceauBuildContext = {
@@ -133,6 +132,9 @@ export function usePinceauContext(userOptions?: PinceauUserOptions): PinceauCont
     updateUtils(_utils) {
       if (_utils) { utils = _utils }
       return utils
+    },
+    setThemeFunction(fn: any) {
+      themeFunction = fn
     },
 
     /**
@@ -202,20 +204,19 @@ export function usePinceauContext(userOptions?: PinceauUserOptions): PinceauCont
   }
 
   return {
-    /**
-     * Main build-time $theme helper.
-     */
+    ...buildContext,
+    ...virtualContext,
     get $theme() {
-      return createThemeHelper(
+      if (!themeFunction) { return }
+
+      return themeFunction(
         theme,
         {
-          cb(ctx) {
-            if (!ctx?.token) { console.log('token not found!', ctx.query) }
+          cb(_ctx) {
+            // if (!ctx?.token) { console.log('token not found!', ctx.query) }
           },
         },
       )
     },
-    ...buildContext,
-    ...virtualContext,
   }
 }

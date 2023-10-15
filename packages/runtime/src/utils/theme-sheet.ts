@@ -1,5 +1,6 @@
 import type { DesignToken } from '@pinceau/theme'
-import { createThemeHelper, get, set } from '@pinceau/core/runtime'
+import { get, set } from '@pinceau/core/runtime'
+import { createThemeHelper } from '@pinceau/theme/runtime'
 import type { PinceauThemeSheet, PinceauThemeSheetOptions } from '../types'
 import { useStyleSheet } from './sheet'
 import { IS_BROWSER } from './constants'

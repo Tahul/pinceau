@@ -1,4 +1,5 @@
 import path from 'node:path'
+import { createResolver } from '@nuxt/kit'
 import { defineConfig } from 'vite'
 import Pinceau from 'pinceau/plugin'
 
