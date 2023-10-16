@@ -1,6 +1,6 @@
 {
   "name": "@pinceau/monorepo",
-  "version": "1.0.0-beta.12",
+  "version": "1.0.0-beta.13",
   "private": true,
   "description": "Make your <script> lighter and your <style> smarter.",
   "keywords": [
