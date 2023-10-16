@@ -24,7 +24,7 @@
     "theme.config.ts"
   ],
   "scripts": {
-    "build": "vite build -c vite.config.base.ts && rm -rf dist",
+    "build:palette": "vite build -c vite.config.base.ts && rm -rf dist",
     "build:react": "vite build -c vite.config.react.ts && rm -rf dist",
     "build:svelte": "vite build -c vite.config.svelte.ts && rm -rf dist",
     "build:vue": "vite build -c vite.config.vue.ts && rm -rf dist",
