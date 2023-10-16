@@ -72,7 +72,7 @@ export interface ReservedConfigKeys {
  * Theme generation output.
  */
 export interface ThemeGenerationOutput {
-  buildDir: string | undefined
+  buildDir: string | false | undefined
   theme: Theme<PinceauTheme>
   outputs: VirtualOutputs
 }

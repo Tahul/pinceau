@@ -34,10 +34,6 @@ export const PinceauReactPlugin: UnpluginInstance<undefined> = createUnplugin(()
 
     transformInclude: id => transformInclude(id, ctx),
 
-    transform: async (code, id) => {
-      const result = await transform(code, id, suite, ctx)
-
-      return result
-    },
+    transform: async (code, id) => await transform(code, id, suite, ctx),
   }
 })

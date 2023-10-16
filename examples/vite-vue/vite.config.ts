@@ -20,18 +20,11 @@ export default defineConfig({
   plugins: [
     Vue(),
     Pinceau({
-      debug: 2,
       style: {
         excludes: [
           resolve('../../packages'),
         ],
-      },
-      theme: {
-        buildDir: resolve('./node_modules/.pinceau'),
-        layers: [
-          '@pinceau/palette'
-        ],
-      },
+      }
     }),
     !process.env.VITEST_WORKER_ID
       ? Inspect({

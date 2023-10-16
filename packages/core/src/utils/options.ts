@@ -19,6 +19,7 @@ export function getDefaultOptions(): { [key in keyof PinceauUserOptions]: any } 
     definitions: true,
     schema: true,
     imports: true,
+    palette: true,
   }
 
   const style: PinceauUserOptions['style'] = {

@@ -61,9 +61,9 @@ export function activate(context: vscode.ExtensionContext) {
     synchronize: {
       fileEvents: [
         vscode.workspace.createFileSystemWatcher('**/*/.nuxt/pinceau/index.ts'),
-        vscode.workspace.createFileSystemWatcher('**/*/node_modules/.vite/pinceau/index.ts'),
+        vscode.workspace.createFileSystemWatcher('**/*/node_modules/.pinceau/index.ts'),
         vscode.workspace.createFileSystemWatcher('**/*/.nuxt/pinceau/definitions.ts'),
-        vscode.workspace.createFileSystemWatcher('**/*/node_modules/.vite/pinceau/definitions.ts'),
+        vscode.workspace.createFileSystemWatcher('**/*/node_modules/.pinceau/definitions.ts'),
       ],
     },
   }

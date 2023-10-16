@@ -2,12 +2,12 @@ import path from 'node:path'
 import fs from 'node:fs'
 import { createResolver } from '@nuxt/kit'
 import { defineConfig } from 'vite'
-import Pinceau from 'pinceau/plugin'
-import { getPinceauContext } from '@pinceau/core/utils'
-import { createReactPlugin } from '@pinceau/react/utils'
-import { createVuePlugin } from '@pinceau/vue/utils'
-import { createSveltePlugin } from '@pinceau/svelte/utils'
-import type { PinceauContext } from '@pinceau/core'
+import Pinceau from '../../integrations/pinceau/src/plugin'
+import { getPinceauContext } from '../../packages/core/src/utils'
+import { createReactPlugin } from '../../integrations/react/src/utils'
+import { createVuePlugin } from '../../integrations/vue/src/utils'
+import { createSveltePlugin } from '../../integrations/svelte/src/utils'
+import type { PinceauContext } from '../../packages/core/src'
 
 let ctx: PinceauContext
 

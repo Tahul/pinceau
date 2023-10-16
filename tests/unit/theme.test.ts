@@ -55,6 +55,7 @@ describe('@pinceau/theme', () => {
     beforeEach(() => {
       ctx = usePinceauContext()
       setupThemeFormats(ctx)
+      ctx.options.theme.palette = false
       configCtx = usePinceauConfigContext(ctx)
       ctx.options.theme.layers = []
       ctx.options.theme.buildDir = undefined
@@ -85,7 +86,20 @@ describe('@pinceau/theme', () => {
       expect(configCtx.config).toBeDefined()
       expect(configCtx).toBeDefined()
     })
-    it('build theme without options', async () => {
+    it('inject @pinceau/palette build theme without options', async () => {
+      ctx.options.theme.palette = true
+
+      await configCtx.buildTheme()
+
+      expect(configCtx.ready).toBeDefined()
+      expect(configCtx.config).toBeDefined()
+      expect(configCtx.config.sources.length).toBe(1)
+      expect(Object.keys(configCtx.config.theme).length).toBeGreaterThan(0)
+      expect(Object.keys(configCtx.config.theme).length).toBeGreaterThan(0)
+      ;['id', 'properties', 'default', 'type'].forEach(prop => expect(configCtx.config.schema).toHaveProperty(prop))
+      expect(Object.keys(configCtx.config.theme).length).toBeGreaterThan(0)
+    })
+    it('can build without theme layer', async () => {
       await configCtx.buildTheme()
 
       expect(configCtx.ready).toBeDefined()
@@ -349,6 +363,8 @@ describe('@pinceau/theme', () => {
     it('resolveConfigSources() - resolve sources from an user config layers key', () => {
       const options = normalizeOptions()
 
+      options.theme.palette = false
+
       options.theme.layers = [
         resolveFixtures('../../packages/palette'),
         {
@@ -420,6 +436,8 @@ describe('@pinceau/theme', () => {
     })
     it('loadLayers() - output full output from options layers', async () => {
       const options = normalizeOptions()
+
+      options.theme.palette = false
 
       options.theme.layers = [
         resolveFixtures('../../packages/palette'),

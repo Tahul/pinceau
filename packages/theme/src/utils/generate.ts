@@ -1,3 +1,4 @@
+import { join } from 'node:path'
 import type { File, Core as Instance, Named, Transform } from 'style-dictionary-esm'
 import StyleDictionary from 'style-dictionary-esm'
 import { REFERENCES_REGEX, message } from '@pinceau/core/utils'
@@ -20,6 +21,8 @@ export async function generateTheme(
 
   // Enforce ending slash for buildDir
   if (buildDir && !buildDir.endsWith('/')) { buildDir += '/' }
+
+  if (buildDir !== false && ctx.options.cwd) { buildDir = join(ctx.options.cwd, 'node_modules/.pinceau/') }
 
   // Transforms used
   const usedTransforms = ['size/px', 'color/hex']
@@ -82,7 +85,7 @@ export async function generateTheme(
       base: {
         silent: true,
         transformGroup: 'pinceau',
-        buildPath: buildDir,
+        buildPath: buildDir || undefined,
         files,
         write: !!buildDir,
         options: {

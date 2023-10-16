@@ -17,6 +17,7 @@
   "devDependencies": {
     "@pinceau/configs": "workspace:*",
     "@pinceau/react": "workspace:*",
+    "@pinceau/palette": "workspace:*",
     "@types/node": "20.8.5",
     "@types/react": "latest",
     "@types/react-dom": "latest",

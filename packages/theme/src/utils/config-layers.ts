@@ -2,7 +2,7 @@ import { dirname, extname } from 'node:path'
 import type { PinceauOptions } from '@pinceau/core'
 import { merger } from '@pinceau/core/utils'
 import { resolveSchema as resolveUntypedSchema } from 'untyped'
-import { resolveModule } from 'local-pkg'
+import { isPackageExists, resolveModule } from 'local-pkg'
 import type { ConfigLayer, ResolvedConfigLayer, Theme, ThemeLoadingOutput } from '../types'
 import { resolveFileLayer } from './config-file'
 import { normalizeTokens } from './tokens'
@@ -81,6 +81,24 @@ export async function loadLayers(options: PinceauOptions): Promise<ThemeLoadingO
  * Resolve a safe layers array from layers option.
  */
 export function resolveConfigSources(options: PinceauOptions) {
+  const configSourceFromModulePath = (path: string): ConfigLayer | undefined => {
+    if (!isPackageExists(path)) { return }
+
+    const resolvedModule = resolveModule(path, { paths: [options.cwd] })
+    if (resolvedModule) {
+      const dir = dirname(resolvedModule)
+      const filename = resolvedModule.replace(`${dir}/`, '')
+      const ext = extname(filename)
+      if (dir && filename && ext) { return { path: `${dir}/`, configFileName: filename.replace(ext, '') } }
+    }
+  }
+
+  // Inject palette if options set to true
+  if (options.theme.palette) {
+    const paletteSource = configSourceFromModulePath('@pinceau/palette')
+    if (paletteSource) { options.theme.layers.push(paletteSource) }
+  }
+
   let sources: ConfigLayer[] = options.theme.layers.reduce(
     (acc: ConfigLayer[], layerOrPath: string | ConfigLayer) => {
       let configLayer: ConfigLayer | undefined
@@ -95,14 +113,8 @@ export function resolveConfigSources(options: PinceauOptions) {
       if (typeof layerOrPath === 'string') {
         // Supports passing a package like `@pinceau/palette`
         if (!layerOrPath.startsWith('/')) {
-          const resolvedModule = resolveModule(layerOrPath, { paths: [options.cwd] })
-
-          if (resolvedModule) {
-            const dir = dirname(resolvedModule)
-            const filename = resolvedModule.replace(`${dir}/`, '')
-            const ext = extname(filename)
-            if (dir && filename) { configLayer = { path: `${dir}/`, configFileName: filename.replace(ext, '') } }
-          }
+          const resolvedModuleSource = configSourceFromModulePath(layerOrPath)
+          if (resolvedModuleSource) { configLayer = resolvedModuleSource }
         }
 
         if (!configLayer) {
@@ -114,7 +126,6 @@ export function resolveConfigSources(options: PinceauOptions) {
       if (configLayer) {
         // File layer
         if (configLayer?.path && !acc.some(layer => layer.path === configLayer?.path)) { acc.unshift(configLayer) }
-
         // Inline layer
         else if (configLayer?.tokens || configLayer?.imports || configLayer?.utils) { acc.unshift(configLayer) }
       }

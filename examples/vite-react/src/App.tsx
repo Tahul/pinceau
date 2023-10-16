@@ -36,7 +36,7 @@ function App() {
   return (
     <div>
       <header>
-        <TestComponent color="magenta" size="lg">
+        <TestComponent color="red" size="lg">
           ???
         </TestComponent>
 

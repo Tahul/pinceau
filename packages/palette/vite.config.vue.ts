@@ -1,7 +1,7 @@
 import path from 'node:path'
 import { defineConfig } from 'vite'
-import Pinceau from 'pinceau/plugin'
-import { PinceauVuePlugin } from '@pinceau/vue/utils'
+import Pinceau from '../../integrations/pinceau/src/plugin'
+import { PinceauVuePlugin } from '../../integrations/vue/src/utils'
 
 export default defineConfig({
   plugins: [

@@ -19,20 +19,11 @@ export default defineConfig({
   },
   plugins: [
     Pinceau({
-      debug: 2,
       style: {
         excludes: [
           resolve('../../packages'),
         ],
-      },
-      theme: {
-        buildDir: resolve('./node_modules/.pinceau/'),
-        layers: [
-          {
-            path: resolve('../../packages/palette/'),
-          },
-        ],
-      },
+      }
     }),
     svelte(),
   ],

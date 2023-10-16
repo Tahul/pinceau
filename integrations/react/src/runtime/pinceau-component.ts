@@ -2,7 +2,9 @@ import { createElement } from 'react'
 import type { ComputedStyleDefinition, SupportedHTMLElements, Variants } from '@pinceau/style'
 import { usePinceauRuntime } from './pinceau-runtime'
 
-export function usePinceauComponent<T extends {}>(staticClass?: string | undefined, computedStyles?: [string, ComputedStyleDefinition][], variants?: Variants, type?: SupportedHTMLElements) {
+export function usePinceauComponent<T extends {}>(type?: SupportedHTMLElements, staticClass?: string | undefined, computedStyles?: [string, ComputedStyleDefinition][], variants?: Variants) {
+  let localAttrs = {}
+
   const component = (
     props: T,
   ) => {
@@ -13,6 +15,7 @@ export function usePinceauComponent<T extends {}>(staticClass?: string | undefin
       {
         ...props,
         className: pinceauClasses,
+        ...(localAttrs || {}),
       },
     )
   }
@@ -21,6 +24,8 @@ export function usePinceauComponent<T extends {}>(staticClass?: string | undefin
     variants = { ...variants, ..._variants }
     return component
   }
+
+  component.withAttrs = attrs => (localAttrs = attrs)
 
   return component
 }

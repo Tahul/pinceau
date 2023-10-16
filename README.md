@@ -6,28 +6,38 @@
 
 > [🕹️ Try it online](https://play.pinceau.dev) • [📖 Documentation](https://pinceau.dev)
 
-- 🪄 Fully-typed styling API inspired from the tools you already [_love_](https://stitches.dev)
-  - `$styled.el()`, `styled()` and `css()`
+- 🦾 Typed Styling API inspired from the tools you already [_love_](https://stitches.dev)
 
-- 🎨 Multi-layers [Design Tokens compatible](https://github.com/design-tokens/community-group) theming
+  - ```typescript
+    const Component = $styled.a<Props>({ ...componentStyle })
+    const className = styled({ ...scopedCss })
+    css({ ...globalCss })
+    ```
 
-- ⚡ Plug & play support for any [Vite](https://vitejs.dev)-based framework:
-  - [Vue](./integrations/vue), [React](./integrations/vue), [Svelte](./integrations/vue), [Nuxt](./integrations/nuxt), [Astro](./integrations/astro)
-  - Planned support for: [Qwik](https://qwik.builder.io), [SolidJS](https://www.solidjs.com), [Preact](https://preactjs.com), [Lit](https://lit.dev), [_yours ?_](https://github.com/Tahul/pinceau/issues)
+- 🎨 Multi-layers [Design Tokens compatible](https://github.com/design-tokens/community-group) theme configuration
 
-- 💅 Comes with everything you need to build a robust design system:
+- ⚡ Plug & play support for any [Vite](https://vitejs.dev)-based framework
+  > [Vue](./integrations/vue), [React](./integrations/vue), [Svelte](./integrations/vue), [Nuxt](./integrations/nuxt), [Astro](./integrations/astro)
+
+- 🪄 Comes with everything you need to build a robust design system
   - Smart output engine that uses [static CSS](https://developer.mozilla.org/en-US/docs/Web/CSS) or [CSSOM](https://developer.mozilla.org/en-US/docs/Web/API/CSS_Object_Model) when you need it
   - Style colocation
   - Style composition
   - Responsive variants API
-  - Theming tokens
+  - Theming and local tokens
   - Runtime theme swapping
 
-- 🌐 SSR-ready with optimized hydration and no _JS/CSS_ theme duplication
+- 🧱 Fully modulable, let you disable every feature you do not need but needs no configuration to start
+
+- 🌐 SSR-ready with optimized hydration and no _JS/CSS_ style duplication
 
 - ✅ **300+** tests covering every core packages and integrations
 
-- 🍦 [Pinceau VSCode extension](https://marketplace.visualstudio.com/items?itemName=yaelguilloux.pinceau-vscode) for **DX Sugar**
+- 🍦 [VSCode extension](https://marketplace.visualstudio.com/items?itemName=yaelguilloux.pinceau-vscode) for **DX Sugar**
+
+> Planned support for: [Qwik](https://qwik.builder.io), [SolidJS](https://www.solidjs.com), [Preact](https://preactjs.com), [Lit](https://lit.dev), [_yours ?_](https://github.com/Tahul/pinceau/issues)
+
+> Pinceau v1 is currently in **⚠️ beta**, feel free to report any feedback you may have in [issues](https://github.com/Tahul/pinceau/issues).
 
 ## ⚙️ Install
 

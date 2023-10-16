@@ -22,6 +22,9 @@ declare module '@pinceau/core' {
   }
 
   interface PinceauExtendedContext {
+    /**
+     * $theme() function for build context.
+     */
     $theme: ThemeFunction
 
     /**

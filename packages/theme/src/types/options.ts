@@ -67,7 +67,7 @@ export interface PinceauThemeOptions {
    *
    * If set to `false`, generation will not output anything on filesystem.
    */
-  buildDir: string | undefined
+  buildDir: string | undefined | false
 
   /**
    * Imports the default CSS reset in the project.
@@ -114,4 +114,9 @@ export interface PinceauThemeOptions {
    * Support for definitions.ts ; improving experience for Pinceau IntelliSense.
    */
   definitions: boolean
+
+  /**
+   * Inject `@pinceau/palette` automatically
+   */
+  palette: boolean
 }
