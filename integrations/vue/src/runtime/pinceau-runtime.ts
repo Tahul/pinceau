@@ -10,8 +10,6 @@ export function usePinceauRuntime(
   variants?: Variants,
   props?: ComponentPublicInstance['$props'],
 ) {
-  console.log({ props })
-
   let computedStylesClass: Ref<string | undefined> | undefined
   if (computedStyles && computedStyles.length) { computedStylesClass = useComputedStyles(computedStyles, props) }
 

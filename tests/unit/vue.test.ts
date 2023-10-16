@@ -416,8 +416,6 @@ console.log('hello world')
 
       const result = transformContext.result()?.code
 
-      console.log(result)
-
       expect(result).toContain('import { usePinceauRuntime } from \'@pinceau/vue/runtime\'')
       expect(result).toContain('const $style0_styled0 = usePinceauRuntime(undefined, undefined, {"size":{"sm":{"width":"32px"}}}, undefined)')
       expect(result).toContain('defineProps({"size":{"required":false,"type":[String, Object]}})')

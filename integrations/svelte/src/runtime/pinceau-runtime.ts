@@ -8,13 +8,6 @@ export function usePinceauRuntime(
   variants?: Variants,
   props?: any,
 ) {
-  console.log({
-    staticClass,
-    computedStyles,
-    variants,
-    props,
-  })
-
   let computedStylesClass: string | undefined
   if (computedStyles && computedStyles.length) { computedStylesClass = useComputedStyles(computedStyles) }
 

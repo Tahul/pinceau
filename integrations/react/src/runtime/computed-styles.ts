@@ -8,8 +8,6 @@ export function useComputedStyles(fns?: [string, ComputedStyleDefinition][], pro
 
   const [className, setClassName] = useState<string>()
 
-  console.log(fns)
-
   const newClassName = runtimeSheet.getRule(
     computedStylesToDeclaration(
       (fns || []).map(([varName, fn]) => [varName, fn(props || {})] as [string, ReturnType<ComputedStyleDefinition>]),

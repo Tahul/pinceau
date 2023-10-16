@@ -43,8 +43,6 @@ export const resolveStylePropContext: PinceauTransformFunction<PinceauStyleFunct
     delete declaration.variants
   }
 
-  console.log(pinceauContext.$theme)
-
   // Transform css() declaration to string
   const css = stringify(
     { [`.${className}[pcsp]`]: declaration },

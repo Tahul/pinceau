@@ -72,8 +72,6 @@ export function findCallees(ast: ASTNode, functionName: string | RegExp) {
             ? search
             : false
 
-        // console.log({ search, isMatch })
-
         if (isMatch) {
           path.match = isRegexMatch ? isMatch : functionName
           paths.push(path as PathMatch)

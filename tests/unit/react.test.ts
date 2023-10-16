@@ -137,8 +137,6 @@ describe('@pinceau/react', () => {
 
       const result = transformContext.result()?.code
 
-      console.log(result)
-
       expect(result).toContain('import { usePinceauRuntime, usePinceauComponent } from \'@pinceau/react/runtime\'')
       expect(result).toContain('() => \"red\"')
       expect(result).toContain('usePinceauComponent(\'')
