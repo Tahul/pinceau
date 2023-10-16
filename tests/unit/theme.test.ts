@@ -899,6 +899,7 @@ describe('@pinceau/theme', () => {
         dev: false,
         theme: {
           layers: [testLayer],
+          palette: false,
         },
       })
       configCtx = usePinceauConfigContext(pinceauContext)
