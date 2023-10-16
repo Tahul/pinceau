@@ -2,12 +2,12 @@
   "name": "@pinceau/astro-example",
   "private": true,
   "scripts": {
-    "dev": "astro dev --port=3000",
-    "start": "astro dev --port=3000",
-    "build:example": "astro build",
-    "preview": "astro preview",
     "astro": "astro",
-    "clean": "rm -rf dist"
+    "build:example": "astro build",
+    "clean": "rm -rf dist",
+    "dev": "astro dev --port=3000",
+    "preview": "astro preview",
+    "start": "astro dev --port=3000"
   },
   "devDependencies": {
     "@pinceau/astro": "workspace:*",

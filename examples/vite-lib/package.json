@@ -1,12 +1,12 @@
 {
   "name": "@pinceau/vite-lib-example",
-  "type": "module",
   "private": true,
+  "type": "module",
   "scripts": {
     "build:example": "vite build",
+    "clean": "rm -rf dist",
     "dev": "vite --port=3000",
-    "preview": "vite preview",
-    "clean": "rm -rf dist"
+    "preview": "vite preview"
   },
   "dependencies": {
     "pinceau": "workspace:*"

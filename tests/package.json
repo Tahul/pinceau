@@ -1,24 +1,21 @@
 {
   "name": "@pinceau/tests",
-  "type": "module",
   "version": "1.0.0",
   "private": true,
-  "packageManager": "pnpm@8.6.0",
   "description": "Make your <script> lighter and your <style> smarter.",
-  "engines": {
-    "vscode": "^1.80.0"
-  },
+  "type": "module",
   "scripts": {
     "test": "vitest --run --coverage -c unit.config.ts",
-    "test:ui": "vitest --ui --coverage --open=false -c unit.config.ts",
-    "test:fixtures": "vitest --run -c fixtures.config.ts"
+    "test:fixtures": "vitest --run -c fixtures.config.ts",
+    "test:ui": "vitest --ui --coverage --open=false -c unit.config.ts"
   },
   "dependencies": {
     "@pinceau/astro": "workspace:*",
     "@pinceau/core": "workspace:*",
-    "@pinceau/react": "workspace:*",
     "@pinceau/language-server": "workspace:*",
     "@pinceau/nuxt": "workspace:*",
+    "@pinceau/palette": "workspace:*",
+    "@pinceau/react": "workspace:*",
     "@pinceau/runtime": "workspace:*",
     "@pinceau/style": "workspace:*",
     "@pinceau/svelte": "workspace:*",
@@ -26,7 +23,6 @@
     "@pinceau/volar": "workspace:*",
     "@pinceau/vscode": "workspace:*",
     "@pinceau/vue": "workspace:*",
-    "@pinceau/palette": "workspace:*",
     "pinceau": "workspace:*"
   },
   "devDependencies": {
@@ -43,5 +39,9 @@
     "vscode-languageserver": "^9.0.1",
     "vscode-languageserver-textdocument": "^1.0.11",
     "vscode-uri": "^3.0.8"
+  },
+  "packageManager": "pnpm@8.6.0",
+  "engines": {
+    "vscode": "^1.80.0"
   }
 }

@@ -4,11 +4,11 @@
   "type": "module",
   "scripts": {
     "build:docs": "nuxt build",
-    "prepare:docs": "nuxt prepare",
+    "clean": "rm -rf dist",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
-    "preview": "nuxt preview",
-    "clean": "rm -rf dist"
+    "prepare:docs": "nuxt prepare",
+    "preview": "nuxt preview"
   },
   "devDependencies": {
     "@nuxt/content": "^2.8.5",

@@ -1,26 +1,8 @@
 {
   "name": "@pinceau/monorepo",
-  "type": "module",
   "version": "1.0.0-beta.10",
-  "homepage": "https://github.com/Tahul/pinceau#readme",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Tahul/pinceau.git"
-  },
-  "bugs": {
-    "url": "https://github.com/Tahul/pinceau/issues"
-  },
   "private": true,
-  "packageManager": "pnpm@8.9.0",
   "description": "Make your <script> lighter and your <style> smarter.",
-  "workspaces": [
-    "docs",
-    "tests",
-    "packages/*",
-    "integrations/*",
-    "examples/*"
-  ],
-  "license": "MIT",
   "keywords": [
     "css-in-js",
     "vue",
@@ -30,40 +12,61 @@
     "nuxt",
     "vite"
   ],
+  "homepage": "https://github.com/Tahul/pinceau#readme",
+  "bugs": {
+    "url": "https://github.com/Tahul/pinceau/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tahul/pinceau.git"
+  },
+  "license": "MIT",
+  "type": "module",
+  "workspaces": [
+    "docs",
+    "tests",
+    "packages/*",
+    "integrations/*",
+    "examples/*"
+  ],
   "scripts": {
     "build": "turbo run build",
-    "build:force": "turbo run build --force",
     "build:docs": "pnpm -r --filter=\"./docs\" run build:docs",
     "build:examples": "pnpm -r --filter=\"./examples\" run build:example",
+    "build:force": "turbo run build --force",
     "build:vscode": "pnpm -r --filter=\"./integrations/(language-server|vscode)\" run build",
     "clean": "turbo run clean",
     "clean:snapshots": "rm -rf ./tests/__snapshots__",
+    "dev:astro": "nodemon --exec 'pnpm --filter=\"./examples/astro\" run dev' --watch 'packages' --watch 'integrations' -e js,ts,astro,vue,svelte,tsx,jsx",
+    "dev:astro-svelte": "nodemon --exec 'pnpm --filter=\"./examples/astro-svelte\" run dev' --watch 'packages' --watch 'integrations' -e js,ts,astro,svelte",
+    "dev:astro-vue": "nodemon --exec 'pnpm --filter=\"./examples/astro-vue\" run dev' --watch 'packages' --watch 'integrations' -e js,ts,astro,vue",
     "dev:docs": "pnpm -r --filter=\"docs\" run dev",
     "dev:lib": "nodemon --exec 'pnpm --filter=\"./examples/vite-lib\" run dev' --watch 'packages' --watch 'integrations' -e js,ts,vue",
-    "dev:nuxt": "pnpm -r --filter=\"./examples/nuxt\" run dev",
+    "dev:lit": "nodemon --exec 'pnpm --filter=\"./examples/vite-lit\" run dev' --watch 'packages' --watch 'integrations' -e js,ts",
     "dev:next": "pnpm -r --filter=\"./examples/next\" run dev",
-    "dev:vue": "nodemon --exec 'pnpm --filter=\"./examples/vite-vue\" run dev' --watch 'packages' --watch 'integrations' -e js,ts,vue",
+    "dev:nuxt": "pnpm -r --filter=\"./examples/nuxt\" run dev",
+    "dev:preact": "nodemon --exec 'pnpm --filter=\"./examples/vite-preact\" run dev' --watch 'packages' --watch 'integrations' -e js,ts,tsx,jsx",
+    "dev:react": "nodemon --exec 'pnpm --filter=\"./examples/vite-react\" run dev' --watch 'packages' --watch 'integrations' -e js,ts,tsx,jsx",
     "dev:repl": "nodemon --exec 'pnpm --filter=\"./integrations/repl\" run dev' --watch 'packages' --watch 'integrations' -e js,ts,vue",
+    "dev:solid": "nodemon --exec 'pnpm --filter=\"./examples/vite-solid\" run dev' --watch 'packages' --watch 'integrations' -e js,ts,tsx,jsx",
     "dev:svelte": "nodemon --exec 'pnpm --filter=\"./examples/vite-svelte\" run dev' --watch 'packages' --watch 'integrations' -e js,ts,svelte",
     "dev:sveltekit": "nodemon --exec 'pnpm --filter=\"./examples/sveltekit\" run dev' --watch 'packages' --watch 'integrations' -e js,ts,svelte",
-    "dev:lit": "nodemon --exec 'pnpm --filter=\"./examples/vite-lit\" run dev' --watch 'packages' --watch 'integrations' -e js,ts",
-    "dev:react": "nodemon --exec 'pnpm --filter=\"./examples/vite-react\" run dev' --watch 'packages' --watch 'integrations' -e js,ts,tsx,jsx",
-    "dev:preact": "nodemon --exec 'pnpm --filter=\"./examples/vite-preact\" run dev' --watch 'packages' --watch 'integrations' -e js,ts,tsx,jsx",
-    "dev:solid": "nodemon --exec 'pnpm --filter=\"./examples/vite-solid\" run dev' --watch 'packages' --watch 'integrations' -e js,ts,tsx,jsx",
-    "dev:astro": "nodemon --exec 'pnpm --filter=\"./examples/astro\" run dev' --watch 'packages' --watch 'integrations' -e js,ts,astro,vue,svelte,tsx,jsx",
-    "dev:astro-vue": "nodemon --exec 'pnpm --filter=\"./examples/astro-vue\" run dev' --watch 'packages' --watch 'integrations' -e js,ts,astro,vue",
-    "dev:astro-svelte": "nodemon --exec 'pnpm --filter=\"./examples/astro-svelte\" run dev' --watch 'packages' --watch 'integrations' -e js,ts,astro,svelte",
+    "dev:vue": "nodemon --exec 'pnpm --filter=\"./examples/vite-vue\" run dev' --watch 'packages' --watch 'integrations' -e js,ts,vue",
     "docs": "nuxi dev docs",
     "lint": "eslint --cache .",
     "lint:fix": "eslint --cache . --fix",
     "palette": "pnpm -r --filter=\"./(packages|integrations)/palette\" run build",
     "prepare": "pnpm stub",
+    "release": "bumpp -r package.json packages/*/package.json integrations/*/package.json",
     "stub": "pnpm -r --filter=\"./(packages|integrations)/*\" run stub && pnpm -r run build:post",
     "test": "pnpm -r --filter=\"./tests\" run test",
-    "test:run": "pnpm -r --filter=\"./tests\" run test",
-    "test:ui": "pnpm -r --filter=\"./tests\" run test:ui",
     "test:fixtures": "pnpm -r --filter=\"./tests\" run test:fixtures",
-    "release": "bumpp -r package.json packages/*/package.json integrations/*/package.json"
+    "test:run": "pnpm -r --filter=\"./tests\" run test",
+    "test:ui": "pnpm -r --filter=\"./tests\" run test:ui"
+  },
+  "resolutions": {
+    "unbuild": "npm:@pinceau/unbuild@latest",
+    "vue-eslint-parser": "npm:@pinceau/vue-eslint-parser@latest"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^1.0.0-beta.27",
@@ -78,20 +81,22 @@
     "@pinceau/volar": "workspace:*",
     "@pinceau/vscode": "workspace:*",
     "@pinceau/vue": "workspace:*",
+    "bumpp": "^9.2.0",
+    "changelogithub": "^0.13.1",
     "eslint": "^8.51.0",
+    "jiti": "^1.20.0",
     "nodemon": "^3.0.1",
     "pinceau": "workspace:*",
     "release-it": "^16.2.1",
     "rollup": "^3.29.4",
     "tsup": "^7.2.0",
+    "turbo": "^1.10.15",
     "typescript": "^5.2.2",
     "unbuild": "^2.0.0",
     "unenv": "^1.7.4",
-    "vite-plugin-inspect": "^0.7.40",
-    "turbo": "^1.10.15",
-    "changelogithub": "^0.13.1",
-    "bumpp": "^9.2.0"
+    "vite-plugin-inspect": "^0.7.40"
   },
+  "packageManager": "pnpm@8.9.0",
   "pnpm": {
     "peerDependencyRules": {
       "allowedVersions": {
@@ -108,11 +113,6 @@
         "@vitejs/plugin-vue-jsx"
       ]
     }
-  },
-  "resolutions": {
-    "jiti": "npm:@pinceau/jiti@latest",
-    "unbuild": "npm:@pinceau/unbuild@latest",
-    "vue-eslint-parser": "npm:@pinceau/vue-eslint-parser@latest"
   },
   "release-it": {
     "git": {

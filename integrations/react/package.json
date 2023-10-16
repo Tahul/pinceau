@@ -1,15 +1,15 @@
 {
   "name": "@pinceau/react",
-  "type": "module",
   "version": "1.0.0-beta.10",
   "homepage": "https://github.com/Tahul/pinceau#readme",
+  "bugs": {
+    "url": "https://github.com/Tahul/pinceau/issues"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Tahul/pinceau.git"
   },
-  "bugs": {
-    "url": "https://github.com/Tahul/pinceau/issues"
-  },
+  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -42,12 +42,12 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "unbuild",
-    "stub": "unbuild --stub",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "stub": "unbuild --stub"
   },
   "dependencies": {
-    "@pinceau/integration": "workspace:*",
     "@pinceau/core": "workspace:*",
+    "@pinceau/integration": "workspace:*",
     "acorn": "^8.10.0",
     "jsx-ast-utils": "^3.3.5",
     "ultrahtml": "npm:@pinceau/ultrahtml@1.5.2"

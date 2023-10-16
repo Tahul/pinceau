@@ -2,12 +2,12 @@
   "name": "@pinceau/sveltekit-example",
   "type": "module",
   "scripts": {
-    "dev": "vite dev --port=3000",
     "build:example": "vite build",
-    "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "dev": "vite dev --port=3000",
+    "preview": "vite preview"
   },
   "devDependencies": {
     "@pinceau/configs": "workspace:*",

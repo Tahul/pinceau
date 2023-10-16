@@ -1,0 +1,85 @@
+{
+  "name": "@pinceau/browser",
+  "version": "1.0.0-beta.10",
+  "homepage": "https://github.com/Tahul/pinceau#readme",
+  "bugs": {
+    "url": "https://github.com/Tahul/pinceau/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tahul/pinceau.git"
+  },
+  "type": "module",
+  "exports": {
+    "./theme": {
+      "import": "./theme.js",
+      "require": "./theme.js",
+      "types": "./theme.d.ts"
+    },
+    "./theme-runtime": {
+      "import": "./theme-runtime.js",
+      "require": "./theme-runtime.js",
+      "types": "./theme-runtime.d.ts"
+    },
+    "./core": {
+      "import": "./core.js",
+      "require": "./core.js",
+      "types": "./core.d.ts"
+    },
+    "./core-runtime": {
+      "import": "./core-runtime.js",
+      "require": "./core-runtime.js",
+      "types": "./core-runtime.d.ts"
+    },
+    "./svelte": {
+      "import": "./svelte.js",
+      "require": "./svelte.js",
+      "types": "./svelte.d.ts"
+    },
+    "./svelte-runtime": {
+      "import": "./svelte-runtime.js",
+      "require": "./svelte-runtime.js",
+      "types": "./svelte-runtime.d.ts"
+    },
+    "./vue": {
+      "import": "./vue.js",
+      "require": "./vue.js",
+      "types": "./vue.d.ts"
+    },
+    "./vue-runtime": {
+      "import": "./vue-runtime.js",
+      "require": "./vue-runtime.js",
+      "types": "./vue-runtime.d.ts"
+    },
+    "./react": {
+      "import": "./react.js",
+      "require": "./react.js",
+      "types": "./react.d.ts"
+    },
+    "./react-runtime": {
+      "import": "./react-runtime.js",
+      "require": "./react-runtime.js",
+      "types": "./react-runtime.d.ts"
+    },
+    "./palette": {
+      "import": "./palette.js",
+      "require": "./palette.js",
+      "types": "./palette.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "jiti build.ts"
+  },
+  "devDependencies": {
+    "@pinceau/configs": "workspace:*",
+    "@pinceau/core": "workspace:*",
+    "@pinceau/react": "workspace:*",
+    "@pinceau/runtime": "workspace:*",
+    "@pinceau/style": "workspace:*",
+    "@pinceau/svelte": "workspace:*",
+    "@pinceau/theme": "workspace:*",
+    "@pinceau/vue": "workspace:*",
+    "jiti": "^1.20.0",
+    "tsup": "^7.2.0"
+  }
+}

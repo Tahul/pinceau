@@ -1,30 +1,29 @@
 {
   "name": "@pinceau/language-server",
   "version": "1.0.0-beta.10",
+  "description": "Pinceau language server providing hints on tokens values and other features.",
   "homepage": "https://github.com/Tahul/pinceau#readme",
+  "bugs": {
+    "url": "https://github.com/Tahul/pinceau/issues"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Tahul/pinceau.git"
   },
-  "bugs": {
-    "url": "https://github.com/Tahul/pinceau/issues"
-  },
-  "type": "module",
-  "description": "Pinceau language server providing hints on tokens values and other features.",
-  "author": "Tahul <yael.guilloux@gmail.com>",
   "license": "MIT",
+  "author": "Tahul <yael.guilloux@gmail.com>",
+  "type": "module",
   "main": "dist/index.js",
   "scripts": {
-    "stub": "unbuild --stub",
     "build": "unbuild",
     "clean": "rm -rf dist",
-    "lint": "eslint ./src --ext .ts,.tsx --fix"
+    "lint": "eslint ./src --ext .ts,.tsx --fix",
+    "stub": "unbuild --stub"
   },
   "dependencies": {
     "@pinceau/integration": "workspace:*",
     "@vue/compiler-sfc": "^3.3.4",
     "fast-glob": "^3.3.1",
-    "jiti": "^1.20.0",
     "line-column": "^1.0.2",
     "tinycolor2": "1.6.0",
     "vscode-languageserver": "^9.0.1",

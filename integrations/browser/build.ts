@@ -6,18 +6,32 @@ const { external, alias } = env(nodeless, node)
 build({
   minify: true,
   treeshake: true,
+  dts: true,
   platform: 'browser',
   format: ['esm'],
-  entry: ['src/index.ts', 'src/utils.ts', 'src/runtime.ts', 'src/volar.ts'],
-  outDir: 'dist/browser',
+  entry: [
+    './src/theme.ts',
+    './src/theme-runtime.ts',
+    './src/core.ts',
+    './src/core-runtime.ts',
+    './src/svelte.ts',
+    './src/svelte-runtime.ts',
+    './src/vue.ts',
+    './src/vue-runtime.ts',
+    './src/react.ts',
+    './src/react-runtime.ts',
+  ],
+  outDir: 'dist/',
   clean: true,
   esbuildOptions: (options) => {
+    options.ignoreAnnotations = true
     options.external = options.external ?? []
     options.external.push('@vue/*')
     options.external.push('vue')
     options.external.push('jiti')
     options.external.push('@volar/*')
     options.external.push(...external)
+    options.external.push('$pinceau/*')
     options.alias = options.alias ?? {}
     options.alias = {
       ...options.alias,
@@ -36,6 +50,7 @@ build({
     options.splitting = true
   },
   noExternal: [
+    'sfc-composer',
     'style-dictionary-esm',
     'nanoid',
     'scule',

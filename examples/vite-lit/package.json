@@ -11,9 +11,9 @@
     "types"
   ],
   "scripts": {
-    "dev": "vite --port=3000",
     "build:example": "tsc && vite build",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "dev": "vite --port=3000"
   },
   "dependencies": {
     "lit": "^3.0.0"

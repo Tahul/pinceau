@@ -1,14 +1,14 @@
 {
   "name": "@pinceau/vite-preact-example",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
   "scripts": {
-    "dev": "vite --port=3000",
-    "dev-refresh": "cross-env USE_REFRESH=true vite --port=3000",
     "build:example": "vite build",
     "build:example-refresh": "cross-env USE_REFRESH=true vite build",
-    "preview": "vite preview",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "dev": "vite --port=3000",
+    "dev-refresh": "cross-env USE_REFRESH=true vite --port=3000",
+    "preview": "vite preview"
   },
   "dependencies": {
     "preact": "^10.18.1"

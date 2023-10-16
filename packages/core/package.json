@@ -1,15 +1,15 @@
 {
   "name": "@pinceau/core",
-  "type": "module",
   "version": "1.0.0-beta.10",
   "homepage": "https://github.com/Tahul/pinceau#readme",
+  "bugs": {
+    "url": "https://github.com/Tahul/pinceau/issues"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Tahul/pinceau.git"
   },
-  "bugs": {
-    "url": "https://github.com/Tahul/pinceau/issues"
-  },
+  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -37,44 +37,8 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "unbuild",
-    "stub": "unbuild --stub",
-    "clean": "rm -rf dist"
-  },
-  "peerDependencies": {
-    "@pinceau/astro": "workspace:*",
-    "@pinceau/react": "workspace:*",
-    "@pinceau/runtime": "workspace:*",
-    "@pinceau/style": "workspace:*",
-    "@pinceau/svelte": "workspace:*",
-    "@pinceau/theme": "workspace:*",
-    "@pinceau/volar": "workspace:*",
-    "@pinceau/vue": "workspace:*"
-  },
-  "peerDependenciesMeta": {
-    "@pinceau/runtime": {
-      "optional": true
-    },
-    "@pinceau/style": {
-      "optional": true
-    },
-    "@pinceau/theme": {
-      "optional": true
-    },
-    "@pinceau/volar": {
-      "optional": true
-    },
-    "@pinceau/vue": {
-      "optional": true
-    },
-    "@pinceau/svelte": {
-      "optional": true
-    },
-    "@pinceau/react": {
-      "optional": true
-    },
-    "@pinceau/astro": {
-      "optional": true
-    }
+    "clean": "rm -rf dist",
+    "stub": "unbuild --stub"
   },
   "dependencies": {
     "ast-types": "0.16.1",
@@ -94,5 +58,41 @@
   "devDependencies": {
     "@types/micromatch": "^4.0.3",
     "vite": "^4.4.11"
+  },
+  "peerDependencies": {
+    "@pinceau/astro": "workspace:*",
+    "@pinceau/react": "workspace:*",
+    "@pinceau/runtime": "workspace:*",
+    "@pinceau/style": "workspace:*",
+    "@pinceau/svelte": "workspace:*",
+    "@pinceau/theme": "workspace:*",
+    "@pinceau/volar": "workspace:*",
+    "@pinceau/vue": "workspace:*"
+  },
+  "peerDependenciesMeta": {
+    "@pinceau/astro": {
+      "optional": true
+    },
+    "@pinceau/react": {
+      "optional": true
+    },
+    "@pinceau/runtime": {
+      "optional": true
+    },
+    "@pinceau/style": {
+      "optional": true
+    },
+    "@pinceau/svelte": {
+      "optional": true
+    },
+    "@pinceau/theme": {
+      "optional": true
+    },
+    "@pinceau/volar": {
+      "optional": true
+    },
+    "@pinceau/vue": {
+      "optional": true
+    }
   }
 }

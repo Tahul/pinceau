@@ -1,15 +1,15 @@
 {
   "name": "@pinceau/palette",
-  "type": "module",
   "version": "1.0.0-beta.10",
   "homepage": "https://github.com/Tahul/pinceau#readme",
+  "bugs": {
+    "url": "https://github.com/Tahul/pinceau/issues"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Tahul/pinceau.git"
   },
-  "bugs": {
-    "url": "https://github.com/Tahul/pinceau/issues"
-  },
+  "type": "module",
   "exports": {
     ".": {
       "types": "./theme.config.ts",
@@ -25,10 +25,10 @@
   ],
   "scripts": {
     "build": "vite build -c vite.config.base.ts && rm -rf dist",
-    "build:vue": "vite build -c vite.config.vue.ts && rm -rf dist",
-    "build:svelte": "vite build -c vite.config.svelte.ts && rm -rf dist",
-    "build:react": "vite build -c vite.config.react.ts && rm -rf dist",
     "build:post": "vite build && rm -rf dist",
+    "build:react": "vite build -c vite.config.react.ts && rm -rf dist",
+    "build:svelte": "vite build -c vite.config.svelte.ts && rm -rf dist",
+    "build:vue": "vite build -c vite.config.vue.ts && rm -rf dist",
     "clean": "rm -rf dist"
   },
   "devDependencies": {

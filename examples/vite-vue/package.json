@@ -1,12 +1,12 @@
 {
   "name": "@pinceau/vite-vue-example",
-  "type": "module",
   "private": true,
+  "type": "module",
   "scripts": {
     "build:example": "vite build",
+    "clean": "rm -rf dist",
     "dev": "vite --port=3000",
-    "preview": "vite preview",
-    "clean": "rm -rf dist"
+    "preview": "vite preview"
   },
   "dependencies": {
     "vue": "^3.3.4",
@@ -14,8 +14,8 @@
   },
   "devDependencies": {
     "@pinceau/configs": "workspace:*",
-    "@pinceau/vue": "workspace:*",
     "@pinceau/palette": "workspace:*",
+    "@pinceau/vue": "workspace:*",
     "@vitejs/plugin-vue": "^4.4.0",
     "typescript": "^5.2.2",
     "vite": "^4.4.11"

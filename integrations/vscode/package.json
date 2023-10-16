@@ -1,17 +1,11 @@
 {
-  "publisher": "yaelguilloux",
   "name": "@pinceau/vscode",
   "displayName": "Pinceau",
   "version": "1.0.0-beta.10",
-  "homepage": "https://github.com/Tahul/pinceau#readme",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Tahul/pinceau.git"
-  },
-  "bugs": {
-    "url": "https://github.com/Tahul/pinceau/issues"
-  },
   "description": "IntelliSense integration for Pinceau features.",
+  "categories": [
+    "Other"
+  ],
   "keywords": [
     "pinceau",
     "vscode-ext",
@@ -19,17 +13,24 @@
     "design-tokens",
     "design-hints"
   ],
-  "categories": [
-    "Other"
-  ],
-  "main": "./dist/index.js",
-  "icon": "icon/pinceau.png",
-  "engines": {
-    "vscode": "^1.80.0"
+  "homepage": "https://github.com/Tahul/pinceau#readme",
+  "bugs": {
+    "url": "https://github.com/Tahul/pinceau/issues"
   },
-  "activationEvents": [
-    "onStartupFinished"
-  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tahul/pinceau.git"
+  },
+  "publisher": "yaelguilloux",
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "unbuild",
+    "clean": "rm -rf dist && rm -rf out && rm -rf .vscode-test",
+    "deploy": "vsce publish --no-dependencies",
+    "package": "vsce package --pre-release --no-dependencies",
+    "stub": "unbuild --stub",
+    "vscode:prepublish": "pnpm build"
+  },
   "contributes": {
     "configuration": {
       "title": "Pinceau",
@@ -105,14 +106,9 @@
       }
     }
   },
-  "scripts": {
-    "stub": "unbuild --stub",
-    "vscode:prepublish": "pnpm build",
-    "build": "unbuild",
-    "clean": "rm -rf dist && rm -rf out && rm -rf .vscode-test",
-    "deploy": "vsce publish --no-dependencies",
-    "package": "vsce package --pre-release --no-dependencies"
-  },
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "devDependencies": {
     "@pinceau/configs": "workspace:*",
     "@pinceau/language-server": "workspace:*",
@@ -121,5 +117,9 @@
     "@vscode/test-electron": "^2.3.5",
     "@vscode/vsce": "^2.21.1",
     "vscode-languageclient": "^9.0.1"
-  }
+  },
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "icon": "icon/pinceau.png"
 }

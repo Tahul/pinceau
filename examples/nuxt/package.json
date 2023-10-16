@@ -3,9 +3,9 @@
   "private": true,
   "scripts": {
     "build:example": "nuxi build",
+    "clean": "rm -rf dist && rm -rf .output && rm -rf .nuxt",
     "dev": "nuxi dev --port=3000",
-    "preview": "nuxi preview",
-    "clean": "rm -rf dist && rm -rf .output && rm -rf .nuxt"
+    "preview": "nuxi preview"
   },
   "dependencies": {
     "@pinceau/nuxt": "workspace:*"

@@ -5,7 +5,6 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  jiti: npm:@pinceau/jiti@latest
   unbuild: npm:@pinceau/unbuild@latest
   vue-eslint-parser: npm:@pinceau/vue-eslint-parser@latest
 
@@ -58,6 +57,9 @@ importers:
       eslint:
         specifier: ^8.51.0
         version: 8.51.0
+      jiti:
+        specifier: ^1.20.0
+        version: 1.20.0
       nodemon:
         specifier: ^3.0.1
         version: 3.0.1
@@ -429,6 +431,39 @@ importers:
         specifier: workspace:*
         version: link:../../packages/configs
 
+  integrations/browser:
+    devDependencies:
+      '@pinceau/configs':
+        specifier: workspace:*
+        version: link:../../packages/configs
+      '@pinceau/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@pinceau/react':
+        specifier: workspace:*
+        version: link:../react
+      '@pinceau/runtime':
+        specifier: workspace:*
+        version: link:../../packages/runtime
+      '@pinceau/style':
+        specifier: workspace:*
+        version: link:../../packages/style
+      '@pinceau/svelte':
+        specifier: workspace:*
+        version: link:../svelte
+      '@pinceau/theme':
+        specifier: workspace:*
+        version: link:../../packages/theme
+      '@pinceau/vue':
+        specifier: workspace:*
+        version: link:../vue
+      jiti:
+        specifier: ^1.20.0
+        version: 1.20.0
+      tsup:
+        specifier: ^7.2.0
+        version: 7.2.0(typescript@5.2.2)
+
   integrations/language-server:
     dependencies:
       '@pinceau/integration':
@@ -440,9 +475,6 @@ importers:
       fast-glob:
         specifier: ^3.3.1
         version: 3.3.1
-      jiti:
-        specifier: npm:@pinceau/jiti@latest
-        version: /@pinceau/jiti@1.20.0
       line-column:
         specifier: ^1.0.2
         version: 1.0.2
@@ -8849,6 +8881,11 @@ packages:
       '@isaacs/cliui': 8.0.2
     optionalDependencies:
       '@pkgjs/parseargs': 0.11.0
+
+  /jiti@1.20.0:
+    resolution: {integrity: sha512-3TV69ZbrvV6U5DfQimop50jE9Dl6J8O1ja1dvBbMba/sZ3YBEQqJ2VZRoQPVnhlzjNtU1vaXRZVrVjU4qtm8yA==}
+    hasBin: true
+    dev: true
 
   /jju@1.4.0:
     resolution: {integrity: sha512-8wb9Yw966OSxApiCt0K3yNJL8pnNeIv+OEq2YMidz4FKP6nonSRoOXc80iXY4JaN2FC11B9qsNmDsm+ZOfMROA==}

@@ -1,17 +1,17 @@
 {
   "name": "@pinceau/repl",
-  "type": "module",
   "version": "1.0.0-beta.10",
   "private": true,
+  "description": "Pinceau component for editing Pinceau components.",
   "homepage": "https://github.com/Tahul/pinceau#readme",
+  "bugs": {
+    "url": "https://github.com/Tahul/pinceau/issues"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Tahul/pinceau.git"
   },
-  "bugs": {
-    "url": "https://github.com/Tahul/pinceau/issues"
-  },
-  "description": "Pinceau component for editing Pinceau components.",
+  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/repl.d.ts",
@@ -33,13 +33,20 @@
     "dist"
   ],
   "scripts": {
-    "dev": "vite --port 3000",
-    "start": "vite preview --port 3000",
     "build:playground": "vite build",
-    "build:playground-types": "vue-tsc -p tsconfig.build.json && api-extractor run -c api-extractor.json && node scripts/cleanup.js",
     "build:playground-preview": "vite build -c vite.preview.config.ts",
+    "build:playground-types": "vue-tsc -p tsconfig.build.json && api-extractor run -c api-extractor.json && node scripts/cleanup.js",
+    "clean": "rm -rf dist",
+    "dev": "vite --port 3000",
     "prepublishOnly": "npm run build && npm run build-types",
-    "clean": "rm -rf dist"
+    "start": "vite preview --port 3000"
+  },
+  "dependencies": {
+    "@iconify/json": "^2.2.128",
+    "monaco-jsx-syntax-highlight": "^1.2.0",
+    "splitpanes": "^3.1.5",
+    "unplugin-icons": "^0.17.0",
+    "vite-plugin-node-polyfills": "^0.15.0"
   },
   "devDependencies": {
     "@babel/types": "^7.23.0",
@@ -71,12 +78,5 @@
     "vite": "^4.4.11",
     "vue": "^3.3.4",
     "vue-tsc": "1.8.19"
-  },
-  "dependencies": {
-    "@iconify/json": "^2.2.128",
-    "monaco-jsx-syntax-highlight": "^1.2.0",
-    "splitpanes": "^3.1.5",
-    "unplugin-icons": "^0.17.0",
-    "vite-plugin-node-polyfills": "^0.15.0"
   }
 }

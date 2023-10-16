@@ -1,16 +1,16 @@
 {
   "name": "@pinceau/astro",
-  "type": "module",
-  "private": true,
   "version": "1.0.0-beta.10",
+  "private": true,
   "homepage": "https://github.com/Tahul/pinceau#readme",
+  "bugs": {
+    "url": "https://github.com/Tahul/pinceau/issues"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Tahul/pinceau.git"
   },
-  "bugs": {
-    "url": "https://github.com/Tahul/pinceau/issues"
-  },
+  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -38,12 +38,12 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "unbuild",
-    "stub": "unbuild --stub",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "stub": "unbuild --stub"
   },
   "dependencies": {
-    "@pinceau/integration": "workspace:*",
     "@pinceau/core": "workspace:*",
+    "@pinceau/integration": "workspace:*",
     "acorn": "^8.10.0"
   },
   "devDependencies": {
