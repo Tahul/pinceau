@@ -59,7 +59,7 @@ export class ReplSvelteTransformer implements ReplTransformer {
     import 'svelte/elements';
     import type { SvelteStyledComponentFactory } from \'@pinceau/svelte\'
     import { ResponsiveProp } from \'@pinceau/style\'
-    import { StyledFunctionArg } from \'@pinceau/style\'
+    import { SupportedHTMLElements } from \'@pinceau/style\'
 
     declare global {
       export type ResponsiveProp<T extends string | number | symbol | undefined> = ResponsiveProp<T>

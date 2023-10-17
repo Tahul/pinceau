@@ -62,16 +62,18 @@ export class ReplVueTransformer implements ReplTransformer<typeof defaultCompile
   shims = {
     'global.d.ts': new File('global.d.ts', `
     import type { VueStyledComponentFactory } from \'@pinceau/vue\'
-    import { ResponsiveProp } from \'@pinceau/style\'
-    import { StyledFunctionArg } from \'@pinceau/style\'
-    import { PropType } from \'vue\'
+    import type { PropType } from \'vue\'
+    import type { StyledFunctionArg, SupportedHTMLElements, ResponsiveProp } from \'@pinceau/style\'
 
     declare global {
       export type ResponsiveProp<T extends string | number | symbol | undefined> = PropType<ResponsiveProp<T>>
       export type StyledProp = PropType<StyledFunctionArg>
       export const $styled: { [Type in SupportedHTMLElements]: VueStyledComponentFactory<Type> }
-      declare module \'@vue/runtime-dom\' { interface HTMLAttributes { styled?: StyledFunctionArg } }
     }
+
+    declare module \'@vue/runtime-dom\' { interface HTMLAttributes { styled?: StyledFunctionArg } }
+
+    export {}
     `),
   }
 

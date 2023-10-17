@@ -4,6 +4,8 @@ import {
   declarationFormat,
   generateTheme,
   javascriptFormat,
+  pinceauNameTransformer,
+  pinceauVariableTransformer,
   resolveConfigContent,
   resolveMediaQueriesKeys,
   typescriptFormat,
@@ -48,6 +50,10 @@ export class PinceauProvider {
           utilsTypesFormat,
           typescriptFormat,
         ],
+        tokensTransforms: [
+          pinceauNameTransformer,
+          pinceauVariableTransformer,
+        ],
       },
     })
 
@@ -69,6 +75,7 @@ import type { SupportedHTMLElements } from '@pinceau/style'
 import type { CSSFunctionArg } from '@pinceau/style'
 import type { StyledFunctionArg } from '@pinceau/style'
 import type { ThemeTokens } from '@pinceau/style'
+
 
 declare global {
   export type ThemeTokens<T extends PinceauThemePaths & (string & {}) = PinceauThemePaths & (string & {})> = PinceauThemeTokens<T>

@@ -89,7 +89,6 @@ const module: any = defineNuxtModule<PinceauUserOptions>({
         tsConfig.compilerOptions.paths['$pinceau/utils'] = [`${resolve(options.theme.buildDir, 'utils.ts')}`]
         tsConfig.compilerOptions.paths['$pinceau/theme'] = [`${resolve(options.theme.buildDir, 'theme.ts')}`]
         tsConfig.compilerOptions.paths['$pinceau/vue-plugin'] = [`${resolve(options.theme.buildDir, 'vue-plugin.ts')}`]
-        tsConfig.compilerOptions.paths.$pinceau = [`${resolve(options.theme.buildDir, 'runtime.ts')}`]
         if (options.theme.schema) { tsConfig.compilerOptions.paths['$pinceau/schema'] = [`${resolve(options.theme.buildDir, 'schema.ts')}`] }
         if (options.theme.definitions) { tsConfig.compilerOptions.paths['$pinceau/definitions'] = [`${resolve(options.theme.buildDir, 'definitions.ts')}`] }
       }

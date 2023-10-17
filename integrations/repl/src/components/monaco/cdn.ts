@@ -255,7 +255,15 @@ export function createJsDelivrFs(onReadFile?: (uri: string, content: string) => 
     if (pkgName.startsWith('@typescript/') || pkgName.startsWith('@types/typescript__')) {
       return false
     }
-    if (pkgName.includes('postcss') || pkgName.includes('rspack') || pkgName.includes('unplugin') || pkgName.includes('vite') || pkgName.includes('@pinceau/core')) {
+    if (
+      pkgName.includes('postcss')
+      || pkgName.includes('rspack')
+      || pkgName.includes('unplugin')
+      || pkgName.includes('vite')
+      || pkgName.includes('csstype')
+      || pkgName.includes('rollup')
+      || pkgName.includes('ast-types')
+    ) {
       return false
     }
     // don't check @types if original package already having types

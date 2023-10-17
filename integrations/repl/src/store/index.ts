@@ -13,7 +13,7 @@ import { PinceauProvider } from './pinceau'
 export const importMapFile = 'import-map.json'
 export const tsconfigFile = 'tsconfig.json'
 export const themeFile = 'theme.config.ts'
-export const pinceauVersion = '1.0.0-beta.14'
+export const pinceauVersion = '1.0.0-beta.16'
 
 const supportedTransformers = {
   vue: ReplVueTransformer,

@@ -22,7 +22,8 @@ export async function generateTheme(
   // Enforce ending slash for buildDir
   if (buildDir && !buildDir.endsWith('/')) { buildDir += '/' }
 
-  if (buildDir !== false && ctx.options.cwd) { buildDir = join(ctx.options.cwd, 'node_modules/.pinceau/') }
+  // Enforce buildDir when not set; `false` disables write
+  if (buildDir === undefined && ctx.options.cwd) { buildDir = join(ctx.options.cwd, 'node_modules/.pinceau/') }
 
   // Transforms used
   const usedTransforms = ['size/px', 'color/hex']

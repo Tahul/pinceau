@@ -8,7 +8,8 @@
     "preview": "nuxi preview"
   },
   "dependencies": {
-    "@pinceau/nuxt": "workspace:*"
+    "@pinceau/nuxt": "workspace:*",
+    "@pinceau/palette": "workspace:*"
   },
   "devDependencies": {
     "@pinceau/configs": "workspace:*",

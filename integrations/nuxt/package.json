@@ -33,6 +33,7 @@
   "dependencies": {
     "@nuxt/kit": "^3.7.4",
     "@pinceau/integration": "workspace:*",
+    "@pinceau/palette": "workspace:*",
     "@pinceau/vue": "workspace:*"
   },
   "devDependencies": {

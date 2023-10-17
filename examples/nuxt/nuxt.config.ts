@@ -14,18 +14,14 @@ export default defineNuxtConfig({
     },
   ],
   pinceau: {
-    theme: {
-      layers: [
-        {
-          path: resolve('../../packages/palette/'),
-        },
-      ],
-    },
     style: {
       excludes: [
         resolve('../../packages'),
       ],
     },
+    theme: {
+      buildDir: resolve('./.nuxt/pinceau/')
+    }
   },
   typescript: {
     includeWorkspace: true,

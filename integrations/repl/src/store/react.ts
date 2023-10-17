@@ -48,6 +48,7 @@ export class ReplReactTransformer implements ReplTransformer<null, {}> {
     'globals.d.ts': new File('globals.d.ts', `import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import type { ReactStyledComponentFactory } from \'@pinceau/react\'
+import { SupportedHTMLElements } from \'@pinceau/style\'
 
 export {}
 

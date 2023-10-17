@@ -55,8 +55,8 @@ export function initMonaco(store: Store) {
       }
 
       getOrCreateModel(
-        Uri.parse(`file:///${filename}`),
-        file.language,
+        Uri.parse(filename),
+        'typescript',
         file.code,
       )
     }
@@ -135,7 +135,8 @@ export async function reloadLanguageTools(store: Store, lang?: 'vue' | 'svelte' 
     return Uri.parse(`file:///${filename}`)
   })
 
-  let _disposeMarkers = () => {}
+  const _disposeMarkers = () => { }
+  /*
   if (lang === 'vue') {
     const { dispose: disposeMarkers } = volar.editor.activateMarkers(
       worker,
@@ -146,6 +147,7 @@ export async function reloadLanguageTools(store: Store, lang?: 'vue' | 'svelte' 
     )
     _disposeMarkers = disposeMarkers
   }
+  */
 
   /*
   const { dispose: disposeAutoInsertion } = volar.editor.activateAutoInsertion(
@@ -165,7 +167,7 @@ export async function reloadLanguageTools(store: Store, lang?: 'vue' | 'svelte' 
 
   disposeWorker = () => {
     _disposeMarkers?.()
-    disposeAutoInsertion?.()
+    // disposeAutoInsertion?.()
     disposeProvides?.()
   }
 }
