@@ -15,6 +15,11 @@
       "types": "./theme.config.ts",
       "import": "./theme.config.ts",
       "require": "./theme.config.ts"
+    },
+    "./theme.config": {
+      "types": "./theme.config.ts",
+      "import": "./theme.config.ts",
+      "require": "./theme.config.ts"
     }
   },
   "main": "./theme.config.ts",

@@ -1,10 +1,10 @@
 import { build } from 'tsup'
-import { env, node, nodeless } from 'unenv'
+import { env, nodeless } from 'unenv'
 
-const { external, alias } = env(nodeless, node)
+const { external, alias } = env(nodeless)
 
 build({
-  minify: true,
+  // minify: true,
   treeshake: true,
   dts: true,
   platform: 'browser',
@@ -28,7 +28,11 @@ build({
     options.external = options.external ?? []
     options.external.push('@vue/*')
     options.external.push('vue')
-    options.external.push('jiti')
+    options.external.push('svelte')
+    options.external.push('svelte/*')
+    options.external.push('@sveltejs/*')
+    options.external.push('react')
+    options.external.push('react-dom')
     options.external.push('@volar/*')
     options.external.push(...external)
     options.external.push('$pinceau/*')
@@ -36,15 +40,11 @@ build({
     options.alias = {
       ...options.alias,
       ...alias,
-      'fs': 'fs',
-      'node:fs': 'fs',
-      'fs/promises': 'fs/promises',
-      'node:fs/promises': 'fs/promises',
       'fast-glob': 'unenv/runtime/mock/noop',
     }
     options.define = {
       'process.env': '0',
-      'process.cwd': '0',
+      'pathToFileURL': '0',
       'process.platform': '0',
     }
     options.splitting = true

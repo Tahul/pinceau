@@ -46,6 +46,7 @@ initMonaco(store)
 onMounted(async () => {
   const theme = await loadTheme(monaco.editor as any)
   ready.value = true
+
   await nextTick()
 
   if (!containerRef.value) { return }

@@ -13,7 +13,13 @@
   "license": "MIT",
   "author": "Tahul <yael.guilloux@gmail.com>",
   "type": "module",
-  "main": "dist/index.js",
+  "main": "dist/index.cjs",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
   "scripts": {
     "build": "unbuild",
     "clean": "rm -rf dist",

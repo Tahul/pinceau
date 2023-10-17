@@ -19,7 +19,7 @@ export default defineBuildConfig({
       name: 'utils',
     },
   ],
-  failOnWarn: false,
+
   clean: true,
   declaration: true,
   rollup: {

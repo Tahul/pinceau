@@ -4,7 +4,8 @@ import { load, normalizeOptions, parsePinceauQuery, usePinceauContext, usePincea
 import { suite as styleTransformSuite } from '@pinceau/style/transforms'
 import { hasRuntimeStyling } from '@pinceau/style/utils'
 import { suite as svelteTransformSuite, transformWriteScriptFeatures, transformWriteStyleFeatures } from '@pinceau/svelte/transforms'
-import { PinceauSvelteTransformer, createSveltePlugin, registerVirtualOutputs } from '@pinceau/svelte/utils'
+import { PinceauSvelteTransformer, createSveltePlugin } from '@pinceau/svelte/utils'
+import { registerVirtualOutputs } from '@pinceau/svelte/unplugin'
 import { usePinceauConfigContext } from '@pinceau/theme/utils'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { paletteLayer, resolveFixtures, resolveTmp } from '../utils'
@@ -18,6 +19,7 @@ describe('@pinceau/svelte', () => {
       const options = normalizeOptions()
       options.theme.layers.push(paletteLayer)
       pinceauContext = usePinceauContext(options)
+      pinceauContext.fs = fs
       pinceauContext.registerTransformer('svelte', PinceauSvelteTransformer)
     })
 
@@ -145,8 +147,7 @@ describe('@pinceau/svelte', () => {
 
       registerVirtualOutputs(pinceauContext)
 
-      expect(fs.writeFileSync).toHaveBeenCalledTimes(2)
-      expect(pinceauContext.getOutputId('/__pinceau_runtime.js')).toBe('$pinceau')
+      expect(fs.writeFileSync).toHaveBeenCalledTimes(1)
       expect(pinceauContext.getOutputId('/__pinceau_svelte_plugin.js')).toBe('$pinceau/svelte-plugin')
     })
   })
@@ -242,6 +243,7 @@ describe('@pinceau/svelte', () => {
       const options = normalizeOptions()
       options.theme.layers.push(paletteLayer)
       pinceauContext = usePinceauContext(options)
+      pinceauContext.fs = fs
       const configCtx = usePinceauConfigContext(pinceauContext)
       await configCtx.buildTheme()
       pinceauContext.registerTransformer('svelte', PinceauSvelteTransformer)

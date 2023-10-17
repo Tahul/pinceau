@@ -4,10 +4,6 @@ export interface PinceauVirtualContext {
    */
   outputs: VirtualOutputs
   /**
-   *
-   */
-  writeOutput: (id: string, path: string) => void
-  /**
    * Register a new output in the virtual storage
    */
   registerOutput: (importPath: string, virtualPath: string, content?: string) => void

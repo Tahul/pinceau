@@ -28,7 +28,7 @@ export function usePinceauConfigContext(ctx: PinceauContext): PinceauConfigConte
    */
   async function buildTheme(newOptions?: PinceauOptions): Promise<ThemeGenerationOutput> {
     // Load the new configurations from options
-    config = await loadLayers(newOptions || ctx.options)
+    config = await loadLayers(newOptions || ctx.options, ctx)
 
     // Run all configResolved callbacks
     await Promise.all(ctx.options.theme.configResolved.map(cb => cb(config)))

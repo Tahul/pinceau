@@ -1,3 +1,4 @@
+import fs from 'node:fs'
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { kebabCase } from 'scule'
 import { findCallees, load, parseAst, parsePinceauQuery, usePinceauContext, usePinceauTransformContext } from '@pinceau/core/utils'
@@ -16,6 +17,7 @@ describe('@pinceau/style', () => {
 
     beforeAll(() => {
       pinceauContext = usePinceauContext()
+      pinceauContext.fs = fs
     })
 
     it('should return a valid css function context object', async () => {
@@ -271,6 +273,7 @@ describe('@pinceau/style', () => {
 
     beforeEach(async () => {
       pinceauContext = usePinceauContext()
+      pinceauContext.fs = fs
       pinceauContext.registerTransformer('vue', PinceauVueTransformer)
     })
 

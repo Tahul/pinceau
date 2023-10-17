@@ -19,7 +19,7 @@ export default defineBuildConfig({
       name: 'utils',
     },
   ],
-  failOnWarn: false,
+
   clean: true,
   declaration: true,
   rollup: {
@@ -55,5 +55,6 @@ export default defineBuildConfig({
     '@pinceau/astro',
     '@babel/types',
     '@babel/parser',
+    'local-pkg',
   ],
 })

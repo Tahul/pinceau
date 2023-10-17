@@ -7,7 +7,7 @@ export default defineBuildConfig({
       name: 'index',
     },
   ],
-  failOnWarn: false,
+
   clean: true,
   declaration: true,
   rollup: {

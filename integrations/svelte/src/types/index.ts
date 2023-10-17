@@ -12,7 +12,7 @@ export type PinceauStyledComponent<
   Attrs extends {} = {},
 > = SvelteComponent<Props & SvelteHTMLElements[Type] & Attrs>
 
-export interface StyledComponentFactory<
+export interface SvelteStyledComponentFactory<
   Type extends SupportedHTMLElements,
   OuterProps extends {} = {},
   OuterAttrs extends {} = {},

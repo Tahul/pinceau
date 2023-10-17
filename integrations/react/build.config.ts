@@ -22,8 +22,12 @@ export default defineBuildConfig({
       input: 'src/utils.ts',
       name: 'utils',
     },
+    {
+      input: 'src/unplugin.ts',
+      name: 'unplugin',
+    },
   ],
-  failOnWarn: false,
+
   clean: true,
   declaration: true,
   rollup: {

@@ -2,9 +2,11 @@ import { getPinceauContext, transform, transformInclude } from '@pinceau/core/ut
 import type { PinceauContext } from '@pinceau/core'
 import { createUnplugin } from 'unplugin'
 import type { UnpluginInstance } from 'unplugin'
-import { suite } from '../transforms/suite'
-import { registerVirtualOutputs } from './virtual'
-import { PinceauVueTransformer } from './transformer'
+import { suite } from './transforms/suite'
+import { registerVirtualOutputs } from './utils/virtual'
+import { PinceauVueTransformer } from './utils/transformer'
+
+export { registerVirtualOutputs }
 
 export const PinceauVuePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
   let ctx: PinceauContext
@@ -33,7 +35,7 @@ export const PinceauVuePlugin: UnpluginInstance<undefined> = createUnplugin(() =
 
         ctx.addTypes({
           imports: [
-            'import type { StyledComponentFactory as VueStyledComponentFactory } from \'@pinceau/vue\'',
+            'import type { VueStyledComponentFactory } from \'@pinceau/vue\'',
             'import { ResponsiveProp } from \'@pinceau/style\'',
             'import { StyledFunctionArg } from \'@pinceau/style\'',
             'import { PropType } from \'vue\'',

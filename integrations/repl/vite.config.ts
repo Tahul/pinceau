@@ -6,6 +6,7 @@ import vue from '@vitejs/plugin-vue'
 import replace from '@rollup/plugin-replace'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import Icons from 'unplugin-icons/vite'
+import { env, node, nodeless } from 'unenv'
 
 const resolve = (p: string) => createResolver(import.meta.url).resolve(p)
 
@@ -21,17 +22,22 @@ const genStub: Plugin = {
   },
 }
 
+const define = {
+  '__filename': undefined,
+  'process.env': {},
+  'process.version': {},
+  '__VUE_PROD_DEVTOOLS__': JSON.stringify(true),
+  'process.versions.node': '\'20.0.0\'',
+}
+
 export default defineConfig({
+  define,
   resolve: {
     alias: {
       'path': 'path-browserify',
       '@vue/compiler-dom': '@vue/compiler-dom/dist/compiler-dom.cjs.js',
       '@vue/compiler-core': '@vue/compiler-core/dist/compiler-core.cjs.js',
-      '@pinceau/stringify': resolve('../../packages/stringify/src/index.ts'),
-      '@pinceau/runtime': resolve('../../packages/runtime/src/index.ts'),
-      '@pinceau/core/runtime': resolve('../../packages/core/src/runtime.ts'),
-      '@pinceau/theme/runtime': resolve('../../packages/theme/src/runtime.ts'),
-      '@pinceau/vue/runtime': resolve('../../integrations/vue/src/runtime.ts'),
+      'jiti': resolve('./src/jiti-proxy.ts'),
     },
   },
   plugins: [
@@ -95,7 +101,7 @@ export default defineConfig({
       output: {
         chunkFileNames: 'chunks/[name]-[hash].js',
       },
-      external: ['vue', 'vue/compiler-sfc', 'react', 'svelte'],
+      external: ['vue', 'vue/compiler-sfc', 'react', 'svelte', 'fs', 'fs.realpath'],
     },
     worker: {
       format: 'es',

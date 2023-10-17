@@ -24,6 +24,7 @@ import {
   usePinceauContext,
   usePinceauTransformContext,
   usePinceauVirtualContext,
+  writeOutput,
 } from '@pinceau/core/utils'
 import Pinceau from 'pinceau/plugin'
 import { createThemeHelper } from '@pinceau/theme/runtime'
@@ -90,6 +91,7 @@ describe('@pinceau/core', () => {
 
     beforeEach(() => {
       context = usePinceauContext(options)
+      context.fs = fs
     })
 
     it('context from options', () => {
@@ -432,17 +434,20 @@ describe('@pinceau/core', () => {
   })
 
   describe('utils/load.ts', () => {
+    const ctx = usePinceauContext()
+    ctx.fs = fs
+
     it('can load files from a query', async () => {
       const testBasePath = resolveFixtures('components/vue/TestBase.vue')
       const query = parsePinceauQuery(testBasePath)
-      const file = loadFile(query)
+      const file = loadFile(query, ctx)
       const fileContent = (await import(`${testBasePath}?raw`)).default
       // Check that `loadFile` gives the same result as importing the file locally with `?raw`
       expect(file).toEqual(fileContent)
     })
     it('throws when file not found', async () => {
       const query = parsePinceauQuery('no-file.js')
-      expect(() => loadFile(query)).toThrow()
+      expect(() => loadFile(query, ctx)).toThrow()
     })
   })
 
@@ -811,6 +816,7 @@ describe('@pinceau/core', () => {
 
     beforeEach(() => {
       ctx = usePinceauContext()
+      ctx.fs = fs
     })
 
     it('add files to context transformed on loadInclude', () => {
@@ -889,7 +895,7 @@ describe('@pinceau/core', () => {
       vi.spyOn(fs, 'writeFileSync').mockImplementationOnce(() => {})
 
       virtualStore.registerOutput(importPath, virtualPath, content)
-      virtualStore.writeOutput(importPath, filePath)
+      writeOutput(importPath, filePath, virtualStore.outputs, fs)
 
       expect(virtualStore.getOutput(importPath)).toEqual(content)
       expect(fs.writeFileSync).toHaveBeenCalledWith(filePath, content)

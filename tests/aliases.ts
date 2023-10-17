@@ -39,6 +39,7 @@ export const alias = {
   '@pinceau/vue/transforms': resolve(__dirname, '../integrations/vue/src/transforms.ts'),
   '@pinceau/vue/runtime': resolve(__dirname, '../integrations/vue/src/runtime.ts'),
   '@pinceau/vue/utils': resolve(__dirname, '../integrations/vue/src/utils.ts'),
+  '@pinceau/vue/unplugin': resolve(__dirname, '../integrations/vue/src/unplugin.ts'),
   '@pinceau/vue': resolve(__dirname, '../integrations/vue/src/index.ts'),
 
   // @pinceau/svelte
@@ -46,6 +47,7 @@ export const alias = {
   '@pinceau/svelte/transforms': resolve(__dirname, '../integrations/svelte/src/transforms.ts'),
   '@pinceau/svelte/runtime': resolve(__dirname, '../integrations/svelte/src/runtime.ts'),
   '@pinceau/svelte/utils': resolve(__dirname, '../integrations/svelte/src/utils.ts'),
+  '@pinceau/svelte/unplugin': resolve(__dirname, '../integrations/svelte/src/unplugin.ts'),
   '@pinceau/svelte': resolve(__dirname, '../integrations/svelte/src/index.ts'),
 
   // @pinceau/astro
@@ -60,6 +62,7 @@ export const alias = {
   '@pinceau/react/transforms': resolve(__dirname, '../integrations/react/src/transforms.ts'),
   '@pinceau/react/runtime': resolve(__dirname, '../integrations/react/src/runtime.ts'),
   '@pinceau/react/utils': resolve(__dirname, '../integrations/react/src/utils.ts'),
+  '@pinceau/react/unplugin': resolve(__dirname, '../integrations/react/src/unplugin.ts'),
   '@pinceau/react': resolve(__dirname, '../integrations/react/src/index.ts'),
 
   // @pinceau/language-server

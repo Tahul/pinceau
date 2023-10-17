@@ -22,8 +22,12 @@ export default defineBuildConfig({
       input: 'src/runtime.ts',
       name: 'runtime',
     },
+    {
+      input: 'src/unplugin.ts',
+      name: 'unplugin',
+    },
   ],
-  failOnWarn: false,
+
   clean: true,
   declaration: true,
   rollup: {
@@ -35,6 +39,7 @@ export default defineBuildConfig({
     '$pinceau/svelte-plugin',
     'svelte/elements',
     'svelte/compiler',
+    'svelte/internal',
     'svelte',
     'sfc-composer/svelte',
     'rollup',

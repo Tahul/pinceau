@@ -1,14 +1,14 @@
+import fs from 'node:fs'
 import { join } from 'pathe'
 import type { PinceauContext } from '@pinceau/core'
+import { writeOutput } from '@pinceau/core/utils'
 import { createSveltePlugin } from './runtime-plugin'
-import { createRuntimeExports } from './runtime-exports'
 
 /**
  * These target needs to be written.
  */
 export function registerVirtualOutputs(ctx: PinceauContext) {
   const outputs: [string, string, string][] = [
-    ['$pinceau', '/__pinceau_runtime.js', createRuntimeExports()],
     ['$pinceau/svelte-plugin', '/__pinceau_svelte_plugin.js', createSveltePlugin(ctx)],
   ]
 
@@ -16,7 +16,6 @@ export function registerVirtualOutputs(ctx: PinceauContext) {
 
   // Write plugin & runtime exports outputs
   if (ctx.options.theme.buildDir) {
-    ctx.writeOutput('$pinceau', join(ctx.options.theme.buildDir, 'runtime.js'))
-    ctx.writeOutput('$pinceau/svelte-plugin', join(ctx.options.theme.buildDir, 'svelte-plugin.js'))
+    writeOutput('$pinceau/svelte-plugin', join(ctx.options.theme.buildDir, 'svelte-plugin.js'), ctx.outputs, fs)
   }
 }

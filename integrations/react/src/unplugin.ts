@@ -2,8 +2,10 @@ import { getPinceauContext, transform, transformInclude } from '@pinceau/core/ut
 import type { PinceauContext } from '@pinceau/core'
 import { createUnplugin } from 'unplugin'
 import type { UnpluginInstance } from 'unplugin'
-import { suite } from '../transforms/suite'
-import { registerVirtualOutputs } from './virtual'
+import { suite } from './transforms/suite'
+import { registerVirtualOutputs } from './utils/virtual'
+
+export { registerVirtualOutputs }
 
 export const PinceauReactPlugin: UnpluginInstance<undefined> = createUnplugin(() => {
   let ctx: PinceauContext
@@ -21,7 +23,7 @@ export const PinceauReactPlugin: UnpluginInstance<undefined> = createUnplugin(()
 
         ctx.addTypes({
           imports: [
-            'import type { StyledComponentFactory as ReactStyledComponentFactory } from \'@pinceau/react\'',
+            'import type { ReactStyledComponentFactory } from \'@pinceau/react\'',
           ],
           global: [
             'export const $styled: { [Type in SupportedHTMLElements]: ReactStyledComponentFactory<Type> }',

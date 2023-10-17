@@ -15,9 +15,7 @@ const SHOW_ERROR_KEY = 'repl_show_error'
 const store = inject('store') as Store
 const showMessage = ref(getItem())
 
-const onChange = debounce((code: string) => {
-  store.state.activeFile.code = code
-}, 250)
+const onChange = debounce((code: string) => (store.state.activeFile.code = code), 250)
 
 function setItem() {
   localStorage.setItem(SHOW_ERROR_KEY, showMessage.value ? 'true' : 'false')

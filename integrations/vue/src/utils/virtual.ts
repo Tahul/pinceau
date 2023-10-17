@@ -1,14 +1,14 @@
+import fs from 'node:fs'
 import { join } from 'pathe'
 import type { PinceauContext } from '@pinceau/core'
+import { writeOutput } from '@pinceau/core/utils'
 import { createVuePlugin } from './runtime-plugin'
-import { createRuntimeExports } from './runtime-exports'
 
 /**
  * These target needs to be written.
  */
 export function registerVirtualOutputs(ctx: PinceauContext) {
   const outputs: [string, string, string][] = [
-    ['$pinceau', '/__pinceau_runtime.js', createRuntimeExports()],
     ['$pinceau/vue-plugin', '/__pinceau_vue_plugin.js', createVuePlugin(ctx)],
   ]
 
@@ -16,7 +16,6 @@ export function registerVirtualOutputs(ctx: PinceauContext) {
 
   // Write plugin & runtime exports outputs
   if (ctx.options.theme.buildDir) {
-    ctx.writeOutput('$pinceau', join(ctx.options.theme.buildDir, 'runtime.js'))
-    ctx.writeOutput('$pinceau/vue-plugin', join(ctx.options.theme.buildDir, 'vue-plugin.js'))
+    writeOutput('$pinceau/vue-plugin', join(ctx.options.theme.buildDir, 'vue-plugin.js'), ctx.outputs, fs)
   }
 }

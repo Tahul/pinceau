@@ -11,5 +11,6 @@ export function getOrCreateModel(
     model.setValue(value)
     return model
   }
+  console.log('creating', uri)
   return editor.createModel(value, lang, uri)
 }

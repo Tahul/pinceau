@@ -32,7 +32,7 @@ onMounted(() => {
     :store="store"
     :editor="_Editor"
     theme="dark"
-    :ssr="false"
+    :ssr="true"
   />
 </template>
 

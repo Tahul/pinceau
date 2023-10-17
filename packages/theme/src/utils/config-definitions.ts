@@ -10,7 +10,7 @@ import type { PinceauThemeDefinitions } from '../types/definitions'
 export function resolveConfigDefinitions(
   ast: File,
   mqKeys: string[],
-  filePath: string,
+  filePath?: string,
 ) {
   const definitions: PinceauThemeDefinitions = {}
 
@@ -31,7 +31,7 @@ export function resolveConfigDefinitions(
           if ((key.startsWith('utils.') || key.startsWith('media.')) && key.split('.').length > 2) { return false }
 
           definitions[key] = {
-            uri: filePath,
+            uri: filePath || '/',
             range: {
               start: path.value.loc.start,
               end: path.value.loc.end,

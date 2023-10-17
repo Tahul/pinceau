@@ -10,9 +10,28 @@ import { COMP_IDENTIFIER } from '.'
 
 export async function compileVueFile(
   store: Store,
-  { filename, code, compiled }: File,
+  file: File,
 ) {
+  let { code } = file
+  const { filename, compiled } = file
+
   const id = toHash(filename)
+
+  const transformed = await store.pinceauProvider.transformVue(file)
+
+  if (transformed) {
+    code = transformed.result()?.code || code
+
+    if (transformed.state.styleFunctions) {
+      let pinceauCss: string = ''
+      for (const [key, styleFn] of Object.entries(transformed.state.styleFunctions)) {
+        if (styleFn.css) {
+          pinceauCss += `\n${styleFn.css}`
+        }
+      }
+      if (pinceauCss) { file.compiled.css = pinceauCss }
+    }
+  }
 
   const { errors, descriptor } = store.transformer.compiler.parse(code, {
     filename,
@@ -86,7 +105,7 @@ export async function compileVueFile(
   // Only need dedicated compilation if not using <script setup>
   if (
     descriptor.template
-    && (!descriptor.scriptSetup || store.transformer.options?.script?.inlineTemplate === false)
+    && (!descriptor.scriptSetup || store.transformer.compilerOptions?.script?.inlineTemplate === false)
   ) {
     const clientTemplateResult = await doCompileTemplate(
       store,
@@ -135,7 +154,7 @@ export async function compileVueFile(
     if (style.module) { return ['<style module> is not supported in the playground.'] }
 
     const styleResult = await store.transformer.compiler.compileStyleAsync({
-      ...store.transformer.options?.style,
+      ...store.transformer.compilerOptions?.style,
       source: style.content,
       filename,
       id,
@@ -154,8 +173,8 @@ export async function compileVueFile(
       css += `${styleResult.code}\n`
     }
   }
-  if (css) { compiled.css = css.trim() }
-  else { compiled.css = '/* No <style> tags present */' }
+  if (css) { compiled.css += css.trim() }
+  else { compiled.css += '/* No <style> tags present */' }
 
   return []
 }
@@ -171,14 +190,14 @@ async function doCompileScript(
     const expressionPlugins: CompilerOptions['expressionPlugins'] = isTS ? ['typescript'] : undefined
     const compiledScript = store.transformer.compiler.compileScript(descriptor, {
       inlineTemplate: true,
-      ...store.transformer.options?.script,
+      ...store.transformer.compilerOptions?.script,
       id,
       templateOptions: {
-        ...store.transformer.options?.template,
+        ...store.transformer.compilerOptions?.template,
         ssr,
         ssrCssVars: descriptor.cssVars,
         compilerOptions: {
-          ...store.transformer.options?.template?.compilerOptions,
+          ...store.transformer.compilerOptions?.template?.compilerOptions,
           expressionPlugins,
         },
       },
@@ -218,7 +237,7 @@ async function doCompileTemplate(
 ) {
   let { code, errors } = store.transformer.compiler.compileTemplate({
     isProd: false,
-    ...store.transformer.options?.template,
+    ...store.transformer.compilerOptions?.template,
     source: descriptor.template!.content,
     filename: descriptor.filename,
     id,
@@ -227,7 +246,7 @@ async function doCompileTemplate(
     ssr,
     ssrCssVars: descriptor.cssVars,
     compilerOptions: {
-      ...store.transformer.options?.template?.compilerOptions,
+      ...store.transformer.compilerOptions?.template?.compilerOptions,
       bindingMetadata,
       expressionPlugins: isTS ? ['typescript'] : undefined,
     },

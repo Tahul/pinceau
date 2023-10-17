@@ -9,7 +9,7 @@ export type PinceauStyledComponent<
   Attrs extends {} = {},
 > = React.FunctionComponent<React.ComponentProps<Type> & React.PropsWithChildren<Props> & Attrs>
 
-export interface StyledComponentFactory<
+export interface VueStyledComponentFactory<
   Type extends SupportedHTMLElements,
   OuterProps extends {} = {},
   OuterAttrs extends {} = {},

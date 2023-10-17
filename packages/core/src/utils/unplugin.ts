@@ -40,7 +40,7 @@ export async function load(id: string, ctx: PinceauContext) {
   if (!query) { return }
 
   // Load file
-  let code = loadFile(query)
+  let code = loadFile(query, ctx)
   if (!code) { return }
 
   // Apply load transformers

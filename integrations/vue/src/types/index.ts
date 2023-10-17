@@ -15,7 +15,7 @@ export type PinceauStyledComponent<
     Component<Props, Attrs>
 )
 
-export interface StyledComponentFactory<
+export interface VueStyledComponentFactory<
   Type extends SupportedHTMLElements,
   OuterProps extends {} = {},
   OuterAttrs extends {} = {},

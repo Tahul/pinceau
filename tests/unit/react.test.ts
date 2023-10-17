@@ -18,6 +18,7 @@ describe('@pinceau/react', () => {
       const options = normalizeOptions()
       options.theme.layers.push(paletteLayer)
       pinceauContext = usePinceauContext(options)
+      pinceauContext.fs = fs
     })
 
     it('can load files', async () => {
@@ -103,8 +104,7 @@ describe('@pinceau/react', () => {
 
       registerVirtualOutputs(pinceauContext)
 
-      expect(fs.writeFileSync).toHaveBeenCalledTimes(2)
-      expect(pinceauContext.getOutputId('/__pinceau_runtime.js')).toBe('$pinceau')
+      expect(fs.writeFileSync).toHaveBeenCalledTimes(1)
       expect(pinceauContext.getOutputId('/__pinceau_react_plugin.js')).toBe('$pinceau/react-plugin')
     })
   })
@@ -179,6 +179,7 @@ describe('@pinceau/react', () => {
       const options = normalizeOptions()
       options.theme.layers.push(paletteLayer)
       pinceauContext = usePinceauContext(options)
+      pinceauContext.fs = fs
       const configCtx = usePinceauConfigContext(pinceauContext)
       await configCtx.buildTheme()
     })

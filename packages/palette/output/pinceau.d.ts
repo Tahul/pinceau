@@ -1,7 +1,6 @@
 import type { ThemeFunction } from '@pinceau/theme'
 import type { PinceauTheme as GeneratedPinceauTheme, PinceauMediaQueries as GeneratedPinceauMediaQueries, PinceauThemePaths as GeneratedPinceauThemePaths } from './theme'
 import type { PinceauUtils as GeneratedPinceauUtils } from './utils.ts'
-import type { StyledComponentFactory } from '@pinceau/style'
 import type { SupportedHTMLElements } from '@pinceau/style'
 import type { CSSFunctionArg } from '@pinceau/style'
 import type { StyledFunctionArg } from '@pinceau/style'

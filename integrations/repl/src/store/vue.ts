@@ -9,7 +9,8 @@ import type { Ref } from 'vue'
 import { compileFile } from '../transforms'
 import { compileModulesForPreview } from '../compiler'
 import type { PreviewProxy } from '../components/output/PreviewProxy'
-import type { File, ReplStore, ReplTransformer } from '.'
+import type { ReplStore, ReplTransformer } from '.'
+import { File, pinceauVersion } from '.'
 
 const defaultMainFile = 'src/App.vue'
 
@@ -37,6 +38,14 @@ const localImports = {
   'vue/compiler-sfc': (version = defaultVersion) => `https://cdn.jsdelivr.net/npm/@vue/compiler-sfc@${version}/dist/compiler-sfc.esm-browser.js`,
   'vue/runtime-dom': (version = defaultVersion) => `https://cdn.jsdelivr.net/npm/@vue/runtime-dom@${version}/dist/runtime-dom.esm-browser.js`,
   'vue/server-renderer': (version = defaultVersion) => `https://cdn.jsdelivr.net/npm/@vue/server-renderer@${version}/dist/server-renderer.esm-browser.js`,
+  'defu': () => 'https://cdn.jsdelivr.net/npm/defu@6.1.2/dist/defu.mjs',
+  'scule': () => 'https://cdn.jsdelivr.net/npm/scule@1.0.0/dist/index.mjs',
+  '@pinceau/runtime': () => `https://cdn.jsdelivr.net/npm/@pinceau/runtime@${pinceauVersion}/dist/index.mjs`,
+  '@pinceau/stringify': () => `https://cdn.jsdelivr.net/npm/@pinceau/stringify@${pinceauVersion}/dist/index.mjs`,
+  '@pinceau/core/runtime': () => `https://cdn.jsdelivr.net/npm/@pinceau/core@${pinceauVersion}/dist/runtime.mjs`,
+  '@pinceau/theme/runtime': () => `https://cdn.jsdelivr.net/npm/@pinceau/theme@${pinceauVersion}/dist/runtime.mjs`,
+  '@pinceau/vue/runtime': () => `https://cdn.jsdelivr.net/npm/@pinceau/vue@${pinceauVersion}/dist/runtime.mjs`,
+  '$pinceau/vue-plugin': () => '/vue-plugin-proxy.js',
 }
 
 export class ReplVueTransformer implements ReplTransformer<typeof defaultCompiler, SFCOptions> {
@@ -48,9 +57,23 @@ export class ReplVueTransformer implements ReplTransformer<typeof defaultCompile
   targetVersion?: string
   compiler: typeof defaultCompiler = defaultCompiler
   compilerOptions: SFCOptions = {}
-  pendingCompiler: Promise<any> | null = null
+  pendingImport: Promise<any> | null = null
   imports: typeof localImports = localImports
-  shims = {}
+  shims = {
+    'global.d.ts': new File('global.d.ts', `
+    import type { VueStyledComponentFactory } from \'@pinceau/vue\'
+    import { ResponsiveProp } from \'@pinceau/style\'
+    import { StyledFunctionArg } from \'@pinceau/style\'
+    import { PropType } from \'vue\'
+
+    declare global {
+      export type ResponsiveProp<T extends string | number | symbol | undefined> = PropType<ResponsiveProp<T>>
+      export type StyledProp = PropType<StyledFunctionArg>
+      export const $styled: { [Type in SupportedHTMLElements]: VueStyledComponentFactory<Type> }
+      declare module \'@vue/runtime-dom\' { interface HTMLAttributes { styled?: StyledFunctionArg } }
+    }
+    `),
+  }
 
   tsconfig: any = {
     compilerOptions: {
@@ -82,6 +105,14 @@ export class ReplVueTransformer implements ReplTransformer<typeof defaultCompile
       '@vue/runtime-core': this.targetVersion || this.defaultVersion,
       '@vue/runtime-dom': this.targetVersion || this.defaultVersion,
       '@vue/shared': this.targetVersion || this.defaultVersion,
+      '@pinceau/vue/runtime': 'latest',
+      '@pinceau/style': 'latest',
+      '@pinceau/theme': 'latest',
+      '@pinceau/runtime': 'latest',
+      '$pinceau/types': '',
+      '$pinceau/theme': '',
+      '$pinceau/utils': '',
+      '$pinceau/vue-plugin': '',
     }
   }
 
@@ -92,9 +123,9 @@ export class ReplVueTransformer implements ReplTransformer<typeof defaultCompile
     const runtimeUrl = this.imports['vue/runtime-dom'](version)
     const ssrUrl = this.imports['vue/server-renderer'](version)
 
-    this.pendingCompiler = import(/* @vite-ignore */ compilerUrl)
-    this.compiler = await this.pendingCompiler
-    this.pendingCompiler = null
+    this.pendingImport = import(/* @vite-ignore */ compilerUrl)
+    this.compiler = await this.pendingImport
+    this.pendingImport = null
 
     const importMap = this.store.getImportMap()
     const imports = importMap.imports || (importMap.imports = {})
@@ -181,14 +212,19 @@ export class ReplVueTransformer implements ReplTransformer<typeof defaultCompile
           ...ssrModules,
         `import { renderToString as _renderToString } from 'vue/server-renderer'
          import { createSSRApp as _createApp } from 'vue'
+         import { PinceauVue } from '$pinceau/vue-plugin'
+
          const AppComponent = __modules__["${mainFile}"].default
+         
          AppComponent.name = 'Repl'
          const app = _createApp(AppComponent)
+         app.use(PinceauVue)
          if (!app.config.hasOwnProperty('unwrapInjectedRef')) {
            app.config.unwrapInjectedRef = true
          }
          app.config.warnHandler = () => {}
          window.__ssr_promise__ = _renderToString(app).then(html => {
+           document.getElementById('pinceau-runtime').innerHTML = app.config.globalProperties.$pinceauSSR.toString()
            document.body.innerHTML = '<div id="app">' + html + '</div>' + \`${previewOptions?.bodyHTML || ''
         }\`
          }).catch(err => {
@@ -200,6 +236,7 @@ export class ReplVueTransformer implements ReplTransformer<typeof defaultCompile
 
       // compile code to simulated module system
       const modules = compileModulesForPreview(this.store)
+
       console.log(`[@pinceau/repl] Compiled ${modules.length} module${modules.length > 1 ? 's' : ''}.`)
 
       const codeToEval = [
@@ -219,18 +256,24 @@ export class ReplVueTransformer implements ReplTransformer<typeof defaultCompile
       // if main file is a vue file, mount it.
       if (mainFile.endsWith('.vue')) {
         codeToEval.push(
-        `import { ${isSSR ? 'createSSRApp' : 'createApp'
-        } as _createApp } from "vue"
+        `import { ${isSSR ? 'createSSRApp' : 'createApp'} as _createApp } from 'vue'
+        import { PinceauVue } from '$pinceau/vue-plugin'
         ${previewOptions?.customCode?.importCode || ''}
         const _mount = () => {
           const AppComponent = __modules__["${mainFile}"].default
           AppComponent.name = 'Repl'
           const app = window.__app__ = _createApp(AppComponent)
+
+          app.use(PinceauVue)
+
           if (!app.config.hasOwnProperty('unwrapInjectedRef')) {
             app.config.unwrapInjectedRef = true
           }
+
           app.config.errorHandler = e => console.error(e)
+
           ${previewOptions?.customCode?.useCode || ''}
+          
           app.mount('#app')
         }
         if (window.__ssr_promise__) {

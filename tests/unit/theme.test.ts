@@ -43,6 +43,7 @@ import {
 import { PinceauVueTransformer } from '@pinceau/vue/utils'
 import fg from 'fast-glob'
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
+import * as localPkg from 'local-pkg'
 import themeConfig from '../fixtures/theme/theme.config'
 import themeConfigContent from '../fixtures/theme/theme.config.ts?raw'
 import { findNode, paletteLayer, resolveFixtures, resolveTmp, testFileLayer, testLayer } from '../utils'
@@ -54,6 +55,8 @@ describe('@pinceau/theme', () => {
 
     beforeEach(() => {
       ctx = usePinceauContext()
+      ctx.fs = fs
+      ctx.localPkg = localPkg
       setupThemeFormats(ctx)
       ctx.options.theme.palette = false
       configCtx = usePinceauConfigContext(ctx)
@@ -70,7 +73,7 @@ describe('@pinceau/theme', () => {
       expect(configCtx.buildTheme).toBeDefined()
     })
     it('create PinceauConfigContext with options', async () => {
-      ctx = usePinceauContext({
+      const localContext = usePinceauContext({
         theme: {
           layers: [
             paletteLayer,
@@ -78,15 +81,17 @@ describe('@pinceau/theme', () => {
         },
       })
 
-      configCtx = usePinceauConfigContext(ctx)
+      const localConfigContext = usePinceauConfigContext(localContext)
 
-      await configCtx.buildTheme()
+      await localConfigContext.buildTheme()
 
-      expect(configCtx.ready).toBeDefined()
-      expect(configCtx.config).toBeDefined()
-      expect(configCtx).toBeDefined()
+      expect(localConfigContext.ready).toBeDefined()
+      expect(localConfigContext.config).toBeDefined()
+      expect(localConfigContext).toBeDefined()
     })
     it('inject @pinceau/palette build theme without options', async () => {
+      ctx.fs = fs
+      ctx.localPkg = localPkg
       ctx.options.theme.palette = true
 
       await configCtx.buildTheme()
@@ -335,6 +340,18 @@ describe('@pinceau/theme', () => {
   })
 
   describe('utils/config-layers.ts', () => {
+    let ctx: PinceauContext
+
+    beforeEach(() => {
+      ctx = usePinceauContext()
+      ctx.fs = fs
+      ctx.localPkg = localPkg
+      setupThemeFormats(ctx)
+      ctx.options.theme.palette = false
+      ctx.options.theme.layers = []
+      ctx.options.theme.buildDir = undefined
+    })
+
     it('getConfigLayer() - get an empty ConfigLayer', () => {
       const layer = getConfigLayer(resolveFixtures())
 
@@ -353,7 +370,7 @@ describe('@pinceau/theme', () => {
 
       options.theme.layers = ['@pinceau/palette']
 
-      const result = resolveConfigSources(options)
+      const result = resolveConfigSources(options, ctx)
 
       expect(result.length).toBe(1)
 
@@ -380,7 +397,7 @@ describe('@pinceau/theme', () => {
         },
       ]
 
-      const result = resolveConfigSources(options)
+      const result = resolveConfigSources(options, ctx)
 
       expect(result.length).toBe(3)
 
@@ -457,7 +474,7 @@ describe('@pinceau/theme', () => {
         },
       ]
 
-      const output = await loadLayers(options)
+      const output = await loadLayers(options, ctx)
 
       expect(output.sources.length).toBe(2)
       expect((output.theme as any).inline).toBeDefined()
@@ -566,7 +583,7 @@ describe('@pinceau/theme', () => {
     it('generate theme output', async () => {
       ctx.options.theme.layers = [testFileLayer]
 
-      const output = await loadLayers(ctx.options)
+      const output = await loadLayers(ctx.options, ctx)
 
       const themeOutput = await generateTheme(output, ctx)
 
@@ -583,7 +600,7 @@ describe('@pinceau/theme', () => {
 
       ctx.options.theme.buildDir = resolveTmp('./generate-output/')
 
-      const output = await loadLayers(ctx.options)
+      const output = await loadLayers(ctx.options, ctx)
 
       const themeOutput = await generateTheme(output, ctx)
 

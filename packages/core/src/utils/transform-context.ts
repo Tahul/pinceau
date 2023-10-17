@@ -8,6 +8,9 @@ export function usePinceauTransformContext(
   query: PinceauQuery,
   pinceauContext: PinceauContext,
 ): PinceauTransformContext {
+  // Ensure source is string and not null/undefined
+  if (!source) { source = '' }
+
   const ms = typeof source !== 'string' ? source : new MagicString(source, { filename: query.filename })
 
   // Executable transforms on this context.

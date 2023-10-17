@@ -5,10 +5,8 @@ export default defineBuildConfig({
     {
       input: 'src/index.ts',
       name: 'index',
-      format: 'esm',
     },
   ],
-  failOnWarn: false,
   clean: true,
   declaration: false,
   rollup: {

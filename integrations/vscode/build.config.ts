@@ -13,7 +13,7 @@ export default defineBuildConfig({
       format: 'cjs',
     },
   ],
-  failOnWarn: false,
+
   clean: true,
   declaration: false,
   rollup: {

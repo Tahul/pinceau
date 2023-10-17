@@ -1,22 +1,24 @@
 import { nextTick, reactive, ref, watch, watchEffect } from 'vue'
 import type { Ref, WatchStopHandle } from 'vue'
 import type { editor } from 'monaco-editor-core'
+import palette from '@pinceau/palette/theme.config?raw'
 import { atou, utoa } from '../utils'
 import type { OutputModes } from '../components/output/types'
 import type { PreviewProxy } from '../components/output/PreviewProxy'
 import { ReplVueTransformer } from './vue'
 import { ReplReactTransformer } from './react'
 import { ReplSvelteTransformer } from './svelte'
+import { PinceauProvider } from './pinceau'
 
 export const importMapFile = 'import-map.json'
 export const tsconfigFile = 'tsconfig.json'
 export const themeFile = 'theme.config.ts'
+export const pinceauVersion = '1.0.0-beta.14'
 
 const supportedTransformers = {
   vue: ReplVueTransformer,
   react: ReplReactTransformer,
   svelte: ReplSvelteTransformer,
-  typescript: ReplReactTransformer,
 }
 
 export class File {
@@ -55,6 +57,7 @@ export class File {
 export interface StoreState {
   mainFile: string
   files: Record<string, File>
+  builtFiles: Record<string, File>
   activeFile: File
   errors: (string | Error)[]
   typescriptVersion: string
@@ -66,6 +69,7 @@ export interface StoreState {
 export interface Store {
   state: StoreState
   transformer: ReplTransformer
+  pinceauProvider: PinceauProvider
   editor: typeof editor | undefined
   effects: WatchStopHandle[]
   resetFlip: Ref<number>
@@ -77,7 +81,7 @@ export interface Store {
   getImportMap: () => any
   getTsConfig?: () => any
   reset: (options: StoreOptions) => Promise<Store>
-  reloadLanguageTools?: undefined | ((lang?: keyof typeof supportedTransformers) => void)
+  reloadLanguageTools?: undefined | ((lang?: 'vue' | 'svelte' | 'react' | 'typescript') => void)
   initialShowOutput: boolean
   initialOutputMode: OutputModes
 }
@@ -105,7 +109,7 @@ export interface ReplTransformer<
   getTypescriptDependencies: (version?: string) => Record<string, string>
   compilerOptions: CompilerOptions
   compiler: CompilerType
-  pendingCompiler: Promise<CompilerType> | null
+  pendingImport: Promise<CompilerType> | null
   imports: { [key: string]: string | ((version: string) => string) }
   setVersion: (version: string) => Promise<void>
   resetVersion: () => void
@@ -125,9 +129,10 @@ export class ReplStore implements Store {
   state: StoreState
   effects: WatchStopHandle[] = []
   transformer: ReplTransformer
+  pinceauProvider: PinceauProvider
   initialShowOutput: boolean
   initialOutputMode: OutputModes
-  reloadLanguageTools: undefined | ((lang?: keyof typeof supportedTransformers) => void)
+  reloadLanguageTools: undefined | ((lang?: 'vue' | 'svelte' | 'react' | 'typescript') => void)
   editor: typeof editor | undefined = undefined
   resetFlip: Ref<number> = ref(0)
 
@@ -144,13 +149,20 @@ export class ReplStore implements Store {
       if (serializedTransformer) { transformer = serializedTransformer }
     }
 
-    if (transformer) { this.transformer = new supportedTransformers[transformer]({ store: this }) }
-    else { throw new Error('You must provide a transformer for the Repl to boot properly.') }
-
     const files: StoreState['files'] = {}
 
     if (serializedFiles) { for (const filename in serializedFiles) { setFile(files, filename, serializedFiles[filename]) } }
-    else { setFile(files, this.transformer.defaultMainFile, this.transformer.welcomeCode) }
+
+    // Set theme.config
+    if (!serializedFiles || !serializedFiles['theme.config.ts']) { setFile(files, themeFile, palette) }
+
+    this.pinceauProvider = new PinceauProvider(this)
+
+    if (transformer) { this.transformer = new supportedTransformers[transformer]({ store: this }) }
+    else { throw new Error('You must provide a transformer for the Repl to boot properly.') }
+
+    // Set main fail from transformer
+    if (!serializedFiles) { setFile(files, this.transformer.defaultMainFile, this.transformer.welcomeCode) }
 
     this.initialShowOutput = showOutput
     this.initialOutputMode = outputMode as OutputModes
@@ -162,6 +174,7 @@ export class ReplStore implements Store {
     this.state = reactive({
       mainFile,
       files,
+      builtFiles: {},
       activeFile: files[mainFile],
       errors: [],
       typescriptVersion: 'latest',
@@ -220,10 +233,8 @@ export class ReplStore implements Store {
 
   // Don't start compiling until the options are set
   init() {
-    const stopCompilerEffect = watchEffect(() =>
-      this.transformer.compileFile(this.state.activeFile).then(
-        errs => (this.state.errors = errs),
-      ),
+    const stopCompilerEffect = watchEffect(
+      () => (this.transformer.compileFile(this.state.activeFile).then(errs => (this.state.errors = errs))),
     )
 
     const stopLanguageToolsEffect = watch(
@@ -454,6 +465,7 @@ function setFile(
       && !filename.startsWith('src/')
       ? `src/${filename}`
       : filename
+
   files[normalized] = new File(normalized, content)
 }
 

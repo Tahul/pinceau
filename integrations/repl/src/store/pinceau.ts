@@ -1,0 +1,194 @@
+import { watch } from 'vue'
+import {
+  cssFormat,
+  declarationFormat,
+  generateTheme,
+  javascriptFormat,
+  resolveConfigContent,
+  resolveMediaQueriesKeys,
+  typescriptFormat,
+  utilsFormat,
+  utilsTypesFormat,
+} from '@pinceau/theme/utils'
+import {
+  normalizeTokens,
+} from '@pinceau/theme/runtime'
+import { transformAddPinceauClass, transformAddRuntimeScriptTag, transformWriteScriptFeatures, suite as vueSuite } from '@pinceau/vue/transforms'
+import { PinceauVueTransformer } from '@pinceau/vue/utils'
+import { PinceauSvelteTransformer } from '@pinceau/svelte/utils'
+import { suite as svelteSuite } from '@pinceau/svelte/transforms'
+import { suite as reactSuite } from '@pinceau/react/transforms'
+import { findDefaultExport, parseAst, parsePinceauQuery, printAst, transform, usePinceauContext, usePinceauTransformContext, visitAst } from '@pinceau/core/utils'
+import { suite as styleSuite } from '@pinceau/style/transforms'
+import { suite as themeSuite } from '@pinceau/theme/transforms'
+import type { PinceauContext } from '@pinceau/core'
+import { File } from '..'
+import type { ReplStore } from '..'
+import { themeFile } from '.'
+
+export class PinceauProvider {
+  store: ReplStore
+  defaultVersion: string = 'latest'
+  targetVersion: string | undefined
+  themeUtils: typeof import('@pinceau/theme/utils') | null = null
+  pendingImport: Promise<any> | undefined
+  pinceauContext: PinceauContext
+
+  constructor(store: ReplStore) {
+    this.store = store
+
+    this.pinceauContext = usePinceauContext({
+      theme: {
+        buildDir: false,
+        outputFormats: [
+          cssFormat,
+          declarationFormat,
+          javascriptFormat,
+          utilsFormat,
+          utilsTypesFormat,
+          typescriptFormat,
+        ],
+      },
+    })
+
+    this.pinceauContext.registerTransformer(
+      'vue',
+      PinceauVueTransformer,
+    )
+    this.pinceauContext.registerTransformer(
+      'svelte',
+      PinceauSvelteTransformer,
+    )
+  }
+
+  init() {
+    this.store.transformer.shims['pinceau.d.ts'] = new File('pinceau.d.ts', `import type { ThemeFunction } from '@pinceau/theme'
+import type { PinceauTheme as GeneratedPinceauTheme, PinceauMediaQueries as GeneratedPinceauMediaQueries, PinceauThemePaths as GeneratedPinceauThemePaths } from '$pinceau/theme'
+import type { PinceauUtils as GeneratedPinceauUtils } from '$pinceau/utils'
+import type { SupportedHTMLElements } from '@pinceau/style'
+import type { CSSFunctionArg } from '@pinceau/style'
+import type { StyledFunctionArg } from '@pinceau/style'
+import type { ThemeTokens } from '@pinceau/style'
+
+declare global {
+  export type ThemeTokens<T extends PinceauThemePaths & (string & {}) = PinceauThemePaths & (string & {})> = PinceauThemeTokens<T>
+  export const styled: (<Props extends {} = {}>(declaration: StyledFunctionArg<Props>) => string)
+  export const css: ((declaration: CSSFunctionArg) => string)
+  export const $theme: ThemeFunction
+  export type PinceauTheme = GeneratedPinceauTheme
+  export type PinceauUtils = GeneratedPinceauUtils
+  export type PinceauMediaQueries = GeneratedPinceauMediaQueries
+  export type PinceauThemePaths = GeneratedPinceauThemePaths
+}
+
+export {}`)
+
+    const themeWatcher = watch(
+      () => this.store.state.files[`src/${themeFile}`],
+      async (newFile) => {
+        if (!newFile) { return }
+
+        const builtFiles = {}
+
+        const defineThemeNode = findDefaultExport(parseAst(newFile.code, { sourceType: 'module' })) as any
+
+        const themeExpression = defineThemeNode.arguments[0]
+
+        let code = newFile.code
+
+        // Eval utils to runtime from AST
+        let utilsCode
+        visitAst(
+          themeExpression,
+          {
+            visitObjectProperty(node) {
+              if (node?.parentPath?.parentPath?.name === 'root' && node.value.key.name === 'utils') {
+                utilsCode = node.value.value
+                node.prune()
+                return false
+              }
+              return this.traverse(node)
+            },
+          },
+        )
+        if (utilsCode) { utilsCode = printAst(utilsCode).code }
+        code = printAst(themeExpression).code
+
+        // eslint-disable-next-line no-eval
+        const _eval = eval
+        _eval(`var _theme = ${code}`)
+        // @ts-ignore
+        let theme = _theme
+
+        const { utils, definitions, imports } = resolveConfigContent(this.pinceauContext.options, theme, newFile.code)
+
+        const mqKeys = resolveMediaQueriesKeys(theme)
+
+        theme = normalizeTokens(theme, mqKeys, true)
+
+        const builtTheme = await generateTheme(
+          {
+            definitions,
+            imports,
+            schema: {},
+            sources: ['/'],
+            theme,
+            utils,
+          },
+          this.pinceauContext,
+        )
+
+        for (const [key, output] of Object.entries(builtTheme.outputs)) {
+          builtFiles[key] = new File(key, output, true)
+        }
+
+        this.store.state.builtFiles = builtFiles
+      },
+      {
+        immediate: true,
+      },
+    )
+  }
+
+  transformReact(file: File) {
+    // console.log({ file })
+    return file
+  }
+
+  transformSvelte(file: File) {
+    // console.log({ file })
+    return file
+  }
+
+  async transformVue(file: File) {
+    if (!file.filename.endsWith('.vue')) { return }
+
+    const query = parsePinceauQuery(file.filename)
+
+    this.pinceauContext.addTransformed(file.filename, query)
+
+    const transformContext = usePinceauTransformContext(
+      file.code,
+      query,
+      this.pinceauContext,
+    )
+
+    transformContext.registerTransforms(styleSuite)
+    transformContext.registerTransforms(themeSuite)
+    transformContext.registerTransforms({
+      globals: [
+        transformAddRuntimeScriptTag,
+      ],
+      templates: [
+        transformAddPinceauClass,
+      ],
+      scripts: [
+        transformWriteScriptFeatures,
+      ],
+    })
+
+    await transformContext.transform()
+
+    return transformContext
+  }
+}

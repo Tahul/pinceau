@@ -1,11 +1,11 @@
 import { dirname, extname } from 'node:path'
-import type { PinceauOptions } from '@pinceau/core'
+import type { PinceauContext, PinceauOptions } from '@pinceau/core'
 import { merger } from '@pinceau/core/utils'
 import { resolveSchema as resolveUntypedSchema } from 'untyped'
-import { isPackageExists, resolveModule } from 'local-pkg'
 import type { ConfigLayer, ResolvedConfigLayer, Theme, ThemeLoadingOutput } from '../types'
 import { resolveFileLayer } from './config-file'
 import { normalizeTokens } from './tokens'
+import { resolveMediaQueriesKeys } from './media-queries'
 import type { PinceauTheme } from '$pinceau/theme'
 
 // Gives an empty layer for a given path or nothing.
@@ -24,8 +24,11 @@ export function getConfigLayer(path?: string): ResolvedConfigLayer {
 /**
  * Resolves all `layers` from Pinceau options and returns a LoadConfigResult object.
  */
-export async function loadLayers(options: PinceauOptions): Promise<ThemeLoadingOutput> {
-  const sources = resolveConfigSources(options)
+export async function loadLayers(
+  options: PinceauOptions,
+  ctx: PinceauContext,
+): Promise<ThemeLoadingOutput> {
+  const sources = resolveConfigSources(options, ctx)
 
   /**
    * loadConfig result
@@ -80,17 +83,23 @@ export async function loadLayers(options: PinceauOptions): Promise<ThemeLoadingO
 /**
  * Resolve a safe layers array from layers option.
  */
-export function resolveConfigSources(options: PinceauOptions) {
+export function resolveConfigSources(
+  options: PinceauOptions,
+  ctx: PinceauContext,
+) {
   const configSourceFromModulePath = (path: string): ConfigLayer | undefined => {
-    if (!isPackageExists(path)) { return }
+    if (!ctx.localPkg || !ctx.localPkg.isPackageExists(path)) { return }
 
-    const resolvedModule = resolveModule(path, { paths: [options.cwd] })
+    const resolvedModule = ctx.localPkg.resolveModule(path, { paths: [options.cwd] })
+
     if (resolvedModule) {
       const dir = dirname(resolvedModule)
       const filename = resolvedModule.replace(`${dir}/`, '')
       const ext = extname(filename)
       if (dir && filename && ext) { return { path: `${dir}/`, configFileName: filename.replace(ext, '') } }
     }
+
+    return undefined
   }
 
   // Inject palette if options set to true
@@ -142,19 +151,6 @@ export function resolveConfigSources(options: PinceauOptions) {
   sources = [...new Set(sources)]
 
   return sources
-}
-
-/**
- * Resolve @mediaQueries keys from a tokens configuration.
- */
-export function resolveMediaQueriesKeys(config: Theme | Theme[]) {
-  if (Array.isArray(config)) { return Array.from(new Set<string>([].concat(...config.map(resolveMediaQueriesKeys)))) }
-
-  const nativeKeys = ['$dark', '$light', '$initial']
-
-  if (config.media && Object.keys(config.media).length) { return Array.from(new Set(nativeKeys.concat(Object.keys(config.media).map(k => `$${k}`)))) }
-
-  return nativeKeys
 }
 
 export function resolveInlineLayer(layer: ConfigLayer, _: PinceauOptions): ResolvedConfigLayer {

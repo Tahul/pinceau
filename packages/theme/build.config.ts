@@ -23,7 +23,7 @@ export default defineBuildConfig({
       name: 'utils',
     },
   ],
-  failOnWarn: false,
+
   clean: true,
   declaration: true,
   rollup: {
@@ -35,6 +35,15 @@ export default defineBuildConfig({
     '@pinceau',
     '@pinceau/style',
     '@pinceau/core',
+    '@pinceau/core/runtime',
+    'defu',
+    'sfc-composer',
+    'ultrahtml',
+    'magic-string',
+    'recast',
+    '@babel/parser',
+    'micromatch',
+    'recast/parsers/typescript.js',
     'style-dictionary-esm',
     'untyped',
     'pathe',
@@ -42,5 +51,7 @@ export default defineBuildConfig({
     '$pinceau',
     'vite',
     'unplugin',
+    '@pinceau/core/utils',
+    '@pinceau/core',
   ],
 })

@@ -11,7 +11,7 @@ export default defineBuildConfig({
       name: 'plugin',
     },
   ],
-  failOnWarn: false,
+
   clean: true,
   declaration: true,
   rollup: {

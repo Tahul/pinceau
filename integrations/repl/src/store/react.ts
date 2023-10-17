@@ -3,7 +3,7 @@ import { compileFile } from '../transforms'
 import { compileModulesForPreview } from '../compiler'
 import type { PreviewProxy } from '../components/output/PreviewProxy'
 import type { ReplStore, ReplTransformer } from '.'
-import { File } from '.'
+import { File, pinceauVersion } from '.'
 
 const defaultMainFile = 'src/App.tsx'
 
@@ -23,6 +23,14 @@ const localImports = {
   'react-dom/server': (version = defaultVersion) => `https://cdn.jsdelivr.net/npm/react-dom@${version}/umd/react-dom-server.browser.development.js`,
   '@types/react': (version = defaultVersion) => `https://cdn.jsdelivr.net/npm/@types/react@${version}/index.d.ts`,
   '@types/react-dom': (version = defaultVersion) => `https://cdn.jsdelivr.net/npm/@types/react-dom@${version}/index.d.ts`,
+  'defu': () => 'https://cdn.jsdelivr.net/npm/defu@6.1.2/dist/defu.mjs',
+  'scule': () => 'https://cdn.jsdelivr.net/npm/scule@1.0.0/dist/index.mjs',
+  '@pinceau/runtime': () => `https://cdn.jsdelivr.net/npm/@pinceau/runtime@${pinceauVersion}/dist/index.mjs`,
+  '@pinceau/stringify': () => `https://cdn.jsdelivr.net/npm/@pinceau/stringify@${pinceauVersion}/dist/index.mjs`,
+  '@pinceau/core/runtime': () => `https://cdn.jsdelivr.net/npm/@pinceau/core@${pinceauVersion}/dist/runtime.mjs`,
+  '@pinceau/theme/runtime': () => `https://cdn.jsdelivr.net/npm/@pinceau/theme@${pinceauVersion}/dist/runtime.mjs`,
+  '@pinceau/react/runtime': () => `https://cdn.jsdelivr.net/npm/@pinceau/vue@${pinceauVersion}/dist/runtime.mjs`,
+  '$pinceau/react-plugin': () => '/react-plugin-proxy.js',
 }
 
 export class ReplReactTransformer implements ReplTransformer<null, {}> {
@@ -34,17 +42,19 @@ export class ReplReactTransformer implements ReplTransformer<null, {}> {
   targetVersion?: string
   compiler = null
   compilerOptions: {} = {}
-  pendingCompiler: Promise<any> | null = null
+  pendingImport: Promise<any> | null = null
   imports: typeof localImports = localImports
   shims = {
     'globals.d.ts': new File('globals.d.ts', `import * as React from 'react'
 import * as ReactDOM from 'react-dom'
+import type { ReactStyledComponentFactory } from \'@pinceau/react\'
 
 export {}
 
 declare global {
     const React: typeof React
     const ReactDOM: typeof ReactDOM
+    export const $styled: { [Type in SupportedHTMLElements]: ReactStyledComponentFactory<Type> }
 }`),
     'runtime.d.ts': new File('runtime.d.ts', 'declare module \'react/jsx-runtime\';'),
   }
@@ -72,24 +82,15 @@ declare global {
 
   constructor({ store }: { store: ReplStore }) {
     this.store = store
-
-    store?.editor?.getModels().forEach((model) => {
-      if (
-        (
-          model.uri.path.includes('/npm/vue')
-          || model.uri.path.includes('/npm/@vue')
-        )
-        && !model.isDisposed()
-      ) {
-        model.dispose()
-      }
-    })
   }
 
   getTypescriptDependencies() {
     return {
       '@types/react': this.targetVersion || this.defaultVersion,
       '@types/react-dom': this.targetVersion || this.defaultVersion,
+      '@pinceau/style': pinceauVersion,
+      '@pinceau/theme': pinceauVersion,
+      '@pinceau/runtime': pinceauVersion,
     }
   }
 
@@ -179,6 +180,7 @@ declare global {
         `import 'react'
         import 'react-dom'
         import 'react-dom/server'
+        import { PinceauProvider, PinceauContext } from '$pinceau/react-plugin'
 
         const ReactDOM = window.ReactDOM
         const React = window.React
@@ -190,7 +192,18 @@ declare global {
 
           const root = window.ReactDOM.createRoot(div);
 
-          const component = React.createElement(AppComponent)
+          let ssrUtils
+          const cb = (_ssr) => {
+            ssrUtils = _ssr
+          }
+
+          const component = React.createElement(
+            PinceauProvider,
+            {
+              children: React.createElement(AppComponent),
+              cb
+            }
+          )
 
           window.ReactDOM.flushSync(() => {
            try {
@@ -199,6 +212,8 @@ declare global {
             reject(e)
            }
           });
+
+          if (ssrUtils) { document.getElementById('pinceau-runtime').innerHTML = ssrUtils.toString() }
 
           document.body.innerHTML = '<div id="app">' + div.innerHTML + '</div>' + \`${previewOptions?.bodyHTML || ''}\`
 
@@ -234,6 +249,7 @@ declare global {
         `import 'react'
         import 'react-dom'
         import 'react-dom/server'
+        import { PinceauProvider } from '$pinceau/react-plugin'
 
         ${previewOptions?.customCode?.importCode || ''}
         
@@ -242,7 +258,12 @@ declare global {
 
           const rootEl = document.getElementById('app')
 
-          const rootComp = React.createElement(AppComponent)
+          const rootComp = React.createElement(
+            PinceauProvider,
+            {
+              children: React.createElement(AppComponent)
+            }
+          )
           
           ${isSSR && 'const root = window.__app__ = window.ReactDOM.hydrateRoot(rootEl, rootComp);\nconsole.log(\'[@pinceau/repl] React SSR HTML has been hydrated!\')'}
           ${!isSSR && 'const root = window.__app__ = window.ReactDOM.createRoot(rootEl).render(rootComp);'}

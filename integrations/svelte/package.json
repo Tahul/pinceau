@@ -35,6 +35,11 @@
       "types": "./dist/runtime.d.ts",
       "import": "./dist/runtime.mjs",
       "require": "./dist/runtime.cjs"
+    },
+    "./unplugin": {
+      "types": "./dist/unplugin.d.ts",
+      "import": "./dist/unplugin.mjs",
+      "require": "./dist/unplugin.cjs"
     }
   },
   "main": "./dist/index.cjs",

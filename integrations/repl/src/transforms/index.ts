@@ -1,4 +1,4 @@
-import type { File, Store } from '../store'
+import { type File, type Store, themeFile } from '../store'
 import { compileSvelteFile } from './svelte'
 import { transformTS } from './typescript'
 import { compileVueFile } from './vue'
@@ -10,6 +10,8 @@ export async function compileFile(
   file: File,
 ): Promise<(string | Error)[]> {
   let { filename, code, compiled } = file
+
+  if (filename === themeFile) { return [] }
 
   if (!code.trim()) { return [] }
 

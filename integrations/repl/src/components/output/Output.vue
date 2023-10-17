@@ -65,9 +65,7 @@ css({
     // backgroundImage: 'linear-gradient(0deg, transparent 24%, rgba(255, 255, 255, .03) 25%, rgba(255, 255, 255, .03) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, .03) 75%, rgba(255, 255, 255, .03) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(255, 255, 255, .03) 25%, rgba(255, 255, 255, .03) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, .03) 75%, rgba(255, 255, 255, .03) 76%, transparent 77%, transparent)',
     backgroundImage: 'radial-gradient($color.gray.8 1px, transparent 0)',
     backgroundSize: '40px 40px',
-    backgroundPosition: '-19px -19px',
-    backgroundSize: '50px 50px',
-    backgroundPosition: '-38px -38px'
+    backgroundPosition: '-19px -19px'
   },
   '.tab-buttons': {
     boxSizing: 'border-box',
@@ -102,7 +100,6 @@ css({
     'alignItems': 'center',
     justifyContent: 'center',
     'fontSize': '12px',
-    'fontFamily': 'var(--font-code)',
     'cursor': 'pointer',
     'color': 'var(--text-light)',
     'boxSizing': 'border-box',

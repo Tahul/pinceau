@@ -18,6 +18,7 @@ describe('@pinceau/vue', () => {
       const options = normalizeOptions()
       options.theme.layers.push(paletteLayer)
       pinceauContext = usePinceauContext(options)
+      pinceauContext.fs = fs
       pinceauContext.registerTransformer('vue', PinceauVueTransformer)
     })
 
@@ -149,8 +150,7 @@ console.log('hello world')
 
       registerVirtualOutputs(pinceauContext)
 
-      expect(fs.writeFileSync).toHaveBeenCalledTimes(2)
-      expect(pinceauContext.getOutputId('/__pinceau_runtime.js')).toBe('$pinceau')
+      expect(fs.writeFileSync).toHaveBeenCalledTimes(1)
       expect(pinceauContext.getOutputId('/__pinceau_vue_plugin.js')).toBe('$pinceau/vue-plugin')
     })
   })
@@ -460,6 +460,7 @@ console.log('hello world')
       const options = normalizeOptions()
       options.theme.layers.push(paletteLayer)
       pinceauContext = usePinceauContext(options)
+      pinceauContext.fs = fs
       const configCtx = usePinceauConfigContext(pinceauContext)
       await configCtx.buildTheme()
       pinceauContext.registerTransformer('vue', PinceauVueTransformer)

@@ -41,6 +41,26 @@ export function initMonaco(store: Store) {
       )
     }
 
+    for (let filename in store.state.builtFiles) {
+      const file = store.state.builtFiles[filename]
+
+      if (
+        filename === '$pinceau/utils'
+        || filename === '$pinceau/theme'
+        || filename === 'pinceau.css'
+      ) { continue }
+
+      if (filename.includes('-types')) {
+        filename = filename.slice(0, filename.indexOf('-types'))
+      }
+
+      getOrCreateModel(
+        Uri.parse(`file:///${filename}`),
+        file.language,
+        file.code,
+      )
+    }
+
     // dispose of any models that are not in the store
     for (const model of editor.getModels()) {
       const uri = model.uri.toString()
@@ -115,20 +135,26 @@ export async function reloadLanguageTools(store: Store, lang?: 'vue' | 'svelte' 
     return Uri.parse(`file:///${filename}`)
   })
 
-  const { dispose: disposeMarkers } = volar.editor.activateMarkers(
-    worker,
-    languageId,
-    lang || 'vue',
-    getSyncUris,
-    editor,
-  )
+  let _disposeMarkers = () => {}
+  if (lang === 'vue') {
+    const { dispose: disposeMarkers } = volar.editor.activateMarkers(
+      worker,
+      languageId,
+      'vue',
+      getSyncUris,
+      editor,
+    )
+    _disposeMarkers = disposeMarkers
+  }
 
+  /*
   const { dispose: disposeAutoInsertion } = volar.editor.activateAutoInsertion(
     worker,
     languageId,
     getSyncUris,
     editor,
   )
+  */
 
   const { dispose: disposeProvides } = await volar.languages.registerProviders(
     worker,
@@ -138,7 +164,7 @@ export async function reloadLanguageTools(store: Store, lang?: 'vue' | 'svelte' 
   )
 
   disposeWorker = () => {
-    disposeMarkers?.()
+    _disposeMarkers?.()
     disposeAutoInsertion?.()
     disposeProvides?.()
   }
@@ -178,9 +204,9 @@ export function loadMonacoEnv(store: Store) {
 
   store.reloadLanguageTools = (lang?: 'vue' | 'react' | 'svelte' | 'typescript') => reloadLanguageTools(store, lang)
 
-  languages.onLanguage('vue', () => store.reloadLanguageTools!('vue'))
-  languages.onLanguage('typescript', () => store.reloadLanguageTools!('typescript'))
-  languages.onLanguage('svelte', () => store.reloadLanguageTools!('svelte'))
+  if (store.transformer.name === 'vue') { languages.onLanguage('vue', () => store.reloadLanguageTools!('vue')) }
+  if (store.transformer.name === 'svelte') { languages.onLanguage('svelte', () => store.reloadLanguageTools!('svelte')) }
+  if (store.transformer.name === 'react') { languages.onLanguage('typescript', () => store.reloadLanguageTools!('typescript')) }
 }
 
 export function loadWasm() {

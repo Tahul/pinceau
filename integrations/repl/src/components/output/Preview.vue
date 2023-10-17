@@ -9,6 +9,7 @@ import {
   WatchStopHandle,
   inject,
   Ref,
+  nextTick
 } from 'vue'
 import srcdoc from './srcdoc.html?raw'
 import { PreviewProxy } from './PreviewProxy'
@@ -47,7 +48,15 @@ watch(
 )
 
 // reset sandbox when version changes
-watch(() => store.state.resetFlip, createSandbox)
+watch(store.resetFlip, createSandbox)
+
+watch(
+  () => store.state.files['src/theme.config.ts'],
+  () => {
+    nextTick(() => createSandbox())
+  },
+  { deep: true }
+)
 
 onUnmounted(() => {
   proxy.destroy()
@@ -82,7 +91,7 @@ function createSandbox() {
     importMap.imports = {}
   }
 
-  const sandboxSrc = srcdoc
+  let sandboxSrc = srcdoc
     .replace(/<!--IMPORT_MAP-->/, JSON.stringify(importMap))
     .replace(
       /<!-- PREVIEW-OPTIONS-HEAD-HTML -->/,
@@ -91,7 +100,15 @@ function createSandbox() {
     .replace(
       /<!--PREVIEW-OPTIONS-PLACEHOLDER-HTML-->/,
       previewOptions?.placeholderHTML || ''
+  )
+  
+  if (store.state.builtFiles['pinceau.css']) {
+    sandboxSrc = sandboxSrc.replace(
+      /<!-- PREVIEW-PINCEAU-THEME -->/,
+      `<style id="pinceau-theme">${store.state.builtFiles['pinceau.css'].code}</style>`
     )
+  }
+  
   sandbox.srcdoc = sandboxSrc
   container.value.appendChild(sandbox)
 

@@ -201,6 +201,9 @@ export function usePinceauContext(userOptions?: PinceauUserOptions): PinceauCont
       if (!query.src || !query.styleFunction || !transformed[query.src]) { return }
       return transformed[query.src].state?.styleFunctions?.[query.styleFunction]
     },
+
+    fs: undefined,
+    localPkg: undefined,
   }
 
   return {

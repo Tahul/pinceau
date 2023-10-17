@@ -108,6 +108,19 @@ export interface PinceauBuildContext {
    * Push new types in `$pinceau/types` format and merge them with previous ones.
    */
   addTypes: (types: Partial<PinceauBuildContext['types']>) => void
+
+  /**
+   * `fs` reference to avoid direct dependencies.
+   */
+  fs?: typeof import('node:fs')
+
+  /**
+   * `local-pkg` reference to avoid direct dependencies when using in browser.
+   */
+  localPkg?: {
+    resolveModule: (name: string, options?: any) => string | undefined
+    isPackageExists: (name: string, options?: any) => boolean
+  }
 }
 
 /**

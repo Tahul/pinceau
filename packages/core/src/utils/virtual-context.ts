@@ -1,5 +1,3 @@
-import fs from 'node:fs'
-import { dirname } from 'pathe'
 import type { PinceauVirtualContext, VirtualOutputs } from '../types'
 
 export function usePinceauVirtualContext(): PinceauVirtualContext {
@@ -33,23 +31,12 @@ export function usePinceauVirtualContext(): PinceauVirtualContext {
     }
   }
 
-  /**
-   * Write a virtual output.
-   */
-  function writeOutput(id: string, path: string) {
-    // Create target directory if it doesn't already exist.
-    const targetDir = dirname(path)
-    if (!fs.existsSync(targetDir)) { fs.mkdirSync(targetDir, { recursive: true }) }
-    if (outputs[id]) { fs.writeFileSync(path, outputs[id]) }
-  }
-
   return {
     get outputs() { return outputs },
     set outputs(v: VirtualOutputs) { outputs = v },
     registerOutput,
     getOutput,
     getOutputId,
-    writeOutput,
     updateOutputs: (outputUpdate: Partial<VirtualOutputs>) => Object.assign(outputs, outputUpdate),
   }
 }

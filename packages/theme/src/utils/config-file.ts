@@ -1,14 +1,15 @@
-import { readFile } from 'node:fs/promises'
 import fs from 'node:fs'
 import type { PinceauOptions } from '@pinceau/core'
 import { message, parseAst } from '@pinceau/core/utils'
 import createJITI from 'jiti'
 import { resolve } from 'pathe'
 import type { ConfigFileImport, ConfigLayer, ResolvedConfigLayer } from '../types'
-import { getConfigLayer, resolveMediaQueriesKeys } from './config-layers'
+import { resolveMediaQueriesKeys } from './media-queries'
+import { getConfigLayer } from './config-layers'
 import { resolveConfigDefinitions } from './config-definitions'
 import { resolveConfigImports } from './config-imports'
 import { resolveConfigUtils } from './config-utils'
+import { resolveConfigContent } from './config-content'
 
 /**
  * Resolve a config file content for the provided ConfigFileImport.
@@ -36,35 +37,7 @@ export async function resolveFileLayer(
   }
   const { config, content } = configFile
 
-  // Find media queries keys from tokens configuration
-  const mqKeys = resolveMediaQueriesKeys(config)
-
-  // Parse configuration AST once
-  const configAst = parseAst(content)
-
-  // Try to resolve imports made in configuration file
-  let imports: ResolvedConfigLayer['imports'] = []
-  if (options.theme.imports) {
-    try { imports = resolveConfigImports(configAst) }
-    catch (e) { /* Mitigate imports resolving errors */ }
-  }
-
-  // Try to resolve tokens definitions
-  let definitions: ResolvedConfigLayer['definitions'] = {}
-  if (options.theme.definitions) {
-    try { definitions = resolveConfigDefinitions(configAst, mqKeys, path) }
-    catch (e) { /* Mitigate definitions resolving errors */ }
-  }
-
-  // Try to resolved the schema
-  let utils: ResolvedConfigLayer['utils'] = {}
-  if (config.utils) {
-    try { utils = resolveConfigUtils(configAst, config) }
-    catch (e) { /* Mitigate utils resolving errors */ }
-    finally {
-      delete config.utils
-    }
-  }
+  const { utils, imports, definitions } = resolveConfigContent(options, config, content, path)
 
   return {
     path,
@@ -81,7 +54,7 @@ export async function resolveFileLayer(
  * Makes an import of a configuration file.
  */
 export async function importConfigFile(path: string, ext: string): Promise<ConfigFileImport> {
-  const content = await readFile(path, 'utf-8')
+  const content = fs.readFileSync(path, 'utf-8')
 
   // Read `.json` configurations
   if (ext === '.json') {

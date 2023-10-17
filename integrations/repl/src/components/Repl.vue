@@ -44,7 +44,7 @@ const props = withDefaults(defineProps<Props>(), {
   showTsConfig: true,
   showTheme: true,
   clearConsole: true,
-  ssr: false,
+  ssr: true,
   compilerOptions: () => ({}),
   previewOptions: () => ({
     headHTML: '',
@@ -76,6 +76,8 @@ compilerOptions.script.fs = {
 }
 
 store.init()
+
+store.pinceauProvider.init()
 
 provide('store', store)
 provide('autoresize', props.autoResize)

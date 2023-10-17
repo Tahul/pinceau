@@ -35,6 +35,7 @@
     "build:examples": "pnpm -r --filter=\"./examples\" run build:example",
     "build:force": "turbo run build --force",
     "build:vscode": "pnpm -r --filter=\"./integrations/(language-server|vscode)\" run build",
+    "build:browser": "pnpm -r --filter=\"./integrations/browser\" run build",
     "clean": "turbo run clean",
     "clean:snapshots": "rm -rf ./tests/__snapshots__",
     "dev:astro": "nodemon --exec 'pnpm --filter=\"./examples/astro\" run dev' --watch 'packages' --watch 'integrations' -e js,ts,astro,vue,svelte,tsx,jsx",

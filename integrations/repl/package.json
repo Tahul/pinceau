@@ -43,6 +43,7 @@
   },
   "dependencies": {
     "@iconify/json": "^2.2.128",
+    "import-mapper": "^0.0.4",
     "monaco-jsx-syntax-highlight": "^1.2.0",
     "splitpanes": "^3.1.5",
     "unplugin-icons": "^0.17.0",
@@ -51,9 +52,12 @@
   "devDependencies": {
     "@babel/types": "^7.23.0",
     "@microsoft/api-extractor": "^7.38.0",
+    "@pinceau/browser": "workspace:*",
     "@pinceau/configs": "workspace:*",
     "@pinceau/palette": "workspace:*",
     "@pinceau/vue": "workspace:*",
+    "@pinceau/svelte": "workspace:*",
+    "@pinceau/react": "workspace:*",
     "@rollup/plugin-replace": "^5.0.3",
     "@types/node": "^20.8.5",
     "@vitejs/plugin-vue": "^4.4.0",

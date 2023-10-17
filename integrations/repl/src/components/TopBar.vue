@@ -35,6 +35,15 @@ const frameworkVersion = computed({
     store.transformer.setVersion(v)
   },
 })
+
+const pinceauVersion = computed({
+  get() {
+    return store.transformer.targetVersion || store.transformer.defaultVersion
+  },
+  set(v) {
+    //
+  },
+})
 </script>
 
 <template>
@@ -51,7 +60,8 @@ const frameworkVersion = computed({
       <div>
         <PinceauIcon />
         <VersionSelect
-          v-model="store.state.typescriptVersion"
+          v-model="pinceauVersion"
+          disabled
           pkg="pinceau"
           label="Pinceau Version"
         />

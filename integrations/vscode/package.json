@@ -22,7 +22,13 @@
     "url": "git+https://github.com/Tahul/pinceau.git"
   },
   "publisher": "yaelguilloux",
-  "main": "./dist/index.js",
+  "main": "dist/index.cjs",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
   "scripts": {
     "build": "unbuild",
     "clean": "rm -rf dist && rm -rf out && rm -rf .vscode-test",

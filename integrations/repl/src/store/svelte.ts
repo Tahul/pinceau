@@ -4,7 +4,7 @@ import { compileFile } from '../transforms'
 import { compileModulesForPreview } from '../compiler'
 import type { PreviewProxy } from '../components/output/PreviewProxy'
 import type { ReplStore, ReplTransformer } from '.'
-import { File } from '.'
+import { File, pinceauVersion } from '.'
 
 const defaultMainFile = 'src/App.svelte'
 
@@ -31,6 +31,14 @@ const localImports = {
   'svelte/store': (version = defaultVersion) => `https://cdn.jsdelivr.net/npm/svelte@${version}/src/runtime/store/index.js`,
   'svelte/internal/disclose-version': (version = defaultVersion) => `'https://cdn.jsdelivr.net/npm/svelte@${version}/src/runtime/internal/disclose-version/index.js`,
   'svelte/transition': (version = defaultVersion) => `https://cdn.jsdelivr.net/npm/svelte@${version}/src/runtime/transition/index.js`,
+  'defu': () => 'https://cdn.jsdelivr.net/npm/defu@6.1.2/dist/defu.mjs',
+  'scule': () => 'https://cdn.jsdelivr.net/npm/scule@1.0.0/dist/index.mjs',
+  '@pinceau/runtime': () => `https://cdn.jsdelivr.net/npm/@pinceau/runtime@${pinceauVersion}/dist/index.mjs`,
+  '@pinceau/stringify': () => `https://cdn.jsdelivr.net/npm/@pinceau/stringify@${pinceauVersion}/dist/index.mjs`,
+  '@pinceau/core/runtime': () => `https://cdn.jsdelivr.net/npm/@pinceau/core@${pinceauVersion}/dist/runtime.mjs`,
+  '@pinceau/theme/runtime': () => `https://cdn.jsdelivr.net/npm/@pinceau/theme@${pinceauVersion}/dist/runtime.mjs`,
+  '@pinceau/react/runtime': () => `https://cdn.jsdelivr.net/npm/@pinceau/react@${pinceauVersion}/dist/runtime.mjs`,
+  '$pinceau/svelte-plugin': () => '/svelte-plugin-proxy.js',
 }
 
 export class ReplSvelteTransformer implements ReplTransformer {
@@ -43,10 +51,24 @@ export class ReplSvelteTransformer implements ReplTransformer {
   targetVersion?: string
   compiler: typeof defaultCompiler = defaultCompiler
   compilerOptions: {} = {}
-  pendingCompiler: Promise<any> | null = null
+  pendingImport: Promise<any> | null = null
   imports: typeof localImports = localImports
   shims = {
-    'globals.d.ts': new File('globals.d.ts', 'declare module \'svelte\';'),
+    'global.d.ts': new File('global.d.ts', `
+    declare module 'svelte';
+    import 'svelte/elements';
+    import type { SvelteStyledComponentFactory } from \'@pinceau/svelte\'
+    import { ResponsiveProp } from \'@pinceau/style\'
+    import { StyledFunctionArg } from \'@pinceau/style\'
+
+    declare global {
+      export type ResponsiveProp<T extends string | number | symbol | undefined> = ResponsiveProp<T>
+      export type StyledProp = StyledFunctionArg
+      export const $styled: { [Type in SupportedHTMLElements]: SvelteStyledComponentFactory<Type> }
+    }
+
+    declare module \'svelte/elements\' { export interface DOMAttributes<T extends EventTarget> { styled?: StyledFunctionArg } }
+    `),
   }
 
   tsconfig: any = {
@@ -91,9 +113,9 @@ export class ReplSvelteTransformer implements ReplTransformer {
       return acc
     }, {})
 
-    this.pendingCompiler = newImports?.['svelte/compiler'] ? import(/* @vite-ignore */ newImports?.['svelte/compiler']) : new Promise(() => defaultCompiler)
-    this.compiler = await this.pendingCompiler
-    this.pendingCompiler = null
+    this.pendingImport = newImports?.['svelte/compiler'] ? import(/* @vite-ignore */ newImports?.['svelte/compiler']) : new Promise(() => defaultCompiler)
+    this.compiler = await this.pendingImport
+    this.pendingImport = null
 
     importMap.imports = newImports
 
@@ -194,8 +216,12 @@ export class ReplSvelteTransformer implements ReplTransformer {
         codeToEval.push(
           `
         ${previewOptions?.customCode?.importCode || ''}
+
+        import { pinceauPlugin } from '$pinceau/svelte-plugin'
         
         const mount = () => {
+          pinceauPlugin()
+          
           const AppComponent = __modules__["${mainFile}"].default
 
           const rootEl = document.getElementById('app')
