@@ -6,7 +6,6 @@ import vue from '@vitejs/plugin-vue'
 import replace from '@rollup/plugin-replace'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import Icons from 'unplugin-icons/vite'
-import { env, node, nodeless } from 'unenv'
 
 const resolve = (p: string) => createResolver(import.meta.url).resolve(p)
 

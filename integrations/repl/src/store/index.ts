@@ -1,4 +1,4 @@
-import { nextTick, reactive, ref, watch, watchEffect } from 'vue'
+import { reactive, ref, watch, watchEffect } from 'vue'
 import type { Ref, WatchStopHandle } from 'vue'
 import type { editor } from 'monaco-editor-core'
 import palette from '@pinceau/palette/theme.config?raw'

@@ -1,4 +1,3 @@
-import { join } from 'node:path'
 import type { File, Core as Instance, Named, Transform } from 'style-dictionary-esm'
 import StyleDictionary from 'style-dictionary-esm'
 import { REFERENCES_REGEX, message } from '@pinceau/core/utils'
@@ -6,6 +5,7 @@ import type { PinceauContext } from '@pinceau/core'
 import type { PinceauTheme } from '@pinceau/outputs'
 import type { DesignTokens, PinceauThemeFormat, Theme, ThemeGenerationOutput, ThemeLoadingOutput } from '../types'
 import { flattenTokens } from './tokens'
+import { resolveBuildDir } from './build-dir'
 
 export async function generateTheme(
   loadedTheme: ThemeLoadingOutput,
@@ -16,14 +16,9 @@ export async function generateTheme(
 
   // Get context
   const { theme } = loadedTheme
-  const { options } = ctx
-  let { buildDir } = options.theme
 
-  // Enforce ending slash for buildDir
-  if (buildDir && !buildDir.endsWith('/')) { buildDir += '/' }
-
-  // Enforce buildDir when not set; `false` disables write
-  if (buildDir === undefined && ctx.options.cwd) { buildDir = join(ctx.options.cwd, 'node_modules/@pinceau/outputs/') }
+  // Resolve build dir path
+  const buildDir = resolveBuildDir(ctx)
 
   // Transforms used
   const usedTransforms = ['size/px', 'color/hex']

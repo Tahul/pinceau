@@ -1,5 +1,5 @@
 import { dirname } from 'pathe'
-import type { PinceauContext, VirtualOutputs } from '../types'
+import type { PinceauContext } from '../types'
 
 /**
  * Write a virtual output.

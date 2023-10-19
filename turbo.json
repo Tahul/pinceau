@@ -4,8 +4,12 @@
     "stub": {
       "outputs": ["dist/**"]
     },
+    "build:pre": {
+      "dependsOn": ["^stub"],
+      "outputs": ["dist/**"]
+    },
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build:pre", "^stub", "^build"],
       "outputs": ["dist/**"]
     },
     "clean": {

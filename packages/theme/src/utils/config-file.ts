@@ -1,14 +1,10 @@
 import fs from 'node:fs'
 import type { PinceauOptions } from '@pinceau/core'
-import { message, parseAst } from '@pinceau/core/utils'
+import { message } from '@pinceau/core/utils'
 import createJITI from 'jiti'
 import { resolve } from 'pathe'
 import type { ConfigFileImport, ConfigLayer, ResolvedConfigLayer } from '../types'
-import { resolveMediaQueriesKeys } from './media-queries'
 import { getConfigLayer } from './config-layers'
-import { resolveConfigDefinitions } from './config-definitions'
-import { resolveConfigImports } from './config-imports'
-import { resolveConfigUtils } from './config-utils'
 import { resolveConfigContent } from './config-content'
 
 /**

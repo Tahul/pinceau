@@ -1,4 +1,3 @@
-import { dirname, extname } from 'node:path'
 import type { PinceauContext, PinceauOptions } from '@pinceau/core'
 import { merger } from '@pinceau/core/utils'
 import { resolveSchema as resolveUntypedSchema } from 'untyped'
@@ -7,6 +6,7 @@ import type { ConfigLayer, ResolvedConfigLayer, Theme, ThemeLoadingOutput } from
 import { resolveFileLayer } from './config-file'
 import { normalizeTokens } from './tokens'
 import { resolveMediaQueriesKeys } from './media-queries'
+import { configSourceFromModulePath } from './module-path'
 
 // Gives an empty layer for a given path or nothing.
 export function getConfigLayer(path?: string): ResolvedConfigLayer {
@@ -87,30 +87,9 @@ export function resolveConfigSources(
   options: PinceauOptions,
   ctx: PinceauContext,
 ) {
-  const configSourceFromModulePath = (path: string): ConfigLayer | undefined => {
-    if (!ctx.resolve) { return }
-
-    let pkgPath
-    try {
-      pkgPath = ctx.resolve(path)
-    }
-    catch (e) {
-      // TODO: Debug messages
-    }
-
-    if (pkgPath) {
-      const dir = dirname(pkgPath)
-      const filename = pkgPath.replace(`${dir}/`, '')
-      const ext = extname(filename)
-      if (dir && filename && ext) { return { path: `${dir}/`, configFileName: filename.replace(ext, '') } }
-    }
-
-    return undefined
-  }
-
   // Inject palette if options set to true
   if (options.theme.palette) {
-    const paletteSource = configSourceFromModulePath('@pinceau/palette')
+    const paletteSource = configSourceFromModulePath('@pinceau/palette', ctx)
     if (paletteSource) { options.theme.layers.push(paletteSource) }
   }
 
@@ -128,7 +107,7 @@ export function resolveConfigSources(
       if (typeof layerOrPath === 'string') {
         // Supports passing a package like `@pinceau/palette`
         if (!layerOrPath.startsWith('/')) {
-          const resolvedModuleSource = configSourceFromModulePath(layerOrPath)
+          const resolvedModuleSource = configSourceFromModulePath(layerOrPath, ctx)
           if (resolvedModuleSource) { configLayer = resolvedModuleSource }
         }
 

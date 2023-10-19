@@ -30,6 +30,7 @@ export default antfu(
       '**/tests/fixtures/',
       '**/tests/tmp/',
       '.vscode',
+      '**/grammars/*.tmLanguage.js',
     ],
   },
 )

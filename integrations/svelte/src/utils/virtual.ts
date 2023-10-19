@@ -1,4 +1,3 @@
-import fs from 'node:fs'
 import { join } from 'pathe'
 import type { PinceauContext } from '@pinceau/core'
 import { writeOutput } from '@pinceau/core/utils'

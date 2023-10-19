@@ -27,7 +27,9 @@
     "stub": "unbuild --stub"
   },
   "dependencies": {
-    "@pinceau/integration": "workspace:*",
+    "@pinceau/theme": "workspace:*",
+    "@pinceau/core": "workspace:*",
+    "@pinceau/style": "workspace:*",
     "@vue/compiler-sfc": "^3.3.4",
     "fast-glob": "^3.3.1",
     "line-column": "^1.0.2",

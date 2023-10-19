@@ -1,4 +1,3 @@
-import { PinceauPluginsOptions } from '@pinceau/core'
 import type { PinceauStyleOptions } from './types'
 
 export * from './types'

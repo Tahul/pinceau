@@ -18,9 +18,6 @@ export default defineNuxtConfig({
       excludes: [
         resolve('../../packages'),
       ],
-    },
-    theme: {
-      buildDir: resolve('./.nuxt/pinceau/')
     }
   },
   typescript: {

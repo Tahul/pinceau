@@ -13,22 +13,21 @@ export function createReactPlugin(ctx: PinceauContext) {
   if (ctx.options.runtime) { imports.push('useRuntimeSheet') }
 
   return `import React, { createContext, useContext } from 'react'
-  import { ${imports.join(', ')} } from '@pinceau/runtime'
+import { ${imports.join(', ')} } from '@pinceau/runtime'
 
-  export const PinceauReactOptions = ${JSON.stringify(runtimeOptions || {})}
+export const PinceauReactOptions = ${JSON.stringify(runtimeOptions || {})}
 
-  const PinceauContext = createContext()
+const PinceauContext = createContext()
 
-  export const usePinceauContext = () => useContext(PinceauContext)
+export const usePinceauContext = () => useContext(PinceauContext)
 
-  export const PinceauProvider = ({ options, children }) => {
-    const userOptions = { ...PinceauReactOptions, ...options }
+export const PinceauProvider = ({ options, children }) => {
+  const userOptions = { ...PinceauReactOptions, ...options }
 
-    ${ctx.options.theme ? 'const themeSheet = useThemeSheet(userOptions)' : ''}
-    ${ctx.options.runtime ? `const runtimeSheet = useRuntimeSheet(${ctx.options.theme ? '{ themeSheet, ...userOptions }' : 'userOptions'})` : ''}
-    ${ctx.options.runtime && !!runtimeOptions?.ssr ? 'const ssr = { toString: () => runtimeSheet.toString() }' : ''}
+  ${ctx.options.theme ? 'const themeSheet = useThemeSheet(userOptions)' : ''}
+  ${ctx.options.runtime ? `const runtimeSheet = useRuntimeSheet(${ctx.options.theme ? '{ themeSheet, ...userOptions }' : 'userOptions'})` : ''}
+  ${ctx.options.runtime && !!runtimeOptions?.ssr ? 'const ssr = { toString: () => runtimeSheet.toString() }' : ''}
 
-    return React.createElement(PinceauContext.Provider, {  value: { themeSheet, runtimeSheet, ssr }, children })
-  }
-`
+  return React.createElement(PinceauContext.Provider, {  value: { themeSheet, runtimeSheet, ssr }, children })
+}`
 }

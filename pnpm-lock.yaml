@@ -533,9 +533,15 @@ importers:
 
   integrations/language-server:
     dependencies:
-      '@pinceau/integration':
+      '@pinceau/core':
         specifier: workspace:*
-        version: link:../../packages/integration
+        version: link:../../packages/core
+      '@pinceau/style':
+        specifier: workspace:*
+        version: link:../../packages/style
+      '@pinceau/theme':
+        specifier: workspace:*
+        version: link:../../packages/theme
       '@vue/compiler-sfc':
         specifier: ^3.3.4
         version: 3.3.4
@@ -945,23 +951,34 @@ importers:
   packages/outputs: {}
 
   packages/palette:
-    dependencies:
-      '@pinceau/core':
-        specifier: workspace:*
-        version: link:../core
     devDependencies:
       '@pinceau/configs':
         specifier: workspace:*
         version: link:../configs
+      '@pinceau/core':
+        specifier: workspace:*
+        version: link:../core
       '@pinceau/outputs':
         specifier: workspace:*
         version: link:../outputs
+      '@pinceau/react':
+        specifier: workspace:*
+        version: link:../../integrations/react
+      '@pinceau/runtime':
+        specifier: workspace:*
+        version: link:../runtime
       '@pinceau/style':
         specifier: workspace:*
         version: link:../style
+      '@pinceau/svelte':
+        specifier: workspace:*
+        version: link:../../integrations/svelte
       '@pinceau/theme':
         specifier: workspace:*
         version: link:../theme
+      '@pinceau/vue':
+        specifier: workspace:*
+        version: link:../../integrations/vue
       pinceau:
         specifier: workspace:*
         version: link:../../integrations/pinceau
