@@ -31,6 +31,7 @@
   ],
   "scripts": {
     "build": "turbo run build",
+    "build:prepare": "turbo run build:prepare",
     "build:docs": "pnpm -r --filter=\"./docs\" run build:docs",
     "build:examples": "pnpm -r --filter=\"./examples\" run build:example",
     "build:force": "turbo run build --force",

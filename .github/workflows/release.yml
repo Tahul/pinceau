@@ -7,6 +7,7 @@ on:
 
 jobs:
   release:
+    name: Build and release
     permissions:
       id-token: write
       contents: write
@@ -30,10 +31,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
-      - name: Install Dependencies
-        run: pnpm i
+      - name: Install dependencies
+        run: pnpm install
 
-      - name: PNPM build
+      - name: Build prepare
+        run: pnpm build:prepare
+
+      - name: Build
         run: pnpm run build
 
       - name: Publish to NPM

@@ -9,7 +9,7 @@
       "outputs": ["dist/**"]
     },
     "build": {
-      "dependsOn": ["^build:pre", "^stub", "^build"],
+      "dependsOn": ["^stub", "^build"],
       "outputs": ["dist/**"]
     },
     "clean": {
