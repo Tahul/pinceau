@@ -1,6 +1,6 @@
 {
   "name": "@pinceau/outputs",
-  "version": "1.0.0-beta.18",
+  "version": "1.0.0-beta.19",
   "homepage": "https://github.com/Tahul/pinceau#readme",
   "bugs": {
     "url": "https://github.com/Tahul/pinceau/issues"
@@ -11,9 +11,14 @@
   },
   "type": "module",
   "types": "./index.d.ts",
+  "scripts": {
+    "clean": "./clean.sh"
+  },
   "exports": {
     ".": {
-      "types": "./index.d.ts"
+      "types": "./index.d.ts",
+      "import": "./index.d.ts",
+      "require": "./index.d.ts"
     },
     "./theme.css": {
       "require": "./theme.css",
@@ -53,5 +58,6 @@
       "types": "./utils.d.ts"
     }
   },
+  "main": "./index.d.ts",
   "files": []
 }
