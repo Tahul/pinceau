@@ -52,6 +52,7 @@
   },
   "dependencies": {
     "@pinceau/integration": "workspace:*",
+    "@pinceau/outputs": "workspace:*",
     "acorn": "^8.10.0",
     "ultrahtml": "npm:@pinceau/ultrahtml@1.5.2"
   },

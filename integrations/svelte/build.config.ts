@@ -34,9 +34,8 @@ export default defineBuildConfig({
     emitCJS: true,
   },
   externals: [
-    '$pinceau/theme',
-    '$pinceau/utils',
-    '$pinceau/svelte-plugin',
+    '@pinceau/outputs',
+    '@pinceau/outputs/svelte-plugin',
     'svelte/elements',
     'svelte/compiler',
     'svelte/internal',

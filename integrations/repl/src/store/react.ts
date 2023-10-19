@@ -181,7 +181,7 @@ declare global {
         `import 'react'
         import 'react-dom'
         import 'react-dom/server'
-        import { PinceauProvider, PinceauContext } from '$pinceau/react-plugin'
+        import { PinceauProvider, PinceauContext } from '@pinceau/outputs/react-plugin'
 
         const ReactDOM = window.ReactDOM
         const React = window.React
@@ -250,7 +250,7 @@ declare global {
         `import 'react'
         import 'react-dom'
         import 'react-dom/server'
-        import { PinceauProvider } from '$pinceau/react-plugin'
+        import { PinceauProvider } from '@pinceau/outputs/react-plugin'
 
         ${previewOptions?.customCode?.importCode || ''}
         

@@ -1,9 +1,9 @@
 import type { Schema } from 'untyped'
 import type { CSSProperties } from '@pinceau/style'
 import type { PinceauOptions, VirtualOutputs } from '@pinceau/core'
+import type { PinceauTheme } from '@pinceau/outputs'
 import type { DesignToken, RawTokenType, ResponsiveToken } from './tokens'
 import type { PinceauImportsDefinition, PinceauThemeDefinitions, PinceauUtilsDefinition } from './definitions'
-import type { PinceauTheme } from '$pinceau/theme'
 
 /**
  * Supports all the different ways of expressing configuration layers from `configOrPaths` from Pinceau's options.

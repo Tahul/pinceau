@@ -145,10 +145,12 @@ describe('@pinceau/svelte', () => {
     it('registers and write svelte virtual outputs', () => {
       vi.spyOn(fs, 'writeFileSync').mockImplementationOnce(() => { })
 
+      pinceauContext.fs = fs
+
       registerVirtualOutputs(pinceauContext)
 
       expect(fs.writeFileSync).toHaveBeenCalledTimes(1)
-      expect(pinceauContext.getOutputId('/__pinceau_svelte_plugin.js')).toBe('$pinceau/svelte-plugin')
+      expect(pinceauContext.getOutputId('/__pinceau_svelte_plugin.js')).toBe('@pinceau/outputs/svelte-plugin')
     })
   })
 

@@ -1,12 +1,11 @@
 import type { PinceauConfigContext, Theme } from '@pinceau/theme'
 import type { PinceauStyleFunctionContext } from '@pinceau/style'
+import type { PinceauTheme, PinceauUtils } from '@pinceau/outputs'
 import type { PinceauVirtualContext } from './virtual-context'
 import type { PinceauOptions } from './options'
 import type { PinceauQuery } from './query'
 import type { PinceauTransformer } from './transforms'
 import type { PinceauTransformState } from './transform-context'
-import type { PinceauTheme } from '$pinceau/theme'
-import type { PinceauUtils } from '$pinceau/utils'
 
 export interface PinceauExtendedContext {
   [key: string]: any
@@ -96,16 +95,17 @@ export interface PinceauBuildContext {
   getStyleFunction: (id: string) => PinceauStyleFunctionContext | void
 
   /**
-   * Push declarations inside `$pinceau/types` format.
+   * Push declarations inside `@pinceau/outputs/index.d.ts` format.
    */
   types: {
     imports: string []
     raw: string[]
     global: string[]
+    exports: string[]
   }
 
   /**
-   * Push new types in `$pinceau/types` format and merge them with previous ones.
+   * Push new types in `@pinceau/types` format and merge them with previous ones.
    */
   addTypes: (types: Partial<PinceauBuildContext['types']>) => void
 
@@ -115,12 +115,9 @@ export interface PinceauBuildContext {
   fs?: typeof import('node:fs')
 
   /**
-   * `local-pkg` reference to avoid direct dependencies when using in browser.
+   * `resolve` reference to avoid direct dependencies when using in browser.
    */
-  localPkg?: {
-    resolveModule: (name: string, options?: any) => string | undefined
-    isPackageExists: (name: string, options?: any) => boolean
-  }
+  resolve?: (path: string) => string | undefined
 }
 
 /**

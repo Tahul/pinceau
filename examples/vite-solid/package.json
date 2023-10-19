@@ -14,7 +14,8 @@
   },
   "devDependencies": {
     "@pinceau/configs": "workspace:*",
-    "@pinceau/react": "workspace:*",
+    "@pinceau/palette": "workspace:*",
+    "@pinceau/outputs": "workspace:*",    "@pinceau/react": "workspace:*",
     "typescript": "^5.2.2",
     "vite": "^4.4.11",
     "vite-plugin-inspect": "^0.7.40",

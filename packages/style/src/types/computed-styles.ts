@@ -1,6 +1,6 @@
 import type { ASTNode, namedTypes } from 'ast-types'
 import type { NodePath } from 'ast-types/lib/node-path'
-import type { PinceauMediaQueries } from '$pinceau/theme'
+import type { PinceauMediaQueries } from '@pinceau/outputs/theme'
 
 export type ComputedStyleSource = NodePath<namedTypes.MemberExpression> & ASTNode & { loc: namedTypes.SourceLocation }
 

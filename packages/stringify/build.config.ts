@@ -20,7 +20,7 @@ export default defineBuildConfig({
     '@pinceau/style',
     '@pinceau/runtime',
     '@pinceau/vue',
-    '$pinceau/utils',
+    '@pinceau/outputs',
     'vite',
   ],
 })

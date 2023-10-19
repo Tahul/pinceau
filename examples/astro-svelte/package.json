@@ -16,7 +16,8 @@
     "@astrojs/svelte": "^4.0.3",
     "@pinceau/astro": "workspace:*",
     "@pinceau/configs": "workspace:*",
-    "@pinceau/svelte": "workspace:*",
+    "@pinceau/palette": "workspace:*",
+    "@pinceau/outputs": "workspace:*",    "@pinceau/svelte": "workspace:*",
     "astro": "^3.3.0"
   },
   "stackblitz": {

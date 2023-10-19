@@ -7,7 +7,7 @@ import { resolveMediaQueriesKeys } from '../utils'
 export const javascriptFormat: PinceauThemeFormat = {
   destination: 'theme.js',
   virtualPath: '/__pinceau_theme.js',
-  importPath: '$pinceau/theme',
+  importPath: '@pinceau/outputs/theme',
   formatter({ dictionary }) {
     const { tokens } = dictionary
 
@@ -29,7 +29,7 @@ export const javascriptFormat: PinceauThemeFormat = {
 export const typescriptFormat: PinceauThemeFormat = {
   destination: 'theme.ts',
   virtualPath: '/__pinceau_theme_ts.ts',
-  importPath: '$pinceau/theme-types',
+  importPath: '@pinceau/outputs/theme-ts',
   formatter({ dictionary }) {
     const { tokens } = dictionary
 
@@ -65,17 +65,21 @@ export const typescriptFormat: PinceauThemeFormat = {
 }
 
 export const declarationFormat: PinceauThemeFormat = {
-  destination: 'pinceau.d.ts',
+  destination: 'index.d.ts',
   virtualPath: '/__pinceau_types_d_ts.d.ts',
-  importPath: '$pinceau/types',
+  importPath: '@pinceau/outputs',
   formatter({ ctx }) {
+    const dedupe = (arr: string[]) => Array.from(new Set(arr))
+
     return [
-      ctx.types.imports.join('\n'),
-      ctx.types.raw.join('\n'),
+      dedupe(ctx.types.imports).join('\n'),
+      dedupe(ctx.types.raw).join('\n'),
       `declare global {
-  ${ctx.types.global.join('\n  ')}
+  ${dedupe(ctx.types.global).join('\n  ')}
 }`,
-      'export {}',
+      `export {
+  ${dedupe(ctx.types.exports).join(',\n  ')}
+}`,
     ].filter(Boolean).join('\n\n')
   },
 }

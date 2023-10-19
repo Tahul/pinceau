@@ -9,13 +9,13 @@ import { createReactPlugin } from './runtime-plugin'
  */
 export function registerVirtualOutputs(ctx: PinceauContext) {
   const outputs: [string, string, string][] = [
-    ['$pinceau/react-plugin', '/__pinceau_react_plugin.js', createReactPlugin(ctx)],
+    ['@pinceau/outputs/react-plugin', '/__pinceau_react_plugin.js', createReactPlugin(ctx)],
   ]
 
   outputs.forEach(([importPath, virtualPath, content]) => ctx.registerOutput(importPath, virtualPath, content))
 
   // Write plugin & runtime exports outputs
   if (ctx.options.theme.buildDir) {
-    writeOutput('$pinceau/react-plugin', join(ctx.options.theme.buildDir, 'react-plugin.js'), ctx.outputs, fs)
+    writeOutput('@pinceau/outputs/react-plugin', join(ctx.options.theme.buildDir, 'react-plugin.js'), ctx)
   }
 }

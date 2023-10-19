@@ -35,7 +35,8 @@ build({
     options.external.push('react-dom')
     options.external.push('@volar/*')
     options.external.push(...external)
-    options.external.push('$pinceau/*')
+    options.external.push('@pinceau/outputs')
+    options.external.push('@pinceau/outputs/*')
     options.alias = options.alias ?? {}
     options.alias = {
       ...options.alias,

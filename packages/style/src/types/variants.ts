@@ -1,5 +1,5 @@
 import type { RawCSS } from '@pinceau/style'
-import type { PinceauMediaQueries } from '$pinceau/theme'
+import type { PinceauMediaQueries } from '@pinceau/outputs/theme'
 
 export interface VariantOptions<PropType = string | number> {
   type?: string

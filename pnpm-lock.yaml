@@ -148,6 +148,12 @@ importers:
       '@pinceau/configs':
         specifier: workspace:*
         version: link:../../packages/configs
+      '@pinceau/outputs':
+        specifier: workspace:*
+        version: link:../../packages/outputs
+      '@pinceau/palette':
+        specifier: workspace:*
+        version: link:../../packages/palette
       '@pinceau/svelte':
         specifier: workspace:*
         version: link:../../integrations/svelte
@@ -170,6 +176,12 @@ importers:
       '@pinceau/configs':
         specifier: workspace:*
         version: link:../../packages/configs
+      '@pinceau/outputs':
+        specifier: workspace:*
+        version: link:../../packages/outputs
+      '@pinceau/palette':
+        specifier: workspace:*
+        version: link:../../packages/palette
       '@pinceau/vue':
         specifier: workspace:*
         version: link:../../integrations/vue
@@ -189,6 +201,9 @@ importers:
       '@pinceau/configs':
         specifier: workspace:*
         version: link:../../packages/configs
+      '@pinceau/outputs':
+        specifier: workspace:*
+        version: link:../../packages/outputs
       nuxt:
         specifier: ^3.7.4
         version: 3.7.4(eslint@8.51.0)(rollup@3.29.4)(typescript@5.2.2)
@@ -204,6 +219,12 @@ importers:
       '@pinceau/configs':
         specifier: workspace:*
         version: link:../../packages/configs
+      '@pinceau/outputs':
+        specifier: workspace:*
+        version: link:../../packages/outputs
+      '@pinceau/palette':
+        specifier: workspace:*
+        version: link:../../packages/palette
       '@pinceau/svelte':
         specifier: workspace:*
         version: link:../../integrations/svelte
@@ -238,6 +259,12 @@ importers:
       '@pinceau/configs':
         specifier: workspace:*
         version: link:../../packages/configs
+      '@pinceau/outputs':
+        specifier: workspace:*
+        version: link:../../packages/outputs
+      '@pinceau/palette':
+        specifier: workspace:*
+        version: link:../../packages/palette
       typescript:
         specifier: ^5.2.2
         version: 5.2.2
@@ -254,6 +281,12 @@ importers:
       '@pinceau/configs':
         specifier: workspace:*
         version: link:../../packages/configs
+      '@pinceau/outputs':
+        specifier: workspace:*
+        version: link:../../packages/outputs
+      '@pinceau/palette':
+        specifier: workspace:*
+        version: link:../../packages/palette
       pinceau:
         specifier: workspace:*
         version: link:../../integrations/pinceau
@@ -273,6 +306,12 @@ importers:
       '@pinceau/configs':
         specifier: workspace:*
         version: link:../../packages/configs
+      '@pinceau/outputs':
+        specifier: workspace:*
+        version: link:../../packages/outputs
+      '@pinceau/palette':
+        specifier: workspace:*
+        version: link:../../packages/palette
       '@pinceau/react':
         specifier: workspace:*
         version: link:../../integrations/react
@@ -304,6 +343,9 @@ importers:
       '@pinceau/configs':
         specifier: workspace:*
         version: link:../../packages/configs
+      '@pinceau/outputs':
+        specifier: workspace:*
+        version: link:../../packages/outputs
       '@pinceau/palette':
         specifier: workspace:*
         version: link:../../packages/palette
@@ -341,6 +383,12 @@ importers:
       '@pinceau/configs':
         specifier: workspace:*
         version: link:../../packages/configs
+      '@pinceau/outputs':
+        specifier: workspace:*
+        version: link:../../packages/outputs
+      '@pinceau/palette':
+        specifier: workspace:*
+        version: link:../../packages/palette
       '@pinceau/react':
         specifier: workspace:*
         version: link:../../integrations/react
@@ -362,6 +410,9 @@ importers:
       '@pinceau/configs':
         specifier: workspace:*
         version: link:../../packages/configs
+      '@pinceau/outputs':
+        specifier: workspace:*
+        version: link:../../packages/outputs
       '@pinceau/palette':
         specifier: workspace:*
         version: link:../../packages/palette
@@ -392,6 +443,9 @@ importers:
 
   examples/vite-vue:
     dependencies:
+      '@vueuse/core':
+        specifier: ^10.5.0
+        version: 10.5.0(vue@3.3.4)
       vue:
         specifier: ^3.3.4
         version: 3.3.4
@@ -402,6 +456,9 @@ importers:
       '@pinceau/configs':
         specifier: workspace:*
         version: link:../../packages/configs
+      '@pinceau/outputs':
+        specifier: workspace:*
+        version: link:../../packages/outputs
       '@pinceau/palette':
         specifier: workspace:*
         version: link:../../packages/palette
@@ -572,6 +629,9 @@ importers:
       '@pinceau/integration':
         specifier: workspace:*
         version: link:../../packages/integration
+      '@pinceau/outputs':
+        specifier: workspace:*
+        version: link:../../packages/outputs
       acorn:
         specifier: ^8.10.0
         version: 8.10.0
@@ -709,6 +769,9 @@ importers:
       '@pinceau/integration':
         specifier: workspace:*
         version: link:../../packages/integration
+      '@pinceau/outputs':
+        specifier: workspace:*
+        version: link:../../packages/outputs
       acorn:
         specifier: ^8.10.0
         version: 8.10.0
@@ -768,6 +831,9 @@ importers:
       '@pinceau/integration':
         specifier: workspace:*
         version: link:../../packages/integration
+      '@pinceau/outputs':
+        specifier: workspace:*
+        version: link:../../packages/outputs
     devDependencies:
       '@pinceau/configs':
         specifier: workspace:*
@@ -780,6 +846,9 @@ importers:
       '@pinceau/astro':
         specifier: workspace:*
         version: link:../../integrations/astro
+      '@pinceau/outputs':
+        specifier: workspace:*
+        version: link:../outputs
       '@pinceau/react':
         specifier: workspace:*
         version: link:../../integrations/react
@@ -813,9 +882,6 @@ importers:
       defu:
         specifier: ^6.1.2
         version: 6.1.2
-      local-pkg:
-        specifier: ^0.5.0
-        version: 0.5.0
       magic-string:
         specifier: ^0.30.5
         version: 0.30.5
@@ -856,6 +922,9 @@ importers:
       '@pinceau/core':
         specifier: workspace:*
         version: link:../core
+      '@pinceau/outputs':
+        specifier: workspace:*
+        version: link:../outputs
       '@pinceau/palette':
         specifier: workspace:*
         version: link:../palette
@@ -876,11 +945,16 @@ importers:
         specifier: workspace:*
         version: link:../configs
 
+  packages/outputs: {}
+
   packages/palette:
     devDependencies:
       '@pinceau/configs':
         specifier: workspace:*
         version: link:../configs
+      '@pinceau/outputs':
+        specifier: workspace:*
+        version: link:../outputs
       vite:
         specifier: ^4.4.11
         version: 4.4.11(@types/node@20.8.5)
@@ -890,6 +964,9 @@ importers:
       '@pinceau/core':
         specifier: workspace:*
         version: link:../core
+      '@pinceau/outputs':
+        specifier: workspace:*
+        version: link:../outputs
       '@pinceau/stringify':
         specifier: workspace:*
         version: link:../stringify
@@ -916,6 +993,9 @@ importers:
       '@pinceau/core':
         specifier: workspace:*
         version: link:../core
+      '@pinceau/outputs':
+        specifier: workspace:*
+        version: link:../outputs
       '@pinceau/theme':
         specifier: workspace:*
         version: link:../theme
@@ -925,6 +1005,9 @@ importers:
       '@pinceau/core':
         specifier: workspace:*
         version: link:../core
+      '@pinceau/outputs':
+        specifier: workspace:*
+        version: link:../outputs
       '@pinceau/stringify':
         specifier: workspace:*
         version: link:../stringify
@@ -947,6 +1030,9 @@ importers:
       '@pinceau/core':
         specifier: workspace:*
         version: link:../core
+      '@pinceau/outputs':
+        specifier: workspace:*
+        version: link:../outputs
       '@unocss/reset':
         specifier: ^0.56.5
         version: 0.56.5
@@ -1030,9 +1116,6 @@ importers:
       jsdom:
         specifier: ^22.1.0
         version: 22.1.0
-      local-pkg:
-        specifier: ^0.5.0
-        version: 0.5.0
       vitest:
         specifier: ^0.34.6
         version: 0.34.6(@vitest/ui@0.34.6)(jsdom@22.1.0)
@@ -2989,6 +3072,7 @@ packages:
     dependencies:
       is-glob: 4.0.3
       micromatch: 4.0.5
+      napi-wasm: 1.1.0
     dev: true
     bundledDependencies:
       - napi-wasm
@@ -3776,7 +3860,6 @@ packages:
 
   /@types/web-bluetooth@0.0.18:
     resolution: {integrity: sha512-v/ZHEj9xh82usl8LMR3GarzFY1IrbXJw5L4QfQhokjRV91q+SelFqxQWSep1ucXEZ22+dSTwLFkXeur25sPIbw==}
-    dev: true
 
   /@typescript-eslint/eslint-plugin@6.8.0(@typescript-eslint/parser@6.8.0)(eslint@8.51.0)(typescript@5.2.2):
     resolution: {integrity: sha512-GosF4238Tkes2SHPQ1i8f6rMtG6zlKwMEB0abqSJ3Npvos+doIlc/ATG+vX1G9coDF3Ex78zM3heXHLyWEwLUw==}
@@ -4493,7 +4576,6 @@ packages:
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
-    dev: true
 
   /@vueuse/head@2.0.0(vue@3.3.4):
     resolution: {integrity: sha512-ykdOxTGs95xjD4WXE4na/umxZea2Itl0GWBILas+O4oqS7eXIods38INvk3XkJKjqMdWPcpCyLX/DioLQxU1KA==}
@@ -4512,7 +4594,6 @@ packages:
 
   /@vueuse/metadata@10.5.0:
     resolution: {integrity: sha512-fEbElR+MaIYyCkeM0SzWkdoMtOpIwO72x8WsZHRE7IggiOlILttqttM69AS13nrDxosnDBYdyy3C5mR1LCxHsw==}
-    dev: true
 
   /@vueuse/motion@2.0.0(rollup@3.29.4)(vue@3.3.4):
     resolution: {integrity: sha512-V3TAlbt1OPmb9DZFoFCz9WC3Oue54t9VHlavSWm+VU1JNimYcd+pc6aGR/hgaHUAU9tOPRHoDTleSrv2zrdIsw==}
@@ -4544,7 +4625,6 @@ packages:
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
-    dev: true
 
   /abab@2.0.6:
     resolution: {integrity: sha512-j2afSsaIENvHZN2B8GOpF566vZ5WVk5opAiMTvWgaQT8DkbOqsTfvNAvHoRGU2zzP8cPoqys+xHTRDWW8L+/BA==}
@@ -9289,6 +9369,7 @@ packages:
     dependencies:
       mlly: 1.4.2
       pkg-types: 1.0.3
+    dev: true
 
   /locate-character@3.0.0:
     resolution: {integrity: sha512-SW13ws7BjaeJ6p7Q6CO2nchbYEc3X3J6WrmTTDto7yMPqVSZTUyY5Tjbid+Ab8gLnATtygYtiDIJGQRRn2ZOiA==}
@@ -10574,6 +10655,10 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /napi-wasm@1.1.0:
+    resolution: {integrity: sha512-lHwIAJbmLSjF9VDRm9GoVOy9AGp3aIvkjv+Kvz9h16QR3uSVYH78PNQUnT2U4X53mhlnV2M7wrhibQ3GHicDmg==}
+    dev: true
 
   /natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
@@ -15460,7 +15545,6 @@ packages:
         optional: true
     dependencies:
       vue: 3.3.4
-    dev: true
 
   /vue-devtools-stub@0.1.0:
     resolution: {integrity: sha512-RutnB7X8c5hjq39NceArgXg28WZtZpGc3+J16ljMiYnFhKvd8hITxSWQSQ5bvldxMDU6gG5mkxl1MTQLXckVSQ==}

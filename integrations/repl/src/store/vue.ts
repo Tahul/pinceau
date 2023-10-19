@@ -214,7 +214,7 @@ export class ReplVueTransformer implements ReplTransformer<typeof defaultCompile
           ...ssrModules,
         `import { renderToString as _renderToString } from 'vue/server-renderer'
          import { createSSRApp as _createApp } from 'vue'
-         import { PinceauVue } from '$pinceau/vue-plugin'
+         import { PinceauVue } from '@pinceau/outputs/vue-plugin'
 
          const AppComponent = __modules__["${mainFile}"].default
          
@@ -259,7 +259,7 @@ export class ReplVueTransformer implements ReplTransformer<typeof defaultCompile
       if (mainFile.endsWith('.vue')) {
         codeToEval.push(
         `import { ${isSSR ? 'createSSRApp' : 'createApp'} as _createApp } from 'vue'
-        import { PinceauVue } from '$pinceau/vue-plugin'
+        import { PinceauVue } from '@pinceau/outputs/vue-plugin'
         ${previewOptions?.customCode?.importCode || ''}
         const _mount = () => {
           const AppComponent = __modules__["${mainFile}"].default

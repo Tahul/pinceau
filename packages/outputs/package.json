@@ -1,0 +1,57 @@
+{
+  "name": "@pinceau/outputs",
+  "version": "1.0.0-beta.17",
+  "homepage": "https://github.com/Tahul/pinceau#readme",
+  "bugs": {
+    "url": "https://github.com/Tahul/pinceau/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tahul/pinceau.git"
+  },
+  "type": "module",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts"
+    },
+    "./theme.css": {
+      "require": "./theme.css",
+      "import": "./theme.css"
+    },
+    "./theme": {
+      "import": "./theme.js",
+      "require": "./theme.js"
+    },
+    "./definitions": {
+      "import": "./definitions.js",
+      "require": "./definitions.js"
+    },
+    "./hmr": {
+      "require": "./hmr.js",
+      "import": "./hmr.js"
+    },
+    "./schema": {
+      "require": "./schema.js",
+      "import": "./schema.js"
+    },
+    "./svelte-plugin": {
+      "require": "./svelte-plugin.js",
+      "import": "./svelte-plugin.js"
+    },
+    "./vue-plugin": {
+      "require": "./vue-plugin.js",
+      "import": "./vue-plugin.js"
+    },
+    "./react-plugin": {
+      "import": "./react-plugin.js",
+      "require": "./react-plugin.js"
+    },
+    "./utils": {
+      "import": "./utils.js",
+      "require": "./utils.js",
+      "types": "./utils.d.ts"
+    }
+  },
+  "files": []
+}

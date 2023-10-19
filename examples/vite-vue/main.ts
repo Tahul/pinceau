@@ -2,7 +2,7 @@ import { createApp } from 'vue'
 import * as VueRouter from 'vue-router'
 import App from './app.vue'
 import Navigation from './components/Navigation.vue'
-import { PinceauVue } from '$pinceau/vue-plugin'
+import { PinceauVue } from '@pinceau/outputs/vue-plugin'
 import './style.css'
 
 export const routes = [

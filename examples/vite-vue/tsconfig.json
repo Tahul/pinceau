@@ -1,8 +1,3 @@
 {
-  "extends": "@pinceau/configs/tsconfig.base.json",
-  "compilerOptions": {
-    "paths": {
-      "$pinceau/types": ["./node_modules/.pinceau/pinceau.d.ts"]
-    }
-  }
+  "extends": "@pinceau/configs/tsconfig.base.json"
 }

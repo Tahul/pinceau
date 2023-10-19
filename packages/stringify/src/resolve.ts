@@ -1,7 +1,7 @@
 import { REFERENCES_REGEX, pathToVarName } from '@pinceau/core/runtime'
 import type { ColorSchemeModes, DesignToken, DesignTokens, ThemeFunction } from '@pinceau/theme'
+import type { PinceauUtils } from '@pinceau/outputs/utils'
 import type { StringifyContext } from './types'
-import type { PinceauUtils } from '$pinceau/utils'
 
 const darkToken = '$dark'
 const lightToken = '$light'

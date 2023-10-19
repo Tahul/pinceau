@@ -8,7 +8,7 @@ export default defineConfig({
       debug: 2,
       dev: false,
       theme: {
-        buildDir: path.join(__dirname, './output/'),
+        buildDir: path.join(__dirname, '../outputs/'),
       },
     }),
   ],

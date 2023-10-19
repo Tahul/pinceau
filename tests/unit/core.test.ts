@@ -895,7 +895,7 @@ describe('@pinceau/core', () => {
       vi.spyOn(fs, 'writeFileSync').mockImplementationOnce(() => {})
 
       virtualStore.registerOutput(importPath, virtualPath, content)
-      writeOutput(importPath, filePath, virtualStore.outputs, fs)
+      writeOutput(importPath, filePath, { ...virtualStore, fs } as any)
 
       expect(virtualStore.getOutput(importPath)).toEqual(content)
       expect(fs.writeFileSync).toHaveBeenCalledWith(filePath, content)

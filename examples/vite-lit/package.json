@@ -20,7 +20,8 @@
   },
   "devDependencies": {
     "@pinceau/configs": "workspace:*",
-    "pinceau": "workspace:*",
+    "@pinceau/palette": "workspace:*",
+    "@pinceau/outputs": "workspace:*",    "pinceau": "workspace:*",
     "typescript": "^5.2.2",
     "vite": "^4.4.11"
   },

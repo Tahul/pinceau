@@ -148,10 +148,12 @@ console.log('hello world')
     it('registers and write vue virtual outputs', () => {
       vi.spyOn(fs, 'writeFileSync').mockImplementationOnce(() => { })
 
+      pinceauContext.fs = fs
+
       registerVirtualOutputs(pinceauContext)
 
       expect(fs.writeFileSync).toHaveBeenCalledTimes(1)
-      expect(pinceauContext.getOutputId('/__pinceau_vue_plugin.js')).toBe('$pinceau/vue-plugin')
+      expect(pinceauContext.getOutputId('/__pinceau_vue_plugin.js')).toBe('@pinceau/outputs/vue-plugin')
     })
   })
 

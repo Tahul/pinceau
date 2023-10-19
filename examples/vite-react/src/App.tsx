@@ -1,4 +1,4 @@
-import { PinceauTheme } from '$pinceau/theme'
+import { PinceauTheme } from '@pinceau/outputs/theme'
 import { useState } from 'react'
 
 const TestComponent = $styled

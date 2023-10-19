@@ -53,6 +53,7 @@
   "dependencies": {
     "@pinceau/core": "workspace:*",
     "@pinceau/integration": "workspace:*",
+    "@pinceau/outputs": "workspace:*",
     "acorn": "^8.10.0",
     "jsx-ast-utils": "^3.3.5",
     "ultrahtml": "npm:@pinceau/ultrahtml@1.5.2"

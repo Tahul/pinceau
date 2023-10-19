@@ -35,9 +35,8 @@ export default defineBuildConfig({
   },
   externals: [
     '@pinceau/theme',
-    '$pinceau/theme',
-    '$pinceau/utils',
-    '$pinceau/vue-plugin',
+    '@pinceau/outputs',
+    '@pinceau/outputs/vue-plugin',
     '@pinceau/core',
     '@pinceau/style',
     '@pinceau/core/utils',

@@ -1,4 +1,5 @@
 import fs from 'node:fs'
+import { createRequire } from 'node:module'
 import type { File } from '@babel/types'
 import type { PinceauContext, PinceauOptions } from '@pinceau/core'
 import { tokensPaths } from '@pinceau/core/runtime'
@@ -43,7 +44,6 @@ import {
 import { PinceauVueTransformer } from '@pinceau/vue/utils'
 import fg from 'fast-glob'
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
-import * as localPkg from 'local-pkg'
 import themeConfig from '../fixtures/theme/theme.config'
 import themeConfigContent from '../fixtures/theme/theme.config.ts?raw'
 import { findNode, paletteLayer, resolveFixtures, resolveTmp, testFileLayer, testLayer } from '../utils'
@@ -56,7 +56,7 @@ describe('@pinceau/theme', () => {
     beforeEach(() => {
       ctx = usePinceauContext()
       ctx.fs = fs
-      ctx.localPkg = localPkg
+      ctx.require = createRequire(import.meta.url)
       setupThemeFormats(ctx)
       ctx.options.theme.palette = false
       configCtx = usePinceauConfigContext(ctx)
@@ -91,7 +91,7 @@ describe('@pinceau/theme', () => {
     })
     it('inject @pinceau/palette build theme without options', async () => {
       ctx.fs = fs
-      ctx.localPkg = localPkg
+      ctx.resolve = createRequire(import.meta.url).resolve
       ctx.options.theme.palette = true
 
       await configCtx.buildTheme()
@@ -128,7 +128,7 @@ describe('@pinceau/theme', () => {
 
       expect((output as any).theme.color.primary.value).toBe('red')
       expect(output.buildDir).toBeUndefined()
-      expect(output.outputs['pinceau.css']).toContain('--color-primary: red;')
+      expect(output.outputs['@pinceau/outputs/theme.css']).toContain('--color-primary: red;')
     })
     it('does not write without buildDir', async () => {
       vi.spyOn(fs, 'writeFileSync').mockImplementationOnce(() => { })
@@ -178,9 +178,9 @@ describe('@pinceau/theme', () => {
 
       const output = await configCtx.buildTheme()
 
-      expect(output.outputs['$pinceau/utils']).include('export const testMx')
-      expect(output.outputs['$pinceau/utils']).include('export const mx')
-      expect(output.outputs['$pinceau/utils']).include('export const my')
+      expect(output.outputs['@pinceau/outputs/utils']).include('export const testMx')
+      expect(output.outputs['@pinceau/outputs/utils']).include('export const mx')
+      expect(output.outputs['@pinceau/outputs/utils']).include('export const my')
     })
   })
 
@@ -345,7 +345,7 @@ describe('@pinceau/theme', () => {
     beforeEach(() => {
       ctx = usePinceauContext()
       ctx.fs = fs
-      ctx.localPkg = localPkg
+      ctx.require = createRequire(import.meta.url)
       setupThemeFormats(ctx)
       ctx.options.theme.palette = false
       ctx.options.theme.layers = []
@@ -588,11 +588,11 @@ describe('@pinceau/theme', () => {
       const themeOutput = await generateTheme(output, ctx)
 
       expect(themeOutput.buildDir).toBeUndefined()
-      expect(themeOutput.outputs).toHaveProperty('pinceau.css')
-      expect(themeOutput.outputs).toHaveProperty('$pinceau/theme')
-      expect(themeOutput.outputs).toHaveProperty('$pinceau/utils')
-      expect(themeOutput.outputs).toHaveProperty('$pinceau/definitions')
-      expect(themeOutput.outputs).toHaveProperty('$pinceau/schema')
+      expect(themeOutput.outputs).toHaveProperty('@pinceau/outputs/theme.css')
+      expect(themeOutput.outputs).toHaveProperty('@pinceau/outputs/theme')
+      expect(themeOutput.outputs).toHaveProperty('@pinceau/outputs/utils')
+      expect(themeOutput.outputs).toHaveProperty('@pinceau/outputs/definitions')
+      expect(themeOutput.outputs).toHaveProperty('@pinceau/outputs/schema')
     })
 
     it('generate theme output (write)', async () => {
@@ -608,20 +608,20 @@ describe('@pinceau/theme', () => {
       const fileNames = files.map(file => file.split('/').pop())
 
       expect(themeOutput.buildDir).toBeDefined()
-      expect(themeOutput.outputs).toHaveProperty('pinceau.css')
+      expect(themeOutput.outputs).toHaveProperty('@pinceau/outputs/theme.css')
       expect(fileNames).toContain('theme.css')
-      expect(themeOutput.outputs).toHaveProperty('$pinceau/theme')
-      expect(themeOutput.outputs).toHaveProperty('$pinceau/theme-types')
-      expect(themeOutput.outputs).toHaveProperty('$pinceau/types')
+      expect(themeOutput.outputs).toHaveProperty('@pinceau/outputs/theme')
+      expect(themeOutput.outputs).toHaveProperty('@pinceau/outputs/theme-ts')
+      expect(themeOutput.outputs).toHaveProperty('@pinceau/outputs')
       expect(fileNames).toContain('theme.ts')
       expect(fileNames).toContain('theme.js')
-      expect(themeOutput.outputs).toHaveProperty('$pinceau/utils')
-      expect(themeOutput.outputs).toHaveProperty('$pinceau/utils-types')
+      expect(themeOutput.outputs).toHaveProperty('@pinceau/outputs/utils')
+      expect(themeOutput.outputs).toHaveProperty('@pinceau/outputs/utils-ts')
       expect(fileNames).toContain('utils.ts')
       expect(fileNames).toContain('utils.js')
-      expect(themeOutput.outputs).toHaveProperty('$pinceau/definitions')
+      expect(themeOutput.outputs).toHaveProperty('@pinceau/outputs/definitions')
       expect(fileNames).toContain('definitions.js')
-      expect(themeOutput.outputs).toHaveProperty('$pinceau/schema')
+      expect(themeOutput.outputs).toHaveProperty('@pinceau/outputs/schema')
       expect(fileNames).toContain('schema.js')
 
       files.forEach((path) => {
@@ -658,7 +658,7 @@ describe('@pinceau/theme', () => {
       const inputHtml = '<pinceau />'
       const expectedHtml = '<style type="text/css" id="pinceau-theme">mockedOutputContent</style>'
 
-      const result = transformIndexHtml(inputHtml, ctx as any, resolveModule as any)
+      const result = transformIndexHtml(inputHtml, ctx as any)
       expect(result).toBe(expectedHtml)
     })
 
@@ -666,21 +666,22 @@ describe('@pinceau/theme', () => {
       ctx.options.dev = true
 
       const inputHtml = '<pinceau />'
-      const expectedHtml = '<style type="text/css" id="pinceau-theme" data-vite-dev-id="mockedOutputId">mockedOutputContent</style>\n<script type="module" data-vite-dev-id="$pinceau/hmr" src="/__pinceau_hmr.js"></script>'
+      const expectedHtml = '<style type="text/css" id="pinceau-theme" data-vite-dev-id="mockedOutputId">mockedOutputContent</style>\n<script type="module" data-vite-dev-id="@pinceau/outputs/hmr" src="/__pinceau_hmr.js"></script>'
 
-      const result = transformIndexHtml(inputHtml, ctx as any, resolveModule as any)
+      const result = transformIndexHtml(inputHtml, ctx as any)
 
       expect(result).toBe(expectedHtml)
     })
 
     it('includes preflight CSS when preflight option is set', async () => {
       ctx.options.theme.preflight = 'tailwind'
+      ctx.require = { resolve: resolveModule } as any
       resolveModule.mockReturnValueOnce('@unocss/reset/tailwind.css')
 
       const inputHtml = '<pinceau />'
       const expectedHtml = '<link rel="stylesheet" type="text/css" href="@unocss/reset/tailwind.css" />\n<style type="text/css" id="pinceau-theme">mockedOutputContent</style>'
 
-      const result = transformIndexHtml(inputHtml, ctx as any, resolveModule as any)
+      const result = transformIndexHtml(inputHtml, ctx as any)
 
       expect(result).toBe(expectedHtml)
     })
@@ -935,7 +936,7 @@ describe('@pinceau/theme', () => {
       })
     })
 
-    describe('$pinceau/definitions', () => {
+    describe('@pinceau/outputs/definitions', () => {
       beforeEach(() => {
         pinceauContext.options.theme.outputFormats.push(definitionsFormat)
       })
@@ -947,7 +948,7 @@ describe('@pinceau/theme', () => {
       })
     })
 
-    describe('$pinceau/hmr', () => {
+    describe('@pinceau/outputs/hmr', () => {
       beforeEach(() => {
         pinceauContext.options.theme.outputFormats.push(hmrFormat)
       })
@@ -959,7 +960,7 @@ describe('@pinceau/theme', () => {
       })
     })
 
-    describe('$pinceau/schema', () => {
+    describe('@pinceau/outputs/schema', () => {
       beforeEach(() => {
         pinceauContext.options.theme.outputFormats.push(schemaFormat)
       })
@@ -971,7 +972,7 @@ describe('@pinceau/theme', () => {
       })
     })
 
-    describe('$pinceau/theme', () => {
+    describe('@pinceau/outputs/theme', () => {
       it('build format (js)', async () => {
         pinceauContext.options.theme.outputFormats.push(javascriptFormat)
 
@@ -989,7 +990,7 @@ describe('@pinceau/theme', () => {
       })
     })
 
-    describe('$pinceau/types', () => {
+    describe('@pinceau/outputs', () => {
       beforeEach(() => {
         pinceauContext.options.theme.outputFormats.push(declarationFormat)
       })
@@ -1001,7 +1002,7 @@ describe('@pinceau/theme', () => {
       })
     })
 
-    describe('$pinceau/utils types', () => {
+    describe('@pinceau/outputs/utils types', () => {
       it('build format', async () => {
         pinceauContext.options.theme.outputFormats.push(utilsFormat)
 

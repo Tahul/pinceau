@@ -23,7 +23,6 @@ export default defineBuildConfig({
     'scule',
     'defu',
     '@pinceau/style',
-    '$pinceau/theme',
-    '$pinceau/utils',
+    '@pinceau/outputs',
   ],
 })

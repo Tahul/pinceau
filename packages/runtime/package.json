@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "@pinceau/core": "workspace:*",
+    "@pinceau/outputs": "workspace:*",
     "@pinceau/stringify": "workspace:*",
     "scule": "^1.0.0"
   },

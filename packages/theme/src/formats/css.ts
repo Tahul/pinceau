@@ -1,13 +1,13 @@
 import type { DesignToken } from 'style-dictionary-esm'
 import StyleDictionary from 'style-dictionary-esm'
+import type { PinceauMediaQueries } from '@pinceau/outputs'
 import type { PinceauThemeFormat } from '../types/options'
 import { walkTokens } from '../utils/tokens'
 import { createThemeRule } from '../utils/css-rules'
-import type { PinceauMediaQueries } from '$pinceau/theme'
 
 export const cssFormat: PinceauThemeFormat = {
-  importPath: 'pinceau.css',
-  virtualPath: '/__pinceau_css.css',
+  importPath: '@pinceau/outputs/theme.css',
+  virtualPath: '/__pinceau_theme_css.css',
   destination: 'theme.css',
   formatter({ ctx, dictionary }) {
     // Get context

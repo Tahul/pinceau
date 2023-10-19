@@ -16,7 +16,8 @@
     "@astrojs/vue": "^3.0.1",
     "@pinceau/astro": "workspace:*",
     "@pinceau/configs": "workspace:*",
-    "@pinceau/vue": "workspace:*",
+    "@pinceau/palette": "workspace:*",
+    "@pinceau/outputs": "workspace:*",    "@pinceau/vue": "workspace:*",
     "astro": "^3.3.0"
   },
   "stackblitz": {

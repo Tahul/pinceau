@@ -1,6 +1,6 @@
 import type { DesignToken, DesignTokens, ThemeFunction } from '@pinceau/theme'
 import { get } from '@pinceau/core/runtime'
-import type { PinceauTheme, PinceauThemePaths } from '$pinceau/theme'
+import type { PinceauTheme, PinceauThemePaths } from '@pinceau/outputs'
 
 /**
  * Creates the $theme helper usable both at build or runtime.

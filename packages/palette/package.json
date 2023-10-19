@@ -37,6 +37,7 @@
   },
   "devDependencies": {
     "@pinceau/configs": "workspace:*",
+    "@pinceau/outputs": "workspace:*",
     "vite": "^4.4.11"
   }
 }

@@ -39,8 +39,7 @@ export default defineBuildConfig({
     'consola',
     'chalk',
     'ast-types',
-    '$pinceau/utils',
-    '$pinceau/theme',
+    '@pinceau/outputs',
     '@pinceau/vue',
     '@pinceau/theme/utils',
     '@pinceau/theme/plugin',
@@ -55,6 +54,5 @@ export default defineBuildConfig({
     '@pinceau/astro',
     '@babel/types',
     '@babel/parser',
-    'local-pkg',
   ],
 })

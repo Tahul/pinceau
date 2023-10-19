@@ -1,11 +1,10 @@
 import type { ResolvedConfig } from 'vite'
+import type { PinceauTheme, PinceauUtils } from '@pinceau/outputs'
 import type { PinceauBuildContext, PinceauContext, PinceauFilterFunction, PinceauOptions, PinceauQuery, PinceauTransformState, PinceauTransformer, PinceauUserOptions } from '../types'
 import { parsePinceauQuery } from './query'
 import { usePinceauVirtualContext } from './virtual-context'
 import { isPathIncluded } from './filter'
 import { normalizeOptions } from './options'
-import type { PinceauUtils } from '$pinceau/utils'
-import type { PinceauTheme } from '$pinceau/theme'
 
 /**
  * Retrieves previously injected PinceauContext inside ViteDevServer to reuse context across plugins.
@@ -50,7 +49,7 @@ export function usePinceauContext(userOptions?: PinceauUserOptions): PinceauCont
   const filters: PinceauFilterFunction[] = []
 
   /**
-   * Typings store for `$pinceau/types` output paths.
+   * Typings store for `@pinceau/outputs/index.d.ts` output paths.
    *
    * This can be extended by plugins to add additional global or local typings.
    */
@@ -58,6 +57,7 @@ export function usePinceauContext(userOptions?: PinceauUserOptions): PinceauCont
     imports: [],
     global: [],
     raw: [],
+    exports: [],
   }
 
   /**
@@ -203,7 +203,7 @@ export function usePinceauContext(userOptions?: PinceauUserOptions): PinceauCont
     },
 
     fs: undefined,
-    localPkg: undefined,
+    resolve: undefined,
   }
 
   return {

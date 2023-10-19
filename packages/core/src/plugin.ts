@@ -1,9 +1,9 @@
 import fs from 'node:fs'
+import { createRequire } from 'node:module'
 import type { UnpluginInstance } from 'unplugin'
 import { createUnplugin } from 'unplugin'
 import chalk from 'chalk'
 import { consola } from 'consola'
-import { isPackageExists, resolveModule } from 'local-pkg'
 import type { PinceauUserOptions } from './types/options'
 import { updateDebugContext } from './utils/debug'
 import { usePinceauContext } from './utils/core-context'
@@ -26,18 +26,26 @@ const PinceauCorePlugin: UnpluginInstance<PinceauUserOptions> = createUnplugin((
 
   const ctx = usePinceauContext(options)
 
-  // Set node dependencies
-  ctx.fs = fs
-  ctx.localPkg = { resolveModule, isPackageExists }
-
   return {
     name: 'pinceau:core-plugin',
 
     enforce: 'pre',
 
     vite: {
+      config(config) {
+        if (!config.server) { config.server = {} }
+        if (!config.server.watch) { config.server.watch = {} }
+        if (!config.server.watch.ignored) { config.server.watch.ignored = [] }
+        (config.server.watch.ignored as any).push('@pinceau/outputs')
+      },
       configResolved(config) {
-        if (!ctx.options.cwd) { ctx.options.cwd = config.root }
+        if (!ctx.options.cwd) {
+          ctx.options.cwd = config.root
+
+          // Set node dependencies
+          ctx.fs = fs
+          ctx.resolve = createRequire(!ctx.options.cwd.endsWith('/') ? `${ctx.options.cwd}/` : ctx.options.cwd).resolve
+        }
       },
       api: {
         getPinceauContext: () => ctx,

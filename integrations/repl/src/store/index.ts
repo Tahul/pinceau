@@ -224,9 +224,9 @@ export class ReplStore implements Store {
     this.init()
     this.forceSandboxReset()
 
-    nextTick(() => {
+    setTimeout(() => {
       window?.location?.reload()
-    })
+    }, 1000)
 
     return this
   }

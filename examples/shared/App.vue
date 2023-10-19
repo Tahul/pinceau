@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import theme from '$pinceau/theme'
+import theme from '@pinceau/outputs/theme'
 
 const color = ref('blue')
 
@@ -43,7 +43,6 @@ css({
     backgroundColor: '$color.gray.9',
     minHeight: '100vh',
     minWidth: '100vw',
-    padding: '$space.16',
   },
 })
 </style>

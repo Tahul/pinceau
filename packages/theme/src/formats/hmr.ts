@@ -1,10 +1,10 @@
 import type { PinceauThemeFormat } from '../types'
 
 /**
- * HMR in development from '$pinceau/hmr'
+ * HMR in development from '@pinceau/outputs/hmr'
  */
 export const hmrFormat: PinceauThemeFormat = {
-  importPath: '$pinceau/hmr',
+  importPath: '@pinceau/outputs/hmr',
   virtualPath: '/__pinceau_hmr.js',
   destination: 'hmr.js',
   formatter() {

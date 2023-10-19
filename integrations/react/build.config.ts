@@ -48,7 +48,7 @@ export default defineBuildConfig({
     'csstype',
     'ast-types',
     'acorn',
-    '$pinceau/react-plugin',
+    '@pinceau/outputs/react-plugin',
     '@types/react',
     '@types/react-dom',
     '@types/node',

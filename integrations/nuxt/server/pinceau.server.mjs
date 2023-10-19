@@ -10,7 +10,7 @@ export default async function (nitro) {
 
     // HMR
     if ($pinceauSSR.options?.dev) {
-      const hmrScript = '<script type="module" data-vite-dev-id="$pinceau/hmr" src="/_nuxt/@id/$pinceau/hmr"></script>'
+      const hmrScript = '<script type="module" data-vite-dev-id="@pinceau/outputs/hmr" src="/_nuxt/@id/@pinceau/outputs/hmr"></script>'
       htmlContext.head.splice(2, 0, hmrScript)
     }
 

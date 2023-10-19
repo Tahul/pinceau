@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { variantsToDeclaration } from '@pinceau/runtime'
 import type { Variants, VariantsProps } from '@pinceau/style'
-import { usePinceauContext } from '$pinceau/react-plugin'
+import { usePinceauContext } from '@pinceau/outputs/react-plugin'
 
 export function useVariants(variants?: Variants, props?: React.FC['propTypes']) {
   const { runtimeSheet } = usePinceauContext()

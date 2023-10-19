@@ -55,7 +55,8 @@
     "stub": "unbuild --stub"
   },
   "dependencies": {
-    "@pinceau/integration": "workspace:*"
+    "@pinceau/integration": "workspace:*",
+    "@pinceau/outputs": "workspace:*"
   },
   "devDependencies": {
     "@pinceau/configs": "workspace:*"

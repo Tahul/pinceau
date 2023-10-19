@@ -1,8 +1,7 @@
+import type { PinceauMediaQueries, PinceauUtils } from '@pinceau/outputs'
 import type { CSSProperties, PseudosProperties } from './properties'
 import type { ComputedStyleDefinition } from './computed-styles'
 import type { Variants } from './variants'
-import type { PinceauUtils } from '$pinceau/utils'
-import type { PinceauMediaQueries } from '$pinceau/theme'
 
 export type PropertyType = (string & {}) | (number & {}) | undefined
 

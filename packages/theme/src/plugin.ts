@@ -1,5 +1,4 @@
 /* c8 ignore start */
-import { createRequire } from 'node:module'
 import { getPinceauContext, transform, transformInclude } from '@pinceau/core/utils'
 import type { PinceauContext } from '@pinceau/core'
 import { createUnplugin } from 'unplugin'
@@ -9,8 +8,6 @@ import { transformIndexHtml } from './utils/html'
 import { usePinceauConfigContext } from './utils/config-context'
 import { suite } from './transforms/suite'
 import { setupThemeFormats } from './utils/setup'
-
-const _require = createRequire(import.meta.url)
 
 const PinceauThemePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
   let ctx: PinceauContext
@@ -48,6 +45,12 @@ const PinceauThemePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
             'export type PinceauMediaQueries = GeneratedPinceauMediaQueries',
             'export type PinceauThemePaths = GeneratedPinceauThemePaths',
           ],
+          exports: [
+            'GeneratedPinceauTheme as PinceauTheme',
+            'GeneratedPinceauUtils as PinceauUtils',
+            'GeneratedPinceauMediaQueries as PinceauMediaQueries',
+            'GeneratedPinceauThemePaths as PinceauThemePaths',
+          ],
         })
 
         await configCtx.buildTheme()
@@ -55,7 +58,7 @@ const PinceauThemePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
 
       transformIndexHtml: {
         order: 'post',
-        handler: async html => transformIndexHtml(html, ctx, _require.resolve),
+        handler: async html => transformIndexHtml(html, ctx),
       },
 
       async handleHotUpdate(hmrContext) {

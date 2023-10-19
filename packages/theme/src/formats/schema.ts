@@ -2,7 +2,7 @@ import type { PinceauThemeFormat } from '../types'
 
 export const schemaFormat: PinceauThemeFormat = {
   destination: 'schema.js',
-  importPath: '$pinceau/schema',
+  importPath: '@pinceau/outputs/schema',
   virtualPath: '/__pinceau_schema.js',
   formatter({ loadedTheme }) {
     const { schema } = loadedTheme

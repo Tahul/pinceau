@@ -1,7 +1,7 @@
 import type { ComputedStyleDefinition } from '@pinceau/style'
 import { computedStylesToDeclaration } from '@pinceau/runtime'
 import type { Writable } from 'svelte/store'
-import { getRuntimeSheet } from '$pinceau/svelte-plugin'
+import { getRuntimeSheet } from '@pinceau/outputs/svelte-plugin'
 
 export function useComputedStyles(
   fns: [string, ComputedStyleDefinition][],

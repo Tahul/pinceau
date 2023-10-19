@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "@pinceau/configs": "workspace:*",
+    "@pinceau/outputs": "workspace:*",
     "@pinceau/core": "workspace:*",
     "@pinceau/theme": "workspace:*"
   }

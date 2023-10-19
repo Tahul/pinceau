@@ -1,6 +1,6 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
-import { PinceauProvider } from '$pinceau/react-plugin'
+import { PinceauProvider } from '@pinceau/outputs/react-plugin'
 import './index.css'
 import App from './App'
 

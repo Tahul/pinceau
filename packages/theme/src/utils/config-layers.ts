@@ -2,11 +2,11 @@ import { dirname, extname } from 'node:path'
 import type { PinceauContext, PinceauOptions } from '@pinceau/core'
 import { merger } from '@pinceau/core/utils'
 import { resolveSchema as resolveUntypedSchema } from 'untyped'
+import type { PinceauTheme } from '@pinceau/outputs'
 import type { ConfigLayer, ResolvedConfigLayer, Theme, ThemeLoadingOutput } from '../types'
 import { resolveFileLayer } from './config-file'
 import { normalizeTokens } from './tokens'
 import { resolveMediaQueriesKeys } from './media-queries'
-import type { PinceauTheme } from '$pinceau/theme'
 
 // Gives an empty layer for a given path or nothing.
 export function getConfigLayer(path?: string): ResolvedConfigLayer {
@@ -88,13 +88,19 @@ export function resolveConfigSources(
   ctx: PinceauContext,
 ) {
   const configSourceFromModulePath = (path: string): ConfigLayer | undefined => {
-    if (!ctx.localPkg || !ctx.localPkg.isPackageExists(path)) { return }
+    if (!ctx.resolve) { return }
 
-    const resolvedModule = ctx.localPkg.resolveModule(path, { paths: [options.cwd] })
+    let pkgPath
+    try {
+      pkgPath = ctx.resolve(path)
+    }
+    catch (e) {
+      // TODO: Debug messages
+    }
 
-    if (resolvedModule) {
-      const dir = dirname(resolvedModule)
-      const filename = resolvedModule.replace(`${dir}/`, '')
+    if (pkgPath) {
+      const dir = dirname(pkgPath)
+      const filename = pkgPath.replace(`${dir}/`, '')
       const ext = extname(filename)
       if (dir && filename && ext) { return { path: `${dir}/`, configFileName: filename.replace(ext, '') } }
     }

@@ -1,5 +1,5 @@
+import type { PinceauTheme } from '@pinceau/outputs'
 import type { PinceauConfigContext, PinceauThemeOptions, Theme, ThemeFunction } from './types'
-import type { PinceauTheme } from '$pinceau/theme'
 
 export * from './types'
 

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { computedStylesToDeclaration } from '@pinceau/runtime'
 import type { ComputedStyleDefinition } from '@pinceau/style'
-import { usePinceauContext } from '$pinceau/react-plugin'
+import { usePinceauContext } from '@pinceau/outputs/react-plugin'
 
 export function useComputedStyles(fns?: [string, ComputedStyleDefinition][], props: any = {}) {
   const { runtimeSheet } = usePinceauContext()

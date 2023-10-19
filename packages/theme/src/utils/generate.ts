@@ -3,9 +3,9 @@ import type { File, Core as Instance, Named, Transform } from 'style-dictionary-
 import StyleDictionary from 'style-dictionary-esm'
 import { REFERENCES_REGEX, message } from '@pinceau/core/utils'
 import type { PinceauContext } from '@pinceau/core'
+import type { PinceauTheme } from '@pinceau/outputs'
 import type { DesignTokens, PinceauThemeFormat, Theme, ThemeGenerationOutput, ThemeLoadingOutput } from '../types'
 import { flattenTokens } from './tokens'
-import type { PinceauTheme } from '$pinceau/theme'
 
 export async function generateTheme(
   loadedTheme: ThemeLoadingOutput,
@@ -23,7 +23,7 @@ export async function generateTheme(
   if (buildDir && !buildDir.endsWith('/')) { buildDir += '/' }
 
   // Enforce buildDir when not set; `false` disables write
-  if (buildDir === undefined && ctx.options.cwd) { buildDir = join(ctx.options.cwd, 'node_modules/.pinceau/') }
+  if (buildDir === undefined && ctx.options.cwd) { buildDir = join(ctx.options.cwd, 'node_modules/@pinceau/outputs/') }
 
   // Transforms used
   const usedTransforms = ['size/px', 'color/hex']

@@ -82,21 +82,8 @@ const module: any = defineNuxtModule<PinceauUserOptions>({
     nuxt.hook('prepare:types', async (opts) => {
       const tsConfig: typeof opts.tsConfig & { vueCompilerOptions?: any } = opts.tsConfig
       tsConfig.compilerOptions = tsConfig.compilerOptions || {}
-      tsConfig.compilerOptions.paths = tsConfig.compilerOptions.paths || {}
-
-      if (options.theme.buildDir) {
-        tsConfig.compilerOptions.paths['pinceau.css'] = [`${resolve(options.theme.buildDir, 'theme.css')}`]
-        tsConfig.compilerOptions.paths['$pinceau/utils'] = [`${resolve(options.theme.buildDir, 'utils.ts')}`]
-        tsConfig.compilerOptions.paths['$pinceau/theme'] = [`${resolve(options.theme.buildDir, 'theme.ts')}`]
-        tsConfig.compilerOptions.paths['$pinceau/vue-plugin'] = [`${resolve(options.theme.buildDir, 'vue-plugin.ts')}`]
-        if (options.theme.schema) { tsConfig.compilerOptions.paths['$pinceau/schema'] = [`${resolve(options.theme.buildDir, 'schema.ts')}`] }
-        if (options.theme.definitions) { tsConfig.compilerOptions.paths['$pinceau/definitions'] = [`${resolve(options.theme.buildDir, 'definitions.ts')}`] }
-      }
-
-      // Push Pinceau reference
-      opts.references = opts.references || []
-      opts.references.push({ path: '$pinceau' })
-      opts.references.push({ path: 'pinceau' })
+      tsConfig.compilerOptions.types = tsConfig.compilerOptions.types || []
+      tsConfig.compilerOptions.types.push('@pinceau/outputs')
 
       // Add Volar plugin
       tsConfig.vueCompilerOptions = tsConfig.vueCompilerOptions || {}

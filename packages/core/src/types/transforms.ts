@@ -1,12 +1,25 @@
-import type { SourceMapCompact, Thenable } from 'unplugin'
-import type { SourceMapInput } from 'rollup'
 import type { MagicSFC, SourceLocation } from 'sfc-composer'
 import type { PinceauStyleFunctionContext } from '@pinceau/style'
 import type { PinceauQuery } from './query'
 import type { PinceauTransformContext } from './transform-context'
 import type { PinceauContext } from './core-context'
 
-export type PinceauTransformResult = { code: string; map?: SourceMapInput | SourceMapCompact | null } | undefined
+export type Thenable<T> = T | Promise<T>
+
+export interface SourceMapOutput {
+  file?: string
+  mappings: string
+  names: string[]
+  sourceRoot?: string
+  sources: string[]
+  sourcesContent?: (string | null)[]
+  version: number
+  x_google_ignoreList?: number[]
+}
+
+export type SourceMapInput = SourceMapOutput | string | null | { mappings: '' }
+
+export type PinceauTransformResult = { code: string; map?: SourceMapOutput | null } | undefined
 
 export interface PropMatch {
   loc: SourceLocation

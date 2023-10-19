@@ -24,7 +24,7 @@ function stringifyUtils(value: PinceauUtilsDefinition, type: 'ts' | 'js') {
 
 export const utilsFormat: PinceauThemeFormat = {
   destination: 'utils.js',
-  importPath: '$pinceau/utils',
+  importPath: '@pinceau/outputs/utils',
   virtualPath: '/__pinceau_utils.js',
   formatter({ loadedTheme }) {
     const { imports, utils } = loadedTheme
@@ -47,7 +47,7 @@ export const utilsFormat: PinceauThemeFormat = {
 export const utilsTypesFormat: PinceauThemeFormat = {
   destination: 'utils.ts',
   virtualPath: '/__pinceau_utils_ts.ts',
-  importPath: '$pinceau/utils-types',
+  importPath: '@pinceau/outputs/utils-ts',
   formatter({ loadedTheme }) {
     const { imports, utils } = loadedTheme
 

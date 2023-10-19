@@ -1,9 +1,3 @@
 {
-  "extends": "@pinceau/configs/tsconfig.vue.json",
-
-  "compilerOptions": {
-    "paths": {
-      "$pinceau/theme": ["../../packages/palette/output/theme.js"]
-    }
-  }
+  "extends": "@pinceau/configs/tsconfig.vue.json"
 }

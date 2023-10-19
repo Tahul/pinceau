@@ -1,5 +1,5 @@
 import { dirname } from 'pathe'
-import type { VirtualOutputs } from '../types'
+import type { PinceauContext, VirtualOutputs } from '../types'
 
 /**
  * Write a virtual output.
@@ -7,11 +7,12 @@ import type { VirtualOutputs } from '../types'
 export function writeOutput(
   id: string,
   path: string,
-  outputs: VirtualOutputs,
-  fs: typeof import('node:fs'),
+  ctx: PinceauContext,
 ) {
+  if (!ctx.fs) { return }
+
   // Create target directory if it doesn't already exist.
   const targetDir = dirname(path)
-  if (!fs.existsSync(targetDir)) { fs.mkdirSync(targetDir, { recursive: true }) }
-  if (outputs[id]) { fs.writeFileSync(path, outputs[id]) }
+  if (!ctx.fs.existsSync(targetDir)) { ctx.fs.mkdirSync(targetDir, { recursive: true }) }
+  if (ctx.outputs[id]) { ctx.fs.writeFileSync(path, ctx.outputs[id]) }
 }

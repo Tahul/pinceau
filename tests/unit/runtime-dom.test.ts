@@ -33,7 +33,7 @@ describe('@pinceau/runtime', () => {
 
   describe('utils/theme-sheet.ts', () => {
     it('should create a theme object based on the root CSS variables', () => {
-      injectSheet('pinceau-theme', fs.readFileSync(resolve(__dirname, '../../packages/palette/output/theme.css')).toString())
+      injectSheet('pinceau-theme', fs.readFileSync(resolve(__dirname, '../../packages/outputs/theme.css')).toString())
 
       const { theme } = useThemeSheet()
 

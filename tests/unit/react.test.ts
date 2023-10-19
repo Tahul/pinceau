@@ -102,10 +102,12 @@ describe('@pinceau/react', () => {
     it('registers and write react virtual outputs', () => {
       vi.spyOn(fs, 'writeFileSync').mockImplementationOnce(() => { })
 
+      pinceauContext.fs = fs
+
       registerVirtualOutputs(pinceauContext)
 
       expect(fs.writeFileSync).toHaveBeenCalledTimes(1)
-      expect(pinceauContext.getOutputId('/__pinceau_react_plugin.js')).toBe('$pinceau/react-plugin')
+      expect(pinceauContext.getOutputId('/__pinceau_react_plugin.js')).toBe('@pinceau/outputs/react-plugin')
     })
   })
 

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import TestVariants from './TestVariants.vue'
 console.log('hello world')
 </script>
 

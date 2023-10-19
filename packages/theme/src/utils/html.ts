@@ -1,20 +1,20 @@
 import type { PinceauContext } from '@pinceau/core'
 
-export function transformIndexHtml(html: string, ctx: PinceauContext, resolveModule: RequireResolve) {
+export function transformIndexHtml(html: string, ctx: PinceauContext) {
   const options = ctx.options
 
   // Vite replace Pinceau theme injection by actual content of `pinceau.css`
-  let hmrScript = ''
-  let devId = ''
-  let preflightPath = ''
+  let hmrScript: string = ''
+  let devId: string = ''
+  let preflightPath: string | undefined = ''
 
   // Enables HMR in development
   if (options.dev) {
     devId = ` data-vite-dev-id="${ctx.getOutputId('pinceau.css')}"`
-    hmrScript = '<script type="module" data-vite-dev-id="$pinceau/hmr" src="/__pinceau_hmr.js"></script>'
+    hmrScript = '<script type="module" data-vite-dev-id="@pinceau/outputs/hmr" src="/__pinceau_hmr.js"></script>'
   }
 
-  if (options.theme.preflight) { preflightPath = resolveModule(`@unocss/reset/${typeof options.theme.preflight === 'boolean' ? 'tailwind' : options.theme.preflight}.css`) }
+  if (options.theme.preflight) { preflightPath = ctx.require?.resolve(`@unocss/reset/${typeof options.theme.preflight === 'boolean' ? 'tailwind' : options.theme.preflight}.css`) }
 
   const preflight = preflightPath ? `<link rel="stylesheet" type="text/css" href="${preflightPath}" />` : ''
 

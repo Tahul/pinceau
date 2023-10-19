@@ -1,6 +1,6 @@
 import type { UnwrapKey } from '@pinceau/style'
+import type { PinceauThemePaths } from '@pinceau/outputs'
 import type { DesignToken, DesignTokens } from './tokens'
-import type { PinceauThemePaths } from '$pinceau/theme'
 
 /**
  * $theme function

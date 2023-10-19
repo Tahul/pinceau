@@ -9,12 +9,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@vueuse/core": "^10.5.0",
     "vue": "^3.3.4",
     "vue-router": "^4.2.5"
   },
   "devDependencies": {
     "@pinceau/configs": "workspace:*",
     "@pinceau/palette": "workspace:*",
+    "@pinceau/outputs": "workspace:*",
     "@pinceau/vue": "workspace:*",
     "@vitejs/plugin-vue": "^4.4.0",
     "typescript": "^5.2.2",

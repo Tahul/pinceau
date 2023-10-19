@@ -5,7 +5,7 @@ import type { PinceauThemeFormat } from '../types'
  */
 export const definitionsFormat: PinceauThemeFormat = {
   destination: 'definitions.js',
-  importPath: '$pinceau/definitions',
+  importPath: '@pinceau/outputs/definitions',
   virtualPath: '/__pinceau_definitions.js',
   formatter({ loadedTheme }) {
     const { definitions } = loadedTheme

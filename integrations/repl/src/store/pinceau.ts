@@ -68,29 +68,7 @@ export class PinceauProvider {
   }
 
   init() {
-    this.store.transformer.shims['pinceau.d.ts'] = new File('pinceau.d.ts', `import type { ThemeFunction } from '@pinceau/theme'
-import type { PinceauTheme as GeneratedPinceauTheme, PinceauMediaQueries as GeneratedPinceauMediaQueries, PinceauThemePaths as GeneratedPinceauThemePaths } from '$pinceau/theme'
-import type { PinceauUtils as GeneratedPinceauUtils } from '$pinceau/utils'
-import type { SupportedHTMLElements } from '@pinceau/style'
-import type { CSSFunctionArg } from '@pinceau/style'
-import type { StyledFunctionArg } from '@pinceau/style'
-import type { ThemeTokens } from '@pinceau/style'
-
-
-declare global {
-  export type ThemeTokens<T extends PinceauThemePaths & (string & {}) = PinceauThemePaths & (string & {})> = PinceauThemeTokens<T>
-  export const styled: (<Props extends {} = {}>(declaration: StyledFunctionArg<Props>) => string)
-  export const css: ((declaration: CSSFunctionArg) => string)
-  export const $theme: ThemeFunction
-  export type PinceauTheme = GeneratedPinceauTheme
-  export type PinceauUtils = GeneratedPinceauUtils
-  export type PinceauMediaQueries = GeneratedPinceauMediaQueries
-  export type PinceauThemePaths = GeneratedPinceauThemePaths
-}
-
-export {}`)
-
-    const themeWatcher = watch(
+    watch(
       () => this.store.state.files[`src/${themeFile}`],
       async (newFile) => {
         if (!newFile) { return }

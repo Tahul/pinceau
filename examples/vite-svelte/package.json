@@ -13,6 +13,7 @@
   "devDependencies": {
     "@pinceau/configs": "workspace:*",
     "@pinceau/palette": "workspace:*",
+    "@pinceau/outputs": "workspace:*",
     "@pinceau/svelte": "workspace:*",
     "@sveltejs/vite-plugin-svelte": "^2.4.6",
     "svelte": "^4.2.1",

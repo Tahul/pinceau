@@ -1,7 +1,6 @@
 import type { ColorSchemeModes, Theme } from '@pinceau/theme'
+import type { PinceauTheme, PinceauUtils } from '@pinceau/outputs'
 import type { PinceauRuntimeOptions } from '.'
-import type { PinceauTheme } from '$pinceau/theme'
-import type { PinceauUtils } from '$pinceau/utils'
 
 export interface PinceauRuntimePluginOptions extends Partial<PinceauRuntimeOptions> {
   /**
@@ -17,7 +16,7 @@ export interface PinceauRuntimePluginOptions extends Partial<PinceauRuntimeOptio
    */
   theme?: Theme<PinceauTheme>
   /**
-   * Utils functions coming from `$pinceau/utils` imports.
+   * Utils functions coming from `@pinceau/outputs/utils` imports.
    */
   utils?: PinceauUtils
   /**
