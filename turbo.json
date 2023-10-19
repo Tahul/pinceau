@@ -5,7 +5,7 @@
       "outputs": ["dist/**"]
     },
     "build": {
-      "dependsOn": ["stub", "^build"],
+      "dependsOn": ["^build"],
       "outputs": ["dist/**"]
     },
     "clean": {

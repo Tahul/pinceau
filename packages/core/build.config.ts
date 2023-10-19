@@ -19,7 +19,6 @@ export default defineBuildConfig({
       name: 'utils',
     },
   ],
-
   clean: true,
   declaration: true,
   rollup: {

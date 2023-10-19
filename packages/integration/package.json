@@ -27,7 +27,6 @@
   },
   "dependencies": {
     "@pinceau/core": "workspace:*",
-    "@pinceau/palette": "workspace:*",
     "@pinceau/runtime": "workspace:*",
     "@pinceau/stringify": "workspace:*",
     "@pinceau/style": "workspace:*",

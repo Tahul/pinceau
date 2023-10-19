@@ -925,9 +925,6 @@ importers:
       '@pinceau/outputs':
         specifier: workspace:*
         version: link:../outputs
-      '@pinceau/palette':
-        specifier: workspace:*
-        version: link:../palette
       '@pinceau/runtime':
         specifier: workspace:*
         version: link:../runtime
@@ -948,6 +945,10 @@ importers:
   packages/outputs: {}
 
   packages/palette:
+    dependencies:
+      '@pinceau/core':
+        specifier: workspace:*
+        version: link:../core
     devDependencies:
       '@pinceau/configs':
         specifier: workspace:*
@@ -955,6 +956,15 @@ importers:
       '@pinceau/outputs':
         specifier: workspace:*
         version: link:../outputs
+      '@pinceau/style':
+        specifier: workspace:*
+        version: link:../style
+      '@pinceau/theme':
+        specifier: workspace:*
+        version: link:../theme
+      pinceau:
+        specifier: workspace:*
+        version: link:../../integrations/pinceau
       vite:
         specifier: ^4.4.11
         version: 4.4.11(@types/node@20.8.5)
