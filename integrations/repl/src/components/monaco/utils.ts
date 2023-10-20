@@ -6,11 +6,12 @@ export function getOrCreateModel(
   lang: string | undefined,
   value: string,
 ) {
+  console.log({ uri: uri.path, lang, value })
   const model = editor.getModel(uri)
   if (model) {
     model.setValue(value)
     return model
   }
-  console.log('creating', uri)
+  // console.log('creating', uri)
   return editor.createModel(value, lang, uri)
 }

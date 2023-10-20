@@ -25,7 +25,7 @@ function onChange(e: Event): void {
 <template>
   <div>
     <select :value="modelValue" @change="onChange">
-      <option v-for="option of options" :value="option.value">
+      <option v-for="option of options" :key="option.value" :value="option.value">
         {{ option.title }}
       </option>
     </select>

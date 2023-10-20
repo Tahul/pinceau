@@ -1,6 +1,7 @@
 import type { Ref } from 'vue'
+import { createReactPlugin, pluginTypes } from '@pinceau/react/utils'
 import { compileFile } from '../transforms'
-import { compileModulesForPreview } from '../compiler'
+import { compileModulesForPreview, processModule } from '../compiler'
 import type { PreviewProxy } from '../components/output/PreviewProxy'
 import type { ReplStore, ReplTransformer } from '.'
 import { File, pinceauVersion } from '.'
@@ -30,7 +31,7 @@ const localImports = {
   '@pinceau/core/runtime': () => `https://cdn.jsdelivr.net/npm/@pinceau/core@${pinceauVersion}/dist/runtime.mjs`,
   '@pinceau/theme/runtime': () => `https://cdn.jsdelivr.net/npm/@pinceau/theme@${pinceauVersion}/dist/runtime.mjs`,
   '@pinceau/react/runtime': () => `https://cdn.jsdelivr.net/npm/@pinceau/vue@${pinceauVersion}/dist/runtime.mjs`,
-  '$pinceau/react-plugin': () => '/react-plugin-proxy.js',
+  '@pinceau/outputs/react-plugin': () => './react-plugin-proxy.js',
 }
 
 export class ReplReactTransformer implements ReplTransformer<null, {}> {
@@ -83,6 +84,8 @@ declare global {
 
   constructor({ store }: { store: ReplStore }) {
     this.store = store
+
+    this.store.pinceauProvider.pinceauContext.addTypes(pluginTypes)
   }
 
   getTypescriptDependencies() {
@@ -147,6 +150,39 @@ declare global {
     )
   }
 
+  getBuiltFilesModules() {
+    const modules: string[] = []
+
+    for (const [key, code] of Object.entries(this.store.state.builtFiles)) {
+      if (
+        [
+          '@pinceau/outputs/theme',
+          '@pinceau/outputs/theme-ts',
+          '@pinceau/outputs/theme.css',
+          '@pinceau/outputs/utils-ts',
+          '@pinceau/outputs',
+        ].includes(key)
+      ) { continue }
+      modules.push(code.code)
+    }
+
+    let reactPlugin = createReactPlugin(this.store.pinceauProvider.pinceauContext)
+
+    reactPlugin = reactPlugin.replace(
+      'import React, { createContext, useContext } from \'react\'',
+      'const { createContext, useContext } = window.React',
+    )
+
+    return [
+      processModule(
+        this.store,
+        reactPlugin,
+        '@pinceau/outputs/react-plugin',
+      ).code,
+      ...modules,
+    ]
+  }
+
   async compileFile(file: File): Promise<(string | Error)[]> {
     return await compileFile(this.store, file)
   }
@@ -175,16 +211,16 @@ declare global {
         console.log(`[@pinceau/repl] Successfully compiled ${ssrModules.length} modules for SSR.`)
 
         await proxy.eval([
+          'import \'react\'\nimport \'react-dom\'\nimport \'react-dom/server\'\n',
           'const __modules__ = {};',
-          'globalThis.require = (val) => { if (val === \'react-dom\') return ReactDOM }',
+          `globalThis.require = (val) => {
+            if (val === \'react\') return React
+            if (val === \'react-dom\') return ReactDOM
+          }`,
+          'const ReactDOM = window.ReactDOM\nconst React = window.React',
+          ...this.getBuiltFilesModules(),
           ...ssrModules,
-        `import 'react'
-        import 'react-dom'
-        import 'react-dom/server'
-        import { PinceauProvider, PinceauContext } from '@pinceau/outputs/react-plugin'
-
-        const ReactDOM = window.ReactDOM
-        const React = window.React
+        `import { PinceauProvider } from "@pinceau/outputs/react-plugin"
 
          const AppComponent = __modules__["${mainFile}"].default
 
@@ -228,15 +264,18 @@ declare global {
 
       // compile code to simulated module system
       const modules = compileModulesForPreview(this.store)
+
       console.log(`[@pinceau/repl] Compiled ${modules.length} module${modules.length > 1 ? 's' : ''}.`)
 
       const codeToEval = [
+        'import \'react\'\nimport \'react-dom\'\nimport \'react-dom/server\'\n',
         'window.__modules__ = {};window.__css__ = [];'
       + `if (window.__app__) window.__app__.unmount();${
        isSSR
         ? ''
         : `document.body.innerHTML = '<div id="app"></div>' + \`${previewOptions?.bodyHTML || ''
         }\``}`,
+        ...this.getBuiltFilesModules(),
         ...modules,
       `setTimeout(()=> {
         document.querySelectorAll('style[css]').forEach(el => el.remove())
@@ -247,11 +286,7 @@ declare global {
       // if main file is a vue file, mount it.
       if (mainFile.endsWith('.tsx')) {
         codeToEval.push(
-        `import 'react'
-        import 'react-dom'
-        import 'react-dom/server'
-        import { PinceauProvider } from '@pinceau/outputs/react-plugin'
-
+        `import { PinceauProvider } from "@pinceau/outputs/react-plugin"
         ${previewOptions?.customCode?.importCode || ''}
         
         const _mount = () => {

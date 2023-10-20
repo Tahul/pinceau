@@ -8,6 +8,7 @@ import { transformIndexHtml } from './utils/html'
 import { usePinceauConfigContext } from './utils/config-context'
 import { suite } from './transforms/suite'
 import { setupThemeFormats } from './utils/setup'
+import { pluginTypes } from './utils/plugin-types'
 
 const PinceauThemePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
   let ctx: PinceauContext
@@ -32,26 +33,7 @@ const PinceauThemePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
 
         ctx.configContext = configCtx
 
-        ctx.addTypes({
-          imports: [
-            'import type { ThemeFunction } from \'@pinceau/theme\'',
-            'import type { PinceauTheme as GeneratedPinceauTheme, PinceauMediaQueries as GeneratedPinceauMediaQueries, PinceauThemePaths as GeneratedPinceauThemePaths } from \'./theme\'',
-            'import type { PinceauUtils as GeneratedPinceauUtils } from \'./utils.ts\'',
-          ],
-          global: [
-            'export const $theme: ThemeFunction',
-            'export type PinceauTheme = GeneratedPinceauTheme',
-            'export type PinceauUtils = GeneratedPinceauUtils',
-            'export type PinceauMediaQueries = GeneratedPinceauMediaQueries',
-            'export type PinceauThemePaths = GeneratedPinceauThemePaths',
-          ],
-          exports: [
-            'GeneratedPinceauTheme as PinceauTheme',
-            'GeneratedPinceauUtils as PinceauUtils',
-            'GeneratedPinceauMediaQueries as PinceauMediaQueries',
-            'GeneratedPinceauThemePaths as PinceauThemePaths',
-          ],
-        })
+        ctx.addTypes(pluginTypes)
 
         await configCtx.buildTheme()
       },
@@ -84,7 +66,7 @@ const PinceauThemePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
             type: 'custom',
             event: 'pinceau:theme',
             data: {
-              css: outputs['pinceau.css'],
+              css: outputs['@pinceau/outputs/theme.css'],
               theme,
             },
           })

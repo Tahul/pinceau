@@ -21,7 +21,7 @@ export function usePinceauVirtualContext(): PinceauVirtualContext {
   }
 
   /**
-   * Resolves the virtual module id from an import like `pinceau.css` or `pinceau.ts`
+   * Resolves the virtual module id from an import like `@pincea/outputs/theme.css` or `pinceau.ts`
    *
    * Uses `includes` in case it the import paths gets called with `?query=`.
    */

@@ -1,17 +1,5 @@
-import { useRuntimeSheet, useThemeSheet } from '@pinceau/runtime'
+const PinceauVueOptions = window.__modules__['@pinceau/outputs/vue-plugin'].PinceauVueOptions
 
-export const PinceauVueOptions = { dev: false, colorSchemeMode: 'media', computedStyles: true, variants: true, ssr: { theme: true, runtime: true }, appId: false }
+const PinceauVue = window.__modules__['@pinceau/outputs/vue-plugin'].PinceauVue
 
-export const PinceauVue = {
-  install(app, options = {}) {
-    const _options = { ...PinceauVueOptions, ...options }
-
-    const themeSheet = useThemeSheet(_options)
-    app.provide('pinceauThemeSheet', themeSheet)
-
-    const runtimeSheet = useRuntimeSheet({ themeSheet, ..._options })
-    app.provide('pinceauRuntimeSheet', runtimeSheet)
-
-    app.config.globalProperties.$pinceauSSR = { toString: () => runtimeSheet.toString() }
-  },
-}
+export { PinceauVueOptions, PinceauVue }

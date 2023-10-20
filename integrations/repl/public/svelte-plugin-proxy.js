@@ -1,20 +1,11 @@
-import { useRuntimeSheet, useThemeSheet } from '@pinceau/runtime'
+const getThemeSheet = window.__modules__['@pinceau/outputs/svelte-plugin'].getThemeSheet
 
-export const PinceauSvelteOptions = { dev: false, colorSchemeMode: 'media', computedStyles: true, variants: true, ssr: { theme: true, runtime: true }, appId: false }
+const getRuntimeSheet = window.__modules__['@pinceau/outputs/svelte-plugin'].getRuntimeSheet
 
-let userOptions
+const PinceauSvelteOptions = window.__modules__['@pinceau/outputs/svelte-plugin'].PinceauSvelteOptions
 
-let themeSheet
-export const getRuntimeSheet = () => runtimeSheet
+const pinceauPlugin = window.__modules__['@pinceau/outputs/svelte-plugin'].pinceauPlugin
 
-let runtimeSheet
-export const getThemeSheet = () => themeSheet
+const ssr = window.__modules__['@pinceau/outputs/svelte-plugin'].ssr
 
-export function pinceauPlugin(options) {
-  userOptions = { ...PinceauSvelteOptions, ...options }
-
-  themeSheet = useThemeSheet(userOptions)
-  runtimeSheet = useRuntimeSheet({ themeSheet, ...userOptions })
-}
-
-export const ssr = { toString: () => runtimeSheet.toString() }
+export { getThemeSheet, getRuntimeSheet, PinceauSvelteOptions, pinceauPlugin, ssr }

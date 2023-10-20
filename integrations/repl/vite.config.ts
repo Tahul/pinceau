@@ -50,14 +50,6 @@ export default defineConfig({
           'node_modules/**/*',
         ],
       },
-      theme: {
-        buildDir: resolve('./node_modules/.pinceau'),
-        layers: [
-          {
-            path: resolve('../../packages/palette/'),
-          },
-        ],
-      },
     }) as any,
     vue({
       script: {

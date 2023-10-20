@@ -40,6 +40,7 @@ onMounted(() => {
 css({
   '.repl-root': {
     height: '100%',
+    fontFamily: '$font.mono',
   },
 })
 </style>

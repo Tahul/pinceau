@@ -4,6 +4,7 @@ import { createUnplugin } from 'unplugin'
 import type { UnpluginInstance } from 'unplugin'
 import { suite } from './transforms/suite'
 import { registerVirtualOutputs } from './utils/virtual'
+import { pluginTypes } from './utils/plugin-types'
 
 export { registerVirtualOutputs }
 
@@ -21,16 +22,7 @@ export const PinceauReactPlugin: UnpluginInstance<undefined> = createUnplugin(()
 
         registerVirtualOutputs(ctx)
 
-        ctx.addTypes({
-          imports: [
-            'import type { ReactStyledComponentFactory } from \'@pinceau/react\'',
-          ],
-          global: [
-            'export const $styled: { [Type in SupportedHTMLElements]: ReactStyledComponentFactory<Type> }',
-          ],
-          raw: [
-          ],
-        })
+        ctx.addTypes(pluginTypes)
       },
     },
 

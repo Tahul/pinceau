@@ -3,6 +3,7 @@ import type { PinceauContext } from '@pinceau/core'
 import { createUnplugin } from 'unplugin'
 import type { UnpluginInstance } from 'unplugin'
 import { suite } from './transforms/suite'
+import { pluginTypes } from './utils/plugin-types'
 
 const PinceauStylePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
   let ctx: PinceauContext
@@ -16,23 +17,7 @@ const PinceauStylePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
       async configResolved(config) {
         ctx = getPinceauContext(config)
 
-        ctx.addTypes({
-          imports: [
-            'import type { StyledComponentFactory } from \'@pinceau/style\'',
-            'import type { SupportedHTMLElements } from \'@pinceau/style\'',
-            'import type { CSSFunctionArg } from \'@pinceau/style\'',
-            'import type { StyledFunctionArg } from \'@pinceau/style\'',
-            'import type { ThemeTokens } from \'@pinceau/style\'',
-          ],
-          global: [
-            // css({ ... })
-            'export const css: ((declaration: CSSFunctionArg) => string)',
-            // styled({ ... }) & styled.a({ ... })
-            'export const styled: (<Props extends {} = {}>(declaration: StyledFunctionArg<Props>) => string)',
-            // Theme tokens helper
-            'export type ThemeTokens<T extends PinceauThemePaths & (string & {}) = PinceauThemePaths & (string & {})> = PinceauThemeTokens<T>',
-          ],
-        })
+        ctx.addTypes(pluginTypes)
       },
     },
 

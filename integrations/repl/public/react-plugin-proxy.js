@@ -1,20 +1,7 @@
-import { useRuntimeSheet, useThemeSheet } from '@pinceau/runtime'
+const PinceauProvider = window.__modules__['@pinceau/outputs/react-plugin'].PinceauProvider
 
-export const PinceauReactOptions = { dev: false, colorSchemeMode: 'media', computedStyles: true, variants: true, ssr: { theme: true, runtime: true }, appId: false }
+const PinceauReactOptions = window.__modules__['@pinceau/outputs/react-plugin'].PinceauReactOptions
 
-export const PinceauContext = React.createContext()
+const usePinceauContext = window.__modules__['@pinceau/outputs/react-plugin'].usePinceauContext
 
-export const usePinceauContext = () => React.useContext(PinceauContext)
-
-export function PinceauProvider({ options, children, cb }) {
-  const userOptions = { ...PinceauReactOptions, ...options }
-
-  const themeSheet = useThemeSheet(userOptions)
-  const runtimeSheet = useRuntimeSheet({ themeSheet, ...userOptions })
-
-  const ssr = { toString: () => runtimeSheet.toString() }
-
-  if (cb) { cb(ssr) }
-
-  return React.createElement(PinceauContext.Provider, { value: { themeSheet, runtimeSheet, ssr }, children })
-}
+export { PinceauProvider, PinceauReactOptions, usePinceauContext }

@@ -30,7 +30,6 @@ export default defineConfig({
         ],
       },
       theme: {
-        buildDir: resolve('./node_modules/.pinceau'),
         layers: [
           {
             path: resolve('../../packages/palette/'),

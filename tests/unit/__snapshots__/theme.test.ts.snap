@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`@pinceau/theme > formats/ > @pinceau/outputs > build format 1`] = `
+exports[`@pinceau/theme > formats/ > @pinceau/outputs/declarations > build format 1`] = `
 {
   "buildDir": undefined,
   "outputs": {
@@ -53,7 +53,7 @@ if (import.meta.hot) {
   import.meta.hot.on(
     'pinceau:theme',
     theme => {
-      theme?.css && updateStyle('pinceau.css', theme.css)
+      theme?.css && updateStyle('@pinceau/outputs/theme.css', theme.css)
     }
   )
 
@@ -164,7 +164,24 @@ export default theme",
 }
 `;
 
-exports[`@pinceau/theme > formats/ > @pinceau/outputs/utils types > build format (types) 1`] = `
+exports[`@pinceau/theme > formats/ > @pinceau/outputs/theme.css > build format 1`] = `
+{
+  "buildDir": undefined,
+  "outputs": {
+    "@pinceau/outputs/theme.css": "@media {:root {--pinceau-mq: $initial;--primary: red;}}",
+  },
+  "theme": {
+    "color": {
+      "primary": {
+        "value": "red",
+        "variable": undefined,
+      },
+    },
+  },
+}
+`;
+
+exports[`@pinceau/theme > formats/ > @pinceau/outputs/utils > build format (ts) 1`] = `
 {
   "buildDir": undefined,
   "outputs": {
@@ -185,30 +202,13 @@ export default utils",
 }
 `;
 
-exports[`@pinceau/theme > formats/ > @pinceau/outputs/utils types > build format 1`] = `
+exports[`@pinceau/theme > formats/ > @pinceau/outputs/utils > build format 1`] = `
 {
   "buildDir": undefined,
   "outputs": {
     "@pinceau/outputs/utils": "export const utils = {}
 
 export default utils",
-  },
-  "theme": {
-    "color": {
-      "primary": {
-        "value": "red",
-        "variable": undefined,
-      },
-    },
-  },
-}
-`;
-
-exports[`@pinceau/theme > formats/ > pinceau.css > build format 1`] = `
-{
-  "buildDir": undefined,
-  "outputs": {
-    "@pinceau/outputs/theme.css": "@media {:root {--pinceau-mq: $initial;--primary: red;}}",
   },
   "theme": {
     "color": {

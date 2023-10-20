@@ -56,7 +56,7 @@ describe('@pinceau/theme', () => {
     beforeEach(() => {
       ctx = usePinceauContext()
       ctx.fs = fs
-      ctx.require = createRequire(import.meta.url)
+      ctx.resolve = createRequire(import.meta.url).resolve
       setupThemeFormats(ctx)
       ctx.options.theme.palette = false
       configCtx = usePinceauConfigContext(ctx)
@@ -345,7 +345,7 @@ describe('@pinceau/theme', () => {
     beforeEach(() => {
       ctx = usePinceauContext()
       ctx.fs = fs
-      ctx.require = createRequire(import.meta.url)
+      ctx.resolve = createRequire(import.meta.url).resolve
       setupThemeFormats(ctx)
       ctx.options.theme.palette = false
       ctx.options.theme.layers = []
@@ -675,7 +675,7 @@ describe('@pinceau/theme', () => {
 
     it('includes preflight CSS when preflight option is set', async () => {
       ctx.options.theme.preflight = 'tailwind'
-      ctx.require = { resolve: resolveModule } as any
+      ctx.resolve = resolveModule as any
       resolveModule.mockReturnValueOnce('@unocss/reset/tailwind.css')
 
       const inputHtml = '<pinceau />'
@@ -924,7 +924,7 @@ describe('@pinceau/theme', () => {
       pinceauContext.options.theme.outputFormats = []
     })
 
-    describe('pinceau.css', () => {
+    describe('@pinceau/outputs/theme.css', () => {
       beforeEach(() => {
         pinceauContext.options.theme.outputFormats.push(cssFormat)
       })
@@ -990,7 +990,7 @@ describe('@pinceau/theme', () => {
       })
     })
 
-    describe('@pinceau/outputs', () => {
+    describe('@pinceau/outputs/declarations', () => {
       beforeEach(() => {
         pinceauContext.options.theme.outputFormats.push(declarationFormat)
       })
@@ -1002,7 +1002,7 @@ describe('@pinceau/theme', () => {
       })
     })
 
-    describe('@pinceau/outputs/utils types', () => {
+    describe('@pinceau/outputs/utils', () => {
       it('build format', async () => {
         pinceauContext.options.theme.outputFormats.push(utilsFormat)
 
@@ -1011,7 +1011,7 @@ describe('@pinceau/theme', () => {
         expect(output).toMatchSnapshot()
       })
 
-      it('build format (types)', async () => {
+      it('build format (ts)', async () => {
         pinceauContext.options.theme.outputFormats.push(utilsTypesFormat)
 
         const output = await configCtx.buildTheme()

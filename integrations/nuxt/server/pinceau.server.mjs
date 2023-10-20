@@ -18,6 +18,6 @@ export default async function (nitro) {
     if ($pinceauSSR.options?.ssr?.runtime) { htmlContext.head.splice(2, 0, `<style id="pinceau-runtime">${$pinceauSSR?.css || ''}</style>`) }
 
     // Theme sheet
-    if ($pinceauSSR.options?.ssr?.theme) { htmlContext.head.splice(2, 0, `<style id="pinceau-theme" ${$pinceauSSR.options?.dev ? 'data-vite-dev-id="pinceau.css"' : ''}>${theme || ''}</style>`) }
+    if ($pinceauSSR.options?.ssr?.theme) { htmlContext.head.splice(2, 0, `<style id="pinceau-theme" ${$pinceauSSR.options?.dev ? 'data-vite-dev-id="@pinceau/outputs/theme.css"' : ''}>${theme || ''}</style>`) }
   })
 }

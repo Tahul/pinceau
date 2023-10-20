@@ -51,7 +51,7 @@ watch(
 watch(store.resetFlip, createSandbox)
 
 watch(
-  () => store.state.files['src/theme.config.ts'],
+  () => store.state.builtFiles,
   () => {
     nextTick(() => createSandbox())
   },
@@ -101,11 +101,11 @@ function createSandbox() {
       /<!--PREVIEW-OPTIONS-PLACEHOLDER-HTML-->/,
       previewOptions?.placeholderHTML || ''
   )
-  
-  if (store.state.builtFiles['pinceau.css']) {
+
+  if (store.state.builtFiles['@pinceau/outputs/theme.css']) {
     sandboxSrc = sandboxSrc.replace(
       /<!-- PREVIEW-PINCEAU-THEME -->/,
-      `<style id="pinceau-theme">${store.state.builtFiles['pinceau.css'].code}</style>`
+      `<style id="pinceau-theme">${store.state.builtFiles['@pinceau/outputs/theme.css'].code}</style>`
     )
   }
   
@@ -204,6 +204,10 @@ css({
     width: '100%',
     height: '100%',
     border: 'none',
+    position: 'relative'
+  },
+  '.msg': {
+    marginBottom: '$space.14'
   }
 })
 </style>

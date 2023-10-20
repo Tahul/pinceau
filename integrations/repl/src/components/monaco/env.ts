@@ -45,18 +45,27 @@ export function initMonaco(store: Store) {
       const file = store.state.builtFiles[filename]
 
       if (
-        filename === '$pinceau/utils'
-        || filename === '$pinceau/theme'
-        || filename === 'pinceau.css'
-      ) { continue }
+        [
+          '@pinceau/outputs/utils',
+          '@pinceau/outputs/theme',
+          '@pinceau/outputs/theme.css',
+        ].includes(filename)
+      ) {
+        continue
+      }
 
-      if (filename.includes('-types')) {
-        filename = filename.slice(0, filename.indexOf('-types'))
+      if (filename.includes('-ts')) {
+        filename = filename.slice(0, filename.indexOf('-ts'))
+      }
+
+      let uri: Uri = Uri.parse(`/npm/@pinceau/outputs@latest/${filename.replace('@pinceau/outputs/', '')}.d.ts`)
+      if (filename === '@pinceau/outputs') {
+        uri = Uri.parse('/npm/@pinceau/outputs@latest/index.d.ts')
       }
 
       getOrCreateModel(
-        Uri.parse(filename),
-        'typescript',
+        uri,
+        undefined,
         file.code,
       )
     }

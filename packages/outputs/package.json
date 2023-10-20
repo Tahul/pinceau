@@ -26,11 +26,13 @@
     },
     "./theme": {
       "import": "./theme.js",
-      "require": "./theme.js"
+      "require": "./theme.js",
+      "types": "./theme.d.ts"
     },
     "./definitions": {
       "import": "./definitions.js",
-      "require": "./definitions.js"
+      "require": "./definitions.js",
+      "types": "./definitions.d.ts"
     },
     "./hmr": {
       "require": "./hmr.js",
@@ -42,15 +44,18 @@
     },
     "./svelte-plugin": {
       "require": "./svelte-plugin.js",
-      "import": "./svelte-plugin.js"
+      "import": "./svelte-plugin.js",
+      "types": "./svelte-plugin.d.ts"
     },
     "./vue-plugin": {
       "require": "./vue-plugin.js",
-      "import": "./vue-plugin.js"
+      "import": "./vue-plugin.js",
+      "types": "./vue-plugin.d.s"
     },
     "./react-plugin": {
       "import": "./react-plugin.js",
-      "require": "./react-plugin.js"
+      "require": "./react-plugin.js",
+      "types": "./react-plugin.d.s"
     },
     "./utils": {
       "import": "./utils.js",

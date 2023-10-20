@@ -13,7 +13,7 @@ import { PinceauProvider } from './pinceau'
 export const importMapFile = 'import-map.json'
 export const tsconfigFile = 'tsconfig.json'
 export const themeFile = 'theme.config.ts'
-export const pinceauVersion = '1.0.0-beta.16'
+export const pinceauVersion = '1.0.0-beta.21'
 
 const supportedTransformers = {
   vue: ReplVueTransformer,
@@ -223,10 +223,6 @@ export class ReplStore implements Store {
     this.reloadLanguageTools?.(transformer)
     this.init()
     this.forceSandboxReset()
-
-    setTimeout(() => {
-      window?.location?.reload()
-    }, 1000)
 
     return this
   }

@@ -8,6 +8,7 @@ import {
   pinceauVariableTransformer,
   resolveConfigContent,
   resolveMediaQueriesKeys,
+  pluginTypes as themePluginTypes,
   typescriptFormat,
   utilsFormat,
   utilsTypesFormat,
@@ -21,9 +22,12 @@ import { PinceauSvelteTransformer } from '@pinceau/svelte/utils'
 import { findDefaultExport, parseAst, parsePinceauQuery, printAst, usePinceauContext, usePinceauTransformContext, visitAst } from '@pinceau/core/utils'
 import { suite as styleSuite } from '@pinceau/style/transforms'
 import { suite as themeSuite } from '@pinceau/theme/transforms'
+import { pluginTypes as stylePluginTypes } from '@pinceau/style/utils'
 import type { PinceauContext } from '@pinceau/core'
 import { File } from '..'
 import type { ReplStore } from '..'
+import { processModule } from '../compiler'
+import { transformTS } from '../transforms/typescript'
 import { themeFile } from '.'
 
 export class PinceauProvider {
@@ -59,10 +63,14 @@ export class PinceauProvider {
       'vue',
       PinceauVueTransformer,
     )
+
     this.pinceauContext.registerTransformer(
       'svelte',
       PinceauSvelteTransformer,
     )
+
+    this.pinceauContext.addTypes(themePluginTypes)
+    this.pinceauContext.addTypes(stylePluginTypes)
   }
 
   init() {
@@ -121,8 +129,32 @@ export class PinceauProvider {
           this.pinceauContext,
         )
 
-        for (const [key, output] of Object.entries(builtTheme.outputs)) {
-          builtFiles[key] = new File(key, output, true)
+        for (const [key, output] of Object.entries(builtTheme.outputs as { [key: string]: string })) {
+          if (key === '@pinceau/outputs' || key.includes('.css')) {
+            builtFiles[key] = new File(
+              key,
+              output,
+              true,
+            )
+            continue
+          }
+
+          let built: string = output
+          if (key.includes('-ts')) {
+            built = await transformTS(built)
+          }
+
+          const newFile = builtFiles[key] = new File(
+            key,
+            output,
+            true,
+          )
+
+          newFile.compiled.js = newFile.compiled.ssr = processModule(
+            this.store,
+            built,
+            key,
+          ).code
         }
 
         this.store.state.builtFiles = builtFiles

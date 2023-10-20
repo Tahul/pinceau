@@ -45,7 +45,7 @@ const dynamicImportKey = '__dynamic_import__'
 const moduleKey = '__module__'
 
 // similar logic with Vite's SSR transform, except this is targeting the browser
-function processFile(
+export function processFile(
   store: Store,
   file: File,
   processed: string[],
@@ -104,7 +104,7 @@ function processChildFiles(
   }
 }
 
-function processModule(store: Store, src: string, filename: string) {
+export function processModule(store: Store, src: string, filename: string) {
   const s = new MagicString(src)
 
   const ast = babelParse(src, {
@@ -130,6 +130,17 @@ function processModule(store: Store, src: string, filename: string) {
 
   function defineImport(node: Node, source: string) {
     const filename = resolveImport(source.replace(/^\.\/+/, 'src/'))
+
+    if (source.includes('@pinceau/outputs')) {
+      const id = `__import_${importedFiles.size}__`
+      importToIdMap.set(source, id)
+      s.appendLeft(
+        node.start!,
+        `const ${id} = ${modulesKey}[${JSON.stringify(source)}]\n`,
+      )
+      return id
+    }
+
     if (!filename) { throw new Error(`File "${source}" does not exist.`) }
 
     if (importedFiles.has(filename)) { return importToIdMap.get(filename)! }
@@ -162,7 +173,8 @@ function processModule(store: Store, src: string, filename: string) {
     // import * as ok from 'foo' --> ok -> __import_foo__
     if (node.type === 'ImportDeclaration') {
       const source = node.source.value
-      if (source.startsWith('./')) {
+
+      if (source.startsWith('./') || source.startsWith('@pinceau/outputs')) {
         const importId = defineImport(node, node.source.value)
         for (const spec of node.specifiers) {
           if (spec.type === 'ImportSpecifier') {

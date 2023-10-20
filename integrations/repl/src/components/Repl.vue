@@ -126,11 +126,13 @@ css({
     '--bg-soft': '$color.gray.1',
     '--border': '$color.gray.2',
     '--text-light': '$color.gray.9',
+    '--font-base': '\'Onest\'',
     '--font-code': '\'JetBrains Mono\', monospace',
     '--color-branding': '$color.red.5',
     '--color-branding-dark': '$color.blue.5',
     '--header-height': '$space.12',
 
+    'fontFamily': 'var(--font-base)',
     'display': 'flex',
     'flexDirection': 'column',
     'height': '100%',
@@ -154,7 +156,6 @@ css({
     'margin': '0',
     'overflow': 'hidden',
     'fontSize': '12px',
-    'fontFamily': '\'Onest\', sans-serif',
     'backgroundColor': 'var(--bg-soft)',
     '&.has-topbar': {
       height: 'calc(100% - var(--header-height))',

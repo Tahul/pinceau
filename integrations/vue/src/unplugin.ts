@@ -5,6 +5,7 @@ import type { UnpluginInstance } from 'unplugin'
 import { suite } from './transforms/suite'
 import { registerVirtualOutputs } from './utils/virtual'
 import { PinceauVueTransformer } from './utils/transformer'
+import { pluginTypes } from './utils/plugin-types'
 
 export { registerVirtualOutputs }
 
@@ -33,22 +34,7 @@ export const PinceauVuePlugin: UnpluginInstance<undefined> = createUnplugin(() =
           },
         )
 
-        ctx.addTypes({
-          imports: [
-            'import type { VueStyledComponentFactory } from \'@pinceau/vue\'',
-            'import { ResponsiveProp } from \'@pinceau/style\'',
-            'import { StyledFunctionArg } from \'@pinceau/style\'',
-            'import { PropType } from \'vue\'',
-          ],
-          global: [
-            'export type ResponsiveProp<T extends string | number | symbol | undefined> = PropType<ResponsiveProp<T>>',
-            'export type StyledProp = PropType<StyledFunctionArg>',
-            'export const $styled: { [Type in SupportedHTMLElements]: VueStyledComponentFactory<Type> }',
-          ],
-          raw: [
-            'declare module \'@vue/runtime-dom\' { interface HTMLAttributes { styled?: StyledFunctionArg } }',
-          ],
-        })
+        ctx.addTypes(pluginTypes)
 
         registerVirtualOutputs(ctx)
       },

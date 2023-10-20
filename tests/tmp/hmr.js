@@ -5,7 +5,7 @@ if (import.meta.hot) {
   import.meta.hot.on(
     'pinceau:theme',
     theme => {
-      theme?.css && updateStyle('pinceau.css', theme.css)
+      theme?.css && updateStyle('@pinceau/outputs/theme.css', theme.css)
     }
   )
 

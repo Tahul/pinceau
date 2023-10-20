@@ -6,11 +6,12 @@ import type {
   SFCTemplateCompileOptions,
 } from 'vue/compiler-sfc'
 import type { Ref } from 'vue'
+import { createVuePlugin, pluginTypes } from '@pinceau/vue/utils'
 import { compileFile } from '../transforms'
-import { compileModulesForPreview } from '../compiler'
+import { compileModulesForPreview, processModule } from '../compiler'
 import type { PreviewProxy } from '../components/output/PreviewProxy'
-import type { ReplStore, ReplTransformer } from '.'
-import { File, pinceauVersion } from '.'
+import type { File, ReplStore, ReplTransformer } from '.'
+import { pinceauVersion } from '.'
 
 const defaultMainFile = 'src/App.vue'
 
@@ -45,7 +46,7 @@ const localImports = {
   '@pinceau/core/runtime': () => `https://cdn.jsdelivr.net/npm/@pinceau/core@${pinceauVersion}/dist/runtime.mjs`,
   '@pinceau/theme/runtime': () => `https://cdn.jsdelivr.net/npm/@pinceau/theme@${pinceauVersion}/dist/runtime.mjs`,
   '@pinceau/vue/runtime': () => `https://cdn.jsdelivr.net/npm/@pinceau/vue@${pinceauVersion}/dist/runtime.mjs`,
-  '$pinceau/vue-plugin': () => '/vue-plugin-proxy.js',
+  '@pinceau/outputs/vue-plugin': () => './vue-plugin-proxy.js',
 }
 
 export class ReplVueTransformer implements ReplTransformer<typeof defaultCompiler, SFCOptions> {
@@ -59,23 +60,7 @@ export class ReplVueTransformer implements ReplTransformer<typeof defaultCompile
   compilerOptions: SFCOptions = {}
   pendingImport: Promise<any> | null = null
   imports: typeof localImports = localImports
-  shims = {
-    'global.d.ts': new File('global.d.ts', `
-    import type { VueStyledComponentFactory } from \'@pinceau/vue\'
-    import type { PropType } from \'vue\'
-    import type { StyledFunctionArg, SupportedHTMLElements, ResponsiveProp } from \'@pinceau/style\'
-
-    declare global {
-      export type ResponsiveProp<T extends string | number | symbol | undefined> = PropType<ResponsiveProp<T>>
-      export type StyledProp = PropType<StyledFunctionArg>
-      export const $styled: { [Type in SupportedHTMLElements]: VueStyledComponentFactory<Type> }
-    }
-
-    declare module \'@vue/runtime-dom\' { interface HTMLAttributes { styled?: StyledFunctionArg } }
-
-    export {}
-    `),
-  }
+  shims = {}
 
   tsconfig: any = {
     compilerOptions: {
@@ -86,6 +71,7 @@ export class ReplVueTransformer implements ReplTransformer<typeof defaultCompile
       module: 'ESNext',
       moduleResolution: 'Bundler',
       allowImportingTsExtensions: true,
+      types: ['@pinceau/outputs'],
     },
     vueCompilerOptions: {
       target: 3.3,
@@ -94,6 +80,8 @@ export class ReplVueTransformer implements ReplTransformer<typeof defaultCompile
 
   constructor({ store }: { store: ReplStore }) {
     this.store = store
+
+    this.store.pinceauProvider.pinceauContext.addTypes(pluginTypes)
   }
 
   getTypescriptDependencies() {
@@ -111,10 +99,7 @@ export class ReplVueTransformer implements ReplTransformer<typeof defaultCompile
       '@pinceau/style': 'latest',
       '@pinceau/theme': 'latest',
       '@pinceau/runtime': 'latest',
-      '$pinceau/types': '',
-      '$pinceau/theme': '',
-      '$pinceau/utils': '',
-      '$pinceau/vue-plugin': '',
+      '@pinceau/outputs': 'latest',
     }
   }
 
@@ -169,6 +154,34 @@ export class ReplVueTransformer implements ReplTransformer<typeof defaultCompile
     )
   }
 
+  getBuiltFilesModules() {
+    const modules: string[] = []
+
+    for (const [key, code] of Object.entries(this.store.state.builtFiles)) {
+      if (
+        // Include `@pinceau/outputs/theme` and `@pinceau/outputs/utils` and skip the rest
+        // theme.css is included in srcdoc.html via replace
+        [
+          '@pinceau/outputs/theme-ts',
+          '@pinceau/outputs/theme.css',
+          '@pinceau/outputs/utils-ts',
+          '@pinceau/outputs',
+        ].includes(key)
+      ) { continue }
+
+      modules.push(code.compiled.ssr || code.compiled.js)
+    }
+
+    return [
+      processModule(
+        this.store,
+        createVuePlugin(this.store.pinceauProvider.pinceauContext),
+        '@pinceau/outputs/vue-plugin',
+      ).code,
+      ...modules,
+    ]
+  }
+
   async compileFile(file: File): Promise<(string | Error)[]> {
     return compileFile(this.store, file)
   }
@@ -209,12 +222,20 @@ export class ReplVueTransformer implements ReplTransformer<typeof defaultCompile
 
         console.log(`[@pinceau/repl] successfully compiled ${ssrModules.length} modules for SSR.`)
 
+        console.log({
+          appendedModules: [
+            ...this.getBuiltFilesModules(),
+            ...ssrModules,
+          ],
+        })
+
         await proxy.eval([
           'const __modules__ = {};',
+          ...this.getBuiltFilesModules(),
           ...ssrModules,
         `import { renderToString as _renderToString } from 'vue/server-renderer'
          import { createSSRApp as _createApp } from 'vue'
-         import { PinceauVue } from '@pinceau/outputs/vue-plugin'
+         const { PinceauVue } = __modules__["@pinceau/outputs/vue-plugin"]
 
          const AppComponent = __modules__["${mainFile}"].default
          
@@ -247,7 +268,8 @@ export class ReplVueTransformer implements ReplTransformer<typeof defaultCompile
        isSSR
         ? ''
         : `document.body.innerHTML = '<div id="app"></div>' + \`${previewOptions?.bodyHTML || ''
-        }\``}`,
+          }\``}`,
+        ...this.getBuiltFilesModules(),
         ...modules,
       `setTimeout(()=> {
         document.querySelectorAll('style[css]').forEach(el => el.remove())
@@ -259,7 +281,7 @@ export class ReplVueTransformer implements ReplTransformer<typeof defaultCompile
       if (mainFile.endsWith('.vue')) {
         codeToEval.push(
         `import { ${isSSR ? 'createSSRApp' : 'createApp'} as _createApp } from 'vue'
-        import { PinceauVue } from '@pinceau/outputs/vue-plugin'
+        const { PinceauVue } = __modules__["@pinceau/outputs/vue-plugin"]
         ${previewOptions?.customCode?.importCode || ''}
         const _mount = () => {
           const AppComponent = __modules__["${mainFile}"].default

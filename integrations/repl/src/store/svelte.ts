@@ -1,7 +1,8 @@
 import type { Ref } from 'vue'
 import * as defaultCompiler from 'svelte/compiler'
+import { createSveltePlugin, pluginTypes } from '@pinceau/svelte/utils'
 import { compileFile } from '../transforms'
-import { compileModulesForPreview } from '../compiler'
+import { compileModulesForPreview, processModule } from '../compiler'
 import type { PreviewProxy } from '../components/output/PreviewProxy'
 import type { ReplStore, ReplTransformer } from '.'
 import { File, pinceauVersion } from '.'
@@ -38,7 +39,7 @@ const localImports = {
   '@pinceau/core/runtime': () => `https://cdn.jsdelivr.net/npm/@pinceau/core@${pinceauVersion}/dist/runtime.mjs`,
   '@pinceau/theme/runtime': () => `https://cdn.jsdelivr.net/npm/@pinceau/theme@${pinceauVersion}/dist/runtime.mjs`,
   '@pinceau/react/runtime': () => `https://cdn.jsdelivr.net/npm/@pinceau/react@${pinceauVersion}/dist/runtime.mjs`,
-  '$pinceau/svelte-plugin': () => '/svelte-plugin-proxy.js',
+  '@pinceau/outputs/svelte-plugin': () => './svelte-plugin-proxy.js',
 }
 
 export class ReplSvelteTransformer implements ReplTransformer {
@@ -92,6 +93,8 @@ export class ReplSvelteTransformer implements ReplTransformer {
 
   constructor({ store }: { store: ReplStore }) {
     this.store = store
+
+    this.store.pinceauProvider.pinceauContext.addTypes(pluginTypes)
   }
 
   getTypescriptDependencies() {
@@ -157,6 +160,34 @@ export class ReplSvelteTransformer implements ReplTransformer {
     )
   }
 
+  getBuiltFilesModules() {
+    const modules: string[] = []
+
+    for (const [key, code] of Object.entries(this.store.state.builtFiles)) {
+      if (
+        [
+          '@pinceau/outputs/theme',
+          '@pinceau/outputs/theme-ts',
+          '@pinceau/outputs/theme.css',
+          '@pinceau/outputs/utils-ts',
+          '@pinceau/outputs',
+        ].includes(key)
+      ) { continue }
+      modules.push(code.code)
+    }
+
+    const sveltePlugin = createSveltePlugin(this.store.pinceauProvider.pinceauContext)
+
+    return [
+      processModule(
+        this.store,
+        sveltePlugin,
+        '@pinceau/outputs/svelte-plugin',
+      ).code,
+      ...modules,
+    ]
+  }
+
   async compileFile(file: File): Promise<(string | Error)[]> {
     return compileFile(this.store, file)
   }
@@ -203,7 +234,8 @@ export class ReplSvelteTransformer implements ReplTransformer {
        isSSR && false
         ? ''
         : `document.body.innerHTML = '<div id="app"></div>' + \`${previewOptions?.bodyHTML || ''
-        }\``}`,
+          }\``}`,
+        ...this.getBuiltFilesModules(),
         ...modules,
       `setTimeout(()=> {
         document.querySelectorAll('style[css]').forEach(el => el.remove())
