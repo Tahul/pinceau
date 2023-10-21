@@ -1,6 +1,6 @@
 {
   "name": "@pinceau/language-server",
-  "version": "1.0.0-beta.21",
+  "version": "1.0.0-beta.22",
   "description": "Pinceau language server providing hints on tokens values and other features.",
   "homepage": "https://github.com/Tahul/pinceau#readme",
   "bugs": {
