@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, ref, shallowRef, watchEffect } from 'vue'
+import { onMounted, ref, shallowRef, watch, watchEffect } from 'vue'
 import { Repl, ReplStore } from '../src'
 import MonacoEditor from '../src/components/editor/MonacoEditor.vue'
 
@@ -32,7 +32,7 @@ onMounted(() => {
     :store="store"
     :editor="_Editor"
     theme="dark"
-    :ssr="true"
+    :ssr="false"
   />
 </template>
 

@@ -9,6 +9,7 @@ import {
   createLanguageService,
   createServiceEnvironment,
 } from '@volar/monaco/worker'
+import type { Store } from '../..'
 import {
   createJsDelivrFs,
   createJsDelivrUriResolver,
@@ -28,6 +29,9 @@ export interface CreateData {
 
 let ts: typeof import('typescript')
 
+let builtFiles: Store['state']['builtFiles'] = {}
+const getBuiltFiles = () => builtFiles
+
 // eslint-disable-next-line no-restricted-globals
 self.onmessage = async (msg: MessageEvent<WorkerMessage>) => {
   if (msg.data?.event === 'init') {
@@ -35,6 +39,10 @@ self.onmessage = async (msg: MessageEvent<WorkerMessage>) => {
 
     // eslint-disable-next-line no-restricted-globals
     self.postMessage('inited')
+
+    if (msg.data.builtFiles) {
+      builtFiles = JSON.parse(msg.data.builtFiles) as Store['state']['builtFiles']
+    }
 
     return
   }
@@ -58,7 +66,7 @@ self.onmessage = async (msg: MessageEvent<WorkerMessage>) => {
         compilerOptions,
       )
 
-      const jsDelivrFs = createJsDelivrFs(ctx.host.onFetchCdnFile)
+      const jsDelivrFs = createJsDelivrFs(ctx.host.onFetchCdnFile, getBuiltFiles)
 
       const jsDelivrUriResolver = createJsDelivrUriResolver(
         '/node_modules',
@@ -84,9 +92,11 @@ self.onmessage = async (msg: MessageEvent<WorkerMessage>) => {
       const serviceConfig = resolveConfig(
         {
           services: {
+            'vue': () => ({}),
             'pug': () => ({}),
             'emmet': () => ({}),
             'pug-beautify': () => ({}),
+            'vue/referencesCodeLens': () => ({}),
             ...(language !== 'vue' ? noopVue : {}),
           },
         },
@@ -94,6 +104,12 @@ self.onmessage = async (msg: MessageEvent<WorkerMessage>) => {
         tsconfig.vueCompilerOptions || {},
         ts as any,
       )
+
+      console.log({
+        serviceConfig,
+        host,
+        env,
+      })
 
       if (language === 'svelte') {
         // @ts-ignore

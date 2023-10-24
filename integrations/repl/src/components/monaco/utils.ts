@@ -6,12 +6,13 @@ export function getOrCreateModel(
   lang: string | undefined,
   value: string,
 ) {
-  console.log({ uri: uri.path, lang, value })
   const model = editor.getModel(uri)
+  if (uri.path.includes('@pinceau/outputs')) {
+    console.log(uri.path)
+  }
   if (model) {
     model.setValue(value)
     return model
   }
-  // console.log('creating', uri)
   return editor.createModel(value, lang, uri)
 }

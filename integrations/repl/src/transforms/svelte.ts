@@ -6,7 +6,24 @@ export async function compileSvelteFile(
   store: Store,
   { filename, code, compiled }: File,
 ) {
-  const sfc = new MagicSFC(code, { parser: store.transformer.compiler.preprocess })
+  const transformed = await store.pinceauProvider.transformSvelte(filename, code)
+
+  if (transformed) {
+    if (transformed.state.styleFunctions) {
+      let pinceauCss: string = ''
+      for (const [_, styleFn] of Object.entries(transformed.state.styleFunctions)) {
+        if (styleFn.css) {
+          pinceauCss += `\n${styleFn.css}`
+        }
+      }
+      if (pinceauCss) { compiled.css = pinceauCss }
+    }
+  }
+
+  const sfc = new MagicSFC(
+    transformed?.result?.()?.code || transformed?.ms.toString() || code,
+    { parser: store.transformer.compiler.preprocess },
+  )
 
   await sfc.parse()
 
@@ -49,7 +66,7 @@ export async function compileSvelteFile(
 
   if (resultSsr.js.code) { compiled.ssr = resultSsr.js.code }
 
-  if (result.css) { compiled.css = result.css.code }
+  if (result.css) { compiled.css += `\n${result.css.code}` }
 
   return []
 }

@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "@pinceau/configs": "workspace:*",
-    "@types/vscode": "^1.83.0",
+    "@types/vscode": "^1.83.1",
     "@vitest/coverage-v8": "^0.34.6",
     "@vitest/ui": "^0.34.6",
     "@vscode/test-electron": "^2.3.5",

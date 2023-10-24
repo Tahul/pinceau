@@ -7,6 +7,7 @@ import * as onigasm from 'onigasm'
 import onigasmWasm from 'onigasm/lib/onigasm.wasm?url'
 import { watchEffect } from 'vue'
 import type { Store } from '../../store'
+import { pinceauVersion } from '../../store'
 import { getOrCreateModel } from './utils'
 import type { CreateData } from './volar.worker'
 
@@ -41,38 +42,38 @@ export function initMonaco(store: Store) {
       )
     }
 
-    for (let filename in store.state.builtFiles) {
+    for (const filename in store.state.builtFiles) {
       const file = store.state.builtFiles[filename]
 
-      if (
-        [
-          '@pinceau/outputs/utils',
-          '@pinceau/outputs/theme',
-          '@pinceau/outputs/theme.css',
-        ].includes(filename)
-      ) {
-        continue
-      }
-
-      if (filename.includes('-ts')) {
-        filename = filename.slice(0, filename.indexOf('-ts'))
-      }
-
-      let uri: Uri = Uri.parse(`/npm/@pinceau/outputs@latest/${filename.replace('@pinceau/outputs/', '')}.d.ts`)
       if (filename === '@pinceau/outputs') {
-        uri = Uri.parse('/npm/@pinceau/outputs@latest/index.d.ts')
+        getOrCreateModel(
+          Uri.parse(`https://cdn.jsdelivr.net/npm/@pinceau/outputs@${pinceauVersion}/index.d.ts`),
+          file.language,
+          file.code,
+        )
       }
 
-      getOrCreateModel(
-        uri,
-        undefined,
-        file.code,
-      )
+      if (filename === '@pinceau/outputs/theme-ts') {
+        getOrCreateModel(
+          Uri.parse(`https://cdn.jsdelivr.net/npm/outputs@${pinceauVersion}/theme.d.ts`),
+          file.language,
+          file.code,
+        )
+      }
+
+      if (filename === '@pinceau/outputs/utils-ts') {
+        getOrCreateModel(
+          Uri.parse(`https://cdn.jsdelivr.net/npm/outputs@${pinceauVersion}/utils.d.ts`),
+          file.language,
+          file.code,
+        )
+      }
     }
 
     // dispose of any models that are not in the store
     for (const model of editor.getModels()) {
       const uri = model.uri.toString()
+      if (uri.includes('@pinceau/outputs')) { continue }
       if (store.state.files[uri.substring('file:///'.length)]) { continue }
       if (store.transformer.shims[uri.substring('file:///'.length)]) { continue }
       if (uri.startsWith(`${jsDelivrUriBase}/`)) { continue }
@@ -140,32 +141,25 @@ export async function reloadLanguageTools(store: Store, lang?: 'vue' | 'svelte' 
   const getSyncUris = () => [
     ...Object.keys(store.state.files),
     ...Object.keys(store.transformer.shims),
+
   ].map((filename) => {
     return Uri.parse(`file:///${filename}`)
   })
 
-  const _disposeMarkers = () => { }
-  /*
-  if (lang === 'vue') {
-    const { dispose: disposeMarkers } = volar.editor.activateMarkers(
-      worker,
-      languageId,
-      'vue',
-      getSyncUris,
-      editor,
-    )
-    _disposeMarkers = disposeMarkers
-  }
-  */
+  const { dispose: disposeMarkers } = volar.editor.activateMarkers(
+    worker,
+    languageId,
+    'vue',
+    getSyncUris,
+    editor,
+  )
 
-  /*
   const { dispose: disposeAutoInsertion } = volar.editor.activateAutoInsertion(
     worker,
     languageId,
     getSyncUris,
     editor,
   )
-  */
 
   const { dispose: disposeProvides } = await volar.languages.registerProviders(
     worker,
@@ -175,8 +169,8 @@ export async function reloadLanguageTools(store: Store, lang?: 'vue' | 'svelte' 
   )
 
   disposeWorker = () => {
-    _disposeMarkers?.()
-    // disposeAutoInsertion?.()
+    disposeMarkers?.()
+    disposeAutoInsertion?.()
     disposeProvides?.()
   }
 }
@@ -186,6 +180,7 @@ export interface WorkerMessage {
   tsVersion: string
   language: string
   tsLocale?: string
+  builtFiles: string
 }
 
 export function loadMonacoEnv(store: Store) {
@@ -194,14 +189,18 @@ export function loadMonacoEnv(store: Store) {
     async getWorker(_: any, label: string) {
       const worker = new volarWorker()
       const init = new Promise<void>((resolve) => {
+        const builtFiles = JSON.stringify(store.state.builtFiles)
+
         worker.addEventListener('message', (data) => {
           if (data.data === 'inited') { resolve() }
         })
+
         worker.postMessage({
           event: 'init',
           tsVersion: store.state.typescriptVersion,
           tsLocale: store.state.locale,
           language: label,
+          builtFiles,
         } satisfies WorkerMessage)
       })
       await init

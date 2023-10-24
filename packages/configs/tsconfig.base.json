@@ -29,5 +29,4 @@
   "vueCompilerOptions": {
     "plugins": ["@pinceau/volar"]
   }
-
 }

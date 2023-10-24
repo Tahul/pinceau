@@ -1,5 +1,6 @@
 import type { FileStat, FileSystem, FileType } from '@volar/language-service'
 import type { UriResolver } from '@volar/cdn'
+import type { File, Store } from '../..'
 
 const textCache = new Map<string, Promise<string | undefined>>()
 const jsonCache = new Map<string, Promise<any>>()
@@ -80,7 +81,11 @@ export function createJsDelivrUriResolver(
   }
 }
 
-export function createJsDelivrFs(onReadFile?: (uri: string, content: string) => void): FileSystem {
+export function createJsDelivrFs(
+  onReadFile?: (uri: string, content: string) => void,
+  getBuiltFiles?: () => Store['state']['builtFiles'],
+): FileSystem {
+  let builtFiles: Record<string, File> | undefined = {}
   const fetchResults = new Map<string, Promise<string | undefined>>()
   const flatResults = new Map<string, Promise<{
     name: string
@@ -96,6 +101,8 @@ export function createJsDelivrFs(onReadFile?: (uri: string, content: string) => 
   }
 
   async function stat(uri: string): Promise<FileStat | undefined> {
+    builtFiles = getBuiltFiles?.()
+
     if (uri === jsDelivrUriBase) {
       return {
         type: 2 satisfies FileType.Directory,
@@ -119,6 +126,18 @@ export function createJsDelivrFs(onReadFile?: (uri: string, content: string) => 
       const flatResult = await flatResults.get(pkgName)!
 
       const filePath = path.slice(`/${pkgName}`.length)
+
+      if (pkgName.includes('@pinceau/outputs')) {
+        if (filePath === '/theme.d.ts' || filePath === '/index.d.ts' || filePath === '/utils.d.ts') {
+          return {
+            type: 1 satisfies FileType.File,
+            ctime: new Date().valueOf(),
+            mtime: new Date().valueOf(),
+            size: 1,
+          }
+        }
+      }
+
       const file = flatResult.find(file => file.name === filePath)
       if (file) {
         return {
@@ -140,6 +159,8 @@ export function createJsDelivrFs(onReadFile?: (uri: string, content: string) => 
   }
 
   async function readDirectory(uri: string): Promise<[string, FileType][]> {
+    builtFiles = getBuiltFiles?.()
+
     if (uri.startsWith(`${jsDelivrUriBase}/`)) {
       const path = uri.substring(jsDelivrUriBase.length)
       const pkgName = getPackageName(path)
@@ -170,6 +191,8 @@ export function createJsDelivrFs(onReadFile?: (uri: string, content: string) => 
   }
 
   async function readFile(uri: string): Promise<string | undefined> {
+    builtFiles = getBuiltFiles?.()
+
     if (uri.startsWith(`${jsDelivrUriBase}/`)) {
       const path = uri.substring(jsDelivrUriBase.length)
       const pkgName = getPackageName(path)
@@ -177,7 +200,30 @@ export function createJsDelivrFs(onReadFile?: (uri: string, content: string) => 
         return
       }
 
-      if (!fetchResults.has(path)) {
+      if (pkgName.includes('@pinceau/outputs')) {
+        fetchResults.set(path, (async () => {
+          const file = path.split('/')
+          const fileName = file[file.length - 1]
+          let content: string | undefined
+
+          if (fileName === 'theme.d.ts' && builtFiles?.['@pinceau/outputs/theme-ts']) {
+            return builtFiles?.['@pinceau/outputs/theme-ts'].code
+          }
+
+          if (fileName === 'index.d.ts' && builtFiles?.['@pinceau/outputs']) {
+            return builtFiles?.['@pinceau/outputs'].code
+          }
+
+          if (fileName === 'utils.d.ts' && builtFiles?.['@pinceau/outputs/utils-ts']) {
+            return builtFiles?.['@pinceau/outputs/utils-ts'].code
+          }
+
+          return content
+        })())
+
+        return await fetchResults.get(path)!
+      }
+      else if (!fetchResults.has(path)) {
         fetchResults.set(path, (async () => {
           if ((await stat(uri))?.type !== 1 satisfies FileType.File) {
             return
@@ -236,6 +282,30 @@ export function createJsDelivrFs(onReadFile?: (uri: string, content: string) => 
         hash: string
       }[]
     }>(`https://data.jsdelivr.com/v1/package/npm/${pkgName}@${version}/flat`)
+
+    if (pkgName === '@pinceau/outputs') {
+      const builtFiles = getBuiltFiles?.() || {}
+
+      Object.entries(builtFiles).forEach(([key]) => {
+        if (key === '@pinceau/outputs/theme-ts') {
+          flat.files.push({
+            name: '/./theme.d.ts',
+            hash: '',
+            time: '',
+            size: 1,
+          })
+        }
+
+        if (key === '@pinceau/outputs/utils-ts') {
+          flat.files.push({
+            name: '/./utils.d.ts',
+            hash: '',
+            time: '',
+            size: 1,
+          })
+        }
+      })
+    }
 
     if (!flat) {
       return []

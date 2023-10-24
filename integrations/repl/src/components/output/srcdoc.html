@@ -44,6 +44,12 @@
           const send_error = (message, stack) =>
             send_reply({ action: 'cmd_error', message, stack })
 
+          if (action === 'theme') {
+            const themeSheet = document.getElementById('pinceau-theme')
+
+            if (themeSheet && ev.data.args.theme) themeSheet.innerHTML = ev.data.args.theme
+          }
+
           if (action === 'eval') {
             try {
               if (scriptEls.length) {

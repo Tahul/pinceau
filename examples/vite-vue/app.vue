@@ -28,7 +28,7 @@ css({
 
 const { x, y } = useMouseInElement(containerRef)
 
-const CircleComponent = $styled.div({
+const CircleComponent = $styled.div<{ color: 'red' | 'blue' }>({
   $size: () => `${size.value}px`,
   position: 'absolute',
   left: () => `calc(${x.value}px - calc($size / 2))`,
@@ -45,7 +45,7 @@ const CircleComponent = $styled.div({
 <template>
   <App ref="containerRef" class="main container">
     <input :styled="{ position: 'absolute', zIndex: '9', color: '$color.gray.8', borderRadius: '9px', right: 0 }" v-model="size" />
-    <CircleComponent />
+    <CircleComponent color="" />
     <div class="dot-background" />
   </App>
 </template>

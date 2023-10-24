@@ -99,7 +99,9 @@ export class ReplVueTransformer implements ReplTransformer<typeof defaultCompile
       '@pinceau/style': 'latest',
       '@pinceau/theme': 'latest',
       '@pinceau/runtime': 'latest',
-      '@pinceau/outputs': 'latest',
+      '@pinceau/outputs': '1.0.0-beta.22',
+      '@pinceau/outputs/theme': '1.0.0-beta.22',
+      '@pinceau/outputs/utils': '1.0.0-beta.22',
     }
   }
 
@@ -222,13 +224,6 @@ export class ReplVueTransformer implements ReplTransformer<typeof defaultCompile
 
         console.log(`[@pinceau/repl] successfully compiled ${ssrModules.length} modules for SSR.`)
 
-        console.log({
-          appendedModules: [
-            ...this.getBuiltFilesModules(),
-            ...ssrModules,
-          ],
-        })
-
         await proxy.eval([
           'const __modules__ = {};',
           ...this.getBuiltFilesModules(),
@@ -283,6 +278,7 @@ export class ReplVueTransformer implements ReplTransformer<typeof defaultCompile
         `import { ${isSSR ? 'createSSRApp' : 'createApp'} as _createApp } from 'vue'
         const { PinceauVue } = __modules__["@pinceau/outputs/vue-plugin"]
         ${previewOptions?.customCode?.importCode || ''}
+
         const _mount = () => {
           const AppComponent = __modules__["${mainFile}"].default
           AppComponent.name = 'Repl'

@@ -7,7 +7,7 @@ export const suite: PinceauTransforms = {
     transformAddRuntimeScriptTag,
   ],
   scripts: [
-    transformWriteStyleFeatures,
     transformWriteScriptFeatures,
+    transformWriteStyleFeatures,
   ],
 }

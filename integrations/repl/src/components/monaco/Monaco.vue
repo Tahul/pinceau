@@ -41,9 +41,11 @@ const store = inject<Store>('store')!
 const lang = computed(() => (props.mode === 'css' ? 'css' : 'javascript'))
 const replTheme = inject<Ref<'dark' | 'light'>>('theme')!
 
-initMonaco(store)
-
 onMounted(async () => {
+  await store.pinceauProvider.pendingBuild
+
+  initMonaco(store)
+
   const theme = await loadTheme(monaco.editor as any)
   ready.value = true
 
@@ -62,9 +64,6 @@ onMounted(async () => {
     'automaticLayout': true,
     'scrollBeyondLastLine': false,
     'minimap': {
-      enabled: false,
-    },
-    'inlineSuggest': {
       enabled: false,
     },
     'semanticHighlighting.enabled': true,

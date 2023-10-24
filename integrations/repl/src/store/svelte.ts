@@ -38,7 +38,7 @@ const localImports = {
   '@pinceau/stringify': () => `https://cdn.jsdelivr.net/npm/@pinceau/stringify@${pinceauVersion}/dist/index.mjs`,
   '@pinceau/core/runtime': () => `https://cdn.jsdelivr.net/npm/@pinceau/core@${pinceauVersion}/dist/runtime.mjs`,
   '@pinceau/theme/runtime': () => `https://cdn.jsdelivr.net/npm/@pinceau/theme@${pinceauVersion}/dist/runtime.mjs`,
-  '@pinceau/react/runtime': () => `https://cdn.jsdelivr.net/npm/@pinceau/react@${pinceauVersion}/dist/runtime.mjs`,
+  '@pinceau/svelte/runtime': () => `https://cdn.jsdelivr.net/npm/@pinceau/svelte@${pinceauVersion}/dist/runtime.mjs`,
   '@pinceau/outputs/svelte-plugin': () => './svelte-plugin-proxy.js',
 }
 
@@ -58,17 +58,6 @@ export class ReplSvelteTransformer implements ReplTransformer {
     'global.d.ts': new File('global.d.ts', `
     declare module 'svelte';
     import 'svelte/elements';
-    import type { SvelteStyledComponentFactory } from \'@pinceau/svelte\'
-    import { ResponsiveProp } from \'@pinceau/style\'
-    import { SupportedHTMLElements } from \'@pinceau/style\'
-
-    declare global {
-      export type ResponsiveProp<T extends string | number | symbol | undefined> = ResponsiveProp<T>
-      export type StyledProp = StyledFunctionArg
-      export const $styled: { [Type in SupportedHTMLElements]: SvelteStyledComponentFactory<Type> }
-    }
-
-    declare module \'svelte/elements\' { export interface DOMAttributes<T extends EventTarget> { styled?: StyledFunctionArg } }
     `),
   }
 
@@ -88,6 +77,7 @@ export class ReplSvelteTransformer implements ReplTransformer {
       resolveJsonModule: true,
       isolatedModules: true,
       noEmit: true,
+      types: ['@pinceau/outputs'],
     },
   }
 
@@ -219,6 +209,7 @@ export class ReplSvelteTransformer implements ReplTransformer {
 
         await proxy.eval([
           'const __modules__ = {};',
+          ...this.getBuiltFilesModules(),
           ...ssrModules,
         ])
       }

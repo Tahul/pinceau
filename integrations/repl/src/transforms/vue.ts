@@ -12,45 +12,45 @@ export async function compileVueFile(
   store: Store,
   file: File,
 ) {
-  let { code } = file
-  const { filename, compiled } = file
+  const { code, filename, compiled } = file
 
   const id = toHash(filename)
 
-  const transformed = await store.pinceauProvider.transformVue(file)
+  const transformed = await store.pinceauProvider.transformVue(filename, code)
 
   if (transformed) {
-    code = transformed.result()?.code || code
-
     if (transformed.state.styleFunctions) {
       let pinceauCss: string = ''
-      for (const [key, styleFn] of Object.entries(transformed.state.styleFunctions)) {
+      for (const [_, styleFn] of Object.entries(transformed.state.styleFunctions)) {
         if (styleFn.css) {
           pinceauCss += `\n${styleFn.css}`
         }
       }
-      if (pinceauCss) { file.compiled.css = pinceauCss }
+      if (pinceauCss) { compiled.css = pinceauCss }
     }
   }
 
-  const { errors, descriptor } = store.transformer.compiler.parse(code, {
-    filename,
-    sourceMap: true,
-  })
+  const { errors, descriptor } = store.transformer.compiler.parse(
+    transformed?.result?.()?.code || transformed?.ms.toString() || code,
+    {
+      filename,
+      sourceMap: true,
+    },
+  )
 
-  if (errors.length) { return errors }
+  if (errors.length) { throw new Error(errors.join(',\n')) }
 
   if (
     descriptor.styles.some(s => s.lang)
     || (descriptor.template && descriptor.template.lang)
   ) {
-    return ['lang="x" pre-processors for <template> or <style> are currently not supported.']
+    throw new Error('lang="x" pre-processors for <template> or <style> are currently not supported.')
   }
 
   const scriptLang = (descriptor.script && descriptor.script.lang) || (descriptor.scriptSetup && descriptor.scriptSetup.lang)
 
   const isTS = scriptLang === 'ts'
-  if (scriptLang && !isTS) { return ['Only lang="ts" is supported for <script> blocks.'] }
+  if (scriptLang && !isTS) { throw new Error('Only lang="ts" is supported for <script> blocks.') }
 
   const hasScoped = descriptor.styles.some(s => s.scoped)
   let clientCode = ''
@@ -73,7 +73,7 @@ export async function compileVueFile(
     )
   }
   catch (e: any) {
-    return [e.stack.split('\n').slice(0, 12).join('\n')]
+    throw new Error(e.stack.split('\n').slice(0, 12).join('\n'))
   }
 
   clientCode += clientScript
@@ -115,7 +115,6 @@ export async function compileVueFile(
       false,
       isTS,
     )
-    if (Array.isArray(clientTemplateResult)) { return clientTemplateResult }
 
     clientCode += `;${clientTemplateResult}`
 
@@ -127,6 +126,7 @@ export async function compileVueFile(
       true,
       isTS,
     )
+
     if (typeof ssrTemplateResult === 'string') {
       // SSR compile failure is fine
       ssrCode += `;${ssrTemplateResult}`
@@ -151,7 +151,7 @@ export async function compileVueFile(
   // Styles
   let css = ''
   for (const style of descriptor.styles) {
-    if (style.module) { return ['<style module> is not supported in the playground.'] }
+    if (style.module) { throw new Error('<style module> is not supported in the playground.') }
 
     const styleResult = await store.transformer.compiler.compileStyleAsync({
       ...store.transformer.compilerOptions?.style,
@@ -175,8 +175,6 @@ export async function compileVueFile(
   }
   if (css) { compiled.css += css.trim() }
   else { compiled.css += '/* No <style> tags present */' }
-
-  return []
 }
 
 async function doCompileScript(
@@ -252,12 +250,11 @@ async function doCompileTemplate(
     },
   })
 
-  if (errors.length) { return errors }
+  if (errors.length) { throw new Error(errors.join(',\n')) }
 
   const fnName = ssr ? 'ssrRender' : 'render'
 
-  code
-    = `\n${code.replace(
+  code = `\n${code.replace(
       /\nexport (function|const) (render|ssrRender)/,
       `$1 ${fnName}`,
     )}` + `\n${COMP_IDENTIFIER}.${fnName} = ${fnName}`

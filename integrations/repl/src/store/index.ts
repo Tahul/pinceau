@@ -13,7 +13,7 @@ import { PinceauProvider } from './pinceau'
 export const importMapFile = 'import-map.json'
 export const tsconfigFile = 'tsconfig.json'
 export const themeFile = 'theme.config.ts'
-export const pinceauVersion = '1.0.0-beta.21'
+export const pinceauVersion = '1.0.0-beta.22'
 
 const supportedTransformers = {
   vue: ReplVueTransformer,
@@ -144,9 +144,14 @@ export class ReplStore implements Store {
   }: StoreOptions = {}) {
     let serializedFiles: { [key: string]: string } | undefined
     if (serializedState) {
-      const { files, transformer: serializedTransformer } = JSON.parse(atou(serializedState))
-      if (files) { serializedFiles = files }
-      if (serializedTransformer) { transformer = serializedTransformer }
+      try {
+        const { files, transformer: serializedTransformer } = JSON.parse(atou(serializedState))
+        if (files) { serializedFiles = files }
+        if (serializedTransformer) { transformer = serializedTransformer }
+      }
+      catch (e) {
+        //
+      }
     }
 
     const files: StoreState['files'] = {}
@@ -230,7 +235,11 @@ export class ReplStore implements Store {
   // Don't start compiling until the options are set
   init() {
     const stopCompilerEffect = watchEffect(
-      () => (this.transformer.compileFile(this.state.activeFile).then(errs => (this.state.errors = errs))),
+      async () => {
+        await this
+          .transformer.compileFile(this.state.activeFile)
+          .catch(err => (this.state.errors = [err.message]))
+      },
     )
 
     const stopLanguageToolsEffect = watch(

@@ -40,8 +40,18 @@
       "types": "./dist/unplugin.d.ts",
       "import": "./dist/unplugin.mjs",
       "require": "./dist/unplugin.cjs"
+    },
+    "./component": {
+      "svelte": "./PinceauComponent.svelte",
+      "import": "./dist/component.mjs",
+      "require": "./dist/unplugin.cjs",
+      "types": "./dist/component.d.ts"
     }
   },
+  "files": [
+    "dist",
+    "PinceauComponent.svelte"
+  ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -53,11 +63,20 @@
   "dependencies": {
     "@pinceau/integration": "workspace:*",
     "@pinceau/outputs": "workspace:*",
-    "acorn": "^8.10.0",
     "ultrahtml": "npm:@pinceau/ultrahtml@1.5.2"
+  },
+  "peerDependencies": {
+    "svelte": "^4.2.2"
+  },
+  "peerDependenciesMeta": {
+    "svelte": {
+      "optional": false
+    }
   },
   "devDependencies": {
     "@pinceau/configs": "workspace:*",
-    "@sveltejs/vite-plugin-svelte": "^2.4.6"
+    "@sveltejs/vite-plugin-svelte": "^2.4.6",
+    "acorn": "^8.10.0",
+    "rollup-plugin-svelte": "^7.1.6"
   }
 }

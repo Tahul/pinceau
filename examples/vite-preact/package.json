@@ -17,11 +17,11 @@
     "@pinceau/configs": "workspace:*",
     "@pinceau/palette": "workspace:*",
     "@pinceau/outputs": "workspace:*",    "@pinceau/react": "workspace:*",
-    "@preact/preset-vite": "^2.5.0",
+    "@preact/preset-vite": "^2.6.0",
     "@prefresh/vite": "^2.4.1",
     "cross-env": "^7.0.3",
     "typescript": "^5.2.2",
-    "vite": "^4.4.11"
+    "vite": "^4.5.0"
   },
   "stackblitz": {
     "installDependencies": false,

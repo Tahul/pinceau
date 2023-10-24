@@ -26,8 +26,6 @@ const App = {
       outputMode: query.get('om') || 'preview',
     }))
 
-    console.log(store)
-
     watchEffect(() => history.replaceState({}, '', store.serialize()))
 
     // setTimeout(() => {

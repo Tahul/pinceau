@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Pane, Splitpanes } from 'splitpanes'
 import 'splitpanes/dist/splitpanes.css'
-import { provide, ref, toRef } from 'vue'
+import { onMounted, provide, ref, toRef } from 'vue'
 import type { Store } from '../store'
 import { ReplStore } from '../store'
 import Output from './output/Output.vue'
@@ -44,7 +44,7 @@ const props = withDefaults(defineProps<Props>(), {
   showTsConfig: true,
   showTheme: true,
   clearConsole: true,
-  ssr: true,
+  ssr: false,
   compilerOptions: () => ({}),
   previewOptions: () => ({
     headHTML: '',
@@ -59,6 +59,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 if (!props.editor) { throw new Error('The "editor" prop is now required.') }
 
+const initializing = ref(true)
 const outputRef = ref<InstanceType<typeof Output>>()
 const { store } = props
 const compilerOptions = (store.transformer.compilerOptions = props.compilerOptions || {})
@@ -77,7 +78,11 @@ compilerOptions.script.fs = {
 
 store.init()
 
-store.pinceauProvider.init()
+onMounted(async () => {
+  await store.pinceauProvider.init()
+
+  initializing.value = false
+})
 
 provide('store', store)
 provide('autoresize', props.autoResize)
@@ -103,15 +108,22 @@ defineExpose({ reload })
     <TopBar v-if="props.topBar" />
     <Splitpanes class="pinceau-repl" :class="[{ 'has-topbar': props.topBar }]">
       <Pane>
-        <EditorContainer :editor-component="editor" />
+        <EditorContainer v-if="!initializing" :editor-component="editor" />
+        <div v-else>
+          Loading...
+        </div>
       </Pane>
       <Pane>
         <Output
+          v-if="!initializing"
           ref="outputRef"
           :editor-component="editor"
           :show-compile-output="props.showCompileOutput"
           :ssr="!!props.ssr"
         />
+        <div v-else>
+          Loading...
+        </div>
       </Pane>
     </Splitpanes>
   </div>

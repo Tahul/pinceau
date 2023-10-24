@@ -30,7 +30,7 @@
     "@pinceau/theme": "workspace:*",
     "@pinceau/core": "workspace:*",
     "@pinceau/style": "workspace:*",
-    "@vue/compiler-sfc": "^3.3.4",
+    "@vue/compiler-sfc": "^3.3.6",
     "fast-glob": "^3.3.1",
     "line-column": "^1.0.2",
     "tinycolor2": "1.6.0",
@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "@pinceau/configs": "workspace:*",
-    "@types/line-column": "^1.0.0",
-    "@types/tinycolor2": "^1.4.4"
+    "@types/line-column": "^1.0.1",
+    "@types/tinycolor2": "^1.4.5"
   }
 }

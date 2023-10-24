@@ -50,14 +50,6 @@ watch(
 // reset sandbox when version changes
 watch(store.resetFlip, createSandbox)
 
-watch(
-  () => store.state.builtFiles,
-  () => {
-    nextTick(() => createSandbox())
-  },
-  { deep: true }
-)
-
 onUnmounted(() => {
   proxy.destroy()
   stopUpdateWatcher && stopUpdateWatcher()
@@ -102,12 +94,10 @@ function createSandbox() {
       previewOptions?.placeholderHTML || ''
   )
 
-  if (store.state.builtFiles['@pinceau/outputs/theme.css']) {
-    sandboxSrc = sandboxSrc.replace(
-      /<!-- PREVIEW-PINCEAU-THEME -->/,
-      `<style id="pinceau-theme">${store.state.builtFiles['@pinceau/outputs/theme.css'].code}</style>`
-    )
-  }
+  sandboxSrc = sandboxSrc.replace(
+    /<!-- PREVIEW-PINCEAU-THEME -->/,
+    `<style id="pinceau-theme">${store?.state?.builtFiles?.['@pinceau/outputs/theme.css']?.code || ''}</style>`
+  )
   
   sandbox.srcdoc = sandboxSrc
   container.value.appendChild(sandbox)
@@ -169,16 +159,39 @@ function createSandbox() {
 
   sandbox.addEventListener('load', () => {
     proxy.handle_links()
-    stopUpdateWatcher = watchEffect(() => {
-      store.transformer.updatePreview(
-        clearConsole,
-        runtimeError,
-        runtimeWarning,
-        props.ssr,
-        proxy,
-        previewOptions,
-      )
-    })
+    const stopFilesWatcher = watch(
+      [
+        store.state.files
+      ],
+      () => {
+        store.transformer.updatePreview(
+          clearConsole,
+          runtimeError,
+          runtimeWarning,
+          props.ssr,
+          proxy,
+          previewOptions,
+        )
+      },
+      {
+        immediate: true
+      }
+    )
+
+    const stopBuildFilesWatcher = watch(
+      () => store.state.builtFiles['@pinceau/outputs/theme.css'].code,
+      (newTheme) => {
+        proxy.theme(newTheme)
+      },
+      {
+        deep: true
+      }
+    )
+
+    stopUpdateWatcher = () => {
+      stopFilesWatcher()
+      stopBuildFilesWatcher()
+    }
   })
 }
 

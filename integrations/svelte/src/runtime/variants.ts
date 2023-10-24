@@ -1,12 +1,11 @@
 import { variantsToDeclaration } from '@pinceau/runtime'
 import type { Variants } from '@pinceau/style'
-import type { Writable } from 'svelte/store'
 import { getRuntimeSheet } from '@pinceau/outputs/svelte-plugin'
 
 export function useVariants(
   variants?: Variants,
-  props?: any,
-  className?: Writable<string | undefined> | undefined,
+  props?: Record<string, any>,
+  className?: string | undefined,
 ) {
   const keys = Object.keys(variants || {})
 

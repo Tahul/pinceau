@@ -6,13 +6,13 @@ export function usePinceauRuntime(
   staticClass: string | undefined,
   computedStyles?: [string, ComputedStyleDefinition][],
   variants?: Variants,
-  props?: any,
+  props: Record<string, any> = {},
 ) {
   let computedStylesClass: string | undefined
-  if (computedStyles && computedStyles.length) { computedStylesClass = useComputedStyles(computedStyles) }
+  if (computedStyles && computedStyles.length) { computedStylesClass = useComputedStyles(computedStyles, props, computedStylesClass) }
 
   let variantsClass: string | undefined
-  if (variants && Object.keys(variants).length) { variantsClass = useVariants(variants, props) }
+  if (variants && Object.keys(variants).length) { variantsClass = useVariants(variants, props, variantsClass) }
 
   return [
     staticClass,

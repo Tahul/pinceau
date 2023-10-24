@@ -1,4 +1,9 @@
+import { execSync } from 'node:child_process'
 import { defineBuildConfig } from 'unbuild'
+
+// @ts-ignore
+import svelte from 'rollup-plugin-svelte'
+import pkg from './package.json'
 
 export default defineBuildConfig({
   entries: [
@@ -25,6 +30,10 @@ export default defineBuildConfig({
     {
       input: 'src/unplugin.ts',
       name: 'unplugin',
+    },
+    {
+      input: 'src/component.ts',
+      name: 'component',
     },
   ],
 
@@ -63,4 +72,11 @@ export default defineBuildConfig({
     'scule',
     'nanoid',
   ],
+  hooks: {
+    'rollup:options': async (ctx, options) => {
+      (options.plugins as any).push(
+        svelte(),
+      )
+    },
+  },
 })
