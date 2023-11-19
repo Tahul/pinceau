@@ -41,11 +41,11 @@ const PinceauCorePlugin: UnpluginInstance<PinceauUserOptions> = createUnplugin((
       configResolved(config) {
         if (!ctx.options.cwd) {
           ctx.options.cwd = config.root
-
-          // Set node dependencies
-          ctx.fs = fs
-          ctx.resolve = createRequire(!ctx.options.cwd.endsWith('/') ? `${ctx.options.cwd}/` : ctx.options.cwd).resolve
         }
+
+        // Set node dependencies
+        ctx.fs = fs
+        ctx.resolve = createRequire(!ctx.options.cwd.endsWith('/') ? `${ctx.options.cwd}/` : ctx.options.cwd).resolve
       },
       api: {
         getPinceauContext: () => ctx,

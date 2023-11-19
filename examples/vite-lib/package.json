@@ -14,7 +14,8 @@
   "devDependencies": {
     "@pinceau/configs": "workspace:*",
     "@pinceau/palette": "workspace:*",
-    "@pinceau/outputs": "workspace:*",    "typescript": "^5.2.2",
+    "@pinceau/outputs": "workspace:*",
+    "typescript": "^5.2.2",
     "vite": "^5.0.0"
   }
 }

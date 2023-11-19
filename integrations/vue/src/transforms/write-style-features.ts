@@ -12,6 +12,8 @@ export const transformWriteStyleFeatures: PinceauTransformFunction = async (
   // Only target current block type functions
   const targetScopedContexts = Object.entries(transformContext.state?.styleFunctions || {}).filter(([key]) => key.startsWith(`${target.type}${target.index}`))
 
+  const writeableFns: string[] = []
+
   // Walk through styled functions state and replace pointers in target
   for (const [id, styleFunction] of targetScopedContexts) {
     // Skip already applied static functions; should not happen.
@@ -24,8 +26,15 @@ export const transformWriteStyleFeatures: PinceauTransformFunction = async (
     }
 
     if (target.type === 'script') {
-      // Push a `<style scoped pinceau-css-function>` at the bottom of the component
-      transformContext.ms.append(`\n<style scoped pc-fn="${id}">${styleFunction.css}</style>`)
+      if (transformContext.query.ext === 'vue') {
+        // Push a `<style scoped pinceau-css-function>` at the bottom of the component
+        transformContext.ms.append(`\n<style scoped pc-fn="${id}">${styleFunction.css}</style>`)
+      }
+      else {
+        // Push a $pinceau/style-functions.css import instead (.ts*/.js* contexts)
+        const styleModuleId = `$pinceau/style-functions.css?src=${transformContext.query.id}&pc-fn=${id}`
+        writeableFns.push(`import \'${styleModuleId}\'`)
+      }
     }
 
     if (target.type === 'template') {
@@ -43,11 +52,13 @@ export const transformWriteStyleFeatures: PinceauTransformFunction = async (
           id,
           filename: transformContext.query.filename,
           css: styleFunction.css,
-          selector: `[data-vite-dev-id*="pc-fn"][data-vite-dev-id*="${id.replace('$', '%24')}"]`,
+          selector: `[data-vite-dev-id*="pc-fn"][data-vite-dev-id*="${id}"]`,
         },
       })
     }
 
     styleFunction.applied.static = true
   }
+
+  if (writeableFns.length) { target.prepend(`\n${writeableFns.join('\n')}\n`) }
 }

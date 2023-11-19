@@ -20,6 +20,9 @@ export function getDefaultOptions(): { [key in keyof PinceauUserOptions]: any } 
     schema: true,
     imports: true,
     palette: true,
+    transformIndexHtml: true,
+    pinceauHtmlTag: true,
+    enforceHtmlInject: true,
   }
 
   const style: PinceauUserOptions['style'] = {

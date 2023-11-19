@@ -12,7 +12,7 @@ export const transformStyledProps: PinceauTransformFunction = async (
   const transformer = pinceauContext.transformers[transformContext.query.ext]
 
   if (transformer) {
-    const matchedProps = transformer.extractProp(transformContext, 'styled')
+    const matchedProps = await transformer.extractProp(transformContext, 'styled')
 
     for (let i = 0; i < matchedProps.length; i++) {
       const prop = matchedProps[i]

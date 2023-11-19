@@ -169,6 +169,7 @@ export function usePinceauContext(userOptions?: PinceauUserOptions): PinceauCont
       }
 
       if (this.filters.length) {
+        // If a single filter return true, take the query out
         return this.filters.some(filter => !filter(query))
           ? query
           : undefined

@@ -40,7 +40,7 @@ const PinceauThemePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
 
       transformIndexHtml: {
         order: 'post',
-        handler: async html => transformIndexHtml(html, ctx),
+        handler: async html => await transformIndexHtml(html, ctx),
       },
 
       async handleHotUpdate(hmrContext) {

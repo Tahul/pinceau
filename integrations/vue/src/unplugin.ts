@@ -1,4 +1,4 @@
-import { getPinceauContext, transform, transformInclude } from '@pinceau/core/utils'
+import { PINCEAU_SCRIPTS_EXTENSIONS, getPinceauContext, transform, transformInclude } from '@pinceau/core/utils'
 import type { PinceauContext } from '@pinceau/core'
 import { createUnplugin } from 'unplugin'
 import type { UnpluginInstance } from 'unplugin'
@@ -30,7 +30,9 @@ export const PinceauVuePlugin: UnpluginInstance<undefined> = createUnplugin(() =
           (ctx) => {
             // Skip `<script>` direct queries as they are made when components has already been transformed.
             // That step has already been processed by Pinceau's transforms.
-            if (ctx.vueQuery && ctx.type === 'script') { return true }
+            if (ctx.vueQuery && ctx.type === 'script') {
+              return true
+            }
           },
         )
 
@@ -45,7 +47,11 @@ export const PinceauVuePlugin: UnpluginInstance<undefined> = createUnplugin(() =
     transform: async (code, id) => {
       const query = ctx.transformed[id]
 
-      if (query.sfc === 'vue' || query.type === 'style') {
+      if (
+        query.sfc === 'vue'
+        || query.type === 'style'
+        || PINCEAU_SCRIPTS_EXTENSIONS.includes(query.ext)
+      ) {
         return await transform(code, id, suite, ctx)
       }
     },

@@ -1,6 +1,5 @@
 import type { PinceauTransformFunction } from '@pinceau/core'
-import { usePinceauTransformContext } from '@pinceau/core/utils'
-import { generatePinceauRuntimeFunction, generateStyledComponent, hasIdentifier, hasRuntimeStyling } from '@pinceau/style/utils'
+import { generatePinceauRuntimeFunction, generateStyledComponent, hasIdentifier } from '@pinceau/style/utils'
 import type { RuntimeParts } from '@pinceau/style'
 import type { PropOptions } from './variants'
 import { resolveVariantsProps, sanitizeVariantsDeclaration } from './variants'
@@ -104,37 +103,4 @@ export const transformWriteScriptFeatures: PinceauTransformFunction = (transform
   if (fileHasRuntime) { imports.push('usePinceauRuntime') }
   if (fileHasStyledComponent) { imports.push('usePinceauComponent') }
   if (imports.length) { target.prepend(`\nimport { ${imports.join(', ')} } from '@pinceau/react/runtime'\n`) }
-}
-
-/**
- * If no <script> tag has been found in file:
- * - Create a temporary one
- * - Write transforms in it
- * - Append it to the component.
- */
-export const transformAddRuntimeScriptTag: PinceauTransformFunction = async (
-  transformContext,
-  pinceauContext,
-) => {
-  if (transformContext.sfc && !transformContext.sfc.scripts.length && hasRuntimeStyling(transformContext)) {
-    // Create proxy transform context
-    const proxyContext = usePinceauTransformContext('', transformContext.query, pinceauContext)
-
-    // Create proxy block
-    const targetBlock = proxyContext.target
-    targetBlock.attrs = {
-      setup: true,
-    }
-    targetBlock.type = 'script'
-    targetBlock.index = 0
-
-    // Assign target block
-    proxyContext.target = targetBlock
-
-    // Apply script features on empty script block
-    transformWriteScriptFeatures(proxyContext, pinceauContext)
-
-    // Append proxy block content as a <script setup> tag
-    transformContext.ms.append(`\n\n<script lang="ts">${proxyContext?.result()?.code || ''}\n</script>`)
-  }
 }

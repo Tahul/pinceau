@@ -1,16 +1,11 @@
 import { createApp } from 'vue'
 import * as VueRouter from 'vue-router'
 import App from './app.vue'
-import Navigation from './components/Navigation.vue'
 import { PinceauVue } from '@pinceau/outputs/vue-plugin'
 import './style.css'
 
 export const routes = [
-  { path: '/', component: () => import('./features/index.vue') },
-  { path: '/core', component: () => import('./features/core.vue') },
-  { path: '/runtime', component: () => import('./features/runtime.vue') },
-  { path: '/theme', component: () => import('./features/theme.vue') },
-  { path: '/vue', component: () => import('./features/vue.vue') },
+  { path: '/', component: () => import('./pages/index.vue') }
 ]
 
 // 3. Create the router instance and pass the `routes` option
@@ -25,8 +20,6 @@ const router = VueRouter.createRouter({
 const app = createApp(App)
 
 app.use(PinceauVue)
-
-app.component('Navigation', Navigation)
 
 app.use(router)
 

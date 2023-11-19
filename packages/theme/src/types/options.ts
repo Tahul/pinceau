@@ -119,4 +119,24 @@ export interface PinceauThemeOptions {
    * Inject `@pinceau/palette` automatically
    */
   palette: boolean
+
+  /**
+   * Toggles the tranformIndexHtml hook from the theme plugin.
+   *
+   * That can be useful when used in another context than a raw Vite project.
+   */
+  transformIndexHtml: boolean
+
+  /**
+   * Toggles the `<pinceau />` HTML tag transform.
+   */
+  pinceauHtmlTag: boolean
+
+  /**
+   * Toggles the HTML enforce mode.
+   *
+   * It is slower than `pinceauHtmlTag`, and will only be used as a fallback.
+   */
+  enforceHtmlInject: boolean
+
 }

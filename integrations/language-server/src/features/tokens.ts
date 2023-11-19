@@ -31,11 +31,11 @@ export function setupTokensHelpers(
     try {
       if (cachedTransform?.version === doc.version) { return cachedTransform }
 
-      const query = parsePinceauQuery(doc.uri)
+      // const query = parsePinceauQuery(doc.uri)
 
-      const parsed = parseVueSFC(doc.getText())
+      // const parsed = parseVueSFC(doc.getText())
 
-      console.log({ query, parsed })
+      // console.log({ query, parsed })
 
       const data = { version }
 

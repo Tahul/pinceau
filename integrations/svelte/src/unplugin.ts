@@ -1,4 +1,4 @@
-import { getPinceauContext, transform, transformInclude } from '@pinceau/core/utils'
+import { PINCEAU_SCRIPTS_EXTENSIONS, getPinceauContext, transform, transformInclude } from '@pinceau/core/utils'
 import type { PinceauContext } from '@pinceau/core'
 import { createUnplugin } from 'unplugin'
 import type { UnpluginInstance } from 'unplugin'
@@ -37,7 +37,10 @@ export const PinceauSveltePlugin: UnpluginInstance<undefined> = createUnplugin((
     transform: async (code, id) => {
       const query = ctx.transformed[id]
 
-      if (query.sfc === 'svelte') { return await transform(code, id, suite, ctx) }
+      if (
+        query.sfc === 'svelte'
+        || PINCEAU_SCRIPTS_EXTENSIONS.includes(query.ext)
+      ) { return await transform(code, id, suite, ctx) }
     },
   }
 })

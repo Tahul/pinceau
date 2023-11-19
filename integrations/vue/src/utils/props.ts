@@ -1,7 +1,7 @@
 import { walkTemplate } from '@pinceau/core/utils'
 import type { PinceauTransformContext, PropMatch } from '@pinceau/core'
 
-export function extractProp(
+export async function extractProp(
   transformContext: PinceauTransformContext,
   prop: string,
 ) {
@@ -28,7 +28,7 @@ export function extractProp(
     }
   }
 
-  walkTemplate(
+  await walkTemplate(
     // In Vue context, the target block will have `ast` coming from Vue template parser.
     // We can walk this block using `ultrahtml` walk function as it has same parent/children shape.
     transformContext.target.ast,
