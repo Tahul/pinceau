@@ -1,6 +1,6 @@
 {
   "name": "@pinceau/repl",
-  "version": "1.0.0-beta.23",
+  "version": "1.0.0-beta.24",
   "private": true,
   "description": "Pinceau component for editing Pinceau components.",
   "homepage": "https://github.com/Tahul/pinceau#readme",
