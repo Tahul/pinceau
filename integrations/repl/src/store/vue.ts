@@ -5,13 +5,11 @@ import type {
   SFCScriptCompileOptions,
   SFCTemplateCompileOptions,
 } from 'vue/compiler-sfc'
-import type { Ref } from 'vue'
 import { createVuePlugin, pluginTypes } from '@pinceau/vue/utils'
 import { compileFile } from '../transforms'
 import { compileModulesForPreview, processModule } from '../compiler'
-import type { PreviewProxy } from '../components/output/PreviewProxy'
-import type { File, ReplStore, ReplTransformer } from '.'
 import { pinceauVersion } from '.'
+import type { File, ReplStore, ReplTransformer } from '.'
 
 const defaultMainFile = 'src/App.vue'
 
@@ -81,7 +79,29 @@ export class ReplVueTransformer implements ReplTransformer<typeof defaultCompile
   constructor({ store }: { store: ReplStore }) {
     this.store = store
 
+    // Set proper `fs` compiler options
+    if (!this.compilerOptions) {
+      this.compilerOptions = {}
+    }
+    if (!this.compilerOptions.script) {
+      this.compilerOptions.script = {}
+    }
+    this.compilerOptions.script.fs = {
+      fileExists(file: string) {
+        if (file.startsWith('/')) { file = file.slice(1) }
+        return !!store.state.files[file]
+      },
+      readFile(file: string) {
+        if (file.startsWith('/')) { file = file.slice(1) }
+        return store.state.files[file].code
+      },
+    }
+
     this.store.pinceauProvider.pinceauContext.addTypes(pluginTypes)
+  }
+
+  async init() {
+    //
   }
 
   getTypescriptDependencies() {
@@ -188,21 +208,15 @@ export class ReplVueTransformer implements ReplTransformer<typeof defaultCompile
     return compileFile(this.store, file)
   }
 
-  async updatePreview(
-    clearConsole: Ref<boolean>,
-    runtimeError: Ref<string | null>,
-    runtimeWarning: Ref<string | null>,
-    ssr: boolean,
-    proxy: PreviewProxy,
-    previewOptions: any,
-  ) {
-    if ((import.meta as any).env.PROD && clearConsole.value) {
-      console.clear()
-    }
-    runtimeError.value = null
-    runtimeWarning.value = null
+  async updatePreview() {
+    if (this.store.sandboxCreating) { await this.store.sandboxCreating }
+    if (!this.store.previewProxy.value) { return }
+    if ((import.meta as any).env.PROD && this.store.clearConsole.value) { console.clear() }
 
-    let isSSR = ssr || false
+    this.store.runtimeError.value = null
+    this.store.runtimeWarning.value = null
+
+    let isSSR = this.store.ssr.value || false
 
     if (this.targetVersion) {
       const [major, minor, patch] = this.targetVersion
@@ -216,15 +230,17 @@ export class ReplVueTransformer implements ReplTransformer<typeof defaultCompile
     }
 
     try {
-      const mainFile = this.store.state.mainFile
+      const mainFile = this.store.state.mainFile!
 
       // if SSR, generate the SSR bundle and eval it to render the HTML
-      if (isSSR && mainFile.endsWith('.vue')) {
+      if (isSSR && mainFile!.endsWith('.vue')) {
         const ssrModules = compileModulesForPreview(this.store, true)
+
+        console.log({ ssrModules })
 
         console.log(`[@pinceau/repl] successfully compiled ${ssrModules.length} modules for SSR.`)
 
-        await proxy.eval([
+        await this.store.previewProxy.value.eval([
           'const __modules__ = {};',
           ...this.getBuiltFilesModules(),
           ...ssrModules,
@@ -233,18 +249,24 @@ export class ReplVueTransformer implements ReplTransformer<typeof defaultCompile
          const { PinceauVue } = __modules__["@pinceau/outputs/vue-plugin"]
 
          const AppComponent = __modules__["${mainFile}"].default
+
+         console.log(PinceauVue)
          
          AppComponent.name = 'Repl'
+         
          const app = _createApp(AppComponent)
+         
          app.use(PinceauVue)
+
          if (!app.config.hasOwnProperty('unwrapInjectedRef')) {
            app.config.unwrapInjectedRef = true
          }
+         
          app.config.warnHandler = () => {}
+         
          window.__ssr_promise__ = _renderToString(app).then(html => {
            document.getElementById('pinceau-runtime').innerHTML = app.config.globalProperties.$pinceauSSR.toString()
-           document.body.innerHTML = '<div id="app">' + html + '</div>' + \`${previewOptions?.bodyHTML || ''
-        }\`
+           document.body.innerHTML = '<div id="app">' + html + '</div>' + \`${this.store.previewOptions.value?.bodyHTML || ''}\`
          }).catch(err => {
            console.error("SSR Error", err)
          })
@@ -255,14 +277,16 @@ export class ReplVueTransformer implements ReplTransformer<typeof defaultCompile
       // compile code to simulated module system
       const modules = compileModulesForPreview(this.store)
 
+      console.log(modules)
+
       console.log(`[@pinceau/repl] Compiled ${modules.length} module${modules.length > 1 ? 's' : ''}.`)
 
       const codeToEval = [
         'window.__modules__ = {};window.__css__ = [];'
-      + `if (window.__app__) window.__app__.unmount();${
+        + `if (window.__app__) window.__app__.unmount();${
        isSSR
         ? ''
-        : `document.body.innerHTML = '<div id="app"></div>' + \`${previewOptions?.bodyHTML || ''
+        : `document.body.innerHTML = '<div id="app"></div>' + \`${this.store.previewOptions.value?.bodyHTML || ''
           }\``}`,
         ...this.getBuiltFilesModules(),
         ...modules,
@@ -277,10 +301,11 @@ export class ReplVueTransformer implements ReplTransformer<typeof defaultCompile
         codeToEval.push(
         `import { ${isSSR ? 'createSSRApp' : 'createApp'} as _createApp } from 'vue'
         const { PinceauVue } = __modules__["@pinceau/outputs/vue-plugin"]
-        ${previewOptions?.customCode?.importCode || ''}
+        ${this.store.previewOptions.value?.customCode?.importCode || ''}
+
+        const AppComponent = __modules__["${mainFile}"].default
 
         const _mount = () => {
-          const AppComponent = __modules__["${mainFile}"].default
           AppComponent.name = 'Repl'
           const app = window.__app__ = _createApp(AppComponent)
 
@@ -292,7 +317,7 @@ export class ReplVueTransformer implements ReplTransformer<typeof defaultCompile
 
           app.config.errorHandler = e => console.error(e)
 
-          ${previewOptions?.customCode?.useCode || ''}
+          ${this.store.previewOptions?.value.customCode?.useCode || ''}
           
           app.mount('#app')
         }
@@ -305,11 +330,11 @@ export class ReplVueTransformer implements ReplTransformer<typeof defaultCompile
       }
 
       // eval code in sandbox
-      await proxy.eval(codeToEval)
+      await this.store.previewProxy.value.eval(codeToEval)
     }
     catch (e: any) {
       console.error(e)
-      runtimeError.value = (e as Error).message
+      this.store.runtimeError.value = (e as Error).message
     }
   }
 }

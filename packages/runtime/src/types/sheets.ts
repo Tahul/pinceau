@@ -28,11 +28,11 @@ export interface PinceauRuntimeSheetOptions extends PinceauRuntimePluginOptions 
 
 export interface PinceauRuntimeSheet {
   sheet: CSSStyleSheet
-  cache: Map<string, { rule: CSSRule; members: number }>
+  cache: Map<string, { rule: CSSRule, members: number }>
   getRule: (declaration: any, previousRule?: string, useClass?: boolean) => string | undefined
   deleteRule: (rule: string) => void
-  deleteMember: (className: string) => { rule: CSSRule; members: number } | void
-  flush: (members?: number, key?: string) => { rule: CSSRule; members: number }[]
+  deleteMember: (className: string) => { rule: CSSRule, members: number } | void
+  flush: (members?: number, key?: string) => { rule: CSSRule, members: number }[]
   hydrate: (cssRules?: CSSRuleList) => void
   toString: () => string
 }

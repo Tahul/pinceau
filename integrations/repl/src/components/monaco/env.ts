@@ -5,7 +5,7 @@ import * as onigasm from 'onigasm'
 
 // @ts-ignore
 import onigasmWasm from 'onigasm/lib/onigasm.wasm?url'
-import { watchEffect } from 'vue'
+import { watch } from 'vue'
 import type { Store } from '../../store'
 import { pinceauVersion } from '../../store'
 import { getOrCreateModel } from './utils'
@@ -14,102 +14,143 @@ import type { CreateData } from './volar.worker'
 // @ts-ignore
 import volarWorker from './volar.worker?worker'
 
-let initted = false
-export function initMonaco(store: Store) {
+export async function initMonaco(store: Store) {
+  console.log('init monaco!')
+
   store.editor = editor
-  if (initted) { return }
-  loadMonacoEnv(store)
-  loadWasm()
 
-  watchEffect(() => {
-    // create a model for each file in the store
-    for (const filename in store.state.files) {
-      const file = store.state.files[filename]
-      if (editor.getModel(Uri.parse(`file:///${filename}`))) { continue }
-      getOrCreateModel(
-        Uri.parse(`file:///${filename}`),
-        file.language,
-        file.code,
-      )
-    }
+  if (!store.editorReady.value) {
+    loadMonacoEnv(store)
+    await loadWasm()
 
-    for (const filename in store.transformer.shims) {
-      const file = store.transformer.shims[filename]
-      getOrCreateModel(
-        Uri.parse(`file:///${file.filename}`),
-        file.language,
-        file.code,
-      )
-    }
+    // Support for go to definition
+    editor.registerEditorOpener({
+      openCodeEditor(_, resource) {
+        if (resource.toString().startsWith(`${jsDelivrUriBase}/`)) { return true }
 
-    for (const filename in store.state.builtFiles) {
-      const file = store.state.builtFiles[filename]
+        const path = resource.path
+        if (/^\//.test(path)) {
+          const fileName = path.replace('/', '')
+          if (fileName !== store.state.activeFile?.filename) {
+            store.setActive(fileName)
+            return true
+          }
+        }
 
-      if (filename === '@pinceau/outputs') {
+        return false
+      },
+    })
+  }
+
+  const shimsSyncEffect = watch(
+    () => store.transformer?.shims,
+    (files) => {
+      if (!store.transformer || store.initializing.value || !files || !Object.keys(files).length) { return }
+
+      console.log('sync shims!')
+
+      for (const filename in store.transformer.shims) {
+        const file = store.transformer.shims[filename]
         getOrCreateModel(
-          Uri.parse(`https://cdn.jsdelivr.net/npm/@pinceau/outputs@${pinceauVersion}/index.d.ts`),
+          Uri.parse(`file:///${file.filename}`),
           file.language,
           file.code,
         )
       }
+    },
+    {
+      deep: true,
+      immediate: true,
+    },
+  )
 
-      if (filename === '@pinceau/outputs/theme-ts') {
-        getOrCreateModel(
-          Uri.parse(`https://cdn.jsdelivr.net/npm/outputs@${pinceauVersion}/theme.d.ts`),
-          file.language,
-          file.code,
-        )
-      }
+  const themeSyncEffect = watch(
+    () => store.state.builtFiles,
+    (files) => {
+      if (!store.transformer || store.initializing.value || !Object.keys(files).length) { return }
 
-      if (filename === '@pinceau/outputs/utils-ts') {
-        getOrCreateModel(
-          Uri.parse(`https://cdn.jsdelivr.net/npm/outputs@${pinceauVersion}/utils.d.ts`),
-          file.language,
-          file.code,
-        )
-      }
-    }
+      console.log('sync theme!')
 
-    // dispose of any models that are not in the store
-    for (const model of editor.getModels()) {
-      const uri = model.uri.toString()
-      if (uri.includes('@pinceau/outputs')) { continue }
-      if (store.state.files[uri.substring('file:///'.length)]) { continue }
-      if (store.transformer.shims[uri.substring('file:///'.length)]) { continue }
-      if (uri.startsWith(`${jsDelivrUriBase}/`)) { continue }
-      if (uri.startsWith('inmemory://')) { continue }
-      model.dispose()
-    }
-  })
+      for (const filename in store.state.builtFiles) {
+        const file = store.state.builtFiles[filename]
 
-  // Support for go to definition
-  editor.registerEditorOpener({
-    openCodeEditor(_, resource) {
-      if (resource.toString().startsWith(`${jsDelivrUriBase}/`)) { return true }
+        if (filename === '@pinceau/outputs') {
+          getOrCreateModel(
+            Uri.parse(`https://cdn.jsdelivr.net/npm/@pinceau/outputs@${pinceauVersion}/index.d.ts`),
+            file.language,
+            file.code,
+          )
+        }
 
-      const path = resource.path
-      if (/^\//.test(path)) {
-        const fileName = path.replace('/', '')
-        if (fileName !== store.state.activeFile.filename) {
-          store.setActive(fileName)
-          return true
+        if (filename === '@pinceau/outputs/theme-ts') {
+          getOrCreateModel(
+            Uri.parse(`https://cdn.jsdelivr.net/npm/outputs@${pinceauVersion}/theme.d.ts`),
+            file.language,
+            file.code,
+          )
+        }
+
+        if (filename === '@pinceau/outputs/utils-ts') {
+          getOrCreateModel(
+            Uri.parse(`https://cdn.jsdelivr.net/npm/outputs@${pinceauVersion}/utils.d.ts`),
+            file.language,
+            file.code,
+          )
         }
       }
-
-      return false
     },
-  })
+    {
+      immediate: true,
+      deep: true,
+    },
+  )
 
-  initted = true
+  const modelSyncEffect = watch(
+    () => store.state.files,
+    (files) => {
+      if (!store.transformer || store.initializing.value || !Object.keys(files).length) { return }
+
+      // create a model for each file in the store
+      for (const filename in store.state.files) {
+        const file = store.state.files[filename]
+        if (editor.getModel(Uri.parse(`file:///${filename}`))) { continue }
+        getOrCreateModel(
+          Uri.parse(`file:///${filename}`),
+          file.language,
+          file.code,
+        )
+      }
+
+      // dispose of any models that are not in the store
+      for (const model of editor.getModels()) {
+        const uri = model.uri.toString()
+        if (!store.state.files) { continue }
+        if (uri.includes('@pinceau/outputs')) { continue }
+        if (store.state.files[uri.substring('file:///'.length)]) { continue }
+        if (store.transformer?.shims?.[uri.substring('file:///'.length)]) { continue }
+        if (uri.startsWith(`${jsDelivrUriBase}/`)) { continue }
+        if (uri.startsWith('inmemory://')) { continue }
+        model.setValue('')
+        model.dispose()
+      }
+    },
+    {
+      immediate: true,
+    },
+  )
+
+  store.effects.push(modelSyncEffect)
+  store.effects.push(shimsSyncEffect)
+  store.effects.push(themeSyncEffect)
+
+  store.editorReady.value = true
 }
 
 let disposeWorker: undefined | (() => void)
 export async function reloadLanguageTools(store: Store, lang?: 'vue' | 'svelte' | 'react' | 'typescript') {
   disposeWorker?.()
 
-  let dependencies: Record<string, string> = {
-    ...store.state.dependencyVersion,
-  }
+  let dependencies: Record<string, string> = {}
 
   if (store.transformer) {
     dependencies = {
@@ -140,7 +181,7 @@ export async function reloadLanguageTools(store: Store, lang?: 'vue' | 'svelte' 
 
   const getSyncUris = () => [
     ...Object.keys(store.state.files),
-    ...Object.keys(store.transformer.shims),
+    ...Object.keys(store.transformer?.shims || {}),
 
   ].map((filename) => {
     return Uri.parse(`file:///${filename}`)
@@ -168,7 +209,7 @@ export async function reloadLanguageTools(store: Store, lang?: 'vue' | 'svelte' 
     languages,
   )
 
-  disposeWorker = () => {
+  disposeWorker = async () => {
     disposeMarkers?.()
     disposeAutoInsertion?.()
     disposeProvides?.()
@@ -207,6 +248,7 @@ export function loadMonacoEnv(store: Store) {
       return worker
     },
   }
+
   languages.register({ id: 'vue', extensions: ['.vue'] })
   languages.register({ id: 'javascript', extensions: ['.js'] })
   languages.register({ id: 'typescript', extensions: ['.ts', '.jsx', '.tsx'] })
@@ -214,9 +256,9 @@ export function loadMonacoEnv(store: Store) {
 
   store.reloadLanguageTools = (lang?: 'vue' | 'react' | 'svelte' | 'typescript') => reloadLanguageTools(store, lang)
 
-  if (store.transformer.name === 'vue') { languages.onLanguage('vue', () => store.reloadLanguageTools!('vue')) }
-  if (store.transformer.name === 'svelte') { languages.onLanguage('svelte', () => store.reloadLanguageTools!('svelte')) }
-  if (store.transformer.name === 'react') { languages.onLanguage('typescript', () => store.reloadLanguageTools!('typescript')) }
+  if (store.transformer?.name === 'vue') { languages.onLanguage('vue', () => store.reloadLanguageTools!('vue')) }
+  if (store.transformer?.name === 'svelte') { languages.onLanguage('svelte', () => store.reloadLanguageTools!('svelte')) }
+  if (store.transformer?.name === 'react') { languages.onLanguage('typescript', () => store.reloadLanguageTools!('typescript')) }
 }
 
 export function loadWasm() {

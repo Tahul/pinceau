@@ -44,7 +44,7 @@
   "dependencies": {
     "@pinceau/core": "workspace:*",
     "@pinceau/integration": "workspace:*",
-    "acorn": "^8.10.0"
+    "acorn": "^8.11.2"
   },
   "devDependencies": {
     "@pinceau/configs": "workspace:*"

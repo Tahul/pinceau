@@ -1,3 +1,10 @@
 {
-  "extends": "@pinceau/configs/tsconfig.base.json"
+  "extends": "@pinceau/configs/tsconfig.base.json",
+  "compilerOptions": {
+    "types": [
+      "unplugin-icons/types/vue",
+      "vite/client",
+      "vitest/importMeta"
+    ]
+  }
 }

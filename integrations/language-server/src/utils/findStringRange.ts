@@ -1,6 +1,6 @@
 import type { Position } from 'vscode-languageserver'
 
-export function findStringRange(text: string, target: string, position: Position, delimiter = '$'): { start: number; end: number } {
+export function findStringRange(text: string, target: string, position: Position, delimiter = '$'): { start: number, end: number } {
   const toRet = {
     start: -1,
     end: -1,

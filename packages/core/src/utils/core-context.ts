@@ -41,7 +41,7 @@ export function usePinceauContext(userOptions?: PinceauUserOptions): PinceauCont
   /**
    * Track list of module queries that got through any kind of Pinceau transforms.
    */
-  const transformed: { [key: string]: PinceauQuery & { state?: PinceauTransformState; previousState?: PinceauTransformState } } = {}
+  const transformed: { [key: string]: PinceauQuery & { state?: PinceauTransformState, previousState?: PinceauTransformState } } = {}
 
   /**
    * Filters applied via `isTransformable` checking if a module query should pass through Pinceau transforms.
@@ -82,7 +82,7 @@ export function usePinceauContext(userOptions?: PinceauUserOptions): PinceauCont
     (
       theme: any,
       options?: {
-        cb?: ((ctx: { query: string; token?: any; theme: PinceauTheme }) => void)
+        cb?: ((ctx: { query: string, token?: any, theme: PinceauTheme }) => void)
       }
     ) => any
   )

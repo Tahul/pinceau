@@ -105,12 +105,6 @@ self.onmessage = async (msg: MessageEvent<WorkerMessage>) => {
         ts as any,
       )
 
-      console.log({
-        serviceConfig,
-        host,
-        env,
-      })
-
       if (language === 'svelte') {
         // @ts-ignore
         serviceConfig.languages[0] = svelteLanguage

@@ -14,6 +14,8 @@ export function compileModulesForPreview(store: Store, isSSR = false) {
   const seen = new Set<File>()
   const processed: string[] = []
 
+  if (!store.state.mainFile) { return [] }
+
   processFile(
     store,
     store.state.files[store.state.mainFile],

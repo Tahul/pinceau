@@ -1,10 +1,8 @@
-import type { Ref } from 'vue'
 import { createReactPlugin, pluginTypes } from '@pinceau/react/utils'
 import { compileFile } from '../transforms'
 import { compileModulesForPreview, processModule } from '../compiler'
-import type { PreviewProxy } from '../components/output/PreviewProxy'
 import type { ReplStore, ReplTransformer } from '.'
-import { File, pinceauVersion } from '.'
+import { File, pinceauVersion, tsconfigFile } from '.'
 
 const defaultMainFile = 'src/App.tsx'
 
@@ -85,6 +83,15 @@ export {}
     this.store = store
 
     this.store.pinceauProvider.pinceauContext.addTypes(pluginTypes)
+
+    this.store.state.files[tsconfigFile] = new File(
+      tsconfigFile,
+      JSON.stringify(this.tsconfig, null, 2),
+    )
+  }
+
+  async init() {
+    //
   }
 
   getTypescriptDependencies() {
@@ -181,30 +188,25 @@ export {}
     return await compileFile(this.store, file)
   }
 
-  async updatePreview(
-    clearConsole: Ref<boolean>,
-    runtimeError: Ref<string | null>,
-    runtimeWarning: Ref<string | null>,
-    ssr: boolean,
-    proxy: PreviewProxy,
-    previewOptions: any,
-  ) {
-    if ((import.meta as any).env.PROD && clearConsole.value) { console.clear() }
-    runtimeError.value = null
-    runtimeWarning.value = null
+  async updatePreview() {
+    if (!this.store.previewProxy.value) { return }
+    if ((import.meta as any).env.PROD && this.store.clearConsole.value) { console.clear() }
 
-    const isSSR = ssr || true
+    this.store.runtimeError.value = null
+    this.store.runtimeWarning.value = null
+
+    const isSSR = this.store.ssr.value || true
 
     try {
       const mainFile = this.store.state.mainFile
 
       // if SSR, generate the SSR bundle and eval it to render the HTML
-      if (isSSR && (mainFile.endsWith('.jsx') || mainFile.endsWith('.tsx'))) {
+      if (isSSR && (mainFile && (mainFile.endsWith('.jsx') || mainFile.endsWith('.tsx')))) {
         const ssrModules = compileModulesForPreview(this.store, true)
 
         console.log(`[@pinceau/repl] Successfully compiled ${ssrModules.length} modules for SSR.`)
 
-        await proxy.eval([
+        await this.store.previewProxy.value.eval([
           'const __modules__ = {};',
           ...this.getBuiltFilesModules(),
           ...ssrModules,
@@ -248,7 +250,7 @@ export {}
 
           if (ssrUtils) { document.getElementById('pinceau-runtime').innerHTML = ssrUtils.toString() }
 
-          document.body.innerHTML = '<div id="app">' + div.innerHTML + '</div>' + \`${previewOptions?.bodyHTML || ''}\`
+          document.body.innerHTML = '<div id="app">' + div.innerHTML + '</div>' + \`${this.store.previewOptions.value?.bodyHTML || ''}\`
 
           resolve()
          }).catch(err => {
@@ -266,10 +268,10 @@ export {}
       const codeToEval = [
         'import \'react\'\nimport \'react-dom\'\nimport \'react-dom/server\'\n',
         'window.__modules__ = {};window.__css__ = [];'
-      + `if (window.__app__) window.__app__.unmount();${
+        + `if (window.__app__) window.__app__.unmount();${
        isSSR
         ? ''
-        : `document.body.innerHTML = '<div id="app"></div>' + \`${previewOptions?.bodyHTML || ''
+        : `document.body.innerHTML = '<div id="app"></div>' + \`${this.store.previewOptions.value?.bodyHTML || ''
         }\``}`,
         ...this.getBuiltFilesModules(),
         ...modules,
@@ -280,7 +282,7 @@ export {}
       ]
 
       // if main file is a vue file, mount it.
-      if (mainFile.endsWith('.tsx')) {
+      if (mainFile?.endsWith('.tsx')) {
         codeToEval.push(
         `
         import * as React from \'react\'
@@ -288,7 +290,7 @@ export {}
         import { hydrateRoot } from \'react-dom/client\'
         import * as ReactDOMServer from \'react-dom/server\'
         import { PinceauProvider } from "@pinceau/outputs/react-plugin"
-        ${previewOptions?.customCode?.importCode || ''}
+        ${this.store.previewOptions.value?.customCode?.importCode || ''}
         
         const _mount = () => {
           const AppComponent = __modules__["${mainFile}"].default
@@ -305,7 +307,7 @@ export {}
           ${isSSR && 'const root = window.__app__ = hydrateRoot(rootEl, rootComp);\nconsole.log(\'[@pinceau/repl] React SSR HTML has been hydrated!\')'}
           ${!isSSR && 'const root = window.__app__ = ReactDOM.createRoot(rootEl).render(rootComp);'}
           
-          ${previewOptions?.customCode?.useCode || ''}
+          ${this.store.previewOptions.value?.customCode?.useCode || ''}
         }
 
         if (window.__ssr_promise__) {
@@ -317,11 +319,11 @@ export {}
       }
 
       // eval code in sandbox
-      await proxy.eval(codeToEval)
+      await this.store.previewProxy.value.eval(codeToEval)
     }
     catch (e: any) {
       console.error(e)
-      runtimeError.value = (e as Error).message
+      this.store.runtimeError.value = (e as Error).message
     }
   }
 }

@@ -10,6 +10,6 @@ export default defineConfig({
     globals: true,
     watch: true,
     include: ['fixtures/*.fixture.ts'],
-    coverage: { enabled: false },
+    // coverage: { enabled: false },
   },
 })

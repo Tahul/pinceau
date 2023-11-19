@@ -48,6 +48,7 @@ styled({
     borderRadius: '$radii.xl',
     appearance: 'none',
     width: '100px',
+    fontWeight: '$fontWeight.bold',
   },
 
   svg: {

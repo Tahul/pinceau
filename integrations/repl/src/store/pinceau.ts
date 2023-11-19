@@ -1,4 +1,4 @@
-import { nextTick, watch } from 'vue'
+import { watch } from 'vue'
 import {
   cssFormat,
   declarationFormat,
@@ -17,7 +17,13 @@ import MagicString from 'magic-string'
 import {
   normalizeTokens,
 } from '@pinceau/theme/runtime'
-import { transformAddPinceauClass, transformAddRuntimeScriptTag, transformWriteScriptFeatures } from '@pinceau/vue/transforms'
+import {
+  transformAddPinceauClass as vueTransformAddPinceauClass,
+  transformAddRuntimeScriptTag as vueTransformAddRuntimeScriptTag,
+  transformStyleTs as vueTransformStyleTs,
+  transformWriteScriptFeatures as vueTransformWriteScriptFeatures,
+  transformWriteStyleFeatures as vueTransformWriteStyleFeatures,
+} from '@pinceau/vue/transforms'
 import { PinceauVueTransformer } from '@pinceau/vue/utils'
 import { PinceauSvelteTransformer } from '@pinceau/svelte/utils'
 import {
@@ -82,7 +88,7 @@ export class PinceauProvider {
   }
 
   async init() {
-    const _init = async (newFile = this.store.state.files[`src/${themeFile}`]) => {
+    const _init = async (newFile = this.store.state.files[themeFile]) => {
       if (!newFile) { return }
 
       const builtFiles = {}
@@ -171,7 +177,7 @@ export class PinceauProvider {
     const debouncedBuild = debounce(_init, 250)
 
     watch(
-      () => this.store.state.files[`src/${themeFile}`],
+      () => this.store.state.files[themeFile],
       () => debouncedBuild(),
       {
         deep: true,
@@ -239,14 +245,14 @@ export class PinceauProvider {
   async transformVue(filename: string, code: string) {
     if (!filename.endsWith('.vue')) { return }
 
+    this.pinceauContext.transformed = {}
+
     const query = parsePinceauQuery(filename)
 
-    if (!this.pinceauContext.transformed[filename]) {
-      this.pinceauContext.addTransformed(filename, query)
-    }
+    this.pinceauContext.addTransformed(filename, query)
 
     const transformContext = usePinceauTransformContext(
-      new MagicString(code),
+      new MagicString(vueTransformStyleTs(code)),
       query,
       this.pinceauContext,
     )
@@ -255,13 +261,21 @@ export class PinceauProvider {
     transformContext.registerTransforms(themeSuite)
     transformContext.registerTransforms({
       globals: [
-        transformAddRuntimeScriptTag,
+        vueTransformAddRuntimeScriptTag,
       ],
       templates: [
-        transformAddPinceauClass,
+        vueTransformAddPinceauClass,
       ],
       scripts: [
-        transformWriteScriptFeatures,
+        vueTransformWriteScriptFeatures,
+      ],
+      styles: [
+        async (transformContext, pinceauContext) => {
+          // Skip `pc-fn` tags since those are already handled in earlier transformation
+          if (transformContext.query.styleFunction) { return }
+
+          await vueTransformWriteStyleFeatures(transformContext, pinceauContext)
+        },
       ],
     })
 

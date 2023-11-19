@@ -1,9 +1,7 @@
-import { execSync } from 'node:child_process'
 import { defineBuildConfig } from 'unbuild'
 
 // @ts-ignore
 import svelte from 'rollup-plugin-svelte'
-import pkg from './package.json'
 
 export default defineBuildConfig({
   entries: [

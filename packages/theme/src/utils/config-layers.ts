@@ -141,7 +141,7 @@ export function resolveConfigSources(
 export function resolveInlineLayer(layer: ConfigLayer, _: PinceauOptions): ResolvedConfigLayer {
   const stringifiedUtils = Object
     .entries(layer?.utils || {})
-    .reduce<{ [key: string]: { js: string; ts: string } }>(
+    .reduce<{ [key: string]: { js: string, ts: string } }>(
       (acc, [key, utilFunction]) => {
         acc[key] = {
           js: `${utilFunction}`,

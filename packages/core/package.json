@@ -44,21 +44,21 @@
     "ast-types": "0.16.1",
     "chalk": "^5.3.0",
     "consola": "^3.2.3",
-    "defu": "^6.1.2",
+    "defu": "^6.1.3",
     "magic-string": "^0.30.5",
     "micromatch": "^4.0.5",
     "minimatch": "^9.0.3",
     "ohash": "^1.1.3",
     "pathe": "^1.1.1",
     "recast": "0.23.4",
-    "scule": "^1.0.0",
+    "scule": "^1.1.0",
     "sfc-composer": "0.8.2",
-    "unplugin": "^1.5.0",
+    "unplugin": "^1.5.1",
     "@pinceau/outputs": "workspace:*"
   },
   "devDependencies": {
-    "@types/micromatch": "^4.0.4",
-    "vite": "^4.5.0"
+    "@types/micromatch": "^4.0.5",
+    "vite": "^5.0.0"
   },
   "peerDependencies": {
     "@pinceau/astro": "workspace:*",

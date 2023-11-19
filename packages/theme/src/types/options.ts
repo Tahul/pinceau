@@ -10,7 +10,7 @@ export interface PinceauThemeFormat {
   destination: string
   importPath: string
   virtualPath: string
-  formatter: (args: FormatterArguments & { ctx: PinceauContext; instance: StyleDictionary; loadedTheme: ThemeLoadingOutput }) => string
+  formatter: (args: FormatterArguments & { ctx: PinceauContext, instance: StyleDictionary, loadedTheme: ThemeLoadingOutput }) => string
 }
 
 export type PinceauThemeTokenTransform = Named<Transform>

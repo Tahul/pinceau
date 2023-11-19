@@ -55,7 +55,7 @@ export function setupTokensHelpers(
     doc: TextDocument,
     _styleFns?: PinceauStyleFunctionContext[],
     settings?: PinceauVSCodeSettings,
-    onToken?: (token: { match: RegExpMatchArray; tokenPath: string; range: Range; settings?: PinceauVSCodeSettings; token?: DesignToken; localToken?: any }) => void,
+    onToken?: (token: { match: RegExpMatchArray, tokenPath: string, range: Range, settings?: PinceauVSCodeSettings, token?: DesignToken, localToken?: any }) => void,
   ) {
     const colors: ColorInformation[] = []
 
@@ -110,12 +110,12 @@ export function setupTokensHelpers(
   ) {
     const toRet: {
       delimiter: string
-      currentLine?: { text: string; range: { start: number; end: number } }
-      currentToken?: { token: string; range: { start: number; end: number } }
+      currentLine?: { text: string, range: { start: number, end: number } }
+      currentToken?: { token: string, range: { start: number, end: number } }
       closestToken?: any
       token?: any
       localToken?: any
-      lineRange?: { start: number; end: number }
+      lineRange?: { start: number, end: number }
     } = {
       delimiter: '$',
       currentToken: undefined,

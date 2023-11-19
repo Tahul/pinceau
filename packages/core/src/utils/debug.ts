@@ -3,7 +3,7 @@ import type { PinceauOptions } from '../types'
 
 type DebugLevel = PinceauOptions['debug']
 
-interface DebugContext { logger: any; debugLevel: DebugLevel; tag: any; info: any; warning: any; error: any; success: any }
+interface DebugContext { logger: any, debugLevel: DebugLevel, tag: any, info: any, warning: any, error: any, success: any }
 
 let context: DebugContext = {
   // consola.withScope(' 🖌 ')

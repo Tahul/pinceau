@@ -1,28 +1,19 @@
 <script setup lang="ts">
 import { Pane, Splitpanes } from 'splitpanes'
 import 'splitpanes/dist/splitpanes.css'
-import { onMounted, provide, ref, toRef } from 'vue'
-import type { Store } from '../store'
-import { ReplStore } from '../store'
+import { onMounted, provide, ref, watch } from 'vue'
+import { ReplStore, playgroundConfigFile } from '../store'
 import Output from './output/Output.vue'
-import type { EditorComponentType } from './editor/types'
+import Topbar from './Topbar.vue'
+import FileSelector from './editor/FileSelector.vue'
 import EditorContainer from './editor/EditorContainer.vue'
-import TopBar from './TopBar.vue'
+import ConfigPanel from './ConfigPanel.vue'
 
 export interface Props {
   theme?: 'dark' | 'light'
-  editor: EditorComponentType
-  store?: Store
-  topBar?: boolean
-  compilerOptions?: any
-  autoResize?: boolean
-  showCompileOutput?: boolean
-  showImportMap?: boolean
-  showTsConfig?: boolean
-  showTheme?: boolean
   clearConsole?: boolean
-  layout?: 'horizontal' | 'vertical'
   ssr?: boolean
+  compilerOptions?: any
   previewOptions?: {
     headHTML?: string
     bodyHTML?: string
@@ -34,98 +25,84 @@ export interface Props {
   }
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  theme: 'light',
-  store: () => new ReplStore(),
-  topBar: true,
-  autoResize: true,
-  showCompileOutput: true,
-  showImportMap: true,
-  showTsConfig: true,
-  showTheme: true,
-  clearConsole: true,
-  ssr: false,
-  compilerOptions: () => ({}),
-  previewOptions: () => ({
-    headHTML: '',
-    bodyHTML: '',
-    placeholderHTML: '',
-    customCode: {
-      importCode: '',
-      useCode: '',
-    },
-  }),
+withDefaults(
+  defineProps<Props>(),
+  {
+    theme: 'dark',
+    clearConsole: true,
+    ssr: true,
+    previewOptions: () => ({
+      headHTML: '',
+      bodyHTML: '',
+      placeholderHTML: '',
+      customCode: {
+        importCode: '',
+        useCode: '',
+      },
+    }),
+  },
+)
+
+const store = new ReplStore({
+  sessionId: ref(location.hash.slice(1)),
 })
 
-if (!props.editor) { throw new Error('The "editor" prop is now required.') }
-
-const initializing = ref(true)
 const outputRef = ref<InstanceType<typeof Output>>()
-const { store } = props
-const compilerOptions = (store.transformer.compilerOptions = props.compilerOptions || {})
-if (!compilerOptions.script) { compilerOptions.script = {} }
-
-compilerOptions.script.fs = {
-  fileExists(file: string) {
-    if (file.startsWith('/')) { file = file.slice(1) }
-    return !!store.state.files[file]
-  },
-  readFile(file: string) {
-    if (file.startsWith('/')) { file = file.slice(1) }
-    return store.state.files[file].code
-  },
-}
-
-store.init()
-
-onMounted(async () => {
-  await store.pinceauProvider.init()
-
-  initializing.value = false
-})
 
 provide('store', store)
-provide('autoresize', props.autoResize)
-provide('import-map', toRef(props, 'showImportMap'))
-provide('tsconfig', toRef(props, 'showTsConfig'))
-provide('theme', toRef(props, 'showTheme'))
-provide('clear-console', toRef(props, 'clearConsole'))
-provide('preview-options', props.previewOptions)
-provide('theme', toRef(props, 'theme'))
 
 /**
  * Reload the preview iframe
  */
-function reload() {
-  outputRef.value?.reload()
-}
+const reload = () => outputRef.value?.reload()
 
 defineExpose({ reload })
+
+const initialized = ref(false)
+
+const mounted = ref(false)
+
+onMounted(() => {
+  mounted.value = true
+})
+
+watch(
+  mounted,
+  async () => {
+    try {
+      if (!initialized.value) {
+        initialized.value = true
+        await store.init()
+      }
+    }
+    catch (e) {
+      console.log({ e })
+    }
+  },
+  {
+    immediate: true,
+  },
+)
 </script>
 
 <template>
   <div :key="store.resetFlip.value" class="pinceau-repl-container">
-    <TopBar v-if="props.topBar" />
-    <Splitpanes class="pinceau-repl" :class="[{ 'has-topbar': props.topBar }]">
-      <Pane>
-        <EditorContainer v-if="!initializing" :editor-component="editor" />
-        <div v-else>
-          Loading...
-        </div>
-      </Pane>
-      <Pane>
-        <Output
-          v-if="!initializing"
-          ref="outputRef"
-          :editor-component="editor"
-          :show-compile-output="props.showCompileOutput"
-          :ssr="!!props.ssr"
-        />
-        <div v-else>
-          Loading...
-        </div>
-      </Pane>
+    <Topbar />
+    <Splitpanes :horizontal="store.layout.value !== 'vertical'" class="pinceau-repl">
+      <Pane id="pinceau-repl-left" class="pane" />
+      <Pane id="pinceau-repl-right" class="pane" />
     </Splitpanes>
+
+    <template v-if="mounted">
+      <Teleport :to="store.layout.value === 'vertical' ? `#pinceau-repl-left` : `#pinceau-repl-right`">
+        <FileSelector />
+        <EditorContainer v-if="!store.initializing.value" v-show="!(store.showConfig.value && store.state.activeFile!.filename === playgroundConfigFile)" />
+        <ConfigPanel v-show="store.showConfig.value && store.state.activeFile!.filename === playgroundConfigFile" />
+      </Teleport>
+      <Teleport :to="store.layout.value === 'vertical' ? `#pinceau-repl-right` : `#pinceau-repl-left`">
+        <Output ref="outputRef" />
+      </Teleport>
+    </template>
   </div>
 </template>
 
@@ -143,12 +120,31 @@ css({
     '--color-branding': '$color.red.5',
     '--color-branding-dark': '$color.blue.5',
     '--header-height': '$space.12',
+    '--tabs-height': '$space.10',
 
     'fontFamily': 'var(--font-base)',
     'display': 'flex',
     'flexDirection': 'column',
     'height': '100%',
     'color': '$color.gray.9',
+
+    '--popper-theme-background-color': '$color.gray.1',
+    '--popper-theme-background-color-hover': '$color.gray.1',
+    '--popper-theme-text-color': '$color.gray.8',
+    '--popper-theme-border-width': '1px',
+    '--popper-theme-border-style': 'solid',
+    '--popper-theme-border-color': '$color.gray.2',
+    '--popper-theme-border-radius': '$radii.lg',
+    '--popper-theme-padding': '$space.2 $space.4',
+    '--popper-theme-box-shadow': '0 6px 30px -6px rgba(0, 0, 0, 0.25)',
+
+    '$dark': {
+      '--popper-theme-background-color': '$color.gray.9',
+      '--popper-theme-background-color-hover': '$color.gray.9',
+      '--popper-theme-text-color': 'white',
+      '--popper-theme-border-color': '$color.gray.8',
+      '--popper-theme-box-shadow': '0 6px 30px -6px rgba(0, 0, 0, 0.25)',
+    },
   },
 
   '$dark': {
@@ -164,14 +160,11 @@ css({
   },
 
   '.pinceau-repl': {
-    'height': '100%',
-    'margin': '0',
-    'overflow': 'hidden',
-    'fontSize': '12px',
-    'backgroundColor': 'var(--bg-soft)',
-    '&.has-topbar': {
-      height: 'calc(100% - var(--header-height))',
-    },
+    height: 'calc(100% - var(--header-height))',
+    margin: '0',
+    overflow: 'hidden',
+    fontSize: '12px',
+    backgroundColor: 'var(--bg-soft)',
   },
 
   ':deep(button)': {
@@ -182,8 +175,8 @@ css({
     backgroundColor: 'transparent',
   },
 
-  '.main-pane': {
-
+  '.pane': {
+    position: 'relative',
   },
 })
 </style>
@@ -194,27 +187,66 @@ css({
     // background: 'linear-gradient(-45deg, #EE7752, #E73C7E, #23A6D5, #23D5AB)'
   },
 
+  '.popper': {
+    fontSize: '$fontSize.xs',
+    whiteSpace: 'nowrap',
+  },
+
   '.splitpanes__pane': {
     boxShadow: '0 0 5px rgba(0, 0, 0, .2) inset',
   },
 
   '.splitpanes--vertical > .splitpanes__splitter': {
-    'minWidth': '6px',
-    'backgroundColor': '$color.red.5',
-    'opacity': '0.5',
-    'transition': 'color 300ms, opacity 300ms',
-    '&:hover': {
-      opacity: '1',
+    'minWidth': '1px',
+    'backgroundColor': 'transparent',
+
+    '&::before': {
+      top: 'calc(50% - 60px)',
+      left: '-4px',
+      width: '8px',
+      height: '120px',
     },
   },
 
   '.splitpanes--horizontal > .splitpanes__splitter': {
-    'minHeight': '6px',
-    'backgroundColor': '$color.red.5',
-    'opacity': '0.5',
+    'position': 'relative',
+    'minHeight': '1px',
+    'backgroundColor': 'transparent',
     'transition': 'color 300ms, opacity 300ms',
+
+    '&::before': {
+      top: '-4px',
+      left: 'calc(50% - 60px)',
+      height: '8px',
+      width: '120px',
+    },
+  },
+
+  '.splitpanes__splitter': {
+    'opacity': 0,
+    'position': 'relative',
+    '&::before': {
+      opacity: '0.5',
+      content: '\'\'',
+      position: 'absolute',
+      backgroundColor: '$color.gray.8',
+      border: '1px solid $color.gray.7',
+      borderRadius: '2px',
+      zIndex: '99',
+    },
+    '&::after': {
+      content: '\'\'',
+      position: 'absolute',
+      top: '0',
+      left: '0',
+      width: '1px',
+      height: '100%',
+      backgroundColor: '$color.gray.8',
+    },
     '&:hover': {
-      opacity: '1',
+      '&::before': {
+        opacity: '1',
+      },
     },
   },
 })

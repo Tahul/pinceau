@@ -257,12 +257,20 @@ export function createJsDelivrFs(
       try {
         data = await fetchJson<{ version: string | null }>(`https://data.jsdelivr.com/v1/package/resolve/npm/${pkgName}@latest`)
       }
-      catch (e) { }
+      catch (e) {}
 
       // Try resolving with jsdelivr
       if (!data || !data.version) {
         try {
           data = await fetchJson<{ version: string | null }>(`https://api.cdnjs.com/libraries/${pkgName}?fields=version`)
+        }
+        catch (e) {}
+      }
+
+      if (!data || !data.version) {
+        try {
+          const unpkgData = await fetchJson<{ version: string }>(`https://www.unpkg.com/${pkgName}@latest/package.json`)
+          if (unpkgData.version) { data = { version: unpkgData.version } }
         }
         catch (e) {}
       }

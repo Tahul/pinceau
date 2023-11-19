@@ -35,7 +35,7 @@
 <div>
 <main on:click={onClick} class={main}>Hello world</main>
 
-<TestComponent color="red" size={test}>
+<TestComponent color="blue" size={test}>
   hello
 </TestComponent>
 </div>

@@ -11,7 +11,7 @@ export async function compileFile(
   store: Store,
   file: File,
 ): Promise<(string | Error)[]> {
-  let { filename, code, compiled } = file
+  const { filename, code, compiled } = file
 
   if (filename === themeFile) {
     return []
@@ -24,22 +24,7 @@ export async function compileFile(
   // Compile plain CSS
   if (filename.endsWith('.css')) {
     compiled.css = code
-  }
-
-  // Compile JS / TS / JSX / TSX
-  if (filename.endsWith('.js') || filename.endsWith('.ts') || filename.endsWith('.tsx') || filename.endsWith('.jsx')) {
-    if (filename.endsWith('.jsx') || filename.endsWith('.tsx')) {
-      code = await compileReactFile(store, file)
-    }
-    if (filename.endsWith('.ts') || filename.endsWith('.tsx') || filename.endsWith('.jsx')) {
-      try {
-        code = await transformTS(code)
-      }
-      catch (e) {
-        //
-      }
-    }
-    compiled.js = compiled.ssr = code
+    return []
   }
 
   if (filename.endsWith('.json')) {
@@ -54,6 +39,29 @@ export async function compileFile(
     }
 
     compiled.js = compiled.ssr = `export default ${JSON.stringify(parsed)}`
+
+    return []
+  }
+
+  // Compile JS / TS / JSX / TSX
+  if (filename.endsWith('.js') || filename.endsWith('.ts') || filename.endsWith('.tsx') || filename.endsWith('.jsx')) {
+    let compiledCode
+
+    if (filename.endsWith('.jsx') || filename.endsWith('.tsx')) {
+      compiledCode = await compileReactFile(store, file)
+    }
+    if (filename.endsWith('.ts') || filename.endsWith('.tsx') || filename.endsWith('.jsx')) {
+      try {
+        compiledCode = await transformTS(code)
+      }
+      catch (e) {
+        //
+      }
+    }
+
+    compiled.js = compiled.ssr = compiledCode
+
+    return []
   }
 
   if (filename.endsWith('.vue')) {
@@ -61,8 +69,11 @@ export async function compileFile(
       await compileVueFile(store, file)
     }
     catch (e) {
+      console.log(e)
       //
     }
+
+    return []
   }
 
   if (filename.endsWith('.svelte')) {
@@ -70,8 +81,11 @@ export async function compileFile(
       await compileSvelteFile(store, file)
     }
     catch (e) {
+      console.log(e)
       //
     }
+
+    return []
   }
 
   return []

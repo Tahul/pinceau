@@ -4,8 +4,14 @@ import { transformTS } from './typescript'
 
 export async function compileSvelteFile(
   store: Store,
-  { filename, code, compiled }: File,
+  file: File,
 ) {
+  if (!store.transformer) { return }
+
+  const { code, filename, compiled } = file
+
+  compiled.css = ''
+
   const transformed = await store.pinceauProvider.transformSvelte(filename, code)
 
   if (transformed) {

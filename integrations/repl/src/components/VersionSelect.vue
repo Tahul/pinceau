@@ -7,9 +7,10 @@ const props = defineProps<{
   label: string
 }>()
 
-const versions = ref<{ value: string; title: string }[]>()
+const versions = ref<{ value: string, title: string }[]>()
 
 const version = defineModel<string>()
+
 async function fetchVersions(): Promise<string[]> {
   const res = await fetch(`https://data.jsdelivr.com/v1/package/npm/${props.pkg}`)
   const { versions } = (await res.json()) as { versions: string[] }

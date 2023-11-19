@@ -17,6 +17,7 @@ export default antfu(
       'jsdoc/require-returns': 'off',
       'ts/no-namespace': 'off',
       'new-cap': 'off',
+      'vue/require-explicit-emits': 'off',
     },
   },
   {

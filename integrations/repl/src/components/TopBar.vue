@@ -1,49 +1,8 @@
 <script lang="ts" setup>
-import { computed, inject } from 'vue'
-import type { Store } from '..'
 import Logo from './Logo.vue'
-import Dropdown from './Dropdown.vue'
-import VersionSelect from './VersionSelect.vue'
-import PinceauIcon from './Icon.vue'
-import SimpleIconsTypescript from '~icons/simple-icons/typescript'
-import VscodeIconsFileTypeReactjs from '~icons/vscode-icons/file-type-reactjs'
-import VscodeIconsFileTypeVue from '~icons/vscode-icons/file-type-vue'
-import VscodeIconsFileTypeSvelte from '~icons/vscode-icons/file-type-svelte'
-
-const store = inject('store') as Store
-
-const icons = {
-  vue: VscodeIconsFileTypeVue,
-  react: VscodeIconsFileTypeReactjs,
-  svelte: VscodeIconsFileTypeSvelte,
-}
-
-const framework = computed({
-  get() {
-    return store.transformer.name || 'vue'
-  },
-  set(v) {
-    store.reset({ transformer: v as 'vue' | 'react' | 'svelte' })
-  },
-})
-
-const frameworkVersion = computed({
-  get() {
-    return store.transformer.targetVersion || store.transformer.defaultVersion
-  },
-  set(v) {
-    store.transformer.setVersion(v)
-  },
-})
-
-const pinceauVersion = computed({
-  get() {
-    return store.transformer.targetVersion || store.transformer.defaultVersion
-  },
-  set(v) {
-    //
-  },
-})
+import FrameworkSelect from './editor/FrameworkSelect.vue'
+import LayoutToggle from './editor/LayoutToggle.vue'
+import ConfigToggle from './editor/ConfigToggle.vue'
 </script>
 
 <template>
@@ -57,42 +16,15 @@ const pinceauVersion = computed({
     </div>
 
     <div class="actions">
-      <div>
-        <PinceauIcon />
-        <VersionSelect
-          v-model="pinceauVersion"
-          disabled
-          pkg="pinceau"
-          label="Pinceau Version"
-        />
-      </div>
+      <ConfigToggle />
+      <LayoutToggle />
       <span class="separator" />
-      <div>
-        <SimpleIconsTypescript />
-        <VersionSelect
-          v-model="store.state.typescriptVersion"
-          pkg="typescript"
-          label="TypeScript Version"
-        />
-      </div>
+      <FrameworkSelect />
+      <!--
+      <PinceauSelect />
+      <TypescriptSelect />
       <span class="separator" />
-      <div>
-        <component :is="icons[framework]" />
-        <VersionSelect
-          :model-value="frameworkVersion"
-          :pkg="store.transformer.name"
-          :label="`${store.transformer.name} Version`"
-          @update:model-value="(v) => (frameworkVersion = v)"
-        />
-        <Dropdown
-          v-model="framework"
-          :options="[
-            { title: 'Vue', value: 'vue' },
-            { title: 'Svelte', value: 'svelte' },
-            { title: 'React', value: 'react' },
-          ]"
-        />
-      </div>
+      -->
     </div>
   </div>
 </template>

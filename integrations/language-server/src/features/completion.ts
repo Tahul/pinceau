@@ -1,11 +1,10 @@
 import type { CompletionItem, TextDocumentPositionParams } from 'vscode-languageserver'
 import type { PinceauExtension } from '..'
-import { getCursorContext } from '../utils/getCursorContext'
 
 export function registerCompletion(
   context: PinceauExtension,
 ) {
-  const { connection, documents, tokensManager, documentReady, rootPath, getStyleFunctions } = context
+  const { connection, documents, documentReady } = context
 
   // This handler provides the initial list of the completion items.
   connection.onCompletion(async (textDocumentPosition: TextDocumentPositionParams): Promise<CompletionItem[]> => {
@@ -14,9 +13,9 @@ export function registerCompletion(
     const doc = documents.get(textDocumentPosition.textDocument.uri)
     if (!doc) { return [] }
 
-    const styleFns = getStyleFunctions(doc)
+    // const styleFns = getStyleFunctions(doc)
 
-    const { isInStringExpression, isOffsetOnStyleTsTag, isTokenFunctionCall } = getCursorContext(doc, textDocumentPosition.position, styleFns)
+    // const { isInStringExpression, isOffsetOnStyleTsTag, isTokenFunctionCall } = getCursorContext(doc, textDocumentPosition.position, styleFns)
 
     // Create completion symbols
     const items: CompletionItem[] = []

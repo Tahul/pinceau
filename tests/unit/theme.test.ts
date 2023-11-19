@@ -443,11 +443,11 @@ describe('@pinceau/theme', () => {
       const result = resolveInlineLayer(layer, options)
 
       expect(result.utils.my.js).toStrictEqual('(value) => {\n'
-        + '            return {\n'
-        + '              marginTop: value,\n'
-        + '              marginBottom: value\n'
-        + '            };\n'
-        + '          }')
+      + '            return {\n'
+      + '              marginTop: value,\n'
+      + '              marginBottom: value\n'
+      + '            };\n'
+      + '          }')
 
       expect(Object.keys(result.theme.media as any).length).toBe(2)
     })

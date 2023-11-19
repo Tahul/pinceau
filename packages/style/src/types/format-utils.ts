@@ -47,11 +47,7 @@ export type WrapObjectKeys<
   [K in WrapKey<keyof TObject, TPrefix, TSuffix>]: WrappedValue<TObject, K, TPrefix, TSuffix>
 }
 
-export type NestedKeyOf<TObject> =
-{ [Key in keyof TObject & (string | number)]: TObject[Key] extends object | string
-  ? `${Key}` | `${Key}.${NestedKeyOf<TObject[Key]>}`
-  : `${Key}`
-}[keyof TObject & (string | number)]
+export type NestedKeyOf<TObject> = { [Key in keyof TObject & (string | number)]: TObject[Key] extends object | string ? `${Key}` | `${Key}.${NestedKeyOf<TObject[Key]>}` : `${Key}` }[keyof TObject & (string | number)]
 
 export type FilterStartingWith<Set, Needle extends string> = Set extends `${Needle}${infer _X}` ? Set : never
 

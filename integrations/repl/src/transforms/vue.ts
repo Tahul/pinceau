@@ -12,11 +12,15 @@ export async function compileVueFile(
   store: Store,
   file: File,
 ) {
+  if (!store.transformer) { return }
+
   const { code, filename, compiled } = file
+
+  compiled.css = ''
 
   const id = toHash(filename)
 
-  const transformed = await store.pinceauProvider.transformVue(filename, code)
+  const transformed = await store.pinceauProvider.transformVue(filename, `${code}`)
 
   if (transformed) {
     if (transformed.state.styleFunctions) {
@@ -26,12 +30,12 @@ export async function compileVueFile(
           pinceauCss += `\n${styleFn.css}`
         }
       }
-      if (pinceauCss) { compiled.css = pinceauCss }
+      if (pinceauCss) { compiled.css += pinceauCss }
     }
   }
 
   const { errors, descriptor } = store.transformer.compiler.parse(
-    transformed?.result?.()?.code || transformed?.ms.toString() || code,
+    transformed?.result?.()?.code || transformed?.ms.toString() || `${code}`,
     {
       filename,
       sourceMap: true,
@@ -41,10 +45,10 @@ export async function compileVueFile(
   if (errors.length) { throw new Error(errors.join(',\n')) }
 
   if (
-    descriptor.styles.some(s => s.lang)
+    descriptor.styles.some(s => s.lang !== 'ts' && typeof s.lang === 'string')
     || (descriptor.template && descriptor.template.lang)
   ) {
-    throw new Error('lang="x" pre-processors for <template> or <style> are currently not supported.')
+    throw new Error('lang="*" other than "ts" for <template> or <style> are currently not supported.')
   }
 
   const scriptLang = (descriptor.script && descriptor.script.lang) || (descriptor.scriptSetup && descriptor.scriptSetup.lang)
@@ -153,6 +157,8 @@ export async function compileVueFile(
   for (const style of descriptor.styles) {
     if (style.module) { throw new Error('<style module> is not supported in the playground.') }
 
+    if (style.attrs.pctransformed) { continue }
+
     const styleResult = await store.transformer.compiler.compileStyleAsync({
       ...store.transformer.compilerOptions?.style,
       source: style.content,
@@ -174,7 +180,7 @@ export async function compileVueFile(
     }
   }
   if (css) { compiled.css += css.trim() }
-  else { compiled.css += '/* No <style> tags present */' }
+  else { compiled.css += '' }
 }
 
 async function doCompileScript(
@@ -184,6 +190,8 @@ async function doCompileScript(
   ssr: boolean,
   isTS: boolean,
 ): Promise<[code: string, bindings: BindingMetadata | undefined]> {
+  if (!store.transformer) { return [`\nconst ${COMP_IDENTIFIER} = {}`, undefined] }
+
   if (descriptor.script || descriptor.scriptSetup) {
     const expressionPlugins: CompilerOptions['expressionPlugins'] = isTS ? ['typescript'] : undefined
     const compiledScript = store.transformer.compiler.compileScript(descriptor, {
@@ -233,6 +241,8 @@ async function doCompileTemplate(
   ssr: boolean,
   isTS: boolean,
 ) {
+  if (!store.transformer) { return }
+
   let { code, errors } = store.transformer.compiler.compileTemplate({
     isProd: false,
     ...store.transformer.compilerOptions?.template,

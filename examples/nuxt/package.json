@@ -14,7 +14,7 @@
   "devDependencies": {
     "@pinceau/configs": "workspace:*",
     "@pinceau/palette": "workspace:*",
-    "@pinceau/outputs": "workspace:*",    "nuxt": "^3.8.0"
+    "@pinceau/outputs": "workspace:*",    "nuxt": "^3.8.1"
   },
   "stackblitz": {
     "installDependencies": false,

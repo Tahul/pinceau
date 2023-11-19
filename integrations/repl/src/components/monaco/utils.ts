@@ -7,9 +7,6 @@ export function getOrCreateModel(
   value: string,
 ) {
   const model = editor.getModel(uri)
-  if (uri.path.includes('@pinceau/outputs')) {
-    console.log(uri.path)
-  }
   if (model) {
     model.setValue(value)
     return model

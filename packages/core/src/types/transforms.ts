@@ -19,7 +19,7 @@ export interface SourceMapOutput {
 
 export type SourceMapInput = SourceMapOutput | string | null | { mappings: '' }
 
-export type PinceauTransformResult = { code: string; map?: SourceMapOutput | null } | undefined
+export type PinceauTransformResult = { code: string, map?: SourceMapOutput | null } | undefined
 
 export interface PropMatch {
   loc: SourceLocation

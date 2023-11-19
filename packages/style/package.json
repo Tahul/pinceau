@@ -45,7 +45,7 @@
     "@pinceau/stringify": "workspace:*",
     "@pinceau/outputs": "workspace:*",
     "@pinceau/theme": "workspace:*",
-    "acorn": "^8.10.0",
+    "acorn": "^8.11.2",
     "ultrahtml": "npm:@pinceau/ultrahtml@1.5.2"
   },
   "devDependencies": {

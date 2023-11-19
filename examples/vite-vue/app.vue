@@ -49,24 +49,3 @@ const CircleComponent = $styled.div<{ color: 'red' | 'blue' }>({
     <div class="dot-background" />
   </App>
 </template>
-
-<style lang="ts">
-styled({
-  variants: {
-    size: {
-      sm: {
-        padding: '$space.1'
-      },
-      md: {
-        padding: '$space.2'
-      },
-      lg: {
-        padding: '$space.4'
-      }
-    },
-    options: {
-      default: 'sm'
-    }
-  }
-})
-</style>

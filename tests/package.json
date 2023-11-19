@@ -5,9 +5,9 @@
   "description": "Make your <script> lighter and your <style> smarter.",
   "type": "module",
   "scripts": {
-    "test": "vitest --run --coverage -c unit.config.ts",
+    "test": "vitest --run -c unit.config.ts",
     "test:fixtures": "vitest --run -c fixtures.config.ts",
-    "test:ui": "vitest --ui --coverage --open=false -c unit.config.ts"
+    "test:ui": "vitest --ui --open=false -c unit.config.ts"
   },
   "dependencies": {
     "@pinceau/astro": "workspace:*",
@@ -27,12 +27,12 @@
   },
   "devDependencies": {
     "@pinceau/configs": "workspace:*",
-    "@types/vscode": "^1.83.1",
+    "@types/vscode": "^1.84.1",
     "@vitest/coverage-v8": "^0.34.6",
     "@vitest/ui": "^0.34.6",
-    "@vscode/test-electron": "^2.3.5",
-    "@vscode/vsce": "^2.21.1",
-    "@vue/test-utils": "^2.4.1",
+    "@vscode/test-electron": "^2.3.6",
+    "@vscode/vsce": "^2.22.0",
+    "@vue/test-utils": "^2.4.2",
     "jsdom": "^22.1.0",
     "vitest": "^0.34.6",
     "vscode-languageclient": "^9.0.1",
