@@ -1,3 +1,4 @@
+import '@pinceau/core'
 import type { PinceauStyleOptions } from './types'
 
 export * from './types'

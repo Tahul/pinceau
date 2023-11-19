@@ -1,3 +1,4 @@
+import '@pinceau/core'
 import type { PinceauReactOptions } from './types'
 
 declare module '@pinceau/core' {
