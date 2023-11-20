@@ -654,11 +654,63 @@ describe('@pinceau/theme', () => {
       resolveModule = vi.fn()
     })
 
-    it('replaces <pinceau /> with the correct tags', async () => {
+    it('adds theme sheet in place of <pinceau />', async () => {
       const inputHtml = '<pinceau />'
       const expectedHtml = '<style type="text/css" id="pinceau-theme">mockedOutputContent</style>'
 
-      const result = transformIndexHtml(inputHtml, ctx as any)
+      const result = await transformIndexHtml(inputHtml, ctx as any)
+      expect(result).toBe(expectedHtml)
+    })
+
+    it('enforce inject the pinceau tags to <head> when <pinceau /> is missing', async () => {
+      ctx.options.theme.enforceHtmlInject = true
+
+      const inputHtml = `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/main.ts"></script>
+  </body>
+</html>
+`
+      const expectedHtml = `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><style type="text/css" id="pinceau-theme">mockedOutputContent</style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/main.ts"></script>
+  </body>
+</html>
+`
+
+      const result = await transformIndexHtml(inputHtml, ctx as any)
+      expect(result).toBe(expectedHtml)
+    })
+
+    it('enforce inject the pinceau tags when <pinceau /> is missing and no <head> is present', async () => {
+      ctx.options.theme.enforceHtmlInject = true
+
+      const inputHtml = ''
+      const expectedHtml = '<style type="text/css" id="pinceau-theme">mockedOutputContent</style>'
+
+      const result = await transformIndexHtml(inputHtml, ctx as any)
+      expect(result).toBe(expectedHtml)
+    })
+
+    it('do not inject anything if <pinceau /> is not found and enforceHtmlInject is false', async () => {
+      ctx.options.theme.enforceHtmlInject = false
+
+      const inputHtml = ''
+      const expectedHtml = ''
+
+      const result = await transformIndexHtml(inputHtml, ctx as any)
       expect(result).toBe(expectedHtml)
     })
 
@@ -668,7 +720,7 @@ describe('@pinceau/theme', () => {
       const inputHtml = '<pinceau />'
       const expectedHtml = '<style type="text/css" id="pinceau-theme" data-vite-dev-id="mockedOutputId">mockedOutputContent</style>\n<script type="module" data-vite-dev-id="@pinceau/outputs/hmr" src="/__pinceau_hmr.js"></script>'
 
-      const result = transformIndexHtml(inputHtml, ctx as any)
+      const result = await transformIndexHtml(inputHtml, ctx as any)
 
       expect(result).toBe(expectedHtml)
     })
@@ -681,7 +733,7 @@ describe('@pinceau/theme', () => {
       const inputHtml = '<pinceau />'
       const expectedHtml = '<link rel="stylesheet" type="text/css" href="@unocss/reset/tailwind.css" />\n<style type="text/css" id="pinceau-theme">mockedOutputContent</style>'
 
-      const result = transformIndexHtml(inputHtml, ctx as any)
+      const result = await transformIndexHtml(inputHtml, ctx as any)
 
       expect(result).toBe(expectedHtml)
     })

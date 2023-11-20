@@ -44,6 +44,10 @@ export async function transformIndexHtml(html: string, ctx: PinceauContext) {
   if (ctx.options.theme.enforceHtmlInject) {
     const parsedHtml = parseTemplate(html)
 
+    const tagsAst = parseTemplate(`<head>${tags}</head>`).children[0].children
+
+    let hasHead: boolean = false
+
     await walkTemplate(
       parsedHtml,
       (node) => {
@@ -51,13 +55,21 @@ export async function transformIndexHtml(html: string, ctx: PinceauContext) {
           const lastMetaTag = node.children.filter(node => node.type === ELEMENT_NODE && node.name === 'meta').slice(-1)?.[0]
           const lastMetaTagIndex = node.children.findIndex(node => node === lastMetaTag)
 
-          if (lastMetaTagIndex > 0) {
-            const tagsAst = parseTemplate(`<head>${tags}</head>`).children[0].children
+          if (lastMetaTagIndex !== -1) {
             node.children.splice(lastMetaTagIndex + 1, 0, ...tagsAst)
           }
+          else {
+            node.children.unshift(...tagsAst)
+          }
+
+          hasHead = true
         }
       },
     )
+
+    if (!hasHead && parsedHtml.children) {
+      parsedHtml.children.push(...tagsAst)
+    }
 
     return await printTemplate(parsedHtml)
   }

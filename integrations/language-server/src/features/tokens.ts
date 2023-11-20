@@ -1,11 +1,13 @@
 import type { TextDocument } from 'vscode-languageserver-textdocument'
-import { parse as parseVueSFC } from '@vue/compiler-sfc'
+
+// import { parse as parseVueSFC } from '@vue/compiler-sfc'
 import { REFERENCES_REGEX } from '@pinceau/core/runtime'
 import type { DesignToken } from '@pinceau/theme'
 import type { ColorInformation, Position, Range } from 'vscode-languageserver'
 import { helperRegex } from '@pinceau/theme/utils'
 import type { PinceauStyleFunctionContext } from '@pinceau/style'
-import { parsePinceauQuery } from '@pinceau/core/utils'
+
+// import { parsePinceauQuery } from '@pinceau/core/utils'
 import type { PinceauVSCodeSettings } from '../manager'
 import type PinceauTokensManager from '../manager'
 import { findAll } from '../utils/findAll'
