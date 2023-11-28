@@ -1,6 +1,6 @@
 {
   "name": "@pinceau/stringify",
-  "version": "1.0.0-beta.22",
+  "version": "1.0.0-beta.25",
   "homepage": "https://github.com/Tahul/pinceau#readme",
   "bugs": {
     "url": "https://github.com/Tahul/pinceau/issues"
@@ -26,7 +26,7 @@
     "stub": "unbuild --stub"
   },
   "dependencies": {
-    "scule": "^1.0.0"
+    "scule": "^1.1.0"
   },
   "devDependencies": {
     "@pinceau/configs": "workspace:*",

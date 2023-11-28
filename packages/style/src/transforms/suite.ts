@@ -16,7 +16,7 @@ export const suite: PinceauTransforms = {
       // - `<style lang="ts">` blocks that has not been transformed in previous steps
       if (
         (transformCtx.query.transformed || transformCtx.target?.attrs?.pctransformed)
-          || (transformCtx.query.type === 'style' && transformCtx.query.lang === 'ts')
+        || (transformCtx.query.type === 'style' && transformCtx.query.lang === 'ts')
       ) { await transformStyleFunctions(transformCtx, pinceauCtx) }
     },
   ],

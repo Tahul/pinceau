@@ -10,7 +10,7 @@ import { setupExtension } from './config'
 import { setupTokensHelpers } from './features/tokens'
 import * as features from './features'
 
-export interface DocumentTokensData { version: number; styleFns: PinceauStyleFunctionContext[] }
+export interface DocumentTokensData { version: number, styleFns: PinceauStyleFunctionContext[] }
 
 export { PinceauTokensManager, setupExtension, setupTokensHelpers, features }
 

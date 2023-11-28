@@ -1,6 +1,6 @@
 {
   "name": "@pinceau/language-server",
-  "version": "1.0.0-beta.22",
+  "version": "1.0.0-beta.25",
   "description": "Pinceau language server providing hints on tokens values and other features.",
   "homepage": "https://github.com/Tahul/pinceau#readme",
   "bugs": {
@@ -30,8 +30,8 @@
     "@pinceau/theme": "workspace:*",
     "@pinceau/core": "workspace:*",
     "@pinceau/style": "workspace:*",
-    "@vue/compiler-sfc": "^3.3.4",
-    "fast-glob": "^3.3.1",
+    "@vue/compiler-sfc": "^3.3.8",
+    "fast-glob": "^3.3.2",
     "line-column": "^1.0.2",
     "tinycolor2": "1.6.0",
     "vscode-languageserver": "^9.0.1",
@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "@pinceau/configs": "workspace:*",
-    "@types/line-column": "^1.0.0",
-    "@types/tinycolor2": "^1.4.4"
+    "@types/line-column": "^1.0.2",
+    "@types/tinycolor2": "^1.4.6"
   }
 }

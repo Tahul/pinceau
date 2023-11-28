@@ -1,6 +1,6 @@
 {
   "name": "@pinceau/browser",
-  "version": "1.0.0-beta.22",
+  "version": "1.0.0-beta.25",
   "homepage": "https://github.com/Tahul/pinceau#readme",
   "bugs": {
     "url": "https://github.com/Tahul/pinceau/issues"
@@ -61,10 +61,10 @@
       "require": "./react-runtime.js",
       "types": "./react-runtime.d.ts"
     },
-    "./palette": {
-      "import": "./palette.js",
-      "require": "./palette.js",
-      "types": "./palette.d.ts"
+    "./pigments": {
+      "import": "./pigments.js",
+      "require": "./pigments.js",
+      "types": "./pigments.d.ts"
     }
   },
   "scripts": {
@@ -79,8 +79,8 @@
     "@pinceau/svelte": "workspace:*",
     "@pinceau/theme": "workspace:*",
     "@pinceau/vue": "workspace:*",
-    "jiti": "^1.20.0",
-    "tsup": "^7.2.0"
+    "jiti": "^1.21.0",
+    "tsup": "^7.3.0"
   },
   "dependencies": {
     "esbuild-plugin-pipe": "^0.2.0",

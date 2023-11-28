@@ -18,25 +18,24 @@
 
   const main = styled({})
 
-  const TestComponent = $styled.a({ color: 'green'}).withVariants({
-    size: {
-      md: {
-        padding: '$space.32'
-      },
-      options: {
-        default: 'md'
-      }
-    }
+  $: test = 0
+
+  $: TestComponent = $styled.a({ 
+    color: (props) => props.color,
+    padding: (props) => `${props.size}px`
   })
 
-  console.log(TestComponent)
+  const onClick = () => {
+    test += 1
+    console.log(test)
+  }
 </script>
 
 
 <div>
-<main class={main}>Hello world</main>
+<main on:click={onClick} class={main}>Hello world</main>
 
-<TestComponent color="blue">
+<TestComponent color="blue" size={test}>
   hello
 </TestComponent>
 </div>

@@ -19,7 +19,7 @@ export interface SourceMapOutput {
 
 export type SourceMapInput = SourceMapOutput | string | null | { mappings: '' }
 
-export type PinceauTransformResult = { code: string; map?: SourceMapOutput | null } | undefined
+export type PinceauTransformResult = { code: string, map?: SourceMapOutput | null } | undefined
 
 export interface PropMatch {
   loc: SourceLocation
@@ -33,7 +33,7 @@ export interface PinceauTransformer {
   parser: (...args: any[]) => any
   loadBlock: (file: string, query: PinceauQuery, ctx: PinceauContext) => Thenable<string | undefined>
   loadTransformers: ((code: string, query: PinceauQuery, ctx: Partial<PinceauContext>) => string)[]
-  extractProp: (transformContext: PinceauTransformContext, prop: string) => PropMatch[]
+  extractProp: (transformContext: PinceauTransformContext, prop: string) => Promise<PropMatch[]>
   classBinding: (id: string, styleFn: PinceauStyleFunctionContext) => string
   parserOptions?: any
 }

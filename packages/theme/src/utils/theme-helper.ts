@@ -8,7 +8,7 @@ import type { PinceauTheme, PinceauThemePaths } from '@pinceau/outputs'
 export function createThemeHelper(
   theme: any = {},
   options?: {
-    cb?: (ctx: { query: string; token?: DesignTokens | DesignToken; theme: PinceauTheme }) => void
+    cb?: (ctx: { query: string, token?: DesignTokens | DesignToken, theme: PinceauTheme }) => void
   },
 ): ThemeFunction {
   return (token?: PinceauThemePaths | (string & {})) => {

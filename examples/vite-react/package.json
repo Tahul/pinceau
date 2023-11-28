@@ -16,16 +16,16 @@
   },
   "devDependencies": {
     "@pinceau/configs": "workspace:*",
-    "@pinceau/palette": "workspace:*",
+    "@pinceau/pigments": "workspace:*",
     "@pinceau/outputs": "workspace:*",
     "@pinceau/react": "workspace:*",
-    "@types/node": "20.8.5",
+    "@types/node": "20.9.2",
     "@types/react": "latest",
     "@types/react-dom": "latest",
-    "@vitejs/plugin-react": "^4.1.0",
+    "@vitejs/plugin-react": "^4.2.0",
     "cross-env": "^7.0.3",
     "typescript": "^5.2.2",
-    "vite": "^4.4.11"
+    "vite": "^5.0.0"
   },
   "stackblitz": {
     "installDependencies": false,

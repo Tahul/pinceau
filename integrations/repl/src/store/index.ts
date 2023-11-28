@@ -1,19 +1,18 @@
-import { reactive, ref, watch, watchEffect } from 'vue'
-import type { Ref, WatchStopHandle } from 'vue'
+import { reactive, ref, shallowRef, watch } from 'vue'
+import type { Ref, ShallowRef, WatchStopHandle } from 'vue'
 import type { editor } from 'monaco-editor-core'
-import palette from '@pinceau/palette/theme.config?raw'
-import { atou, utoa } from '../utils'
-import type { OutputModes } from '../components/output/types'
 import type { PreviewProxy } from '../components/output/PreviewProxy'
 import { ReplVueTransformer } from './vue'
 import { ReplReactTransformer } from './react'
 import { ReplSvelteTransformer } from './svelte'
 import { PinceauProvider } from './pinceau'
+import { SessionProvider } from './session'
 
 export const importMapFile = 'import-map.json'
 export const tsconfigFile = 'tsconfig.json'
-export const themeFile = 'theme.config.ts'
-export const pinceauVersion = '1.0.0-beta.21'
+export const playgroundConfigFile = 'config.json'
+export const themeFile = 'src/theme.config.ts'
+export const pinceauVersion = '1.0.0-beta.22'
 
 const supportedTransformers = {
   vue: ReplVueTransformer,
@@ -55,43 +54,61 @@ export class File {
 }
 
 export interface StoreState {
-  mainFile: string
+  mainFile?: string
+  activeFile?: File
   files: Record<string, File>
   builtFiles: Record<string, File>
-  activeFile: File
   errors: (string | Error)[]
   typescriptVersion: string
   locale?: string | undefined
-  /** \{ dependencyName: version \} */
-  dependencyVersion?: Record<string, string>
 }
 
 export interface Store {
+  initializing: Ref<boolean>
+  sandboxCreating?: Promise<void>
+  compiling: Ref<boolean>
+  resetting: Ref<boolean>
   state: StoreState
-  transformer: ReplTransformer
+  defaultTransformer?: keyof typeof supportedTransformers
+  transformer?: ReplTransformer
+  setTransformer?: (transformer: keyof typeof supportedTransformers) => Promise<void>
   pinceauProvider: PinceauProvider
+  sessionId?: Ref<string | undefined>
+  sessionProvider: SessionProvider
+  layout: Ref<'horizontal' | 'vertical'>
+  theme: Ref<'dark' | 'light'>
+  showConfig: Ref<boolean>
+  clearConsole: Ref<boolean>
+  sandbox: ShallowRef<HTMLIFrameElement | undefined>
+  previewProxy: ShallowRef<PreviewProxy | undefined>
+  previewOptions: Ref<any>
+  ssr: Ref<boolean>
   editor: typeof editor | undefined
+  editorReady: Ref<boolean>
   effects: WatchStopHandle[]
   resetFlip: Ref<number>
-  init: () => void
+  init: (options?: { updatePreview?: boolean }) => void
+  compileFiles: () => Promise<void>
   setActive: (filename: string) => void
   addFile: (filename: string | File) => void
   deleteFile: (filename: string) => void
   renameFile: (oldFilename: string, newFilename: string) => void
   getImportMap: () => any
   getTsConfig?: () => any
-  reset: (options: StoreOptions) => Promise<Store>
+  reset: (options: { transformer: keyof typeof supportedTransformers }) => Promise<this>
   reloadLanguageTools?: undefined | ((lang?: 'vue' | 'svelte' | 'react' | 'typescript') => void)
-  initialShowOutput: boolean
-  initialOutputMode: OutputModes
+  runtimeError: Ref<string | null>
+  runtimeWarning: Ref<string | null>
 }
 
 export interface StoreOptions {
-  transformer?: 'vue' | 'react' | 'svelte'
-  serializedState?: string
+  sessionId?: Ref<string | undefined>
+  defaultTransformer?: keyof typeof supportedTransformers
   showOutput?: boolean
-  // loose type to allow getting from the URL without inducing a typing error
-  outputMode?: OutputModes | string
+  clearConsole?: boolean
+  previewOptions?: any
+  theme?: 'dark' | 'light'
+  ssr?: any
 }
 
 export interface ReplTransformer<
@@ -106,6 +123,7 @@ export interface ReplTransformer<
   welcomeCode: string
   tsconfig: any
   shims: Record<string, File>
+  init: () => Promise<void>
   getTypescriptDependencies: (version?: string) => Record<string, string>
   compilerOptions: CompilerOptions
   compiler: CompilerType
@@ -115,156 +133,153 @@ export interface ReplTransformer<
   resetVersion: () => void
   getDefaultImports: (version?: string) => Record<string, string>
   compileFile: (file: File) => Promise<(string | Error)[]>
-  updatePreview: (
-    clearConsole: Ref<boolean>,
-    runtimeError: Ref<string | null>,
-    runtimeWarning: Ref<string | null>,
-    ssr: boolean,
-    proxy: PreviewProxy,
-    previewOptions: any,
-  ) => Promise<any>
+  updatePreview: () => Promise<any>
 }
 
 export class ReplStore implements Store {
-  state: StoreState
+  defaultTransformer: keyof typeof supportedTransformers = 'vue'
+  transformer?: ReplTransformer
+  state: StoreState = reactive({
+    builtFiles: {},
+    errors: [],
+    files: {},
+    typescriptVersion: 'latest',
+    mainFile: undefined,
+    activeFile: undefined,
+    locale: navigator.language,
+  })
+
+  initializing: Ref<boolean> = ref(true)
+  compiling: Ref<boolean> = ref(true)
+  resetting: Ref<boolean> = ref(false)
   effects: WatchStopHandle[] = []
-  transformer: ReplTransformer
   pinceauProvider: PinceauProvider
-  initialShowOutput: boolean
-  initialOutputMode: OutputModes
+  sessionProvider: SessionProvider
   reloadLanguageTools: undefined | ((lang?: 'vue' | 'svelte' | 'react' | 'typescript') => void)
   editor: typeof editor | undefined = undefined
+  editorReady: Ref<boolean> = ref(false)
   resetFlip: Ref<number> = ref(0)
+  layout = ref<'vertical' | 'horizontal'>('vertical')
+  showConfig = ref<boolean>(false)
+  previewProxy: ShallowRef<PreviewProxy | undefined> = shallowRef(undefined)
+  sandbox: ShallowRef<HTMLIFrameElement | undefined> = shallowRef(undefined)
+  clearConsole: Ref<boolean> = ref(true)
+  ssr: Ref<boolean> = ref(true)
+  previewOptions: Ref<any> = ref({})
+  theme: Ref<'dark' | 'light'> = ref('dark')
+  runtimeError: Ref<string | null> = ref(null)
+  runtimeWarning: Ref<string | null> = ref(null)
+  sessionId: Ref<string | undefined> = ref(undefined)
+  sandboxCreating?: Promise<void> | undefined
 
   constructor({
-    transformer,
-    serializedState = '',
-    showOutput = false,
-    outputMode = 'preview',
+    sessionId,
+    clearConsole = true,
+    theme = 'dark',
   }: StoreOptions = {}) {
-    let serializedFiles: { [key: string]: string } | undefined
-    if (serializedState) {
-      const { files, transformer: serializedTransformer } = JSON.parse(atou(serializedState))
-      if (files) { serializedFiles = files }
-      if (serializedTransformer) { transformer = serializedTransformer }
-    }
-
-    const files: StoreState['files'] = {}
-
-    if (serializedFiles) { for (const filename in serializedFiles) { setFile(files, filename, serializedFiles[filename]) } }
-
-    // Set theme.config
-    if (!serializedFiles || !serializedFiles['theme.config.ts']) { setFile(files, themeFile, palette) }
+    if (typeof clearConsole !== 'undefined') { this.clearConsole.value = clearConsole }
+    if (typeof theme !== 'undefined') { this.theme.value = theme }
+    if (sessionId) { this.sessionId.value = sessionId.value }
 
     this.pinceauProvider = new PinceauProvider(this)
-
-    if (transformer) { this.transformer = new supportedTransformers[transformer]({ store: this }) }
-    else { throw new Error('You must provide a transformer for the Repl to boot properly.') }
-
-    // Set main fail from transformer
-    if (!serializedFiles) { setFile(files, this.transformer.defaultMainFile, this.transformer.welcomeCode) }
-
-    this.initialShowOutput = showOutput
-    this.initialOutputMode = outputMode as OutputModes
-
-    // Set main file
-    let mainFile = this.transformer?.defaultMainFile
-    if (!files[mainFile]) { mainFile = Object.keys(files)[0] }
-
-    this.state = reactive({
-      mainFile,
-      files,
-      builtFiles: {},
-      activeFile: files[mainFile],
-      errors: [],
-      typescriptVersion: 'latest',
-      resetFlip: 0,
-    })
-
-    this.initImportMap()
-    this.initTsConfig()
+    this.sessionProvider = new SessionProvider(this)
   }
 
-  async reset({
-    transformer,
-    showOutput = false,
-    outputMode = 'preview',
-  }: StoreOptions) {
-    if (transformer) { this.transformer = new supportedTransformers[transformer]({ store: this }) }
-    else { throw new Error('You must provide a transformer for the Repl to boot properly.') }
+  async reset({ transformer }: { transformer?: keyof typeof supportedTransformers }) {
+    this.resetting.value = true
 
-    this.effects.forEach(cancel => cancel())
+    try {
+      this.effects.forEach(e => e())
 
-    const files: StoreState['files'] = {}
+      this.editor?.getModels().forEach(model => model.dispose())
 
-    setFile(files, this.transformer.defaultMainFile, this.transformer.welcomeCode)
+      this.state.files = {}
 
-    this.initialShowOutput = showOutput
-    this.initialOutputMode = outputMode as OutputModes
+      this.sessionProvider.resetLocalStorage()
 
-    // Set main file
-    let mainFile = this.transformer?.defaultMainFile
-    if (!files[mainFile]) { mainFile = Object.keys(files)[0] }
+      this.defaultTransformer = transformer || this.defaultTransformer
 
-    const newState = {
-      mainFile,
-      files,
-      activeFile: files[mainFile],
-      errors: [],
-      typescriptVersion: 'latest',
+      await this.init()
+
+      await new Promise(r => setTimeout(r, 5000))
+    }
+    catch (e) {
+      console.log({ e })
     }
 
-    for (const key in newState) {
-      this.state[key] = newState[key]
-    }
-
-    this.initImportMap(true)
-    this.initTsConfig(true)
-    this.reloadLanguageTools?.(transformer)
-    this.init()
-    this.forceSandboxReset()
+    this.resetting.value = false
 
     return this
   }
 
-  // Don't start compiling until the options are set
-  init() {
-    const stopCompilerEffect = watchEffect(
-      () => (this.transformer.compileFile(this.state.activeFile).then(errs => (this.state.errors = errs))),
+  async compileFiles() {
+    if (!this.transformer) { return }
+
+    try {
+      for (const file in this.state.files) {
+        if (file !== this.state.mainFile) {
+          const errs = await this.transformer.compileFile(this.state.files[file])
+          if (errs.length) { this.state.errors.push(...errs) }
+        }
+      }
+
+      if (this.state.mainFile) { await this.transformer.compileFile(this.state.files[this.state.mainFile]) }
+    }
+    catch (e) {
+      console.log({ e })
+    }
+  }
+
+  async init() {
+    await this.sessionProvider.init()
+
+    await this.pinceauProvider.init()
+
+    if (!this.transformer) { return }
+
+    const stopCompilerEffect = watch(
+      () => this.state.activeFile?.code,
+      async (newCode, oldCode) => {
+        if (!this.previewProxy.value || !this.transformer) { return }
+        if (!newCode || !this.state.activeFile) { return }
+        if (newCode === oldCode) { return }
+
+        this.compiling.value = true
+
+        try {
+          await this.transformer.compileFile(this.state.activeFile)
+          await this.transformer.updatePreview()
+        }
+        catch (e) {
+          console.log({ e })
+        }
+
+        this.sessionProvider.updateLocalStorageContent()
+
+        this.compiling.value = false
+      },
     )
+    this.effects.push(stopCompilerEffect)
 
     const stopLanguageToolsEffect = watch(
       () => [
         this.state.files[tsconfigFile]?.code,
         this.state.typescriptVersion,
         this.state.locale,
-        this.state.dependencyVersion,
       ],
-      () => this.reloadLanguageTools?.(this.transformer.name as keyof typeof supportedTransformers),
+      () => {
+        if (!this.previewProxy.value || !this.transformer) { return }
+        this.reloadLanguageTools?.(this.transformer.name as keyof typeof supportedTransformers)
+      },
       { deep: true },
     )
+    this.effects.push(stopLanguageToolsEffect)
+
+    await this.transformer.updatePreview()
 
     this.state.errors = []
-    for (const file in this.state.files) {
-      if (file !== this.transformer.defaultMainFile) {
-        this.transformer.compileFile(this.state.files[file]).then(errs =>
-          this.state.errors.push(...errs),
-        )
-      }
-    }
 
-    this.effects = [stopCompilerEffect, stopLanguageToolsEffect]
-  }
-
-  initTsConfig(reset: boolean = false) {
-    if (!this.state.files[tsconfigFile] || reset) { this.setTsConfig(this.transformer.tsconfig) }
-  }
-
-  setTsConfig(config: any) {
-    this.state.files[tsconfigFile] = new File(
-      tsconfigFile,
-      JSON.stringify(config, undefined, 2),
-    )
+    this.initializing.value = false
   }
 
   getTsConfig() {
@@ -277,6 +292,7 @@ export class ReplStore implements Store {
   }
 
   setActive(filename: string) {
+    if (filename === playgroundConfigFile) { this.state.activeFile = new File('config.json', '{}', true) }
     if (!this.state.files[filename]) { return }
     this.state.activeFile = this.state.files[filename]
   }
@@ -295,7 +311,7 @@ export class ReplStore implements Store {
       // eslint-disable-next-line no-alert
       confirm(`Are you sure you want to delete ${stripSrcPrefix(filename)}?`)
     ) {
-      if (this.state.activeFile.filename === filename) { this.state.activeFile = this.state.files[this.state.mainFile] }
+      if (this.state.mainFile && this.state.activeFile && this.state.activeFile.filename === filename) { this.state.activeFile = this.state.files[this.state.mainFile] }
 
       delete this.state.files[filename]
     }
@@ -329,74 +345,31 @@ export class ReplStore implements Store {
 
     if (this.state.mainFile === oldFilename) { this.state.mainFile = newFilename }
 
-    this.transformer.compileFile(file).then(errs => (this.state.errors = errs))
-  }
-
-  serialize() {
-    const files = this.getFiles()
-    const importMap = files[importMapFile]
-
-    if (importMap) {
-      const defaultImports = this.transformer.getDefaultImports()
-
-      const { imports } = JSON.parse(importMap)
-
-      for (const importName of Object.keys(defaultImports)) {
-        if (imports[importName] === defaultImports[importName]) { delete imports[importName] }
-      }
-
-      if (!Object.keys(imports).length) { delete files[importMapFile] }
-      else { files[importMapFile] = JSON.stringify({ imports }, null, 2) }
-    }
-
-    return `#${utoa(JSON.stringify({ files, transformer: this?.transformer?.name || 'vue' }))}`
+    if (this.transformer) { this.transformer.compileFile(file).then(errs => (this.state.errors = errs)) }
   }
 
   getFiles() {
     const exported: Record<string, string> = {}
     for (const filename in this.state.files) {
-      const normalized
-        = filename === importMapFile ? filename : stripSrcPrefix(filename)
-      exported[normalized] = this.state.files[filename].code
+      exported[filename] = this.state.files[filename].code
     }
     return exported
-  }
-
-  async setFiles(
-    newFiles: Record<string, string>,
-    mainFile,
-  ) {
-    const files: Record<string, File> = {}
-
-    if (mainFile === this.transformer.defaultMainFile && !newFiles[mainFile]) { setFile(files, mainFile, this.transformer.welcomeCode) }
-
-    for (const filename in newFiles) { setFile(files, filename, newFiles[filename]) }
-
-    this.state.errors = []
-
-    for (const file in files) { this.state.errors.push(...(await this.transformer.compileFile(files[file]))) }
-
-    this.state.mainFile = mainFile
-    this.state.files = files
-    this.initImportMap()
-    this.setActive(mainFile)
-    this.forceSandboxReset()
   }
 
   forceSandboxReset() {
     this.resetFlip.value = this.resetFlip.value + 1
   }
 
-  initImportMap(reset: boolean = false) {
-    const map = this.state.files[importMapFile]
+  getBaseMap(reset: boolean = false) {
+    let map = this.state?.files?.[importMapFile]
 
     if (!map || reset) {
-      this.state.files[importMapFile] = new File(
+      map = new File(
         importMapFile,
         JSON.stringify(
           {
             imports: {
-              ...this.transformer.getDefaultImports(),
+              ...(this.transformer?.getDefaultImports() || {}),
             },
           },
           null,
@@ -411,7 +384,7 @@ export class ReplStore implements Store {
         if (!json.imports) { json.imports = {} }
 
         json.imports = {
-          ...this.transformer.getDefaultImports(),
+          ...(this.transformer?.getDefaultImports() || {}),
           ...json.imports,
         }
 
@@ -421,16 +394,17 @@ export class ReplStore implements Store {
         //
       }
     }
+
+    return map
   }
 
   getImportMap() {
     try {
-      return JSON.parse(this.state.files[importMapFile].code)
+      if (!this.state.files[importMapFile]) { return {} }
+      return JSON.parse(this.state.files?.[importMapFile]?.code || '{}')
     }
     catch (e) {
-      this.state.errors = [
-        `Syntax error in import-map.json: ${(e as Error).message}`,
-      ]
+      this.state.errors = [`Syntax error in import-map.json: ${(e as Error).message}`]
       return {}
     }
   }
@@ -438,6 +412,7 @@ export class ReplStore implements Store {
   setImportMap(map: {
     imports: Record<string, string>
     scopes?: Record<string, Record<string, string>>
+    styles?: Record<string, string>
   }) {
     this.state.files[importMapFile]!.code = JSON.stringify(map, null, 2)
   }
@@ -446,9 +421,14 @@ export class ReplStore implements Store {
     this.state.typescriptVersion = version
     console.info(`[@pinceau/repl] Now using TypeScript version: ${version}`)
   }
+
+  async setTransformer(transformer: keyof typeof supportedTransformers) {
+    this.transformer = new supportedTransformers[transformer]({ store: this })
+    await this.transformer.init()
+  }
 }
 
-function setFile(
+export function setFile(
   files: Record<string, File>,
   filename: string,
   content: string,
@@ -457,8 +437,9 @@ function setFile(
   // for cleaner Volar path completion when using Monaco editor
   const normalized
     = filename !== importMapFile
-      && filename !== tsconfigFile
-      && !filename.startsWith('src/')
+    && filename !== tsconfigFile
+    && filename !== themeFile
+    && !filename.startsWith('src/')
       ? `src/${filename}`
       : filename
 

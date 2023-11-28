@@ -1,22 +1,14 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Card from '../components/Card.astro';
-import Example from '../components/Example.vue';
+import Example from '../components/Example.svelte';
 ---
 
 <Layout title="Welcome to Astro.">
   <main>
-    <h1>Welcome to <span>Astro</span></h1>
-    <p class="instructions">
-      Check out the <code>src/pages</code> directory to get started.<br />
-    </p>
+    <h1>Welcome to <span>Pinceau</span></h1>
     <ul role="list" >
-      <Card
-        href="/foo"
-        title="/foo"
-        body="Go to page foo."
-      />
-      <Example client:only="vue" />
+      <Example client:only="svelte" />
     </ul>
   </main>
 </Layout>

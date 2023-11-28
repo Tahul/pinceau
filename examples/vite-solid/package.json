@@ -10,16 +10,16 @@
     "serve": "vite preview"
   },
   "dependencies": {
-    "solid-js": "^1.8.1"
+    "solid-js": "^1.8.5"
   },
   "devDependencies": {
     "@pinceau/configs": "workspace:*",
-    "@pinceau/palette": "workspace:*",
+    "@pinceau/pigments": "workspace:*",
     "@pinceau/outputs": "workspace:*",    "@pinceau/react": "workspace:*",
     "typescript": "^5.2.2",
-    "vite": "^4.4.11",
-    "vite-plugin-inspect": "^0.7.40",
-    "vite-plugin-solid": "^2.7.1"
+    "vite": "^5.0.0",
+    "vite-plugin-inspect": "^0.7.42",
+    "vite-plugin-solid": "^2.7.2"
   },
   "stackblitz": {
     "installDependencies": false,

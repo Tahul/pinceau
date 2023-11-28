@@ -36,8 +36,8 @@ export const testFileLayer = {
   configFileName: 'theme.config',
 }
 
-export const paletteLayer = {
-  path: resolveFixtures('../../packages/palette'),
+export const pigmentsLayers = {
+  path: resolveFixtures('../../packages/pigments'),
   configFileName: 'theme.config',
 }
 

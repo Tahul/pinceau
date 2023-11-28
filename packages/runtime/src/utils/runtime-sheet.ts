@@ -19,7 +19,7 @@ export function useRuntimeSheet(options?: PinceauRuntimeSheetOptions): PinceauRu
 
   const sheet = useStyleSheet('pinceau-runtime', IS_BROWSER ? document : undefined)
 
-  const cache: Map<string, { rule: CSSRule; members: number }> = new Map()
+  const cache: Map<string, { rule: CSSRule, members: number }> = new Map()
 
   /**
    * Hydrate CSS rules from existing stylesheet.
@@ -138,8 +138,8 @@ export function useRuntimeSheet(options?: PinceauRuntimeSheetOptions): PinceauRu
   function flush(
     members: number = 0,
     className?: string,
-  ): { rule: CSSRule; members: number }[] {
-    const flushed: { rule: CSSRule; members: number }[] = []
+  ): { rule: CSSRule, members: number }[] {
+    const flushed: { rule: CSSRule, members: number }[] = []
 
     if (!sheet) { return flushed }
 

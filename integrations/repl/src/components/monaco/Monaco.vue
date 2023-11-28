@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import {
-  type Ref,
   computed,
   inject,
   nextTick,
@@ -39,15 +38,17 @@ const ready = ref(false)
 const editor = shallowRef<monaco.editor.IStandaloneCodeEditor>()
 const store = inject<Store>('store')!
 const lang = computed(() => (props.mode === 'css' ? 'css' : 'javascript'))
-const replTheme = inject<Ref<'dark' | 'light'>>('theme')!
-
-initMonaco(store)
 
 onMounted(async () => {
+  if (store.pinceauProvider.pendingBuild) { await store.pinceauProvider.pendingBuild }
+
+  await initMonaco(store)
+
   const theme = await loadTheme(monaco.editor as any)
-  ready.value = true
 
   await nextTick()
+
+  ready.value = true
 
   if (!containerRef.value) { return }
 
@@ -57,14 +58,11 @@ onMounted(async () => {
       : { model: null }),
     'fontSize': 12,
     'fontFamily': '\'JetBrains Mono\', monospace',
-    'theme': replTheme.value === 'light' ? theme.light : theme.dark,
+    'theme': store.theme.value === 'light' ? theme.light : theme.dark,
     'readOnly': props.readonly,
     'automaticLayout': true,
     'scrollBeyondLastLine': false,
     'minimap': {
-      enabled: false,
-    },
-    'inlineSuggest': {
       enabled: false,
     },
     'semanticHighlighting.enabled': true,
@@ -147,11 +145,14 @@ onMounted(async () => {
   })
 
   // Update theme
-  watch(replTheme, (n) => {
-    editorInstance.updateOptions({
-      theme: n === 'light' ? theme.light : theme.dark,
-    })
-  })
+  watch(
+    store.theme,
+    (n) => {
+      editorInstance.updateOptions({
+        theme: n === 'light' ? theme.light : theme.dark,
+      })
+    },
+  )
 })
 
 onBeforeUnmount(() => {

@@ -30,7 +30,7 @@ export const transformWriteScriptFeatures: PinceauTransformFunction = (transform
     if (!fileHasRuntime) { fileHasRuntime = !!hasRuntime }
 
     // Every arguments resolved from `usePinceauRuntime`
-    const runtimeParts: { staticClass: string; computedStyles: string | undefined; variants: string | undefined } = {
+    const runtimeParts: { staticClass: string, computedStyles: string | undefined, variants: string | undefined } = {
       staticClass: styleFn.className ? `\`${styleFn.className}\`` : 'undefined',
       computedStyles: undefined,
       variants: undefined,

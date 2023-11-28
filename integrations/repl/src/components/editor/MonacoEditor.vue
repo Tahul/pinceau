@@ -15,7 +15,7 @@ function onChange(code: string) {
 
 <template>
   <Monaco
-    :filename="filename"
+    :filename="filename || 'no-file.ts'"
     :value="value || ''"
     :readonly="readonly"
     :mode="mode"

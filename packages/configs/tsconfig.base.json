@@ -27,7 +27,6 @@
   "references": [{ "path": "./tsconfig.node.json" }],
   "exclude": ["dist", "node_modules"],
   "vueCompilerOptions": {
-    "plugins": ["@pinceau/volar"]
+    "plugins": ["../../integrations/volar/dist/index.cjs"]
   }
-
 }

@@ -1,7 +1,7 @@
 {
   "name": "@pinceau/vscode",
   "displayName": "Pinceau",
-  "version": "1.0.0-beta.22",
+  "version": "1.0.0-beta.25",
   "description": "IntelliSense integration for Pinceau features.",
   "categories": [
     "Other"
@@ -118,10 +118,10 @@
   "devDependencies": {
     "@pinceau/configs": "workspace:*",
     "@pinceau/language-server": "workspace:*",
-    "@types/node": "^20.8.5",
-    "@types/vscode": "^1.83.0",
-    "@vscode/test-electron": "^2.3.5",
-    "@vscode/vsce": "^2.21.1",
+    "@types/node": "^20.9.2",
+    "@types/vscode": "^1.84.1",
+    "@vscode/test-electron": "^2.3.6",
+    "@vscode/vsce": "^2.22.0",
     "vscode-languageclient": "^9.0.1"
   },
   "engines": {

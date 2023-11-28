@@ -11,7 +11,7 @@ export interface PinceauThemeDefinitions {
 }
 
 export interface PinceauUtilsDefinition {
-  [key: string]: { js?: string; ts?: string }
+  [key: string]: { js?: string, ts?: string }
 }
 
 export type PinceauImportsDefinition = string[]

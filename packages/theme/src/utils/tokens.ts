@@ -55,10 +55,10 @@ export function normalizeTokens(
         // Inline string/number/boolean/bigint/symbol values
         && (
           typeof obj[k] === 'string'
-          || typeof obj[k] === 'number'
-          || typeof obj[k] === 'boolean'
-          || typeof obj[k] === 'symbol'
-          || typeof obj[k] === 'bigint'
+            || typeof obj[k] === 'number'
+            || typeof obj[k] === 'boolean'
+            || typeof obj[k] === 'symbol'
+            || typeof obj[k] === 'bigint'
         )
       ) { result[k] = { value: obj[k] } }
       // Walk on nested object

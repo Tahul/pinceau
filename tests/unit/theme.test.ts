@@ -46,7 +46,7 @@ import fg from 'fast-glob'
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import themeConfig from '../fixtures/theme/theme.config'
 import themeConfigContent from '../fixtures/theme/theme.config.ts?raw'
-import { findNode, paletteLayer, resolveFixtures, resolveTmp, testFileLayer, testLayer } from '../utils'
+import { findNode, pigmentsLayers, resolveFixtures, resolveTmp, testFileLayer, testLayer } from '../utils'
 
 describe('@pinceau/theme', () => {
   describe('utils/config-context.ts', () => {
@@ -58,7 +58,7 @@ describe('@pinceau/theme', () => {
       ctx.fs = fs
       ctx.resolve = createRequire(import.meta.url).resolve
       setupThemeFormats(ctx)
-      ctx.options.theme.palette = false
+      ctx.options.theme.pigments = false
       configCtx = usePinceauConfigContext(ctx)
       ctx.options.theme.layers = []
       ctx.options.theme.buildDir = undefined
@@ -76,7 +76,7 @@ describe('@pinceau/theme', () => {
       const localContext = usePinceauContext({
         theme: {
           layers: [
-            paletteLayer,
+            pigmentsLayers,
           ],
         },
       })
@@ -89,10 +89,10 @@ describe('@pinceau/theme', () => {
       expect(localConfigContext.config).toBeDefined()
       expect(localConfigContext).toBeDefined()
     })
-    it('inject @pinceau/palette build theme without options', async () => {
+    it('inject @pinceau/pigments build theme without options', async () => {
       ctx.fs = fs
       ctx.resolve = createRequire(import.meta.url).resolve
-      ctx.options.theme.palette = true
+      ctx.options.theme.pigments = true
 
       await configCtx.buildTheme()
 
@@ -158,7 +158,7 @@ describe('@pinceau/theme', () => {
     })
     it('merges multiple layers', async () => {
       ctx.options.theme.layers.push(testLayer)
-      ctx.options.theme.layers.push(paletteLayer)
+      ctx.options.theme.layers.push(pigmentsLayers)
 
       const output = await configCtx.buildTheme()
 
@@ -166,7 +166,7 @@ describe('@pinceau/theme', () => {
       expect((output as any).theme.color.white.value).toBe('#ffffff')
     })
     it('properly outputs utils', async () => {
-      ctx.options.theme.layers.push(paletteLayer)
+      ctx.options.theme.layers.push(pigmentsLayers)
       ctx.options.theme.layers.push({
         utils: {
           testMx: (value: string) => ({
@@ -347,7 +347,7 @@ describe('@pinceau/theme', () => {
       ctx.fs = fs
       ctx.resolve = createRequire(import.meta.url).resolve
       setupThemeFormats(ctx)
-      ctx.options.theme.palette = false
+      ctx.options.theme.pigments = false
       ctx.options.theme.layers = []
       ctx.options.theme.buildDir = undefined
     })
@@ -368,7 +368,7 @@ describe('@pinceau/theme', () => {
     it('resolveConfigSources() - resolve pkg source', () => {
       const options = normalizeOptions()
 
-      options.theme.layers = ['@pinceau/palette']
+      options.theme.layers = ['@pinceau/pigments']
 
       const result = resolveConfigSources(options, ctx)
 
@@ -380,10 +380,10 @@ describe('@pinceau/theme', () => {
     it('resolveConfigSources() - resolve sources from an user config layers key', () => {
       const options = normalizeOptions()
 
-      options.theme.palette = false
+      options.theme.pigments = false
 
       options.theme.layers = [
-        resolveFixtures('../../packages/palette'),
+        resolveFixtures('../../packages/pigments'),
         {
           path: resolveFixtures(),
           configFileName: 'theme.config',
@@ -403,7 +403,7 @@ describe('@pinceau/theme', () => {
 
       expect(result[0].tokens).toBeDefined()
       expect(result[1].path).toBe(resolveFixtures())
-      expect(result[2].path).toBe(resolveFixtures('../../packages/palette'))
+      expect(result[2].path).toBe(resolveFixtures('../../packages/pigments'))
     })
     it('resolveMediaQueriesKeys() - it can resolve media queries keys from a config', () => {
       const keys = resolveMediaQueriesKeys(themeConfig)
@@ -443,21 +443,21 @@ describe('@pinceau/theme', () => {
       const result = resolveInlineLayer(layer, options)
 
       expect(result.utils.my.js).toStrictEqual('(value) => {\n'
-        + '            return {\n'
-        + '              marginTop: value,\n'
-        + '              marginBottom: value\n'
-        + '            };\n'
-        + '          }')
+      + '            return {\n'
+      + '              marginTop: value,\n'
+      + '              marginBottom: value\n'
+      + '            };\n'
+      + '          }')
 
       expect(Object.keys(result.theme.media as any).length).toBe(2)
     })
     it('loadLayers() - output full output from options layers', async () => {
       const options = normalizeOptions()
 
-      options.theme.palette = false
+      options.theme.pigments = false
 
       options.theme.layers = [
-        resolveFixtures('../../packages/palette'),
+        resolveFixtures('../../packages/pigments'),
         {
           path: resolveFixtures('./theme'),
           configFileName: 'theme.config',
@@ -654,11 +654,63 @@ describe('@pinceau/theme', () => {
       resolveModule = vi.fn()
     })
 
-    it('replaces <pinceau /> with the correct tags', async () => {
+    it('adds theme sheet in place of <pinceau />', async () => {
       const inputHtml = '<pinceau />'
       const expectedHtml = '<style type="text/css" id="pinceau-theme">mockedOutputContent</style>'
 
-      const result = transformIndexHtml(inputHtml, ctx as any)
+      const result = await transformIndexHtml(inputHtml, ctx as any)
+      expect(result).toBe(expectedHtml)
+    })
+
+    it('enforce inject the pinceau tags to <head> when <pinceau /> is missing', async () => {
+      ctx.options.theme.enforceHtmlInject = true
+
+      const inputHtml = `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/main.ts"></script>
+  </body>
+</html>
+`
+      const expectedHtml = `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><style type="text/css" id="pinceau-theme">mockedOutputContent</style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/main.ts"></script>
+  </body>
+</html>
+`
+
+      const result = await transformIndexHtml(inputHtml, ctx as any)
+      expect(result).toBe(expectedHtml)
+    })
+
+    it('enforce inject the pinceau tags when <pinceau /> is missing and no <head> is present', async () => {
+      ctx.options.theme.enforceHtmlInject = true
+
+      const inputHtml = ''
+      const expectedHtml = '<style type="text/css" id="pinceau-theme">mockedOutputContent</style>'
+
+      const result = await transformIndexHtml(inputHtml, ctx as any)
+      expect(result).toBe(expectedHtml)
+    })
+
+    it('do not inject anything if <pinceau /> is not found and enforceHtmlInject is false', async () => {
+      ctx.options.theme.enforceHtmlInject = false
+
+      const inputHtml = ''
+      const expectedHtml = ''
+
+      const result = await transformIndexHtml(inputHtml, ctx as any)
       expect(result).toBe(expectedHtml)
     })
 
@@ -668,7 +720,7 @@ describe('@pinceau/theme', () => {
       const inputHtml = '<pinceau />'
       const expectedHtml = '<style type="text/css" id="pinceau-theme" data-vite-dev-id="mockedOutputId">mockedOutputContent</style>\n<script type="module" data-vite-dev-id="@pinceau/outputs/hmr" src="/__pinceau_hmr.js"></script>'
 
-      const result = transformIndexHtml(inputHtml, ctx as any)
+      const result = await transformIndexHtml(inputHtml, ctx as any)
 
       expect(result).toBe(expectedHtml)
     })
@@ -681,7 +733,7 @@ describe('@pinceau/theme', () => {
       const inputHtml = '<pinceau />'
       const expectedHtml = '<link rel="stylesheet" type="text/css" href="@unocss/reset/tailwind.css" />\n<style type="text/css" id="pinceau-theme">mockedOutputContent</style>'
 
-      const result = transformIndexHtml(inputHtml, ctx as any)
+      const result = await transformIndexHtml(inputHtml, ctx as any)
 
       expect(result).toBe(expectedHtml)
     })
@@ -917,7 +969,7 @@ describe('@pinceau/theme', () => {
         dev: false,
         theme: {
           layers: [testLayer],
-          palette: false,
+          pigments: false,
         },
       })
       configCtx = usePinceauConfigContext(pinceauContext)

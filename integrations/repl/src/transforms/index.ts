@@ -1,4 +1,6 @@
-import { type File, type Store, themeFile } from '../store'
+import { themeFile } from '../store'
+import type { File, Store } from '../store'
+import { compileReactFile } from './react'
 import { compileSvelteFile } from './svelte'
 import { transformTS } from './typescript'
 import { compileVueFile } from './vue'
@@ -9,11 +11,15 @@ export async function compileFile(
   store: Store,
   file: File,
 ): Promise<(string | Error)[]> {
-  let { filename, code, compiled } = file
+  const { filename, code, compiled } = file
 
-  if (filename === themeFile) { return [] }
+  if (filename === themeFile) {
+    return []
+  }
 
-  if (!code.trim()) { return [] }
+  if (!code.trim()) {
+    return []
+  }
 
   // Compile plain CSS
   if (filename.endsWith('.css')) {
@@ -21,15 +27,9 @@ export async function compileFile(
     return []
   }
 
-  // Compile JS / TS / JSX / TSX
-  if (filename.endsWith('.js') || filename.endsWith('.ts') || filename.endsWith('.tsx') || filename.endsWith('.jsx')) {
-    if (filename.endsWith('.ts') || filename.endsWith('.tsx') || filename.endsWith('.jsx')) { code = await transformTS(code) }
-    compiled.js = compiled.ssr = code
-    return []
-  }
-
   if (filename.endsWith('.json')) {
     let parsed
+
     try {
       parsed = JSON.parse(code)
     }
@@ -37,17 +37,55 @@ export async function compileFile(
       console.error(`Error parsing ${filename}`, err.message)
       return [err.message]
     }
+
     compiled.js = compiled.ssr = `export default ${JSON.stringify(parsed)}`
+
+    return []
+  }
+
+  // Compile JS / TS / JSX / TSX
+  if (filename.endsWith('.js') || filename.endsWith('.ts') || filename.endsWith('.tsx') || filename.endsWith('.jsx')) {
+    let compiledCode
+
+    if (filename.endsWith('.jsx') || filename.endsWith('.tsx')) {
+      compiledCode = await compileReactFile(store, file)
+    }
+    if (filename.endsWith('.ts') || filename.endsWith('.tsx') || filename.endsWith('.jsx')) {
+      try {
+        compiledCode = await transformTS(code)
+      }
+      catch (e) {
+        //
+      }
+    }
+
+    compiled.js = compiled.ssr = compiledCode
+
     return []
   }
 
   if (filename.endsWith('.vue')) {
-    compileVueFile(store, file)
+    try {
+      await compileVueFile(store, file)
+    }
+    catch (e) {
+      console.log(e)
+      //
+    }
+
     return []
   }
 
   if (filename.endsWith('.svelte')) {
-    compileSvelteFile(store, file)
+    try {
+      await compileSvelteFile(store, file)
+    }
+    catch (e) {
+      console.log(e)
+      //
+    }
+
+    return []
   }
 
   return []

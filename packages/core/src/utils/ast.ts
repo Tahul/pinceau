@@ -2,7 +2,12 @@ import * as recast from 'recast'
 import type { ParserOptions } from '@babel/parser'
 import { parse as babelParse } from '@babel/parser'
 import { parse as tsParse } from 'recast/parsers/typescript.js'
-import { parse as htmlParse, walkSync as walkHtml } from 'ultrahtml'
+import {
+  parse as htmlParse,
+  render as htmlPrint,
+  transform as htmlTransform,
+  walk as htmlWalk,
+} from 'ultrahtml'
 import type { File } from '@babel/types'
 import type { ASTNode, namedTypes } from 'ast-types'
 import type { NodePath } from 'ast-types/lib/node-path'
@@ -109,7 +114,9 @@ export function getCharAfterLastImport(ast: ASTNode) {
  */
 
 /* c8 ignore start */
-export const walkTemplate = walkHtml
+export const walkTemplate = htmlWalk
+export const transformTemplate = htmlTransform
+export const printTemplate = htmlPrint
 export const visitAst = recast.visit
 export const printAst = recast.print
 export const astTypes = recast.types

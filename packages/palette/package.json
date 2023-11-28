@@ -1,6 +1,6 @@
 {
   "name": "@pinceau/palette",
-  "version": "1.0.0-beta.22",
+  "version": "1.0.0-beta.25",
   "homepage": "https://github.com/Tahul/pinceau#readme",
   "bugs": {
     "url": "https://github.com/Tahul/pinceau/issues"
@@ -47,6 +47,6 @@
     "@pinceau/style": "workspace:*",
     "@pinceau/runtime": "workspace:*",
     "pinceau": "workspace:*",
-    "vite": "^4.4.11"
+    "vite": "^5.0.0"
   }
 }

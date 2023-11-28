@@ -1,4 +1,4 @@
-import type { PinceauPluginsOptions } from '@pinceau/core'
+import '@pinceau/core'
 import type { PinceauAstroOptions } from './types'
 
 declare module '@pinceau/core' {

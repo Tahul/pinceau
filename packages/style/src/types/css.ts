@@ -42,39 +42,39 @@ export type RawCSS<
   HasRoot extends boolean = false,
 > =
   // Utils properties
-  {
-    [K in keyof PinceauUtils]?:
-    // `utils: { mx: (value: string) => ... }`, grab the type of `value` and inject it.
+{
+  [K in keyof PinceauUtils]?:
+  // `utils: { mx: (value: string) => ... }`, grab the type of `value` and inject it.
     | Parameters<PinceauUtils[K]>[0]
     // Same but as Computed Style
     | ComputedStyleDefinition<Props>
-  }
+}
   |
   // Autocomplete from template source
-  {
-    [K in keyof TemplateSource]?: RawCSS<LocalTokens, TemplateSource[K], Props, true>
-  }
+{
+  [K in keyof TemplateSource]?: RawCSS<LocalTokens, TemplateSource[K], Props, true>
+}
   |
   // $media queries
-  {
-    [K in PinceauMediaQueries]?: RawCSS<LocalTokens, TemplateSource, Props, HasRoot>
-  }
+{
+  [K in PinceauMediaQueries]?: RawCSS<LocalTokens, TemplateSource, Props, HasRoot>
+}
   |
   // If the CSS has a root, display all possible properties.
-  (
+(
     HasRoot extends true ?
     // CSS Properties
-        {
-          [K in keyof CSSProperties]?: CSSProperties<LocalTokens>[K] | ComputedStyleDefinition<Props>
-        }
+    {
+      [K in keyof CSSProperties]?: CSSProperties<LocalTokens>[K] | ComputedStyleDefinition<Props>
+    }
         |
         // Pseudos properties
-        {
-          [K in keyof PseudosProperties]?: RawCSS<LocalTokens, TemplateSource, Props, true>
-        }
+    {
+      [K in keyof PseudosProperties]?: RawCSS<LocalTokens, TemplateSource, Props, true>
+    }
         |
         // Local tokens overwriting
-        (
+    (
           LocalTokens extends string ?
               {
                 [K in LocalTokens]?: PropertyType | ComputedStyleDefinition<Props>

@@ -1,6 +1,6 @@
 {
   "name": "@pinceau/astro",
-  "version": "1.0.0-beta.22",
+  "version": "1.0.0-beta.25",
   "private": true,
   "homepage": "https://github.com/Tahul/pinceau#readme",
   "bugs": {
@@ -52,7 +52,7 @@
   "dependencies": {
     "@pinceau/core": "workspace:*",
     "@pinceau/integration": "workspace:*",
-    "acorn": "^8.10.0"
+    "acorn": "^8.11.2"
   },
   "devDependencies": {
     "@pinceau/configs": "workspace:*"

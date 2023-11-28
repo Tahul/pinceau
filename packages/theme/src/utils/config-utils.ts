@@ -9,7 +9,7 @@ export function resolveConfigUtils(
   configAst: File,
   layer: ConfigLayer,
 ) {
-  const utils: Record<string, { ts?: string; js?: string }> = {}
+  const utils: Record<string, { ts?: string, js?: string }> = {}
 
   let utilsNode: NodePath<namedTypes.ObjectProperty> | undefined
 

@@ -1,5 +1,5 @@
 <template>
   <div>
-    <MyButton size="xl" color="green" />
+    Hello World
   </div>
 </template>

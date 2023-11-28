@@ -17,6 +17,7 @@ export default antfu(
       'jsdoc/require-returns': 'off',
       'ts/no-namespace': 'off',
       'new-cap': 'off',
+      'vue/require-explicit-emits': 'off',
     },
   },
   {
@@ -26,11 +27,12 @@ export default antfu(
       '**/*.md',
       '**/examples/**',
       '**/package.json',
-      'packages/palette/output/',
+      'packages/pigments/output/',
       '**/tests/fixtures/',
       '**/tests/tmp/',
       '.vscode',
       '**/grammars/*.tmLanguage.js',
+      'packages/outputs/',
     ],
   },
 )

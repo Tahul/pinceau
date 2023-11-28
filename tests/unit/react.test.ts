@@ -7,7 +7,7 @@ import { suite as reactTransormSuite, transformWriteScriptFeatures, transformWri
 import { createReactPlugin, registerVirtualOutputs } from '@pinceau/react/utils'
 import { usePinceauConfigContext } from '@pinceau/theme/utils'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { paletteLayer, resolveFixtures, resolveTmp } from '../utils'
+import { pigmentsLayers, resolveFixtures, resolveTmp } from '../utils'
 
 describe('@pinceau/react', () => {
   describe('utils/load.ts', () => {
@@ -16,7 +16,7 @@ describe('@pinceau/react', () => {
 
     beforeEach(async () => {
       const options = normalizeOptions()
-      options.theme.layers.push(paletteLayer)
+      options.theme.layers.push(pigmentsLayers)
       pinceauContext = usePinceauContext(options)
       pinceauContext.fs = fs
     })
@@ -115,7 +115,7 @@ describe('@pinceau/react', () => {
     let pinceauContext: PinceauContext
     beforeEach(async () => {
       const options = normalizeOptions()
-      options.theme.layers.push(paletteLayer)
+      options.theme.layers.push(pigmentsLayers)
       pinceauContext = usePinceauContext(options)
       const configCtx = usePinceauConfigContext(pinceauContext)
       await configCtx.buildTheme()
@@ -179,7 +179,7 @@ describe('@pinceau/react', () => {
     let pinceauContext: PinceauContext
     beforeEach(async () => {
       const options = normalizeOptions()
-      options.theme.layers.push(paletteLayer)
+      options.theme.layers.push(pigmentsLayers)
       pinceauContext = usePinceauContext(options)
       pinceauContext.fs = fs
       const configCtx = usePinceauConfigContext(pinceauContext)

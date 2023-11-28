@@ -2,7 +2,7 @@
 import type { VNode } from 'vue'
 import { computed, inject, ref } from 'vue'
 import type { Store } from '../../store'
-import { importMapFile, stripSrcPrefix, tsconfigFile } from '../../store'
+import { importMapFile, playgroundConfigFile, stripSrcPrefix, themeFile, tsconfigFile } from '../../store'
 
 const store = inject('store') as Store
 
@@ -17,12 +17,17 @@ const pending = ref<boolean | string>(false)
  * Text shown in the input box when editing a file's name
  * This is a display name so it should always strip off the `src/` prefix.
  */
-const pendingFilename = ref(`Comp.${store.transformer.name}`)
+const pendingFilename = ref(`Comp.${store.transformer?.name || 'ts'}`)
 
 const files = computed(() => Object.entries(store.state.files)
   .filter(
     ([name, file]) => {
-      return name !== importMapFile && name !== tsconfigFile && !file.hidden
+      return (
+        name !== themeFile
+        && name !== importMapFile
+        && name !== tsconfigFile
+        && !file.hidden
+      )
     },
   )
   .map(([name]) => name),
@@ -110,67 +115,103 @@ function horizontalScroll(e: WheelEvent) {
     class="file-selector"
     @wheel="horizontalScroll"
   >
-    <template v-for="(file, i) in files">
-      <div
-        v-if="pending !== file"
-        :key="file"
-        class="file"
-        :class="{ active: store.state.activeFile.filename === file }"
-        @click="store.setActive(file)"
-        @dblclick="i > 0 && editFileName(file)"
-      >
-        <span class="label">{{ stripSrcPrefix(file) }}</span>
-        <span v-if="i > 0" class="remove" @click.stop="store.deleteFile(file)">
-          <svg class="icon" width="12" height="12" viewBox="0 0 24 24">
-            <line stroke="#999" x1="18" y1="6" x2="6" y2="18" />
-            <line stroke="#999" x1="6" y1="6" x2="18" y2="18" />
-          </svg>
-        </span>
-      </div>
-      <div
-        v-if="(pending === true && i === files.length - 1) || pending === file"
-        :key="file"
-        class="file pending"
-      >
-        <input
-          v-model="pendingFilename"
-          spellcheck="false"
-          @blur="doneNameFile"
-          @keyup.enter="doneNameFile"
-          @keyup.esc="cancelNameFile"
-          @vue:mounted="focus"
+    <div v-if="!store.showConfig.value">
+      <template v-for="(file, i) in files">
+        <div
+          v-if="pending !== file"
+          :key="file"
+          class="file"
+          :class="{ active: store.state.activeFile!.filename === file }"
+          @click="store.setActive(file)"
+          @dblclick="i > 0 && editFileName(file)"
         >
+          <span class="label">{{ stripSrcPrefix(file) }}</span>
+          <span v-if="i > 0" class="remove" @click.stop="store.deleteFile(file)">
+            <svg class="icon" width="12" height="12" viewBox="0 0 24 24">
+              <line stroke="#999" x1="18" y1="6" x2="6" y2="18" />
+              <line stroke="#999" x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </span>
+        </div>
+        <div
+          v-if="(pending === true && i === files.length - 1) || pending === file"
+          :key="file"
+          class="file pending"
+        >
+          <input
+            v-model="pendingFilename"
+            spellcheck="false"
+            @blur="doneNameFile"
+            @keyup.enter="doneNameFile"
+            @keyup.esc="cancelNameFile"
+            @vue:mounted="focus"
+          >
+        </div>
+      </template>
+      <button class="add" @click="startAddFile">
+        +
+      </button>
+    </div>
+    <div v-else>
+      <div
+        class="file"
+        :class="{ active: store.state.activeFile?.filename === playgroundConfigFile }"
+        @click="store.setActive(playgroundConfigFile)"
+      >
+        <span class="label">Configuration</span>
       </div>
-    </template>
-    <button class="add" @click="startAddFile">
-      +
-    </button>
+    </div>
+
+    <div class="settings-files">
+      <div
+        v-if="!store.showConfig.value"
+        class="file"
+        :class="{ active: store.state.activeFile?.filename === themeFile }"
+        @click="store.setActive(themeFile)"
+      >
+        <span class="label">Theme</span>
+      </div>
+      <div
+        v-if="store.showConfig.value"
+        class="file"
+        :class="{ active: store.state.activeFile?.filename === tsconfigFile }"
+        @click="store.setActive(tsconfigFile)"
+      >
+        <span class="label">tsconfig.json</span>
+      </div>
+      <div
+        v-if="store.showConfig.value"
+        class="file"
+        :class="{ active: store.state.activeFile?.filename === importMapFile }"
+        @click="store.setActive(importMapFile)"
+      >
+        <span class="label">Import Map</span>
+      </div>
+    </div>
   </div>
 </template>
 
 <style lang="ts" scoped>
-css({
-  '.file-selector': {
-    'display': 'flex',
-    'borderBottom': '1px solid var(--border)',
-    'backgroundColor': 'var(--bg)',
-    'overflowY': 'hidden',
-    'overflowX': 'auto',
-    'whiteSpace': 'nowrap',
-    'position': 'relative',
-    'height': 'var(--header-height)',
+styled({
+  'height': 'var(--tabs-height)',
+  'borderBottom': '1px solid var(--border)',
+  'backgroundColor': 'var(--bg)',
+  'display': 'flex',
+  'overflowY': 'hidden',
+  'overflowX': 'auto',
+  'whiteSpace': 'nowrap',
+  'position': 'relative',
 
-    '&::-webkit-scrollbar': {
-      height: '1px',
-    },
+  '&::-webkit-scrollbar': {
+    height: '1px',
+  },
 
-    '&::-webkit-scrollbar-track': {
-      backgroundColor: 'var(--border)',
-    },
+  '&::-webkit-scrollbar-track': {
+    backgroundColor: 'var(--border)',
+  },
 
-    '&::-webkit-scrollbar-thumb': {
-      backgroundColor: 'var(--color-branding)',
-    },
+  '&::-webkit-scrollbar-thumb': {
+    backgroundColor: 'var(--color-branding)',
   },
 
   '.file': {
@@ -183,12 +224,32 @@ css({
     'boxSizing': 'border-box',
     'padding': '$space.1',
     'transition': 'box-shadow 0.05s ease-in-out',
+    'position': 'relative',
 
     '&.active': {
-      color: 'var(--color-branding)',
-      boxShadow: 'inset 0 0 11px $color.red.9',
+      '&::before': {
+        content: '\'\'',
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        width: '100%',
+        height: '3px',
+        backgroundImage: 'linear-gradient(270deg, $color.white 0%, $color.red.5 100%)',
+      },
 
-      span: {
+      '&::after': {
+        opacity: 1,
+        content: '\'\'',
+        position: 'absolute',
+        backgroundSize: '100%',
+        backgroundImage: 'linear-gradient(270deg, rgba(239, 88, 63, 0.05) 0%, rgba(255,255,255,0.05) 100%)',
+        bottom: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+      },
+
+      'span': {
         fontWeight: '$fontWeight.bold',
       },
     },
@@ -199,17 +260,21 @@ css({
     },
 
     'input': {
-      width: '90px',
-      height: '30px',
-      lineHeight: '30px',
-      outline: 'none',
-      border: '1px solid var(--border)',
-      borderRadius: '4px',
-      padding: '0 0 0 10px',
-      marginTop: '2px',
-      marginLeft: '6px',
-      fontFamily: 'var(--font-code)',
-      fontSize: '12px',
+      'width': '90px',
+      'height': '30px',
+      'lineHeight': '30px',
+      'outline': 'none',
+      'border': '1px solid var(--border)',
+      'borderRadius': '4px',
+      'padding': '0 0 0 10px',
+      'marginLeft': '$space.2',
+      'fontFamily': 'var(--font-code)',
+      'fontSize': '12px',
+      'backgroundColor': '$color.gray.8',
+
+      '&:active, &:focus': {
+        outline: '1px solid $color.red.5',
+      },
     },
 
     '&.remove': {
@@ -226,8 +291,17 @@ css({
     fontFamily: 'var(--font-code)',
     color: '#999',
     verticalAlign: 'middle',
-    marginLeft: '6px',
+    padding: '0 $space.4',
     position: 'relative',
+  },
+
+  '.settings-files': {
+    position: 'sticky',
+    marginLeft: 'auto',
+    top: 0,
+    right: 0,
+    paddingLeft: '30px',
+    backgroundColor: 'var(--bg)',
   },
 })
 </style>

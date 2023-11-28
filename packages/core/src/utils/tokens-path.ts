@@ -22,10 +22,10 @@ export function tokensPaths(
       // Handle full token format
       if (
         typeof value === 'object'
-        && (
-          isRawTokenLike(value?.value)
-          || isResponsiveTokenObjectLike(value?.value, mqKeys)
-        )
+          && (
+            isRawTokenLike(value?.value)
+            || isResponsiveTokenObjectLike(value?.value, mqKeys)
+          )
       ) {
         output.push([newKey, value?.value])
         return
@@ -57,11 +57,11 @@ export function isResponsiveTokenObjectLike(value: any, mqKeys?: string[]) {
 export function isRawTokenLike(value: any) {
   return (
     typeof value !== 'undefined'
-    && (
-      typeof value === 'string'
-      || typeof value === 'number'
-      || Array.isArray(value)
-    )
+      && (
+        typeof value === 'string'
+          || typeof value === 'number'
+          || Array.isArray(value)
+      )
   )
 }
 

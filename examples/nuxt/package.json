@@ -9,12 +9,12 @@
   },
   "dependencies": {
     "@pinceau/nuxt": "workspace:*",
-    "@pinceau/palette": "workspace:*"
+    "@pinceau/pigments": "workspace:*"
   },
   "devDependencies": {
     "@pinceau/configs": "workspace:*",
-    "@pinceau/palette": "workspace:*",
-    "@pinceau/outputs": "workspace:*",    "nuxt": "^3.7.4"
+    "@pinceau/pigments": "workspace:*",
+    "@pinceau/outputs": "workspace:*",    "nuxt": "^3.8.1"
   },
   "stackblitz": {
     "installDependencies": false,

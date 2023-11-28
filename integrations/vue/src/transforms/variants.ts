@@ -71,7 +71,7 @@ export function pushVariantsProps(
     },
   )
 
-  let targetDefaults: (NodePath<namedTypes.ObjectExpression> & ASTNode & { loc: any; properties: any[] }) | undefined
+  let targetDefaults: (NodePath<namedTypes.ObjectExpression> & ASTNode & { loc: any, properties: any[] }) | undefined
   let writeableDefaults: (NodePath & ASTNode) | undefined
 
   // Handle `withDefaults` usage
@@ -80,7 +80,7 @@ export function pushVariantsProps(
     {
       visitCallExpression(path) {
         if (path?.value?.callee?.name === 'withDefaults') {
-          targetDefaults = path?.value?.arguments?.[1] as NodePath<namedTypes.ObjectExpression> & ASTNode & { loc: any; properties: any[] } | undefined
+          targetDefaults = path?.value?.arguments?.[1] as NodePath<namedTypes.ObjectExpression> & ASTNode & { loc: any, properties: any[] } | undefined
 
           if (!targetDefaults) { return }
 

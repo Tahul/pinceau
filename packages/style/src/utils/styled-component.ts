@@ -9,7 +9,7 @@ export function generateStyledComponent(
     + `\'${styleFn?.element || 'div'}\', `
     + `${runtimeParts?.staticClass}, `
     + `${runtimeParts?.computedStyles}, `
-    + `${runtimeParts?.variants && !styleFn.helpers.includes('withVariants') || 'undefined'}, ${
+    + `${(runtimeParts?.variants && !styleFn.helpers.includes('withVariants')) || 'undefined'}, ${
       (
       `${typeof withPropNames}` === 'string'
     ? withPropNames
@@ -33,5 +33,5 @@ export function generatePinceauRuntimeFunction(
     : `${outputVariantsKeys ? `{ ${Object.keys(variantsProps || {}).join(', ')} }` : 'undefined'}`
       )
 }`
-    + ')'
++ ')'
 }

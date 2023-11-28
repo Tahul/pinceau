@@ -10,7 +10,7 @@ export interface PinceauThemeFormat {
   destination: string
   importPath: string
   virtualPath: string
-  formatter: (args: FormatterArguments & { ctx: PinceauContext; instance: StyleDictionary; loadedTheme: ThemeLoadingOutput }) => string
+  formatter: (args: FormatterArguments & { ctx: PinceauContext, instance: StyleDictionary, loadedTheme: ThemeLoadingOutput }) => string
 }
 
 export type PinceauThemeTokenTransform = Named<Transform>
@@ -116,7 +116,27 @@ export interface PinceauThemeOptions {
   definitions: boolean
 
   /**
-   * Inject `@pinceau/palette` automatically
+   * Inject `@pinceau/pigments` automatically
    */
-  palette: boolean
+  pigments: boolean
+
+  /**
+   * Toggles the tranformIndexHtml hook from the theme plugin.
+   *
+   * That can be useful when used in another context than a raw Vite project.
+   */
+  transformIndexHtml: boolean
+
+  /**
+   * Toggles the `<pinceau />` HTML tag transform.
+   */
+  pinceauHtmlTag: boolean
+
+  /**
+   * Toggles the HTML enforce mode.
+   *
+   * It is slower than `pinceauHtmlTag`, and will only be used as a fallback.
+   */
+  enforceHtmlInject: boolean
+
 }

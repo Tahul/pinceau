@@ -8,7 +8,7 @@ import { PinceauSvelteTransformer, createSveltePlugin } from '@pinceau/svelte/ut
 import { registerVirtualOutputs } from '@pinceau/svelte/unplugin'
 import { usePinceauConfigContext } from '@pinceau/theme/utils'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { paletteLayer, resolveFixtures, resolveTmp } from '../utils'
+import { pigmentsLayers, resolveFixtures, resolveTmp } from '../utils'
 
 describe('@pinceau/svelte', () => {
   describe('utils/load.ts', () => {
@@ -17,7 +17,7 @@ describe('@pinceau/svelte', () => {
 
     beforeEach(async () => {
       const options = normalizeOptions()
-      options.theme.layers.push(paletteLayer)
+      options.theme.layers.push(pigmentsLayers)
       pinceauContext = usePinceauContext(options)
       pinceauContext.fs = fs
       pinceauContext.registerTransformer('svelte', PinceauSvelteTransformer)
@@ -158,7 +158,7 @@ describe('@pinceau/svelte', () => {
     let pinceauContext: PinceauContext
     beforeEach(async () => {
       const options = normalizeOptions()
-      options.theme.layers.push(paletteLayer)
+      options.theme.layers.push(pigmentsLayers)
       pinceauContext = usePinceauContext(options)
       const configCtx = usePinceauConfigContext(pinceauContext)
       await configCtx.buildTheme()
@@ -243,7 +243,7 @@ describe('@pinceau/svelte', () => {
     let pinceauContext: PinceauContext
     beforeEach(async () => {
       const options = normalizeOptions()
-      options.theme.layers.push(paletteLayer)
+      options.theme.layers.push(pigmentsLayers)
       pinceauContext = usePinceauContext(options)
       pinceauContext.fs = fs
       const configCtx = usePinceauConfigContext(pinceauContext)

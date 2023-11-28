@@ -1,6 +1,6 @@
 {
   "name": "@pinceau/react",
-  "version": "1.0.0-beta.22",
+  "version": "1.0.0-beta.25",
   "homepage": "https://github.com/Tahul/pinceau#readme",
   "bugs": {
     "url": "https://github.com/Tahul/pinceau/issues"
@@ -64,7 +64,7 @@
     "@pinceau/core": "workspace:*",
     "@pinceau/integration": "workspace:*",
     "@pinceau/outputs": "workspace:*",
-    "acorn": "^8.10.0",
+    "acorn": "^8.11.2",
     "jsx-ast-utils": "^3.3.5",
     "ultrahtml": "npm:@pinceau/ultrahtml@1.5.2"
   },

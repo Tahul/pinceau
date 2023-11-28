@@ -5874,8 +5874,8 @@ export type StandardProperties<
   TLength = (string & {}) | 0,
   TTime = string & {},
 > =
-  StandardLonghandProperties<TLocalTokens, TLength, TTime> &
-  StandardShorthandProperties<TLocalTokens, TLength, TTime>
+StandardLonghandProperties<TLocalTokens, TLength, TTime> &
+StandardShorthandProperties<TLocalTokens, TLength, TTime>
 
 export interface SvgProperties<
   TLocalTokens extends string | undefined = string & {},
@@ -6107,9 +6107,9 @@ export type SimplePseudos =
   | '&:visited'
 
 export type VuePseudos =
-| '&:deep('
-| '&:slotted('
-| '&:global('
+  | '&:deep('
+  | '&:slotted('
+  | '&:global('
 
 export type Pseudos = AdvancedPseudos | SimplePseudos | VuePseudos
 

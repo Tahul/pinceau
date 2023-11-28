@@ -1,3 +1,4 @@
+import '@pinceau/core'
 import type { PinceauTheme } from '@pinceau/outputs'
 import type { PinceauConfigContext, PinceauThemeOptions, Theme, ThemeFunction } from './types'
 

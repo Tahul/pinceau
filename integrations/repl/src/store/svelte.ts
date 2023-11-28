@@ -1,17 +1,15 @@
-import type { Ref } from 'vue'
 import * as defaultCompiler from 'svelte/compiler'
 import { createSveltePlugin, pluginTypes } from '@pinceau/svelte/utils'
 import { compileFile } from '../transforms'
 import { compileModulesForPreview, processModule } from '../compiler'
-import type { PreviewProxy } from '../components/output/PreviewProxy'
 import type { ReplStore, ReplTransformer } from '.'
-import { File, pinceauVersion } from '.'
+import { File, pinceauVersion, tsconfigFile } from '.'
 
 const defaultMainFile = 'src/App.svelte'
 
 const welcomeCode = `
 <script lang="ts">
-	let name = 'world';
+  let name = 'world';
 </script>
 
 <h1>Hello {name}!</h1>
@@ -38,7 +36,7 @@ const localImports = {
   '@pinceau/stringify': () => `https://cdn.jsdelivr.net/npm/@pinceau/stringify@${pinceauVersion}/dist/index.mjs`,
   '@pinceau/core/runtime': () => `https://cdn.jsdelivr.net/npm/@pinceau/core@${pinceauVersion}/dist/runtime.mjs`,
   '@pinceau/theme/runtime': () => `https://cdn.jsdelivr.net/npm/@pinceau/theme@${pinceauVersion}/dist/runtime.mjs`,
-  '@pinceau/react/runtime': () => `https://cdn.jsdelivr.net/npm/@pinceau/react@${pinceauVersion}/dist/runtime.mjs`,
+  '@pinceau/svelte/runtime': () => `https://cdn.jsdelivr.net/npm/@pinceau/svelte@${pinceauVersion}/dist/runtime.mjs`,
   '@pinceau/outputs/svelte-plugin': () => './svelte-plugin-proxy.js',
 }
 
@@ -58,17 +56,6 @@ export class ReplSvelteTransformer implements ReplTransformer {
     'global.d.ts': new File('global.d.ts', `
     declare module 'svelte';
     import 'svelte/elements';
-    import type { SvelteStyledComponentFactory } from \'@pinceau/svelte\'
-    import { ResponsiveProp } from \'@pinceau/style\'
-    import { SupportedHTMLElements } from \'@pinceau/style\'
-
-    declare global {
-      export type ResponsiveProp<T extends string | number | symbol | undefined> = ResponsiveProp<T>
-      export type StyledProp = StyledFunctionArg
-      export const $styled: { [Type in SupportedHTMLElements]: SvelteStyledComponentFactory<Type> }
-    }
-
-    declare module \'svelte/elements\' { export interface DOMAttributes<T extends EventTarget> { styled?: StyledFunctionArg } }
     `),
   }
 
@@ -88,6 +75,7 @@ export class ReplSvelteTransformer implements ReplTransformer {
       resolveJsonModule: true,
       isolatedModules: true,
       noEmit: true,
+      types: ['@pinceau/outputs'],
     },
   }
 
@@ -95,6 +83,15 @@ export class ReplSvelteTransformer implements ReplTransformer {
     this.store = store
 
     this.store.pinceauProvider.pinceauContext.addTypes(pluginTypes)
+
+    this.store.state.files[tsconfigFile] = new File(
+      tsconfigFile,
+      JSON.stringify(this.tsconfig, null, 2),
+    )
+  }
+
+  async init() {
+    //
   }
 
   getTypescriptDependencies() {
@@ -192,33 +189,27 @@ export class ReplSvelteTransformer implements ReplTransformer {
     return compileFile(this.store, file)
   }
 
-  async updatePreview(
-    clearConsole: Ref<boolean>,
-    runtimeError: Ref<string | null>,
-    runtimeWarning: Ref<string | null>,
-    ssr: boolean,
-    proxy: PreviewProxy,
-    previewOptions: any,
-  ) {
-    if ((import.meta as any).env.PROD && clearConsole.value) {
-      console.clear()
-    }
-    runtimeError.value = null
-    runtimeWarning.value = null
+  async updatePreview() {
+    if (!this.store.previewProxy.value) { return }
+    if ((import.meta as any).env.PROD && this.store.clearConsole.value) { console.clear() }
 
-    const isSSR = ssr || true
+    this.store.runtimeError.value = null
+    this.store.runtimeWarning.value = null
+
+    const isSSR = this.store.ssr.value || true
 
     try {
       const mainFile = this.store.state.mainFile
 
       // if SSR, generate the SSR bundle and eval it to render the HTML
-      if (isSSR && (mainFile.endsWith('.svelte'))) {
+      if (isSSR && (mainFile?.endsWith('.svelte'))) {
         const ssrModules = compileModulesForPreview(this.store, true)
 
         console.log(`[@pinceau/repl] Successfully compiled ${ssrModules.length} modules for SSR.`)
 
-        await proxy.eval([
+        await this.store.previewProxy.value.eval([
           'const __modules__ = {};',
+          ...this.getBuiltFilesModules(),
           ...ssrModules,
         ])
       }
@@ -230,10 +221,10 @@ export class ReplSvelteTransformer implements ReplTransformer {
 
       const codeToEval = [
         'window.__modules__ = {};window.__css__ = [];'
-      + `if (window.__app__) window.__app__.unmount();${
+        + `if (window.__app__) window.__app__.unmount();${
        isSSR && false
         ? ''
-        : `document.body.innerHTML = '<div id="app"></div>' + \`${previewOptions?.bodyHTML || ''
+        : `document.body.innerHTML = '<div id="app"></div>' + \`${this.store.previewOptions.value?.bodyHTML || ''
           }\``}`,
         ...this.getBuiltFilesModules(),
         ...modules,
@@ -244,10 +235,10 @@ export class ReplSvelteTransformer implements ReplTransformer {
       ]
 
       // if main file is a vue file, mount it.
-      if (mainFile.endsWith('.svelte')) {
+      if (mainFile?.endsWith('.svelte')) {
         codeToEval.push(
           `
-        ${previewOptions?.customCode?.importCode || ''}
+        ${this.store.previewOptions.value?.customCode?.importCode || ''}
 
         import { pinceauPlugin } from '@pinceau/outputs/svelte-plugin'
         
@@ -260,7 +251,7 @@ export class ReplSvelteTransformer implements ReplTransformer {
 
           const rootComp = new AppComponent({ target: rootEl })
           
-          ${previewOptions?.customCode?.useCode || ''}
+          ${this.store.previewOptions.value?.customCode?.useCode || ''}
         }
 
         mount()`,
@@ -268,11 +259,11 @@ export class ReplSvelteTransformer implements ReplTransformer {
       }
 
       // eval code in sandbox
-      await proxy.eval(codeToEval)
+      await this.store.previewProxy.value.eval(codeToEval)
     }
     catch (e: any) {
       console.error(e)
-      runtimeError.value = (e as Error).message
+      this.store.runtimeError.value = (e as Error).message
     }
   }
 }

@@ -1,11 +1,13 @@
 import type { TextDocument } from 'vscode-languageserver-textdocument'
-import { parse as parseVueSFC } from '@vue/compiler-sfc'
+
+// import { parse as parseVueSFC } from '@vue/compiler-sfc'
 import { REFERENCES_REGEX } from '@pinceau/core/runtime'
 import type { DesignToken } from '@pinceau/theme'
 import type { ColorInformation, Position, Range } from 'vscode-languageserver'
 import { helperRegex } from '@pinceau/theme/utils'
 import type { PinceauStyleFunctionContext } from '@pinceau/style'
-import { parsePinceauQuery } from '@pinceau/core/utils'
+
+// import { parsePinceauQuery } from '@pinceau/core/utils'
 import type { PinceauVSCodeSettings } from '../manager'
 import type PinceauTokensManager from '../manager'
 import { findAll } from '../utils/findAll'
@@ -31,11 +33,11 @@ export function setupTokensHelpers(
     try {
       if (cachedTransform?.version === doc.version) { return cachedTransform }
 
-      const query = parsePinceauQuery(doc.uri)
+      // const query = parsePinceauQuery(doc.uri)
 
-      const parsed = parseVueSFC(doc.getText())
+      // const parsed = parseVueSFC(doc.getText())
 
-      console.log({ query, parsed })
+      // console.log({ query, parsed })
 
       const data = { version }
 
@@ -55,7 +57,7 @@ export function setupTokensHelpers(
     doc: TextDocument,
     _styleFns?: PinceauStyleFunctionContext[],
     settings?: PinceauVSCodeSettings,
-    onToken?: (token: { match: RegExpMatchArray; tokenPath: string; range: Range; settings?: PinceauVSCodeSettings; token?: DesignToken; localToken?: any }) => void,
+    onToken?: (token: { match: RegExpMatchArray, tokenPath: string, range: Range, settings?: PinceauVSCodeSettings, token?: DesignToken, localToken?: any }) => void,
   ) {
     const colors: ColorInformation[] = []
 
@@ -110,12 +112,12 @@ export function setupTokensHelpers(
   ) {
     const toRet: {
       delimiter: string
-      currentLine?: { text: string; range: { start: number; end: number } }
-      currentToken?: { token: string; range: { start: number; end: number } }
+      currentLine?: { text: string, range: { start: number, end: number } }
+      currentToken?: { token: string, range: { start: number, end: number } }
       closestToken?: any
       token?: any
       localToken?: any
-      lineRange?: { start: number; end: number }
+      lineRange?: { start: number, end: number }
     } = {
       delimiter: '$',
       currentToken: undefined,

@@ -36,7 +36,7 @@ export interface PinceauBuildContext {
   /**
    * A list of transformed files
    */
-  transformed: { [key: string]: PinceauQuery & { state?: PinceauTransformState; previousState?: PinceauTransformState } }
+  transformed: { [key: string]: PinceauQuery & { state?: PinceauTransformState, previousState?: PinceauTransformState } }
   /**
    * Is a module transformable
    */

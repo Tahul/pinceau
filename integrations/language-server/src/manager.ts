@@ -36,8 +36,8 @@ async function globRequire(folderPath: string, globPaths: string[], cb: (filePat
 export default class PinceauTokensManager {
   public initialized = false
   public synchronizing: Promise<void> | false = false
-  private tokensCache = new CacheManager<DesignToken & { definition: Location; color?: Color }>()
-  private transformCache = new CacheManager<{ version: number; styleFns: PinceauStyleFunctionContext[] }>()
+  private tokensCache = new CacheManager<DesignToken & { definition: Location, color?: Color }>()
+  private transformCache = new CacheManager<{ version: number, styleFns: PinceauStyleFunctionContext[] }>()
 
   public async syncTokens(folders: string[], settings: Partial<PinceauVSCodeSettings>) {
     this.synchronizing = this.scanFolders(folders, settings)

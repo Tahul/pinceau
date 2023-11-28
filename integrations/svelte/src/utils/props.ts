@@ -2,7 +2,7 @@ import { parse, walk as walkTemplate } from 'svelte/compiler'
 import { createSourceLocationFromOffsets } from 'sfc-composer'
 import type { PinceauTransformContext, PropMatch } from '@pinceau/core'
 
-export function extractProp(
+export async function extractProp(
   transformContext: PinceauTransformContext,
   prop: string,
 ) {

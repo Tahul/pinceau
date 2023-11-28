@@ -12,7 +12,7 @@ export default defineConfig({
     watch: true,
     include: ['unit/*.test.ts'],
     coverage: {
-      enabled: true,
+      enabled: false,
       reporter: ['text', 'json', 'html'],
       allowExternal: true,
       include: [

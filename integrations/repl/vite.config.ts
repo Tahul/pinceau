@@ -71,7 +71,43 @@ export default defineConfig({
       'vue',
       'svelte',
       'react',
+      'sfc-composer',
+      'sfc-composer/vue',
+      'sfc-composer/svelte',
+      'sfc-composer/astro',
+      'recast/parsers/typescript.js',
+      'ultrahtml',
+      'defu',
+      'node:process',
+      'micromatch',
+      'vscode-languageserver-textdocument',
+      'vscode-uri',
+      'nanoid',
+      'scule',
+      'style-dictionary-esm',
+      'pathe',
+      'node:fs',
+      '@volar/language-core',
+      'svelte2tsx',
+      '@jridgewell/sourcemap-codec',
+      'recast',
+      '@babel/parser',
+      'volar-service-typescript',
+      'untyped',
     ],
+  },
+  server: {
+    proxy: {
+      // Using the proxy instance
+      '/pinceau-functions': {
+        target: 'https://pinceau-functions.yael.dev',
+        changeOrigin: true,
+        configure: (proxy, options) => {
+          if (!options.headers) { options.headers = {} }
+          options.headers.Origin = 'https://play.pinceau.dev'
+        },
+      },
+    },
   },
   base: './',
   build: {

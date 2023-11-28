@@ -1,10 +1,8 @@
-import type { Ref } from 'vue'
 import { createReactPlugin, pluginTypes } from '@pinceau/react/utils'
 import { compileFile } from '../transforms'
 import { compileModulesForPreview, processModule } from '../compiler'
-import type { PreviewProxy } from '../components/output/PreviewProxy'
 import type { ReplStore, ReplTransformer } from '.'
-import { File, pinceauVersion } from '.'
+import { File, pinceauVersion, tsconfigFile } from '.'
 
 const defaultMainFile = 'src/App.tsx'
 
@@ -17,11 +15,11 @@ export default () => {
 const defaultVersion = '18.2.0'
 
 const localImports = {
-  'react': (version = defaultVersion) => `https://cdn.jsdelivr.net/npm/react@${version}/umd/react.development.js`,
-  'react/jsx-runtime': (version = defaultVersion) => `https://cdn.jsdelivr.net/npm/react@${version}/jsx-runtime.js`,
-  'react-dom': (version = defaultVersion) => `https://cdn.jsdelivr.net/npm/react-dom@${version}/umd/react-dom.development.js`,
-  'react-dom/client': (version = defaultVersion) => `https://cdn.jsdelivr.net/npm/react-dom@${version}/client.js`,
-  'react-dom/server': (version = defaultVersion) => `https://cdn.jsdelivr.net/npm/react-dom@${version}/umd/react-dom-server.browser.development.js`,
+  'react': (version = defaultVersion) => `https://esm.sh/react@${version}?dev`,
+  'react/jsx-runtime': (version = defaultVersion) => `https://esm.sh/react@${version}/jsx-runtime?dev`,
+  'react-dom': (version = defaultVersion) => `https://esm.sh/react-dom@${version}?dev`,
+  'react-dom/client': (version = defaultVersion) => `https://esm.sh/react-dom@${version}/client?dev`,
+  'react-dom/server': (version = defaultVersion) => `https://esm.sh/react-dom@${version}/server?dev`,
   '@types/react': (version = defaultVersion) => `https://cdn.jsdelivr.net/npm/@types/react@${version}/index.d.ts`,
   '@types/react-dom': (version = defaultVersion) => `https://cdn.jsdelivr.net/npm/@types/react-dom@${version}/index.d.ts`,
   'defu': () => 'https://cdn.jsdelivr.net/npm/defu@6.1.2/dist/defu.mjs',
@@ -30,7 +28,7 @@ const localImports = {
   '@pinceau/stringify': () => `https://cdn.jsdelivr.net/npm/@pinceau/stringify@${pinceauVersion}/dist/index.mjs`,
   '@pinceau/core/runtime': () => `https://cdn.jsdelivr.net/npm/@pinceau/core@${pinceauVersion}/dist/runtime.mjs`,
   '@pinceau/theme/runtime': () => `https://cdn.jsdelivr.net/npm/@pinceau/theme@${pinceauVersion}/dist/runtime.mjs`,
-  '@pinceau/react/runtime': () => `https://cdn.jsdelivr.net/npm/@pinceau/vue@${pinceauVersion}/dist/runtime.mjs`,
+  '@pinceau/react/runtime': () => `https://cdn.jsdelivr.net/npm/@pinceau/react@${pinceauVersion}/dist/runtime.mjs`,
   '@pinceau/outputs/react-plugin': () => './react-plugin-proxy.js',
 }
 
@@ -46,18 +44,17 @@ export class ReplReactTransformer implements ReplTransformer<null, {}> {
   pendingImport: Promise<any> | null = null
   imports: typeof localImports = localImports
   shims = {
-    'globals.d.ts': new File('globals.d.ts', `import * as React from 'react'
+    'globals.d.ts': new File('globals.d.ts', `
+import * as React from 'react'
 import * as ReactDOM from 'react-dom'
-import type { ReactStyledComponentFactory } from \'@pinceau/react\'
-import { SupportedHTMLElements } from \'@pinceau/style\'
-
-export {}
 
 declare global {
     const React: typeof React
     const ReactDOM: typeof ReactDOM
-    export const $styled: { [Type in SupportedHTMLElements]: ReactStyledComponentFactory<Type> }
-}`),
+}
+
+export {}
+`),
     'runtime.d.ts': new File('runtime.d.ts', 'declare module \'react/jsx-runtime\';'),
   }
 
@@ -78,7 +75,7 @@ declare global {
       isolatedModules: true,
       noEmit: true,
       jsx: 'react-jsx',
-      types: ['@types/react', '@types/react-dom'],
+      types: ['@types/react', '@types/react-dom', '@pinceau/outputs'],
     },
   }
 
@@ -86,6 +83,15 @@ declare global {
     this.store = store
 
     this.store.pinceauProvider.pinceauContext.addTypes(pluginTypes)
+
+    this.store.state.files[tsconfigFile] = new File(
+      tsconfigFile,
+      JSON.stringify(this.tsconfig, null, 2),
+    )
+  }
+
+  async init() {
+    //
   }
 
   getTypescriptDependencies() {
@@ -166,12 +172,7 @@ declare global {
       modules.push(code.code)
     }
 
-    let reactPlugin = createReactPlugin(this.store.pinceauProvider.pinceauContext)
-
-    reactPlugin = reactPlugin.replace(
-      'import React, { createContext, useContext } from \'react\'',
-      'const { createContext, useContext } = window.React',
-    )
+    const reactPlugin = createReactPlugin(this.store.pinceauProvider.pinceauContext)
 
     return [
       processModule(
@@ -187,47 +188,44 @@ declare global {
     return await compileFile(this.store, file)
   }
 
-  async updatePreview(
-    clearConsole: Ref<boolean>,
-    runtimeError: Ref<string | null>,
-    runtimeWarning: Ref<string | null>,
-    ssr: boolean,
-    proxy: PreviewProxy,
-    previewOptions: any,
-  ) {
-    if ((import.meta as any).env.PROD && clearConsole.value) { console.clear() }
-    runtimeError.value = null
-    runtimeWarning.value = null
+  async updatePreview() {
+    if (!this.store.previewProxy.value) { return }
+    if ((import.meta as any).env.PROD && this.store.clearConsole.value) { console.clear() }
 
-    const isSSR = ssr || true
+    this.store.runtimeError.value = null
+    this.store.runtimeWarning.value = null
+
+    const isSSR = this.store.ssr.value || true
 
     try {
       const mainFile = this.store.state.mainFile
 
       // if SSR, generate the SSR bundle and eval it to render the HTML
-      if (isSSR && (mainFile.endsWith('.jsx') || mainFile.endsWith('.tsx'))) {
+      if (isSSR && (mainFile && (mainFile.endsWith('.jsx') || mainFile.endsWith('.tsx')))) {
         const ssrModules = compileModulesForPreview(this.store, true)
 
         console.log(`[@pinceau/repl] Successfully compiled ${ssrModules.length} modules for SSR.`)
 
-        await proxy.eval([
-          'import \'react\'\nimport \'react-dom\'\nimport \'react-dom/server\'\n',
+        await this.store.previewProxy.value.eval([
           'const __modules__ = {};',
-          `globalThis.require = (val) => {
-            if (val === \'react\') return React
-            if (val === \'react-dom\') return ReactDOM
-          }`,
-          'const ReactDOM = window.ReactDOM\nconst React = window.React',
           ...this.getBuiltFilesModules(),
           ...ssrModules,
-        `import { PinceauProvider } from "@pinceau/outputs/react-plugin"
+        `
+        import * as React from \'react\'
+        import * as ReactDOM from \'react-dom\'
+        import { createRoot } from \'react-dom/client\'
+        import * as ReactDOMServer from \'react-dom/server\'
+        import { PinceauProvider } from "@pinceau/outputs/react-plugin"
+
+        window.React = React
+        window.ReactDOM = ReactDOM
 
          const AppComponent = __modules__["${mainFile}"].default
 
          window.__ssr_promise__ = new Promise((resolve, reject) => {
           const div = document.createElement('div');
 
-          const root = window.ReactDOM.createRoot(div);
+          const root = createRoot(div);
 
           let ssrUtils
           const cb = (_ssr) => {
@@ -242,7 +240,7 @@ declare global {
             }
           )
 
-          window.ReactDOM.flushSync(() => {
+          ReactDOM.flushSync(() => {
            try {
             root.render(component);
            } catch (e) {
@@ -252,7 +250,7 @@ declare global {
 
           if (ssrUtils) { document.getElementById('pinceau-runtime').innerHTML = ssrUtils.toString() }
 
-          document.body.innerHTML = '<div id="app">' + div.innerHTML + '</div>' + \`${previewOptions?.bodyHTML || ''}\`
+          document.body.innerHTML = '<div id="app">' + div.innerHTML + '</div>' + \`${this.store.previewOptions.value?.bodyHTML || ''}\`
 
           resolve()
          }).catch(err => {
@@ -270,10 +268,10 @@ declare global {
       const codeToEval = [
         'import \'react\'\nimport \'react-dom\'\nimport \'react-dom/server\'\n',
         'window.__modules__ = {};window.__css__ = [];'
-      + `if (window.__app__) window.__app__.unmount();${
+        + `if (window.__app__) window.__app__.unmount();${
        isSSR
         ? ''
-        : `document.body.innerHTML = '<div id="app"></div>' + \`${previewOptions?.bodyHTML || ''
+        : `document.body.innerHTML = '<div id="app"></div>' + \`${this.store.previewOptions.value?.bodyHTML || ''
         }\``}`,
         ...this.getBuiltFilesModules(),
         ...modules,
@@ -284,10 +282,15 @@ declare global {
       ]
 
       // if main file is a vue file, mount it.
-      if (mainFile.endsWith('.tsx')) {
+      if (mainFile?.endsWith('.tsx')) {
         codeToEval.push(
-        `import { PinceauProvider } from "@pinceau/outputs/react-plugin"
-        ${previewOptions?.customCode?.importCode || ''}
+        `
+        import * as React from \'react\'
+        import * as ReactDOM from \'react-dom\'
+        import { hydrateRoot } from \'react-dom/client\'
+        import * as ReactDOMServer from \'react-dom/server\'
+        import { PinceauProvider } from "@pinceau/outputs/react-plugin"
+        ${this.store.previewOptions.value?.customCode?.importCode || ''}
         
         const _mount = () => {
           const AppComponent = __modules__["${mainFile}"].default
@@ -301,10 +304,10 @@ declare global {
             }
           )
           
-          ${isSSR && 'const root = window.__app__ = window.ReactDOM.hydrateRoot(rootEl, rootComp);\nconsole.log(\'[@pinceau/repl] React SSR HTML has been hydrated!\')'}
-          ${!isSSR && 'const root = window.__app__ = window.ReactDOM.createRoot(rootEl).render(rootComp);'}
+          ${isSSR && 'const root = window.__app__ = hydrateRoot(rootEl, rootComp);\nconsole.log(\'[@pinceau/repl] React SSR HTML has been hydrated!\')'}
+          ${!isSSR && 'const root = window.__app__ = ReactDOM.createRoot(rootEl).render(rootComp);'}
           
-          ${previewOptions?.customCode?.useCode || ''}
+          ${this.store.previewOptions.value?.customCode?.useCode || ''}
         }
 
         if (window.__ssr_promise__) {
@@ -316,11 +319,11 @@ declare global {
       }
 
       // eval code in sandbox
-      await proxy.eval(codeToEval)
+      await this.store.previewProxy.value.eval(codeToEval)
     }
     catch (e: any) {
       console.error(e)
-      runtimeError.value = (e as Error).message
+      this.store.runtimeError.value = (e as Error).message
     }
   }
 }

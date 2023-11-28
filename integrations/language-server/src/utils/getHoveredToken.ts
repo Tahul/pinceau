@@ -20,7 +20,7 @@ function findClosestChar(
   return -1
 }
 
-export function getHoveredToken(doc: TextDocument, position: Position): { token: string; range: { start: number; end: number } } | undefined {
+export function getHoveredToken(doc: TextDocument, position: Position): { token: string, range: { start: number, end: number } } | undefined {
   const line = getCurrentLine(doc, position)
   if (!line) { return }
   const startIndex = findClosestChar(line.text, '$', position.character)
@@ -35,7 +35,7 @@ export function getHoveredToken(doc: TextDocument, position: Position): { token:
   }
 }
 
-export function getHoveredThemeFunction(doc: TextDocument, position: Position): { token: string; range: { start: number; end: number } } | undefined {
+export function getHoveredThemeFunction(doc: TextDocument, position: Position): { token: string, range: { start: number, end: number } } | undefined {
   const line = getCurrentLine(doc, position)
   if (!line) { return }
   const startIndex = line.text.lastIndexOf('$theme(', position.character)

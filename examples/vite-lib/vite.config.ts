@@ -28,7 +28,7 @@ export default defineConfig({
       theme: {
         layers: [
           {
-            path: resolve('../../packages/palette/'),
+            path: resolve('../../packages/pigments/'),
           },
         ],
       },

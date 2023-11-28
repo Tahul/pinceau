@@ -93,4 +93,8 @@ export class PreviewProxy {
   handle_links() {
     return this.iframe_command('catch_clicks', {})
   }
+
+  theme(theme: string) {
+    return this.iframe_command('theme', { theme })
+  }
 }

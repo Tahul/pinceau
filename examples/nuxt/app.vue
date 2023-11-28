@@ -1,15 +1,5 @@
-<script setup lang="ts">
-const TestComponent = $styled.a({
-  
-})
-</script>
-
 <template>
-  <App 
-    :styled="{
-      backgroundColor: '$color.blue.1'
-    }"
-  >
+  <main>
     <NuxtPage />
-  </App>
+  </main>
 </template>
