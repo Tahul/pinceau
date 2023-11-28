@@ -33,6 +33,14 @@
       "require": "./dist/utils.cjs"
     }
   },
+  "typesVersions": {
+    "*": {
+      ".": ["./dist/index.d.ts"],
+      "plugin": ["./dist/plugin.d.ts"],
+      "transform": ["./dist/transform.d.ts"],
+      "utils": ["./dist/utils.d.ts"]
+    }
+  },
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",

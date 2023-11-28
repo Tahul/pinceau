@@ -42,6 +42,16 @@
       "require": "./dist/unplugin.cjs"
     }
   },
+  "typesVersions": {
+    "*": {
+      ".": ["./dist/index.d.ts"],
+      "plugin": ["./dist/plugin.d.ts"],
+      "transform": ["./dist/transform.d.ts"],
+      "runtime": ["./dist/runtime.d.ts"],
+      "utils": ["./dist/utils.d.ts"],
+      "unplugin": ["./dist/unplugin.d.ts"]
+    }
+  },
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",

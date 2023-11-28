@@ -22,6 +22,12 @@
       "require": "./dist/plugin.cjs"
     }
   },
+  "typesVersions": {
+    "*": {
+      ".": ["./dist/index.d.ts"],
+      "plugin": ["./dist/plugin.d.ts"]
+    }
+  },
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",

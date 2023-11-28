@@ -48,6 +48,16 @@
       "types": "./dist/component.d.ts"
     }
   },
+  "typesVersions": {
+    "*": {
+      ".": ["./dist/index.d.ts"],
+      "plugin": ["./dist/plugin.d.ts"],
+      "transform": ["./dist/transform.d.ts"],
+      "utils": ["./dist/utils.d.ts"],
+      "runtime": ["./dist/runtime.d.ts"],
+      "unplugin": ["./dist/unplugin.d.ts"]
+    }
+  },
   "files": [
     "dist",
     "PinceauComponent.svelte"
