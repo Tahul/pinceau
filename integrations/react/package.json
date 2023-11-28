@@ -1,6 +1,6 @@
 {
   "name": "@pinceau/react",
-  "version": "1.0.0-beta.25",
+  "version": "1.0.0-beta.26",
   "homepage": "https://github.com/Tahul/pinceau#readme",
   "bugs": {
     "url": "https://github.com/Tahul/pinceau/issues"
@@ -44,12 +44,24 @@
   },
   "typesVersions": {
     "*": {
-      ".": ["./dist/index.d.ts"],
-      "plugin": ["./dist/plugin.d.ts"],
-      "transform": ["./dist/transform.d.ts"],
-      "runtime": ["./dist/runtime.d.ts"],
-      "utils": ["./dist/utils.d.ts"],
-      "unplugin": ["./dist/unplugin.d.ts"]
+      ".": [
+        "./dist/index.d.ts"
+      ],
+      "plugin": [
+        "./dist/plugin.d.ts"
+      ],
+      "transform": [
+        "./dist/transform.d.ts"
+      ],
+      "runtime": [
+        "./dist/runtime.d.ts"
+      ],
+      "utils": [
+        "./dist/utils.d.ts"
+      ],
+      "unplugin": [
+        "./dist/unplugin.d.ts"
+      ]
     }
   },
   "main": "./dist/index.cjs",

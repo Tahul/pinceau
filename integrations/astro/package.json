@@ -1,6 +1,6 @@
 {
   "name": "@pinceau/astro",
-  "version": "1.0.0-beta.25",
+  "version": "1.0.0-beta.26",
   "private": true,
   "homepage": "https://github.com/Tahul/pinceau#readme",
   "bugs": {
@@ -35,10 +35,18 @@
   },
   "typesVersions": {
     "*": {
-      ".": ["./dist/index.d.ts"],
-      "plugin": ["./dist/plugin.d.ts"],
-      "transform": ["./dist/transform.d.ts"],
-      "utils": ["./dist/utils.d.ts"]
+      ".": [
+        "./dist/index.d.ts"
+      ],
+      "plugin": [
+        "./dist/plugin.d.ts"
+      ],
+      "transform": [
+        "./dist/transform.d.ts"
+      ],
+      "utils": [
+        "./dist/utils.d.ts"
+      ]
     }
   },
   "main": "./dist/index.cjs",

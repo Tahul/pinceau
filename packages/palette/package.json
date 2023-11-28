@@ -1,6 +1,6 @@
 {
   "name": "@pinceau/palette",
-  "version": "1.0.0-beta.25",
+  "version": "1.0.0-beta.26",
   "homepage": "https://github.com/Tahul/pinceau#readme",
   "bugs": {
     "url": "https://github.com/Tahul/pinceau/issues"
@@ -34,19 +34,37 @@
     "build:react": "vite build -c vite.config.react.ts && rm -rf dist",
     "build:svelte": "vite build -c vite.config.svelte.ts && rm -rf dist",
     "build:vue": "vite build -c vite.config.vue.ts && rm -rf dist",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "storybook:vue": "storybook dev -p 6006 --config-dir .storybook-vue",
+    "build:storybook:vue": "storybook build --config-dir .storybook-vue"
   },
   "devDependencies": {
-    "@pinceau/core": "workspace:*",
     "@pinceau/configs": "workspace:*",
+    "@pinceau/core": "workspace:*",
     "@pinceau/outputs": "workspace:*",
-    "@pinceau/svelte": "workspace:*",
+    "@pinceau/pigments": "workspace:*",
     "@pinceau/react": "workspace:*",
-    "@pinceau/vue": "workspace:*",
-    "@pinceau/theme": "workspace:*",
-    "@pinceau/style": "workspace:*",
     "@pinceau/runtime": "workspace:*",
+    "@pinceau/style": "workspace:*",
+    "@pinceau/svelte": "workspace:*",
+    "@pinceau/theme": "workspace:*",
+    "@pinceau/vue": "workspace:*",
+    "@storybook/addon-essentials": "8.0.0-alpha.0",
+    "@storybook/addon-interactions": "8.0.0-alpha.0",
+    "@storybook/addon-links": "8.0.0-alpha.0",
+    "@storybook/blocks": "8.0.0-alpha.0",
+    "@storybook/cli": "8.0.0-alpha.0",
+    "@storybook/test": "8.0.0-alpha.0",
+    "@storybook/vue3": "8.0.0-alpha.0",
+    "@storybook/vue3-vite": "8.0.0-alpha.0",
     "pinceau": "workspace:*",
-    "vite": "^5.0.0"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "storybook": "8.0.0-alpha.0",
+    "vite": "^5.0.0",
+    "vue": "^3.3.9"
+  },
+  "dependencies": {
+    "radix-vue": "^1.2.3"
   }
 }

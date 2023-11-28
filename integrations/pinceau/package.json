@@ -1,6 +1,6 @@
 {
   "name": "pinceau",
-  "version": "1.0.0-beta.25",
+  "version": "1.0.0-beta.26",
   "homepage": "https://github.com/Tahul/pinceau#readme",
   "bugs": {
     "url": "https://github.com/Tahul/pinceau/issues"
@@ -24,8 +24,12 @@
   },
   "typesVersions": {
     "*": {
-      ".": ["./dist/index.d.ts"],
-      "plugin": ["./dist/plugin.d.ts"]
+      ".": [
+        "./dist/index.d.ts"
+      ],
+      "plugin": [
+        "./dist/plugin.d.ts"
+      ]
     }
   },
   "main": "./dist/index.cjs",

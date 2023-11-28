@@ -1,6 +1,6 @@
 {
   "name": "@pinceau/volar",
-  "version": "1.0.0-beta.25",
+  "version": "1.0.0-beta.26",
   "homepage": "https://github.com/Tahul/pinceau#readme",
   "bugs": {
     "url": "https://github.com/Tahul/pinceau/issues"
@@ -19,7 +19,9 @@
   },
   "typesVersions": {
     "*": {
-      ".": ["./dist/index.d.ts"]
+      ".": [
+        "./dist/index.d.ts"
+      ]
     }
   },
   "main": "./dist/index.cjs",
