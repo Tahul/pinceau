@@ -29,12 +29,12 @@
     "theme.config.ts"
   ],
   "scripts": {
-    "build:prepare": "pnpm run build:base",
-    "build:base": "vite build -c vite.config.base.ts && rm -rf dist",
-    "build:react": "vite build -c vite.config.react.ts && rm -rf dist",
-    "build:svelte": "vite build -c vite.config.svelte.ts && rm -rf dist",
-    "build:vue": "vite build -c vite.config.vue.ts && rm -rf dist",
-    "clean": "rm -rf dist",
+    "_build:prepare": "pnpm run build:base",
+    "_build:base": "vite build -c vite.config.base.ts && rm -rf dist",
+    "_build:react": "vite build -c vite.config.react.ts && rm -rf dist",
+    "_build:svelte": "vite build -c vite.config.svelte.ts && rm -rf dist",
+    "_build:vue": "vite build -c vite.config.vue.ts && rm -rf dist",
+    "_clean": "rm -rf dist",
     "storybook:vue": "storybook dev -p 6006 --config-dir .storybook-vue",
     "build:storybook:vue": "storybook build --config-dir .storybook-vue"
   },
