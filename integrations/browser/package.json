@@ -80,7 +80,7 @@
     "@pinceau/theme": "workspace:*",
     "@pinceau/vue": "workspace:*",
     "jiti": "^1.21.0",
-    "tsup": "^7.3.0"
+    "tsup": "^8.0.1"
   },
   "dependencies": {
     "esbuild-plugin-pipe": "^0.2.0",

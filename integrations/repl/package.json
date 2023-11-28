@@ -42,8 +42,8 @@
     "start": "vite preview --port 3000"
   },
   "dependencies": {
-    "@iconify/json": "^2.2.143",
-    "appwrite": "^13.0.0",
+    "@iconify/json": "^2.2.149",
+    "appwrite": "^13.0.1",
     "import-mapper": "^0.0.4",
     "monaco-jsx-syntax-highlight": "^1.2.0",
     "splitpanes": "^3.1.5",
@@ -52,7 +52,7 @@
     "vue3-popper": "^1.5.0"
   },
   "devDependencies": {
-    "@babel/types": "^7.23.3",
+    "@babel/types": "^7.23.4",
     "@microsoft/api-extractor": "^7.38.3",
     "@pinceau/browser": "workspace:*",
     "@pinceau/configs": "workspace:*",
@@ -61,7 +61,7 @@
     "@pinceau/svelte": "workspace:*",
     "@pinceau/vue": "workspace:*",
     "@rollup/plugin-replace": "^5.0.5",
-    "@types/node": "^20.9.2",
+    "@types/node": "^20.10.0",
     "@vitejs/plugin-vue": "^4.5.0",
     "@volar/cdn": "~1.11.1",
     "@volar/language-server": "^1.11.1",
@@ -78,11 +78,11 @@
     "path-browserify": "^1.0.1",
     "simple-git-hooks": "^2.9.0",
     "sucrase": "^3.34.0",
-    "svelte": "^4.2.5",
-    "svelte2tsx": "^0.6.25",
-    "typescript": "^5.2.2",
-    "vite": "^5.0.0",
-    "vue": "^3.3.8",
+    "svelte": "^4.2.7",
+    "svelte2tsx": "^0.6.27",
+    "typescript": "^5.3.2",
+    "vite": "^5.0.3",
+    "vue": "^3.3.9",
     "vue-tsc": "1.8.22"
   }
 }

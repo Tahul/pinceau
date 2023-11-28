@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@vueuse/core": "^10.6.1",
-    "vue": "^3.3.8",
+    "vue": "^3.3.9",
     "vue-router": "^4.2.5"
   },
   "devDependencies": {
@@ -19,8 +19,8 @@
     "@pinceau/outputs": "workspace:*",
     "@pinceau/vue": "workspace:*",
     "@vitejs/plugin-vue": "^4.5.0",
-    "typescript": "^5.2.2",
-    "vite": "^5.0.0"
+    "typescript": "^5.3.2",
+    "vite": "^5.0.3"
   },
   "stackblitz": {
     "installDependencies": false,

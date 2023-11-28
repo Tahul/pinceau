@@ -97,7 +97,7 @@
   },
   "devDependencies": {
     "@pinceau/configs": "workspace:*",
-    "@sveltejs/vite-plugin-svelte": "^3.0.0",
+    "@sveltejs/vite-plugin-svelte": "^3.0.1",
     "acorn": "^8.11.2",
     "rollup-plugin-svelte": "^7.1.6"
   }

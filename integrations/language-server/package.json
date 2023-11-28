@@ -30,7 +30,7 @@
     "@pinceau/theme": "workspace:*",
     "@pinceau/core": "workspace:*",
     "@pinceau/style": "workspace:*",
-    "@vue/compiler-sfc": "^3.3.8",
+    "@vue/compiler-sfc": "^3.3.9",
     "fast-glob": "^3.3.2",
     "line-column": "^1.0.2",
     "tinycolor2": "1.6.0",

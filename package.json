@@ -71,7 +71,7 @@
     "vue-eslint-parser": "npm:@pinceau/vue-eslint-parser@latest"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^1.2.1",
+    "@antfu/eslint-config": "^2.1.1",
     "@pinceau/configs": "workspace:*",
     "@pinceau/core": "workspace:*",
     "@pinceau/language-server": "workspace:*",
@@ -90,13 +90,13 @@
     "nodemon": "^3.0.1",
     "pinceau": "workspace:*",
     "release-it": "^17.0.0",
-    "rollup": "^4.5.0",
-    "tsup": "^7.3.0",
+    "rollup": "^4.6.0",
+    "tsup": "^8.0.1",
     "turbo": "^1.10.16",
-    "typescript": "^5.2.2",
+    "typescript": "^5.3.2",
     "unbuild": "^2.0.0",
-    "unenv": "^1.7.4",
-    "vite-plugin-inspect": "^0.7.42"
+    "unenv": "^1.8.0",
+    "vite-plugin-inspect": "^0.8.0"
   },
   "packageManager": "pnpm@8.9.0",
   "pnpm": {

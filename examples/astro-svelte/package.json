@@ -10,7 +10,7 @@
     "start": "astro dev --port=3000"
   },
   "dependencies": {
-    "vue": "^3.3.8"
+    "vue": "^3.3.9"
   },
   "devDependencies": {
     "@astrojs/svelte": "^4.0.4",
@@ -18,7 +18,7 @@
     "@pinceau/configs": "workspace:*",
     "@pinceau/pigments": "workspace:*",
     "@pinceau/outputs": "workspace:*",    "@pinceau/svelte": "workspace:*",
-    "astro": "^3.5.5"
+    "astro": "^3.6.2"
   },
   "stackblitz": {
     "installDependencies": false,

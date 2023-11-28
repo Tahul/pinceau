@@ -10,15 +10,15 @@
     "serve": "vite preview"
   },
   "dependencies": {
-    "solid-js": "^1.8.5"
+    "solid-js": "^1.8.6"
   },
   "devDependencies": {
     "@pinceau/configs": "workspace:*",
     "@pinceau/pigments": "workspace:*",
     "@pinceau/outputs": "workspace:*",    "@pinceau/react": "workspace:*",
-    "typescript": "^5.2.2",
-    "vite": "^5.0.0",
-    "vite-plugin-inspect": "^0.7.42",
+    "typescript": "^5.3.2",
+    "vite": "^5.0.3",
+    "vite-plugin-inspect": "^0.8.0",
     "vite-plugin-solid": "^2.7.2"
   },
   "stackblitz": {

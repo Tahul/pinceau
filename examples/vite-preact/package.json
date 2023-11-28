@@ -20,8 +20,8 @@
     "@preact/preset-vite": "^2.7.0",
     "@prefresh/vite": "^2.4.4",
     "cross-env": "^7.0.3",
-    "typescript": "^5.2.2",
-    "vite": "^5.0.0"
+    "typescript": "^5.3.2",
+    "vite": "^5.0.3"
   },
   "stackblitz": {
     "installDependencies": false,

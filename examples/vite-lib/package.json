@@ -15,7 +15,7 @@
     "@pinceau/configs": "workspace:*",
     "@pinceau/pigments": "workspace:*",
     "@pinceau/outputs": "workspace:*",
-    "typescript": "^5.2.2",
-    "vite": "^5.0.0"
+    "typescript": "^5.3.2",
+    "vite": "^5.0.3"
   }
 }
