@@ -46,7 +46,7 @@ import fg from 'fast-glob'
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import themeConfig from '../fixtures/theme/theme.config'
 import themeConfigContent from '../fixtures/theme/theme.config.ts?raw'
-import { findNode, paletteLayer, resolveFixtures, resolveTmp, testFileLayer, testLayer } from '../utils'
+import { findNode, pigmentsLayers, resolveFixtures, resolveTmp, testFileLayer, testLayer } from '../utils'
 
 describe('@pinceau/theme', () => {
   describe('utils/config-context.ts', () => {
@@ -58,7 +58,7 @@ describe('@pinceau/theme', () => {
       ctx.fs = fs
       ctx.resolve = createRequire(import.meta.url).resolve
       setupThemeFormats(ctx)
-      ctx.options.theme.palette = false
+      ctx.options.theme.pigments = false
       configCtx = usePinceauConfigContext(ctx)
       ctx.options.theme.layers = []
       ctx.options.theme.buildDir = undefined
@@ -76,7 +76,7 @@ describe('@pinceau/theme', () => {
       const localContext = usePinceauContext({
         theme: {
           layers: [
-            paletteLayer,
+            pigmentsLayers,
           ],
         },
       })
@@ -89,10 +89,10 @@ describe('@pinceau/theme', () => {
       expect(localConfigContext.config).toBeDefined()
       expect(localConfigContext).toBeDefined()
     })
-    it('inject @pinceau/palette build theme without options', async () => {
+    it('inject @pinceau/pigments build theme without options', async () => {
       ctx.fs = fs
       ctx.resolve = createRequire(import.meta.url).resolve
-      ctx.options.theme.palette = true
+      ctx.options.theme.pigments = true
 
       await configCtx.buildTheme()
 
@@ -158,7 +158,7 @@ describe('@pinceau/theme', () => {
     })
     it('merges multiple layers', async () => {
       ctx.options.theme.layers.push(testLayer)
-      ctx.options.theme.layers.push(paletteLayer)
+      ctx.options.theme.layers.push(pigmentsLayers)
 
       const output = await configCtx.buildTheme()
 
@@ -166,7 +166,7 @@ describe('@pinceau/theme', () => {
       expect((output as any).theme.color.white.value).toBe('#ffffff')
     })
     it('properly outputs utils', async () => {
-      ctx.options.theme.layers.push(paletteLayer)
+      ctx.options.theme.layers.push(pigmentsLayers)
       ctx.options.theme.layers.push({
         utils: {
           testMx: (value: string) => ({
@@ -347,7 +347,7 @@ describe('@pinceau/theme', () => {
       ctx.fs = fs
       ctx.resolve = createRequire(import.meta.url).resolve
       setupThemeFormats(ctx)
-      ctx.options.theme.palette = false
+      ctx.options.theme.pigments = false
       ctx.options.theme.layers = []
       ctx.options.theme.buildDir = undefined
     })
@@ -368,7 +368,7 @@ describe('@pinceau/theme', () => {
     it('resolveConfigSources() - resolve pkg source', () => {
       const options = normalizeOptions()
 
-      options.theme.layers = ['@pinceau/palette']
+      options.theme.layers = ['@pinceau/pigments']
 
       const result = resolveConfigSources(options, ctx)
 
@@ -380,10 +380,10 @@ describe('@pinceau/theme', () => {
     it('resolveConfigSources() - resolve sources from an user config layers key', () => {
       const options = normalizeOptions()
 
-      options.theme.palette = false
+      options.theme.pigments = false
 
       options.theme.layers = [
-        resolveFixtures('../../packages/palette'),
+        resolveFixtures('../../packages/pigments'),
         {
           path: resolveFixtures(),
           configFileName: 'theme.config',
@@ -403,7 +403,7 @@ describe('@pinceau/theme', () => {
 
       expect(result[0].tokens).toBeDefined()
       expect(result[1].path).toBe(resolveFixtures())
-      expect(result[2].path).toBe(resolveFixtures('../../packages/palette'))
+      expect(result[2].path).toBe(resolveFixtures('../../packages/pigments'))
     })
     it('resolveMediaQueriesKeys() - it can resolve media queries keys from a config', () => {
       const keys = resolveMediaQueriesKeys(themeConfig)
@@ -454,10 +454,10 @@ describe('@pinceau/theme', () => {
     it('loadLayers() - output full output from options layers', async () => {
       const options = normalizeOptions()
 
-      options.theme.palette = false
+      options.theme.pigments = false
 
       options.theme.layers = [
-        resolveFixtures('../../packages/palette'),
+        resolveFixtures('../../packages/pigments'),
         {
           path: resolveFixtures('./theme'),
           configFileName: 'theme.config',
@@ -969,7 +969,7 @@ describe('@pinceau/theme', () => {
         dev: false,
         theme: {
           layers: [testLayer],
-          palette: false,
+          pigments: false,
         },
       })
       configCtx = usePinceauConfigContext(pinceauContext)

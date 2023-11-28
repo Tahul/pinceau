@@ -57,7 +57,7 @@
     "docs": "nuxi dev docs",
     "lint": "eslint --cache .",
     "lint:fix": "eslint --cache . --fix",
-    "palette": "pnpm -r --filter=\"./(packages|integrations)/palette\" run build:base",
+    "pigments": "pnpm -r --filter=\"./(packages|integrations)/pigments\" run build:base",
     "prepare": "pnpm stub",
     "release": "bumpp -r package.json packages/*/package.json integrations/*/package.json",
     "stub": "pnpm -r --filter=\"./(packages|integrations)/*\" run stub && pnpm -r run build:post",

@@ -44,7 +44,7 @@ export default defineNuxtConfig({
       buildDir: resolve('./node_modules/.pinceau'),
       layers: [
         {
-          path: resolve('../../packages/palette/'),
+          path: resolve('../../packages/pigments/'),
         },
       ],
     },

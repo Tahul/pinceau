@@ -9,11 +9,11 @@
   },
   "dependencies": {
     "@pinceau/nuxt": "workspace:*",
-    "@pinceau/palette": "workspace:*"
+    "@pinceau/pigments": "workspace:*"
   },
   "devDependencies": {
     "@pinceau/configs": "workspace:*",
-    "@pinceau/palette": "workspace:*",
+    "@pinceau/pigments": "workspace:*",
     "@pinceau/outputs": "workspace:*",    "nuxt": "^3.8.1"
   },
   "stackblitz": {

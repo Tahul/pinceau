@@ -12,7 +12,7 @@
   },
   "devDependencies": {
     "@pinceau/configs": "workspace:*",
-    "@pinceau/palette": "workspace:*",
+    "@pinceau/pigments": "workspace:*",
     "@pinceau/outputs": "workspace:*",
     "@pinceau/svelte": "workspace:*",
     "@sveltejs/vite-plugin-svelte": "^3.0.0",

@@ -16,7 +16,7 @@
     "@astrojs/svelte": "^4.0.4",
     "@pinceau/astro": "workspace:*",
     "@pinceau/configs": "workspace:*",
-    "@pinceau/palette": "workspace:*",
+    "@pinceau/pigments": "workspace:*",
     "@pinceau/outputs": "workspace:*",    "@pinceau/svelte": "workspace:*",
     "astro": "^3.5.5"
   },

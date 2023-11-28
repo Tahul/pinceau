@@ -16,7 +16,7 @@
     "@astrojs/vue": "^3.0.4",
     "@pinceau/astro": "workspace:*",
     "@pinceau/configs": "workspace:*",
-    "@pinceau/palette": "workspace:*",
+    "@pinceau/pigments": "workspace:*",
     "@pinceau/outputs": "workspace:*",    "@pinceau/vue": "workspace:*",
     "astro": "^3.5.5"
   },

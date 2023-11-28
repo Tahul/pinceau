@@ -56,7 +56,7 @@
     "@microsoft/api-extractor": "^7.38.3",
     "@pinceau/browser": "workspace:*",
     "@pinceau/configs": "workspace:*",
-    "@pinceau/palette": "workspace:*",
+    "@pinceau/pigments": "workspace:*",
     "@pinceau/react": "workspace:*",
     "@pinceau/svelte": "workspace:*",
     "@pinceau/vue": "workspace:*",

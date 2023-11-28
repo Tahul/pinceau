@@ -61,10 +61,10 @@
       "require": "./react-runtime.js",
       "types": "./react-runtime.d.ts"
     },
-    "./palette": {
-      "import": "./palette.js",
-      "require": "./palette.js",
-      "types": "./palette.d.ts"
+    "./pigments": {
+      "import": "./pigments.js",
+      "require": "./pigments.js",
+      "types": "./pigments.d.ts"
     }
   },
   "scripts": {

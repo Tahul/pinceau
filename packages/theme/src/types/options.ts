@@ -116,9 +116,9 @@ export interface PinceauThemeOptions {
   definitions: boolean
 
   /**
-   * Inject `@pinceau/palette` automatically
+   * Inject `@pinceau/pigments` automatically
    */
-  palette: boolean
+  pigments: boolean
 
   /**
    * Toggles the tranformIndexHtml hook from the theme plugin.

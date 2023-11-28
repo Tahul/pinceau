@@ -87,10 +87,10 @@ export function resolveConfigSources(
   options: PinceauOptions,
   ctx: PinceauContext,
 ) {
-  // Inject palette if options set to true
-  if (options.theme.palette) {
-    const paletteSource = configSourceFromModulePath('@pinceau/palette', ctx)
-    if (paletteSource) { options.theme.layers.push(paletteSource) }
+  // Inject pigments if options set to true
+  if (options.theme.pigments) {
+    const pigmentsSource = configSourceFromModulePath('@pinceau/pigments', ctx)
+    if (pigmentsSource) { options.theme.layers.push(pigmentsSource) }
   }
 
   let sources: ConfigLayer[] = options.theme.layers.reduce(
@@ -105,7 +105,7 @@ export function resolveConfigSources(
 
       // Check if the config layer path passed as string in the array
       if (typeof layerOrPath === 'string') {
-        // Supports passing a package like `@pinceau/palette`
+        // Supports passing a package like `@pinceau/pigments`
         if (!layerOrPath.startsWith('/')) {
           const resolvedModuleSource = configSourceFromModulePath(layerOrPath, ctx)
           if (resolvedModuleSource) { configLayer = resolvedModuleSource }

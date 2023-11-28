@@ -14,7 +14,7 @@
     "@nuxt/content": "^2.9.0",
     "@nuxt/devtools": "latest",
     "@pinceau/nuxt": "workspace:*",
-    "@pinceau/palette": "workspace:*",
+    "@pinceau/pigments": "workspace:*",
     "@vueuse/motion": "^2.0.0",
     "nuxt": "^3.8.1",
     "nuxt-icon": "^0.6.6",

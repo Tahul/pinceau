@@ -1,0 +1,52 @@
+{
+  "name": "@pinceau/pigments",
+  "version": "1.0.0-beta.25",
+  "homepage": "https://github.com/Tahul/pinceau#readme",
+  "bugs": {
+    "url": "https://github.com/Tahul/pinceau/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tahul/pinceau.git"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./theme.config.ts",
+      "import": "./theme.config.ts",
+      "require": "./theme.config.ts"
+    },
+    "./theme.config": {
+      "types": "./theme.config.ts",
+      "import": "./theme.config.ts",
+      "require": "./theme.config.ts"
+    }
+  },
+  "main": "./theme.config.ts",
+  "module": "./theme.config.ts",
+  "types": "./theme.config.ts",
+  "files": [
+    "theme.config.ts"
+  ],
+  "scripts": {
+    "build:prepare": "pnpm run build:base",
+    "build:base": "vite build -c vite.config.base.ts && rm -rf dist",
+    "build:react": "vite build -c vite.config.react.ts && rm -rf dist",
+    "build:svelte": "vite build -c vite.config.svelte.ts && rm -rf dist",
+    "build:vue": "vite build -c vite.config.vue.ts && rm -rf dist",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "@pinceau/core": "workspace:*",
+    "@pinceau/configs": "workspace:*",
+    "@pinceau/outputs": "workspace:*",
+    "@pinceau/svelte": "workspace:*",
+    "@pinceau/react": "workspace:*",
+    "@pinceau/vue": "workspace:*",
+    "@pinceau/theme": "workspace:*",
+    "@pinceau/style": "workspace:*",
+    "@pinceau/runtime": "workspace:*",
+    "pinceau": "workspace:*",
+    "vite": "^5.0.0"
+  }
+}

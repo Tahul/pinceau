@@ -1,4 +1,4 @@
-import palette from '@pinceau/palette/theme.config?raw'
+import pigments from '@pinceau/pigments/theme.config?raw'
 import type { ReplStore, StoreState } from '..'
 import { File, importMapFile, setFile, themeFile, tsconfigFile } from '.'
 
@@ -46,8 +46,8 @@ export class SessionProvider {
       // Set main file from transformer
       setFile(files, this.store.transformer.defaultMainFile, this.store.transformer.welcomeCode)
 
-      // Set main theme file from palette
-      setFile(files, themeFile, palette)
+      // Set main theme file from pigments
+      setFile(files, themeFile, pigments)
 
       files[tsconfigFile] = new File(tsconfigFile, JSON.stringify(this.store.transformer.tsconfig, null, 2))
 

@@ -27,7 +27,7 @@ export default antfu(
       '**/*.md',
       '**/examples/**',
       '**/package.json',
-      'packages/palette/output/',
+      'packages/pigments/output/',
       '**/tests/fixtures/',
       '**/tests/tmp/',
       '.vscode',

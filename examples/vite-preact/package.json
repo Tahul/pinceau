@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "@pinceau/configs": "workspace:*",
-    "@pinceau/palette": "workspace:*",
+    "@pinceau/pigments": "workspace:*",
     "@pinceau/outputs": "workspace:*",    "@pinceau/react": "workspace:*",
     "@preact/preset-vite": "^2.7.0",
     "@prefresh/vite": "^2.4.4",

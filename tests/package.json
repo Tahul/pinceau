@@ -14,7 +14,7 @@
     "@pinceau/core": "workspace:*",
     "@pinceau/language-server": "workspace:*",
     "@pinceau/nuxt": "workspace:*",
-    "@pinceau/palette": "workspace:*",
+    "@pinceau/pigments": "workspace:*",
     "@pinceau/react": "workspace:*",
     "@pinceau/runtime": "workspace:*",
     "@pinceau/style": "workspace:*",

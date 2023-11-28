@@ -11,7 +11,7 @@
   },
   "devDependencies": {
     "@pinceau/configs": "workspace:*",
-    "@pinceau/palette": "workspace:*",
+    "@pinceau/pigments": "workspace:*",
     "@pinceau/outputs": "workspace:*",    "@pinceau/svelte": "workspace:*",
     "@sveltejs/adapter-auto": "^2.1.1",
     "@sveltejs/kit": "^1.27.6",

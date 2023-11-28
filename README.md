@@ -113,7 +113,7 @@ Example: [`examples/vite-react/vite.config.ts`](./examples/vite-react/vite.confi
 <details>
 <summary>Use our theme or create yours</summary><br>
 
-Use our default theme, [🎨 Palette](./packages/palette):
+Use our default theme, [🎨 Pigments](./packages/pigments):
 
 ```ts
 // vite.config.ts
@@ -121,7 +121,7 @@ export default defineConfig({
   plugins: [
     Pinceau({
       theme: {
-        layers: ['@pinceau/palette']
+        layers: ['@pinceau/pigments']
       }
     })
   ]

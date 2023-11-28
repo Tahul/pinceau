@@ -33,7 +33,7 @@ export default defineConfig({
       },
     }),
     {
-      name: '@pinceau/palette-end',
+      name: '@pinceau/pigments-end',
       configResolved(_config) {
         config = _config
       },
