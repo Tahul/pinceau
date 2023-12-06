@@ -49,9 +49,9 @@ export async function loadLayers(
     // Support tokens passed in `layers: [{ tokens }]`
     let resolvedLayer: ResolvedConfigLayer
     if (layer.tokens || layer.utils) { resolvedLayer = resolveInlineLayer(layer, options) }
+    else { resolvedLayer = await resolveFileLayer(layer, options, ctx) }
 
-    else { resolvedLayer = await resolveFileLayer(layer, options) }
-
+    // Pass on source if layer not resolvable
     if (!resolvedLayer) { continue }
 
     const { path, theme, definitions, utils, imports } = resolvedLayer

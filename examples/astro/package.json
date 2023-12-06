@@ -11,7 +11,7 @@
   },
   "devDependencies": {
     "@pinceau/astro": "workspace:*",
-    "astro": "^3.6.2",
+    "astro": "^4.0.2",
     "canvas-confetti": "^1.9.2"
   },
   "stackblitz": {

@@ -42,18 +42,18 @@
     "start": "vite preview --port 3000"
   },
   "dependencies": {
-    "@iconify/json": "^2.2.149",
+    "@iconify/json": "^2.2.152",
     "appwrite": "^13.0.1",
     "import-mapper": "^0.0.4",
     "monaco-jsx-syntax-highlight": "^1.2.0",
     "splitpanes": "^3.1.5",
-    "unplugin-icons": "^0.17.4",
-    "vite-plugin-node-polyfills": "^0.16.0",
+    "unplugin-icons": "^0.18.1",
+    "vite-plugin-node-polyfills": "^0.17.0",
     "vue3-popper": "^1.5.0"
   },
   "devDependencies": {
-    "@babel/types": "^7.23.4",
-    "@microsoft/api-extractor": "^7.38.3",
+    "@babel/types": "^7.23.5",
+    "@microsoft/api-extractor": "^7.38.4",
     "@pinceau/browser": "workspace:*",
     "@pinceau/configs": "workspace:*",
     "@pinceau/pigments": "workspace:*",
@@ -61,13 +61,13 @@
     "@pinceau/svelte": "workspace:*",
     "@pinceau/vue": "workspace:*",
     "@rollup/plugin-replace": "^5.0.5",
-    "@types/node": "^20.10.0",
-    "@vitejs/plugin-vue": "^4.5.0",
+    "@types/node": "^20.10.3",
+    "@vitejs/plugin-vue": "^4.5.1",
     "@volar/cdn": "~1.11.1",
     "@volar/language-server": "^1.11.1",
     "@volar/monaco": "~1.11.1",
     "@volar/typescript": "~1.11.1",
-    "@vue/language-service": "1.8.22",
+    "@vue/language-service": "1.8.25",
     "fflate": "^0.8.1",
     "monaco-editor": "^0.44.0",
     "monaco-editor-core": "^0.44.0",
@@ -78,11 +78,11 @@
     "path-browserify": "^1.0.1",
     "simple-git-hooks": "^2.9.0",
     "sucrase": "^3.34.0",
-    "svelte": "^4.2.7",
+    "svelte": "^4.2.8",
     "svelte2tsx": "^0.6.27",
     "typescript": "^5.3.2",
-    "vite": "^5.0.3",
-    "vue": "^3.3.9",
-    "vue-tsc": "1.8.22"
+    "vite": "^5.0.5",
+    "vue": "^3.3.10",
+    "vue-tsc": "1.8.25"
   }
 }

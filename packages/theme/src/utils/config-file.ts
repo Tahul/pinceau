@@ -1,7 +1,6 @@
 import fs from 'node:fs'
-import type { PinceauOptions } from '@pinceau/core'
+import type { PinceauContext, PinceauOptions } from '@pinceau/core'
 import { message } from '@pinceau/core/utils'
-import createJITI from 'jiti'
 import { resolve } from 'pathe'
 import type { ConfigFileImport, ConfigLayer, ResolvedConfigLayer } from '../types'
 import { getConfigLayer } from './config-layers'
@@ -13,6 +12,7 @@ import { resolveConfigContent } from './config-content'
 export async function resolveFileLayer(
   layer: ConfigLayer,
   options: PinceauOptions,
+  ctx?: PinceauContext,
 ): Promise<ResolvedConfigLayer> {
   // Find full configuration path
   const resolvedConfigPath = resolveConfigPath(layer, options)
@@ -25,7 +25,7 @@ export async function resolveFileLayer(
   // Try to import a configuration file
   let configFile: ConfigFileImport
   try {
-    configFile = await importConfigFile(path, ext)
+    configFile = await importConfigFile(path, ext, ctx)
   }
   catch (e) {
     message('CONFIG_RESOLVE_ERROR', [path, e])
@@ -49,7 +49,11 @@ export async function resolveFileLayer(
 /**
  * Makes an import of a configuration file.
  */
-export async function importConfigFile(path: string, ext: string): Promise<ConfigFileImport> {
+export async function importConfigFile(
+  path: string,
+  ext: string,
+  ctx?: PinceauContext,
+): Promise<ConfigFileImport> {
   const content = fs.readFileSync(path, 'utf-8')
 
   // Read `.json` configurations
@@ -62,12 +66,21 @@ export async function importConfigFile(path: string, ext: string): Promise<Confi
     }
   }
 
-  // Import configuration with JITI
-  const config = createJITI(path, {
-    interopDefault: true,
-    requireCache: false,
-    esmResolve: true,
-  })(path)
+  // Try importing the configuration with a dynamic import
+  let config
+  try {
+    // First try to use a dynamic import for this file.
+    config = await import(`${path}?${Date.now()}`).then(d => d?.default || d)
+  }
+  catch (e) {
+    //
+  }
+
+  // Fallback on jiti if it is present
+  if (!config && ctx?.jiti) {
+    const jitiImport = ctx.jiti(path)
+    config = jitiImport?.default || jitiImport
+  }
 
   return {
     path,

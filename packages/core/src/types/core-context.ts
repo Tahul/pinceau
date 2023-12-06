@@ -1,6 +1,7 @@
 import type { PinceauConfigContext, Theme } from '@pinceau/theme'
 import type { PinceauStyleFunctionContext } from '@pinceau/style'
 import type { PinceauTheme, PinceauUtils } from '@pinceau/outputs'
+import type { JITI } from 'jiti'
 import type { PinceauVirtualContext } from './virtual-context'
 import type { PinceauOptions } from './options'
 import type { PinceauQuery } from './query'
@@ -21,10 +22,6 @@ export interface PinceauContext extends
 }
 
 export interface PinceauBuildContext {
-  /**
-   * Any kind of dev server like ViteDevServer.
-   */
-  devServer: any
   /**
    * ConfigContext injected by @pinceau/theme when present.
    */
@@ -110,6 +107,11 @@ export interface PinceauBuildContext {
   addTypes: (types: Partial<PinceauBuildContext['types']>) => void
 
   /**
+   * Any kind of dev server like ViteDevServer.
+   */
+  devServer?: any
+
+  /**
    * `fs` reference to avoid direct dependencies.
    */
   fs?: typeof import('node:fs')
@@ -118,6 +120,11 @@ export interface PinceauBuildContext {
    * `resolve` reference to avoid direct dependencies when using in browser.
    */
   resolve?: (path: string) => string | undefined
+
+  /**
+   * `jiti` reference to avoid direct dependency on it.
+   */
+  jiti?: JITI
 }
 
 /**

@@ -1,8 +1,8 @@
 import { message } from '@pinceau/core/utils'
-import type { Named, Transform } from 'style-dictionary-esm'
+import type SD from 'style-dictionary'
 
 // Replace dashed by dotted
-export const pinceauNameTransformer: Named<Transform> = {
+export const pinceauNameTransformer: SD.Named<SD.Transform> = {
   name: 'pinceau/name',
   type: 'name',
   matcher: () => true,
@@ -13,7 +13,7 @@ export const pinceauNameTransformer: Named<Transform> = {
 }
 
 // Add `variable` key to attributes
-export const pinceauVariableTransformer: Named<Transform> = {
+export const pinceauVariableTransformer: SD.Named<SD.Transform> = {
   name: 'pinceau/variable',
   type: 'attribute',
   matcher: () => true,

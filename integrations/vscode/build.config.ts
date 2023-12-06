@@ -13,7 +13,9 @@ export default defineBuildConfig({
       format: 'cjs',
     },
   ],
-
+  externals: [
+    'vscode',
+  ],
   clean: true,
   declaration: false,
   rollup: {

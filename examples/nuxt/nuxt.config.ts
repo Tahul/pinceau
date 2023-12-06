@@ -7,12 +7,6 @@ export default defineNuxtConfig({
   modules: [
     '@pinceau/nuxt',
   ],
-  components: [
-    {
-      path: resolve('../shared'),
-      global: true,
-    },
-  ],
   pinceau: {
     style: {
       excludes: [

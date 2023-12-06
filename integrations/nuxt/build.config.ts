@@ -15,7 +15,6 @@ export default defineBuildConfig({
   },
   externals: [
     '@nuxt',
-    'jiti',
     'chalk',
     'consola',
     'defu',

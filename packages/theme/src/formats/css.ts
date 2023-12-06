@@ -1,6 +1,6 @@
-import type { DesignToken } from 'style-dictionary-esm'
-import StyleDictionary from 'style-dictionary-esm'
+import SD from 'style-dictionary'
 import type { PinceauMediaQueries } from '@pinceau/outputs'
+import type { DesignToken } from '../types'
 import type { PinceauThemeFormat } from '../types/options'
 import { walkTokens } from '../utils/tokens'
 import { createThemeRule } from '../utils/css-rules'
@@ -12,7 +12,7 @@ export const cssFormat: PinceauThemeFormat = {
   formatter({ ctx, dictionary }) {
     // Get context
     const colorSchemeMode = ctx.options.theme.colorSchemeMode
-    const { formattedVariables } = StyleDictionary.formatHelpers
+    const { formattedVariables } = SD.formatHelpers
 
     // Create :root tokens list
     const mediaQueries: { [key in PinceauMediaQueries]?: DesignToken[] } & { $initial: DesignToken[] } = {
@@ -60,8 +60,8 @@ export const cssFormat: PinceauThemeFormat = {
           dictionary: { ...dictionary, allTokens: value } as any,
           outputReferences: true,
           formatting: ctx.options.dev
-            ? { separator: '\n', indentation: '    ', prefix: '--', commentStyle: 'long' }
-            : { separator: '\n', indentation: '    ', prefix: '--', commentStyle: 'long' },
+            ? { separator: ':', indentation: '    ', prefix: '--', commentStyle: 'long', suffix: ';\n' }
+            : { separator: ':', indentation: '    ', prefix: '--', commentStyle: 'long', suffix: ';' },
         })
 
         css += createThemeRule({ mq: key as PinceauMediaQueries, content, theme: dictionary.tokens, colorSchemeMode })

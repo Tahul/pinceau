@@ -4,6 +4,7 @@ import type { UnpluginInstance } from 'unplugin'
 import { createUnplugin } from 'unplugin'
 import chalk from 'chalk'
 import { consola } from 'consola'
+import createJITI from 'jiti'
 import type { PinceauUserOptions } from './types/options'
 import { updateDebugContext } from './utils/debug'
 import { usePinceauContext } from './utils/core-context'
@@ -43,15 +44,18 @@ const PinceauCorePlugin: UnpluginInstance<PinceauUserOptions> = createUnplugin((
           ctx.options.cwd = config.root
         }
 
+        const basePath = !ctx.options.cwd.endsWith('/') ? `${ctx.options.cwd}/` : ctx.options.cwd
+
         // Set node dependencies
         ctx.fs = fs
-        ctx.resolve = createRequire(!ctx.options.cwd.endsWith('/') ? `${ctx.options.cwd}/` : ctx.options.cwd).resolve
+        ctx.resolve = createRequire(basePath).resolve
+        ctx.jiti = createJITI(basePath)
       },
       api: {
         getPinceauContext: () => ctx,
       },
       configureServer(server) {
-        // As server exists, we most likely are in development mode.
+        // As server exists, we are in development mode.
         ctx.options.dev = true
         ctx.devServer = server
       },

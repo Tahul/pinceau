@@ -2,7 +2,6 @@ import { dirname } from 'node:path'
 import type { Color, Location } from 'vscode-languageserver/node'
 import type { DesignToken } from '@pinceau/theme'
 import fastGlob from 'fast-glob'
-import createJITI from 'jiti'
 import type { PinceauStyleFunctionContext } from '@pinceau/style'
 import CacheManager from './cache'
 import isColor from './utils/isColor'
@@ -53,8 +52,6 @@ export default class PinceauTokensManager {
 
   public async scanFolders(folders: string[], settings: Partial<PinceauVSCodeSettings>) {
     for (const folderPath of folders) {
-      const jiti = createJITI(folderPath, { cache: false, requireCache: false, v8cache: false })
-
       try {
         await globRequire(
           folderPath,
@@ -63,13 +60,13 @@ export default class PinceauTokensManager {
             const themePath = dirname(filePath)
 
             if (filePath.includes('theme.js')) {
-              const file = await jiti(filePath)
-              this.updateCacheFromTokensContent({ content: file?.default || file, filePath: themePath })
+              const file = await import(`${filePath}?${Date.now()}`).then(d => d?.default || d)
+              this.updateCacheFromTokensContent({ content: file, filePath: themePath })
               settings?.debug && console.log('📥 Loaded theme:', filePath)
             }
             if (filePath.includes('definitions.js')) {
-              const file = await jiti(filePath)
-              this.pushDefinitions({ content: file?.default || file, filePath: themePath })
+              const file = await import(`${filePath}?${Date.now()}`).then(d => d?.default || d)
+              this.pushDefinitions({ content: file, filePath: themePath })
               settings?.debug && console.log('📥 Loaded definitions:', filePath)
             }
           },

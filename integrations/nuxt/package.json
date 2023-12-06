@@ -14,15 +14,14 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
-      "require": "./index.cjs"
+      "require": "./dist/index.cjs"
     }
   },
-  "main": "./index.cjs",
+  "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "files": [
     "dist",
-    "index.cjs",
     "server"
   ],
   "scripts": {
@@ -41,9 +40,9 @@
     "@nuxthq/studio": "^1.0.5",
     "@nuxtjs/color-mode": "^3.3.2",
     "@pinceau/configs": "workspace:*",
-    "nitropack": "2.8.0",
+    "nitropack": "2.8.1",
     "nuxi": "3.10.0",
     "nuxt": "3.8.2",
-    "nuxt-component-meta": "^0.5.4"
+    "nuxt-component-meta": "^0.6.0"
   }
 }

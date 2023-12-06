@@ -1,6 +1,5 @@
 import type { PinceauContext } from '@pinceau/core'
-import type { Named, Core as StyleDictionary, Transform } from 'style-dictionary-esm'
-import type { FormatterArguments } from 'style-dictionary-esm/types/Format'
+import type SD from 'style-dictionary'
 import type { ConfigOrPaths, ResolvedConfig, ThemeGenerationOutput, ThemeLoadingOutput } from './config'
 
 /**
@@ -10,10 +9,10 @@ export interface PinceauThemeFormat {
   destination: string
   importPath: string
   virtualPath: string
-  formatter: (args: FormatterArguments & { ctx: PinceauContext, instance: StyleDictionary, loadedTheme: ThemeLoadingOutput }) => string
+  formatter: (args: Parameters<SD.Format['formatter']>[0] & { ctx: PinceauContext, instance: SD.Core, loadedTheme: ThemeLoadingOutput }) => string
 }
 
-export type PinceauThemeTokenTransform = Named<Transform>
+export type PinceauThemeTokenTransform = SD.Named<SD.Transform>
 
 /**
  * Supported color scheme modes.

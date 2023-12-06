@@ -73,7 +73,7 @@ export function pathToVarName(
   prefix: string = '--',
   splitPoint: string = '.',
   separator: string = '-',
-) {
+): string {
   if (Array.isArray(path)) { path = path.join(separator) }
   if (path.charAt(0) === '$') { path = path.substring(1) }
   return `${prefix}${path.split(splitPoint).join(separator)}`

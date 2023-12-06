@@ -34,7 +34,7 @@
     "@pinceau/core": "workspace:*",
     "@pinceau/outputs": "workspace:*",
     "@pinceau/stringify": "workspace:*",
-    "scule": "^1.1.0"
+    "scule": "^1.1.1"
   },
   "devDependencies": {
     "@pinceau/configs": "workspace:*"

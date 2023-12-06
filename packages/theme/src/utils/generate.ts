@@ -1,18 +1,21 @@
-import type { File, Core as Instance, Named, Transform } from 'style-dictionary-esm'
-import StyleDictionary from 'style-dictionary-esm'
+import fs from 'node:fs'
 import { REFERENCES_REGEX, message } from '@pinceau/core/utils'
 import type { PinceauContext } from '@pinceau/core'
 import type { PinceauTheme } from '@pinceau/outputs'
+import { setFs } from 'style-dictionary/fs'
+import SD from 'style-dictionary'
 import type { DesignTokens, PinceauThemeFormat, Theme, ThemeGenerationOutput, ThemeLoadingOutput } from '../types'
 import { flattenTokens } from './tokens'
 import { resolveBuildDir } from './build-dir'
+
+setFs(fs)
 
 export async function generateTheme(
   loadedTheme: ThemeLoadingOutput,
   ctx: PinceauContext,
 ): Promise<ThemeGenerationOutput> {
   // Create Style Dictionary local instance
-  let styleDictionary: Instance = StyleDictionary
+  let styleDictionary: SD.Core = SD as SD.Core
 
   // Get context
   const { theme } = loadedTheme
@@ -24,23 +27,17 @@ export async function generateTheme(
   const usedTransforms = ['size/px', 'color/hex']
 
   // Files created by Pinceau
-  const files: File[] = []
-
-  // Tokens outputs to be pased
-  const outputs: ThemeGenerationOutput['outputs'] = {}
+  const files: SD.File[] = []
 
   // Generation result for virtual storage
-  let result: ThemeGenerationOutput = {
+  const result: ThemeGenerationOutput = {
     buildDir,
-    theme: {} as Theme<PinceauTheme>,
+    theme: {} as PinceauTheme,
     outputs: {},
   }
 
-  // Cleanup default fileHeader
-  styleDictionary.fileHeader = {}
-
   // Register all transforms
-  const transforms: Named<Transform>[] = ctx.options.theme.tokensTransforms
+  const transforms: SD.Named<SD.Transform>[] = ctx.options.theme.tokensTransforms
   for (const transform of transforms) {
     styleDictionary.registerTransform(transform)
     usedTransforms.push(transform.name)
@@ -53,9 +50,9 @@ export async function generateTheme(
     styleDictionary.registerFormat({
       name: format.importPath,
       formatter(args) {
-        const result = format.formatter({ ...args, loadedTheme, ctx, instance: styleDictionary })
-        outputs[format.importPath] = result
-        return result
+        const outputResult = format.formatter({ ...args, loadedTheme, ctx, instance: styleDictionary })
+        result.outputs[format.importPath] = outputResult
+        return outputResult
       },
     })
 
@@ -75,7 +72,16 @@ export async function generateTheme(
     transforms: usedTransforms,
   })
 
-  styleDictionary = styleDictionary.extend({
+  // Grab final tokens payload from an action
+  styleDictionary.registerAction({
+    name: 'done',
+    do: ({ tokens }) => {
+      result.theme = flattenTokens(tokens)
+    },
+    undo: () => {},
+  })
+
+  styleDictionary = new (styleDictionary as any)({
     tokens: theme as DesignTokens,
     platforms: {
       base: {
@@ -89,32 +95,18 @@ export async function generateTheme(
         },
         referencesOptions: {
           regex: REFERENCES_REGEX,
-          openingChar: '$',
-          closingChar: '\b',
+          opening_character: '$',
+          closing_character: '\b',
         },
         actions: ['done'],
       },
     },
-  })
+  }) as SD.Core
+  await (styleDictionary as any).hasInitialized
 
   // Build theme
   try {
-    result = await new Promise<ThemeGenerationOutput>(
-      (resolve) => {
-        styleDictionary.registerAction({
-          name: 'done',
-          do: ({ tokens }) => {
-            resolve({
-              buildDir,
-              theme: flattenTokens(tokens) as Theme<PinceauTheme>,
-              outputs,
-            })
-          },
-          undo: () => {},
-        })
-        styleDictionary.buildAllPlatforms()
-      },
-    )
+    await (styleDictionary as any).buildAllPlatforms()
   }
   catch (e) {
     message('CONFIG_BUILD_ERROR', [e])

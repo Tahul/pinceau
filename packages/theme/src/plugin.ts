@@ -1,8 +1,10 @@
 /* c8 ignore start */
+import fs from 'node:fs'
 import { getPinceauContext, transform, transformInclude } from '@pinceau/core/utils'
 import type { PinceauContext } from '@pinceau/core'
 import { createUnplugin } from 'unplugin'
 import type { UnpluginInstance } from 'unplugin'
+import { setFs } from 'style-dictionary/fs'
 import type { PinceauConfigContext } from './types'
 import { transformIndexHtml } from './utils/html'
 import { usePinceauConfigContext } from './utils/config-context'
@@ -13,6 +15,8 @@ import { pluginTypes } from './utils/plugin-types'
 const PinceauThemePlugin: UnpluginInstance<undefined> = createUnplugin(() => {
   let ctx: PinceauContext
   let configCtx: PinceauConfigContext
+
+  setFs(fs)
 
   return {
     name: 'pinceau:theme-plugin',

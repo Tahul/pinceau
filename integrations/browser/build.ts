@@ -52,7 +52,7 @@ build({
   },
   noExternal: [
     'sfc-composer',
-    'style-dictionary-esm',
+    'style-dictionary',
     'nanoid',
     'scule',
     'recast',

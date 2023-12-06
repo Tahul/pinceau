@@ -1,4 +1,5 @@
 import type { PinceauTransformFunction } from '@pinceau/core'
+import { pathToVarName } from '@pinceau/core/runtime'
 import { helperRegex } from '../utils/helper-regex'
 
 /**

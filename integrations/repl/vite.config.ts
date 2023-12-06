@@ -36,7 +36,6 @@ export default defineConfig({
       'path': 'path-browserify',
       '@vue/compiler-dom': '@vue/compiler-dom/dist/compiler-dom.cjs.js',
       '@vue/compiler-core': '@vue/compiler-core/dist/compiler-core.cjs.js',
-      'jiti': resolve('./src/jiti-proxy.ts'),
     },
   },
   plugins: [
@@ -84,7 +83,7 @@ export default defineConfig({
       'vscode-uri',
       'nanoid',
       'scule',
-      'style-dictionary-esm',
+      'style-dictionary',
       'pathe',
       'node:fs',
       '@volar/language-core',

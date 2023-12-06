@@ -44,6 +44,7 @@ import {
 import { PinceauVueTransformer } from '@pinceau/vue/utils'
 import fg from 'fast-glob'
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
+import createJITI from 'jiti'
 import themeConfig from '../fixtures/theme/theme.config'
 import themeConfigContent from '../fixtures/theme/theme.config.ts?raw'
 import { findNode, pigmentsLayers, resolveFixtures, resolveTmp, testFileLayer, testLayer } from '../utils'
@@ -57,6 +58,7 @@ describe('@pinceau/theme', () => {
       ctx = usePinceauContext()
       ctx.fs = fs
       ctx.resolve = createRequire(import.meta.url).resolve
+      ctx.jiti = createJITI(import.meta.url)
       setupThemeFormats(ctx)
       ctx.options.theme.pigments = false
       configCtx = usePinceauConfigContext(ctx)
@@ -92,6 +94,7 @@ describe('@pinceau/theme', () => {
     it('inject @pinceau/pigments build theme without options', async () => {
       ctx.fs = fs
       ctx.resolve = createRequire(import.meta.url).resolve
+      ctx.jiti = createJITI(import.meta.url)
       ctx.options.theme.pigments = true
 
       await configCtx.buildTheme()
@@ -346,6 +349,7 @@ describe('@pinceau/theme', () => {
       ctx = usePinceauContext()
       ctx.fs = fs
       ctx.resolve = createRequire(import.meta.url).resolve
+      ctx.jiti = createJITI(import.meta.url)
       setupThemeFormats(ctx)
       ctx.options.theme.pigments = false
       ctx.options.theme.layers = []
@@ -491,6 +495,8 @@ describe('@pinceau/theme', () => {
 
     it('resolve utils from a config file AST', async () => {
       const utils = resolveConfigUtils(configAst, themeConfig)
+
+      console.log(utils)
 
       expect(Object.keys(utils).length).toBe(Object.keys((themeConfig as any).utils).length)
     })

@@ -67,11 +67,12 @@
     "test:ui": "pnpm -r --filter=\"./tests\" run test:ui"
   },
   "resolutions": {
-    "unbuild": "npm:@pinceau/unbuild@latest",
-    "vue-eslint-parser": "npm:@pinceau/vue-eslint-parser@latest"
+    "vue-eslint-parser": "npm:@pinceau/vue-eslint-parser@latest",
+    "jiti": "npm:@pinceau/jiti@latest",
+    "unbuild": "npm:@pinceau/unbuild@latest"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^2.1.1",
+    "@antfu/eslint-config": "^2.3.4",
     "@pinceau/configs": "workspace:*",
     "@pinceau/core": "workspace:*",
     "@pinceau/language-server": "workspace:*",
@@ -85,18 +86,18 @@
     "@pinceau/vue": "workspace:*",
     "bumpp": "^9.2.0",
     "changelogithub": "^0.13.2",
-    "eslint": "^8.54.0",
-    "jiti": "^1.21.0",
-    "nodemon": "^3.0.1",
+    "eslint": "^8.55.0",
+    "nodemon": "^3.0.2",
     "pinceau": "workspace:*",
     "release-it": "^17.0.0",
-    "rollup": "^4.6.0",
+    "rollup": "^4.6.1",
+    "tslib": "^2.6.2",
     "tsup": "^8.0.1",
-    "turbo": "^1.10.16",
+    "turbo": "^1.11.0",
     "typescript": "^5.3.2",
     "unbuild": "^2.0.0",
     "unenv": "^1.8.0",
-    "vite-plugin-inspect": "^0.8.0"
+    "vite-plugin-inspect": "^0.8.1"
   },
   "packageManager": "pnpm@8.9.0",
   "pnpm": {

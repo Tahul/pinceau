@@ -53,5 +53,6 @@ export default defineBuildConfig({
     '@pinceau/astro',
     '@babel/types',
     '@babel/parser',
+    'jiti',
   ],
 })

@@ -52,8 +52,8 @@
   "dependencies": {
     "@pinceau/core": "workspace:*",
     "@pinceau/outputs": "workspace:*",
-    "@unocss/reset": "^0.57.7",
-    "style-dictionary-esm": "^1.9.1",
+    "@unocss/reset": "^0.58.0",
+    "style-dictionary": "npm:@pinceau/style-dictionary@latest",
     "untyped": "^1.4.0"
   },
   "devDependencies": {
