@@ -25,7 +25,8 @@
   "dependencies": {
     "@nuxt/kit": "^3.7.4",
     "@pinceau/integration": "workspace:*",
-    "@pinceau/vue": "workspace:*"
+    "@pinceau/vue": "workspace:*",
+    "jiti": "^2.4.0"
   },
   "devDependencies": {
     "@nuxt/test-utils": "^3.7.4",

@@ -107,7 +107,6 @@
     }
   },
   "resolutions": {
-    "jiti": "npm:@pinceau/jiti@latest",
     "unbuild": "npm:@pinceau/unbuild@latest",
     "vue-eslint-parser": "npm:@pinceau/vue-eslint-parser@latest"
   },

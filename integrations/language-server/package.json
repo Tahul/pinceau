@@ -20,7 +20,7 @@
     "@pinceau/integration": "workspace:*",
     "@vue/compiler-sfc": "^3.3.4",
     "fast-glob": "^3.3.1",
-    "jiti": "^1.20.0",
+    "jiti": "^2.4.0",
     "line-column": "^1.0.2",
     "tinycolor2": "1.6.0",
     "vscode-languageserver": "^9.0.1",

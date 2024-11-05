@@ -2,7 +2,7 @@ import fs from 'node:fs'
 import process from 'node:process'
 import { join, resolve } from 'pathe'
 import { addPluginTemplate, addPrerenderRoutes, createResolver, defineNuxtModule, resolveModule } from '@nuxt/kit'
-import createJITI from 'jiti'
+import { createJiti } from 'jiti'
 import type { PinceauUserOptions } from '@pinceau/core'
 import { walkTokens } from '@pinceau/theme/runtime'
 import type { ConfigLayer } from '@pinceau/theme'
@@ -49,12 +49,12 @@ const module: any = defineNuxtModule<PinceauUserOptions>({
       // @ts-expect-error
       nuxt.hook('component-meta:transformers', (transformers: any[]) => {
         transformers.push(
-          (component: any, code: string) => {
+          async (component: any, code: string) => {
             const resolvedTokens: string[] = []
 
             // Grab built tokens and resolve all tokens paths
             if (fs.existsSync(join(buildDir, 'index.ts'))) {
-              const _tokens = createJITI(buildDir)(join(buildDir, 'index.ts')).default
+              const _tokens = await createJiti(buildDir).import<{ theme?: any }>(join(buildDir, 'index.ts'), { default: true })
               walkTokens(_tokens?.theme || _tokens, (_, __, paths) => { cachedTokens.push(paths.join('.')) })
             }
 

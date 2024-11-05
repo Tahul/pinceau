@@ -2,7 +2,7 @@ import { readFile } from 'node:fs/promises'
 import fs from 'node:fs'
 import type { PinceauOptions } from '@pinceau/core'
 import { message, parseAst } from '@pinceau/core/utils'
-import createJITI from 'jiti'
+import { createJiti } from 'jiti'
 import { resolve } from 'pathe'
 import type { ConfigFileImport, ConfigLayer, ResolvedConfigLayer } from '../types'
 import { getConfigLayer, resolveMediaQueriesKeys } from './config-layers'
@@ -94,11 +94,10 @@ export async function importConfigFile(path: string, ext: string): Promise<Confi
   }
 
   // Import configuration with JITI
-  const config = createJITI(path, {
+  const config = await createJiti(path, {
     interopDefault: true,
     requireCache: false,
-    esmResolve: true,
-  })(path)
+  }).import(path, { default: true })
 
   return {
     path,
